@@ -1,4 +1,4 @@
-SRCS = ConfigReader.cxx TreeAnalyzer.cxx
+SRCS = StRoot/ConfigReader/ConfigReader.cxx TreeAnalyzer.cxx
 OBJS = $(SRCS:.cxx=.o)
 DEPS = FlowUtils.h
 TARGET = TreeAnalyzer
@@ -32,7 +32,7 @@ $(TARGET): $(OBJS)
 TreeAnalyzer.o: FlowUtils.h StRoot/ConfigReader/ConfigReader.h TreeAnalyzer.cxx
 	$(COMPILE) -o $@ -c TreeAnalyzer.cxx $(SOLIBS) $(ROOTCFLAGS) $(ROOTLIBS) $(INCFLAGS) $(LIBFLAGS)
 
-ConfigReader.o: StRoot/ConfigReader/ConfigReader.h StRoot/ConfigReader/ConfigReader.cxx
+StRoot/ConfigReader/ConfigReader.o: StRoot/ConfigReader/ConfigReader.h StRoot/ConfigReader/ConfigReader.cxx
 	$(COMPILE) -o $@ -c StRoot/ConfigReader/ConfigReader.cxx $(ROOTCFLAGS) $(ROOTLIBS)
 
 .PHONY: clean
