@@ -47,7 +47,7 @@ The `TreeAnalyzer` will be an executable, so you only invoke it by name and supp
 2) Job ID given by the scheduler.
 3) Name of the config file.
 4) Name of the file with correction info (for re-centering and Fourier shifting) (produced by TreeAnalyzer if not present).
-5) Name of the file with event plane resolutions (produced by TreeAnalyzer if not present).
+5) Name of the file with event plane resolutions (produced by you, see below).
 
 For your .xml file, send `TreeAnalyzer`, the correction and resolution files, the config file, and the `libs/` directory. An example command section would look like this: 
 
@@ -62,8 +62,17 @@ For your .xml file, send `TreeAnalyzer`, the correction and resolution files, th
 
 The program will determine what iteration you're on based on the status of `correctionInfo_INPUT.root`, so you don't have to do anything between iterations aside from combining and supplying the correction info. You should always supply the names of the correction and resolution files to the program since it won't be a problem if they don't exist.
 
-* Correction file doesn't exist = iteration 0
-* Correction file exists, but TProfiles are empty = iteration 1
-* Correction file exists and TProfiles are not empty = iteration 2
+* Correction file doesn't exist = iteration 0 (Get re-centering info)
+* Correction file exists, but TProfiles are empty = iteration 1 (Apply re-centering, get shifting info)
+* Correction file exists and TProfiles are not empty = iteration 2 (Apply re-centering and shifting, get all correlations)
 * Correction file exists, TProfiles not empty, and resolution file exists = flow can now be calculated
 
+For event plane resolutions, this info will be present in the following TProfiles of correlations between the various subevents, located in the main output ROOT files. These will be filled after the 3rd iteration and then they can be used by the analyzer to calculate the resolutions.
+`p_TpcAB`
+`p_TpcAEpdA`
+`p_TpcAEpdB`
+`p_TpcBEpdA`
+`p_TpcBEpdB`
+`p_EpdAEpdB`
+
+Currently, the analyzer requires that the resolution file contains a `TH1D` of resolution vs centrality ID called `h_resolutions`. The x-axis should NOT be in percentages! It should be following the normal ID that can be seen in the section of `TreeAnalyzer.cxx` where the `centrality` variable is assigned. So essentially `h_resolutions` will have an x-axis from 0 to 16, with 16 bins, and will look like a backwards version of the resolutions vs centrality percentages.
