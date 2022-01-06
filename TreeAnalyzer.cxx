@@ -714,7 +714,7 @@ int main(int argc, char *argv[])
 		      eventInfo.YnTpcA += d_pT * TMath::Sin(ORDER_M * d_phi);
 		    }
 		} // End TPC A
-	      else if (d_eta > configs.tpc_B_low_eta && d_eta < configs.tpc_B_high_eta)     // TPC B
+	      if (d_eta > configs.tpc_B_low_eta && d_eta < configs.tpc_B_high_eta)     // TPC B
 		{
 		  eventInfo.nTracksTpcB++;
 		  particleInfo.isInTpcB = true;
