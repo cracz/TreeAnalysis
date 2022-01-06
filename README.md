@@ -64,5 +64,6 @@ The program will determine what iteration you're on based on the status of `corr
 
 * Correction file doesn't exist = iteration 0
 * Correction file exists, but TProfiles are empty = iteration 1
-* Correction file exists and TProfiles are not empty = iteration 2 (flow can be calculated)
+* Correction file exists and TProfiles are not empty = iteration 2
+* Correction file exists, TProfiles not empty, and resolution file exists = flow can now be calculated
 
