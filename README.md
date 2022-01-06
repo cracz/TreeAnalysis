@@ -6,12 +6,19 @@ This is a **mostly** complete and standalone package to create TTrees from STAR 
 ## Dependencies - Important!
 
 To complete this package, use CVS to checkout the following StRoot libraries. Place them within the `StRoot/` directory of this package.
+
 `StarClassLibrary`
+
 `StBichsel`
+
 `StEpdUtil`
+
 `StEvent`
+
 `StPicoDstMaker`
+
 `StPicoEvent`
+
 
 This package also uses a class called `ConfigReader` located in the `StRoot/` directory. This class is actually its own repository so it has been attached to this repository as a **submodule**. Most things about the `TreeAnalysis` repo should be the same as other git repos, but a few things will be a little different when dealing with `ConfigReader`. For example, you can make changes to `ConfigReader` from within this repo and push the changes back to the main `ConfigReader` repo, but there's just some extra steps. Check out Git's info on submodules for more info.
 
@@ -68,11 +75,17 @@ The program will determine what iteration you're on based on the status of `corr
 * Correction file exists, TProfiles not empty, and resolution file exists = flow can now be calculated
 
 For event plane resolutions, this info will be present in the following TProfiles of correlations between the various subevents, located in the main output ROOT files. These will be filled after the 3rd iteration and then they can be used by the analyzer to calculate the resolutions.
+
 `p_TpcAB`
+
 `p_TpcAEpdA`
+
 `p_TpcAEpdB`
+
 `p_TpcBEpdA`
+
 `p_TpcBEpdB`
+
 `p_EpdAEpdB`
 
 Currently, the analyzer requires that the resolution file contains a `TH1D` of resolution vs centrality ID called `h_resolutions`. The x-axis should NOT be in percentages! It should be following the normal ID that can be seen in the section of `TreeAnalyzer.cxx` where the `centrality` variable is assigned. So essentially `h_resolutions` will have an x-axis from 0 to 16, with 16 bins, and will look like a backwards version of the resolutions vs centrality percentages.
