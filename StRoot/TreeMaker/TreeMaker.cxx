@@ -348,22 +348,22 @@ Int_t TreeMaker::Make()
 		      // 19.6 GeV COL
 		      else if (configs.sqrt_s_NN == 19.6)
 			{
-			  if     ( eventInfo.primTracks >=   4 && eventInfo.primTracks <=   5 ) eventInfo.centID =  0;  // 75% - 80% (Peripheral)
-			  else if( eventInfo.primTracks >=   6 && eventInfo.primTracks <=   8 ) eventInfo.centID =  1;
-			  else if( eventInfo.primTracks >=   9 && eventInfo.primTracks <=  11 ) eventInfo.centID =  2;
-			  else if( eventInfo.primTracks >=  12 && eventInfo.primTracks <=  16 ) eventInfo.centID =  3;
-			  else if( eventInfo.primTracks >=  17 && eventInfo.primTracks <=  23 ) eventInfo.centID =  4;
-			  else if( eventInfo.primTracks >=  24 && eventInfo.primTracks <=  31 ) eventInfo.centID =  5;
-			  else if( eventInfo.primTracks >=  32 && eventInfo.primTracks <=  42 ) eventInfo.centID =  6;
-			  else if( eventInfo.primTracks >=  43 && eventInfo.primTracks <=  56 ) eventInfo.centID =  7;
-			  else if( eventInfo.primTracks >=  57 && eventInfo.primTracks <=  72 ) eventInfo.centID =  8;
-			  else if( eventInfo.primTracks >=  73 && eventInfo.primTracks <=  93 ) eventInfo.centID =  9;
-			  else if( eventInfo.primTracks >=  94 && eventInfo.primTracks <= 118 ) eventInfo.centID = 10;
-			  else if( eventInfo.primTracks >= 119 && eventInfo.primTracks <= 149 ) eventInfo.centID = 11;
-			  else if( eventInfo.primTracks >= 150 && eventInfo.primTracks <= 186 ) eventInfo.centID = 12;
-			  else if( eventInfo.primTracks >= 187 && eventInfo.primTracks <= 232 ) eventInfo.centID = 13;
-			  else if( eventInfo.primTracks >= 233 && eventInfo.primTracks <= 290 ) eventInfo.centID = 14;
-			  else if( eventInfo.primTracks >= 290 )                                eventInfo.centID = 15;  // 0% - 5% (Central)
+			  if     ( primTracks >=   4 && primTracks <=   5 ) centrality =  0;  // 75% - 80% (Peripheral)
+			  else if( primTracks >=   6 && primTracks <=   8 ) centrality =  1;
+			  else if( primTracks >=   9 && primTracks <=  11 ) centrality =  2;
+			  else if( primTracks >=  12 && primTracks <=  16 ) centrality =  3;
+			  else if( primTracks >=  17 && primTracks <=  23 ) centrality =  4;
+			  else if( primTracks >=  24 && primTracks <=  31 ) centrality =  5;
+			  else if( primTracks >=  32 && primTracks <=  42 ) centrality =  6;
+			  else if( primTracks >=  43 && primTracks <=  56 ) centrality =  7;
+			  else if( primTracks >=  57 && primTracks <=  72 ) centrality =  8;
+			  else if( primTracks >=  73 && primTracks <=  93 ) centrality =  9;
+			  else if( primTracks >=  94 && primTracks <= 118 ) centrality = 10;
+			  else if( primTracks >= 119 && primTracks <= 149 ) centrality = 11;
+			  else if( primTracks >= 150 && primTracks <= 186 ) centrality = 12;
+			  else if( primTracks >= 187 && primTracks <= 232 ) centrality = 13;
+			  else if( primTracks >= 233 && primTracks <= 290 ) centrality = 14;
+			  else if( primTracks >= 290 )                      centrality = 15;  // 0% - 5% (Central)
 			}
 
 
