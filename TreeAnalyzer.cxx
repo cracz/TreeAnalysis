@@ -41,7 +41,7 @@
 #include "StRoot/StEpdUtil/StEpdGeom.h"
 
 // Configuration file reader
-#include "ConfigReader.h"
+#include "StRoot/ConfigReader/ConfigReader.h"
 
 // My Util Header
 #include "FlowUtils.h"
