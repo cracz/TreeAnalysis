@@ -38,7 +38,7 @@ class StPicoTrack;
 
 const Double_t PI = TMath::Pi();
 const Int_t Ncentralities =  16;
-const Int_t N_track       = 195;
+const Int_t N_track    = 2048;       // Max tracks in an event
 const Int_t CENT_BINS  = 16;
 const Int_t FIRST_CENT = 16 - CENT_BINS;
 const Double_t D_M0_PI = 0.139571;   //Rest masses

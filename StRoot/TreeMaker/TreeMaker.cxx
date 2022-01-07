@@ -363,7 +363,7 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 150 && primTracks <= 186 ) centrality = 12;
 			  else if( primTracks >= 187 && primTracks <= 232 ) centrality = 13;
 			  else if( primTracks >= 233 && primTracks <= 290 ) centrality = 14;
-			  else if( primTracks >= 291 )                      centrality = 15;  // 0% - 5% (Central)
+			  else if( primTracks >= 291 && primTracks <= 2048) centrality = 15;  // 0% - 5% (Central)
 			}
 
 
