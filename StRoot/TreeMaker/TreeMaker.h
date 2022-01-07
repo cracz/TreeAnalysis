@@ -38,7 +38,7 @@ class StPicoTrack;
 
 const Double_t PI = TMath::Pi();
 const Int_t Ncentralities =  16;
-const Int_t N_track       = 195;
+const Int_t N_track       = 2048;
 const Int_t CENT_BINS  = 16;
 const Int_t FIRST_CENT = 16 - CENT_BINS;
 const Double_t D_M0_PI = 0.139571;   //Rest masses
@@ -75,7 +75,10 @@ private:
   UShort_t            tree_nEPDhits;
   Short_t             tree_EPDid[744];
   Float_t             tree_EPDnMip[744];
-
+  Double_t            tree_Beta[N_track];
+  Float_t             tree_dEdx[N_track];
+  Int_t               tree_nHitsFit[N_track];
+  Int_t               tree_nHitsPoss[N_track];
     
   TH1D*                h_eventCheck;
   TH1D*                h_trackCheck;
