@@ -66,6 +66,11 @@ Int_t TreeMaker::Init()
   FxtTree->Branch("nEPDhits",&tree_nEPDhits,"nEPDhits/s");
   FxtTree->Branch("EPDid",tree_EPDid,"EPDid[nEPDhits]/S");
   FxtTree->Branch("EPDnMip",tree_EPDnMip,"EPDnMip[nEPDhits]/F");
+  FxtTree->Branch("tofBeta",tree_Beta,"tofBeta[tracknumber]/D");
+  FxtTree->Branch("dEdx",tree_dEdx,"dEdx[tracknumber]/F");
+  FxtTree->Branch("nHitsFit",tree_nHitsFit,"nHitsFit[tracknumber]/I");
+  FxtTree->Branch("nHitsPoss",tree_nHitsPoss,"nHitsPoss[tracknumber]/I");
+
 
   // QA plots
   h_eventCheck = new TH1D("h_eventCheck","Event number after each cut;;Events", 6, 0, 6);
@@ -646,6 +651,10 @@ Int_t TreeMaker::Make()
 			      tree_Px[realTrackIndex] = d_px;
 			      tree_Py[realTrackIndex] = d_py;
 			      tree_Pz[realTrackIndex] = d_pz;
+                              tree_Beta[realTrackIndex] = d_tofBeta;
+			      tree_dEdx[realTrackIndex] = track->dEdx();
+		              tree_nHitsFit[realTrackIndex] = track->nHitsFit();
+		              tree_nHitsPoss[realTrackIndex] = track->nHitsPoss();
 			      realTrackIndex += 1;
 			    } // 2nd track loop ends
 			    
