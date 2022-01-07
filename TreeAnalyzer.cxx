@@ -102,7 +102,16 @@ int main(int argc, char *argv[])
   const Bool_t ODD_PLANE = ((int)ORDER_M % 2 == 1) ? true : false;
 
   //=== INITIALIZE TTREE
-  Int_t N_track = 195;  // Max number of tracks in an event (FOR 3 GEV ONLY!!!)
+  Int_t N_track = 0;  // Max number of tracks in an event. Depends on energy and centrality definition!
+  if      (configs.sqrt_s_NN == 3.0)  { N_track = 195;  }
+  else if (configs.sqrt_s_NN == 7.2)  { N_track = 240;  }
+  else if (configs.sqrt_s_NN == 19.6) { N_track = 2048; } // UPDATE THIS WHEN THE CENTRALITY IS OFFICIAL
+  else
+    {
+      std::cout << "Unknown energy! N_track is not set!" << std::endl;
+      return 1;
+    }
+
   Int_t i_runID;
   Int_t i_eventID;
   Float_t f_bField;
