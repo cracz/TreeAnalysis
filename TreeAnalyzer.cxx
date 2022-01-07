@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
   Float_t f_zvtx;
   UShort_t i_centrality;
   UShort_t i_trackNumber;
-  Int_t PID[N_track];
+  Short_t PID[N_track];
   Short_t charge[N_track];
   Float_t Px[N_track];
   Float_t Py[N_track];
