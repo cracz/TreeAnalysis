@@ -128,6 +128,11 @@ int main(int argc, char *argv[])
   UShort_t i_nEPDhits;
   Short_t EPDids[744];
   Float_t EPDnMip[744];
+  Double_t tofBeta[N_track];
+  Float_t dEdx[N_track];
+  Int_t nHitsFit[N_track];
+  Int_t nHitsPoss[N_track];
+
 
   TFile *inputFile = TFile::Open(inFile);
   if (!inputFile) { std::cout << "Input file could not be opened properly!" << std::endl; return 1; }
@@ -149,7 +154,10 @@ int main(int argc, char *argv[])
   tree->SetBranchAddress("nEPDhits",&i_nEPDhits);
   tree->SetBranchAddress("EPDid",&EPDids);
   tree->SetBranchAddress("EPDnMip",&EPDnMip);
-
+  tree->SetBranchAddress("tofBeta",&tofBeta);
+  tree->SetBranchAddress("dEdx",&dEdx);
+  tree->SetBranchAddress("nHitsFit",&nHitsFit);
+  tree->SetBranchAddress("nHitsPoss",&nHitsPoss);
 
   // INPUT FILE FOR CORRECTION INFORMATION
   //TString correctionInputName = "correctionInfo_INPUT.root";
@@ -264,6 +272,8 @@ int main(int argc, char *argv[])
   TH1D *h_simulationCheck_total = new TH1D ("h_simulationCheck_total", "Total N_{trk}", 3, 0, 3);
   */
   TH1D *h_nhits       = (TH1D*)inputFile->Get("h_nhits");
+  TH1D *h_nhitsFit    = new TH1D("h_nhitsFit", "nHitsFit;Number of hits for fitting;Tracks", 50, 0, 50);
+  TH1D *h_nhitsPoss   = new TH1D("h_nhitsPoss", "nHitsFit;Number of hits possible;Tracks", 50, 0, 50);
   TH1D *h_nhits_ratio = (TH1D*)inputFile->Get("h_nhits_ratio");
   TH1D *h_nhits_dEdx  = (TH1D*)inputFile->Get("h_nhits_dEdx");
   TH1D *h_DCA         = (TH1D*)inputFile->Get("h_DCA");
@@ -645,6 +655,10 @@ int main(int argc, char *argv[])
       Double_t d_mom;
       Double_t d_eta;
       Double_t d_phi;
+      //Double_t d_tofBeta;
+      //Double_t d_dEdx;
+      Int_t i_nHitsFit;
+      Int_t i_nHitsPoss;
       Short_t s_PID;
       Short_t s_charge;
 
@@ -664,8 +678,15 @@ int main(int argc, char *argv[])
 	  d_eta = FlowUtils::pseudorapidity(Px[iTrk], Py[iTrk], Pz[iTrk]);
 	  d_pT  = FlowUtils::transMomentum(Px[iTrk], Py[iTrk]);
 	  d_mom = FlowUtils::totalMomentum(Px[iTrk], Py[iTrk], Pz[iTrk]);
+	  //d_tofBeta = tofBeta[iTrk];
+	  //d_dEdx = dEdx[iTrk];
+	  i_nHitsFit = nHitsFit[iTrk];
+	  i_nHitsPoss = nHitsPoss[iTrk];
+
 
 	  h_PID->Fill((Double_t)s_PID);
+	  h_nhitsFit->Fill(i_nHitsFit);
+	  h_nhitsPoss->Fill(i_nHitsPoss);
 
 	  // Get event planes from the TPC here before the TOF cut
 	  if (s_charge != 0)
