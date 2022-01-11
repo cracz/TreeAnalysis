@@ -255,8 +255,8 @@ int main(int argc, char *argv[])
   // HISTOGRAMS
   //TH1::SetDefaultSumw2(true);
 
-  TH1D *h_PID = new TH1D("h_PID","Track IDs;ID;Tracks", 6, -1, 5);
 
+  TH1D *h_PID = new TH1D("h_PID","Track IDs;ID;Tracks", 6, -1, 5);
 
   TH1D *h_eventCheck = (TH1D*)inputFile->Get("h_eventCheck");
   h_eventCheck->SetStats(0);
@@ -282,8 +282,8 @@ int main(int argc, char *argv[])
 
   TH1D *h_zvtx = (TH1D*)inputFile->Get("h_zvtx");
 
-  TH1D *h_eta_s   = new TH1D("h_eta_s", "Particle #eta_{CM};#eta-#eta_{mid};Particles", 600, -6, 2);
-  TH1D *h_eta_TPC_s = new TH1D("h_eta_TPC_s", "TPC tracks' #eta_{CM};#eta-#eta_{mid};Particles", 600, -2, 2);
+  TH1D *h_eta_s   = new TH1D("h_eta_s", "Particle #eta_{CM};#eta-#eta_{mid};Particles", 1200, -6, 6);
+  TH1D *h_eta_TPC_s = new TH1D("h_eta_TPC_s", "TPC tracks' #eta_{CM};#eta-#eta_{mid};Particles", 500, -2.5, 2.5);
 
   TH1D *h_tileWeights = new TH1D("h_tileWeights", "EPD Tile Weights;Hits;nMIP Weights", 5, -1, 4);
   TH1D *h_centralities = (TH1D*)inputFile->Get("h_centralities");
