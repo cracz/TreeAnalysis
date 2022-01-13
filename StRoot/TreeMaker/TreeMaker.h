@@ -31,6 +31,11 @@
 // Configuration file reader
 #include "../ConfigReader/ConfigReader.h"
 
+// IEvent file headers
+#include "StRoot/IClasses/IEventPlane.h"
+#include "StRoot/IClasses/IEvent.h"
+
+
 class StPicoDstMaker;
 class StPicoDst;
 class StPicoEvent;
@@ -40,6 +45,7 @@ const Double_t PI = TMath::Pi();
 const Int_t Ncentralities =  16;
 
 const Int_t N_track    = 2048;       // Max tracks in an event
+//This number may be unnecessary
 
 const Int_t CENT_BINS  = 16;
 const Int_t FIRST_CENT = 16 - CENT_BINS;
@@ -69,19 +75,23 @@ private:
   Float_t             tree_Vz;
   UShort_t            tree_centrality;
   UShort_t            tree_tracknumber;
+  UShort_t            tree_nEPDhits;
+  Short_t             tree_EPDid[744];
+  Float_t             tree_EPDnMip[744];
+  UShort_t            tree_nEPDhits;
+  IEvent	      tree_tracks;  
+  /*
   Short_t             tree_PID[N_track];
   Short_t             tree_Charge[N_track];
   Float_t             tree_Px[N_track];
   Float_t             tree_Py[N_track];
   Float_t             tree_Pz[N_track];
-  UShort_t            tree_nEPDhits;
-  Short_t             tree_EPDid[744];
-  Float_t             tree_EPDnMip[744];
   Double_t            tree_Beta[N_track];
   Float_t             tree_dEdx[N_track];
   Int_t               tree_nHitsFit[N_track];
   Int_t               tree_nHitsPoss[N_track];
-    
+  */
+  
   TH1D*                h_eventCheck;
   TH1D*                h_trackCheck;
   TH1D*                h_centralities;
