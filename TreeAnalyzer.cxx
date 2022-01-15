@@ -632,8 +632,11 @@ int main(int argc, char *argv[])
 
   FlowUtils::Event eventInfo;
   FlowUtils::Particle particleInfo;
+  StEpdGeom *epdGeom = new StEpdGeom();
 
   Int_t events2read = tree->GetEntries();
+
+  std::cout << "Setup complete, beginning analysis on " << events2read << " events..." << std::endl;
 
   // EVENT LOOP
   for (Long64_t ievent = 0; ievent < events2read; ievent++)
@@ -934,7 +937,6 @@ int main(int argc, char *argv[])
       //=========================================================
       //                EPD STUFF
       //=========================================================
-      StEpdGeom *epdGeom = new StEpdGeom();
       Short_t tileID;
       TVector3 tileVector;     // Vector from vertex to center of tile that was hit
       Int_t tileSector;
