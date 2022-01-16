@@ -275,6 +275,8 @@ Int_t TreeMaker::Make()
 		    { 
 		      h_eventCheck->Fill(4); // Count # of events after Vr cut
 		      
+		      h2_trans_vtx_cut->Fill(pVtx.X(),pVtx.Y());
+
 		      Int_t nTracks = mPicoDstMaker->picoDst()->numberOfTracks(); // Get the number of Primary Tracks
 		      Int_t primTracks = 0;
 		      Int_t N_pp = 0;
