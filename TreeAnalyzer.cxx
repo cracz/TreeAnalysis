@@ -255,6 +255,14 @@ int main(int argc, char *argv[])
   // HISTOGRAMS
   //TH1::SetDefaultSumw2(true);
 
+  // temp variables when histogram bins/bounds depend on the energy
+  int tempBins1 = 0;
+  double tempLowBound1 = 0;
+  double tempHighBound1 = 0;
+  //int tempBins2 = 0;
+  //double tempLowBound2 = 0;
+  //double tempHighBound2 = 0;
+
 
   TH1D *h_PID = new TH1D("h_PID","Track IDs;ID;Tracks", 6, -1, 5);
 
@@ -473,8 +481,10 @@ int main(int argc, char *argv[])
   TProfile *p_EpdAEpdB = new TProfile("p_EpdAEpdB","EPD A EPD B Correlations;Centrality;<cos("+ORDER_N_STR+"(#psi^{EPD,A}_{"+ORDER_M_STR+"}-#psi^{EPD,B}_{"+ORDER_M_STR+"}))>", 
 				      CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
 
-
-  TProfile2D *p2_pp_vs_eta = new TProfile2D("p2_pp_vs_eta","<TnMIP> for Supersectors vs #eta;#eta;Supersector", 400, -6, -2, 12, 0.5, 12.5);
+  tempBins1      = (configs.fixed_target) ? 400 : 800;
+  tempLowBound1  = (configs.fixed_target) ? -6.0 : -6.0;
+  tempHighBound1 = (configs.fixed_target) ? -2.0 : 6.0;
+  TProfile2D *p2_pp_vs_eta = new TProfile2D("p2_pp_vs_eta","<TnMIP> for Supersectors vs #eta;#eta;Supersector", tempBins1, tempLowBound1, tempHighBound1, 12, 0.5, 12.5);
   TH2D *h2_trans_vtx     = (TH2D*)inputFile->Get("h2_trans_vtx");
   TH2D *h2_trans_vtx_cut = (TH2D*)inputFile->Get("h2_trans_vtx_cut");
 
@@ -515,8 +525,15 @@ int main(int argc, char *argv[])
   TH2D *h2_m2_vs_qp_de = (TH2D*)inputFile->Get("h2_m2_vs_qp_de");
   TH2D *h2_m2_vs_qp_tr = (TH2D*)inputFile->Get("h2_m2_vs_qp_tr");
   
-  TH2D *h2_phi_vs_eta_TPC = new TH2D("h2_phi_vs_eta_TPC", "TPC;#eta;#phi", 300, -2.2, 0.2, 300, -4, 4);
-  TH2D *h2_phi_vs_eta_EPD = new TH2D("h2_phi_vs_eta_EPD", "EPD;#eta;#phi", 300, -6, -2.5, 300, -4, 4);
+  tempBins1      = (configs.fixed_target) ?  300 :  600;
+  tempLowBound1  = (configs.fixed_target) ? -2.2 : -2.5;
+  tempHighBound1 = (configs.fixed_target) ?  0.2 :  2.5;
+  TH2D *h2_phi_vs_eta_TPC = new TH2D("h2_phi_vs_eta_TPC", "TPC;#eta;#phi", tempBins1, tempLowBound1, tempHighBound1, 300, -4, 4);
+
+  tempBins1      = (configs.fixed_target) ?  300 :  600;
+  tempLowBound1  = (configs.fixed_target) ? -6.0 : -6.0;
+  tempHighBound1 = (configs.fixed_target) ? -2.5 :  6.0;
+  TH2D *h2_phi_vs_eta_EPD = new TH2D("h2_phi_vs_eta_EPD", "EPD;#eta;#phi", tempBins1, tempLowBound1, tempHighBound1, 300, -4, 4);
 
   TH2D *h2_pT_vs_yCM_pp = (TH2D*)inputFile->Get("h2_pT_vs_yCM_pp");
   TH2D *h2_pT_vs_yCM_pm = (TH2D*)inputFile->Get("h2_pT_vs_yCM_pm");
@@ -528,19 +545,21 @@ int main(int argc, char *argv[])
 
 
   // Here the name refers to the eta region that will be displayed/searched using the event plane angle from the opposite region
-
+  tempBins1      = (configs.fixed_target) ?  50  :  100;
+  tempLowBound1  = (configs.fixed_target) ? -2.0 : -2.3;
+  tempHighBound1 = (configs.fixed_target) ?  0.0 :  2.3;
   TProfile2D *h2_v2ScanTpc = new TProfile2D("h2_v2ScanTpc", "<cos("+ORDER_N_STR+"(#phi^{TPC} - #psi^{EPD}_{"+ORDER_M_STR+"}))>;#eta;Centrality (%)", 
-					      50, -2, 0, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
+					    tempBins1, tempLowBound1, tempHighBound1, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
   TProfile2D *h2_v2ScanTpcEpdA = new TProfile2D("h2_v2ScanTpcEpdA", "<cos("+ORDER_N_STR+"(#phi^{TPC} - #psi^{EPD,A}_{"+ORDER_M_STR+"}))>;#eta;Centrality (%)", 
-					      50, -2, 0, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
+						tempBins1, tempLowBound1, tempHighBound1, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
   TProfile2D *h2_v2ScanTpcEpdB = new TProfile2D("h2_v2ScanTpcEpdB", "<cos("+ORDER_N_STR+"(#phi^{TPC} - #psi^{EPD,B}_{"+ORDER_M_STR+"}))>;#eta;Centrality (%)", 
-					      50, -2, 0, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
+						tempBins1, tempLowBound1, tempHighBound1, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
   TProfile2D *h2_v2ScanEpd = new TProfile2D("h2_v2ScanEpd", "<cos("+ORDER_N_STR+"(#phi^{EPD} - #psi^{TPC}_{"+ORDER_M_STR+"}))>;#eta;Centrality (%)", 
-					      50, -5.2, -2.3, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
+					    50, -5.2, -2.3, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
   TProfile2D *h2_v2ScanEpdTpcA = new TProfile2D("h2_v2ScanEpdTpcA", "<cos("+ORDER_N_STR+"(#phi^{EPD} - #psi^{TPC,A}_{"+ORDER_M_STR+"}))>;#eta;Centrality (%)", 
-						  50, -5.2, -2.3, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
+						50, -5.2, -2.3, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
   TProfile2D *h2_v2ScanEpdTpcB = new TProfile2D("h2_v2ScanEpdTpcB", "<cos("+ORDER_N_STR+"(#phi^{EPD} - #psi^{TPC,B}_{"+ORDER_M_STR+"}))>;#eta;Centrality (%)", 
-						  50, -5.2, -2.3, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
+						50, -5.2, -2.3, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
   h2_v2ScanTpc->SetStats(0);
   h2_v2ScanTpcEpdA->SetStats(0);
   h2_v2ScanTpcEpdB->SetStats(0);
@@ -964,10 +983,6 @@ int main(int argc, char *argv[])
 	  tilenMip = EPDnMip[iEpdHit];
 	  tileWeight = (tilenMip > configs.epd_threshold) ? ( (tilenMip > configs.epd_max_weight)?configs.epd_max_weight:tilenMip ) : 0;
 
-	  p2_pp_vs_eta->Fill(tileEta, tileSector, tileWeight);
-	  h_tileWeights->Fill(tileWeight);
-	  h2_phi_vs_eta_EPD->Fill(tileEta, tilePhi);
-
 	  if (epdAside)
 	    {
 	      eventInfo.nHitsEpd++;
@@ -999,6 +1014,10 @@ int main(int argc, char *argv[])
 	      epdParticleInfo.eta    = tileEta;
 	      epdParticleInfo.weight = tileWeight;
 
+	      h_tileWeights->Fill(tileWeight);
+	      h2_phi_vs_eta_EPD->Fill(tileEta, tilePhi);
+	      p2_pp_vs_eta->Fill(tileEta, tileSector, tileWeight);
+
 	      if (ODD_PLANE)
 		{
 		  if (tileEta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
@@ -1028,6 +1047,10 @@ int main(int argc, char *argv[])
 	      epdParticleInfo.phi    = tilePhi;
 	      epdParticleInfo.eta    = tileEta;
 	      epdParticleInfo.weight = tileWeight;
+
+	      h_tileWeights->Fill(tileWeight);
+	      h2_phi_vs_eta_EPD->Fill(tileEta, tilePhi);
+	      p2_pp_vs_eta->Fill(tileEta, tileSector, tileWeight);
 
 	      if (ODD_PLANE)
 		{
