@@ -3,7 +3,6 @@
 
 // Load header files
 #include "TreeMaker.h"
-#include "TF1.h"
 
 // Bichsel header
 #include "StRoot/StBichsel/Bichsel.h"
@@ -47,6 +46,32 @@ TreeMaker::~TreeMaker() {}
 Int_t TreeMaker::Init()
 {
   outputFile = new TFile(JobIdName,"recreate");
+
+  //=========================================================
+  //          Bichsel Function Setup
+  //=========================================================
+  Double_t log2dx = 1.0;
+  Double_t xStart = 0.01;
+  Double_t xStop  = 3.0;
+  Int_t npx = 10000;
+  //                      Mass  log2(dx)
+  Double_t params[2] = {  1.0,   log2dx  };
+
+  params[0] = D_M0_DE;
+  bichselZ_de = new TF1(Form("BichselZ_de_log2dx_%i",(int)log2dx),bichselZ,xStart,xStop,2);
+  if (!bichselZ_de) { std::cout << "De function error" << std::endl; return 1; }
+  bichselZ_de->SetParameters(params); 
+  bichselZ_de->SetNpx(npx);
+
+  params[0] = D_M0_TR;
+  bichselZ_tr = new TF1(Form("BichselZ_tr_log2dx_%i",(int)log2dx),bichselZ,xStart,xStop,2);
+  if (!bichselZ_tr) { std::cout << "Tr function error" << std::endl; return 1; }
+  bichselZ_tr->SetParameters(params); 
+  bichselZ_tr->SetNpx(npx);
+  //=========================================================
+  //          END Bichsel Function Setup
+  //=========================================================
+
   
   // New Tree
   FxtTree = new TTree("Autree","TTree to hold FXT events and tracks");
@@ -205,38 +230,14 @@ Int_t TreeMaker::Init()
 
 Int_t TreeMaker::Finish()
 {
+  delete bichselZ_de;
+  delete bichselZ_tr;
   outputFile->Write();
   return kStOK;
 }
 
 Int_t TreeMaker::Make()
 {
-  //=========================================================
-  //          Bichsel Function Setup
-  //=========================================================
-  Double_t log2dx = 1.0;
-  Double_t xStart = 0.01;
-  Double_t xStop  = 3.0;
-  Int_t npx = 10000;
-  //                      Mass  log2(dx)
-  Double_t params[2] = {  1.0,   log2dx  };
-
-  params[0] = D_M0_DE;
-  TF1 *bichselZ_de = new TF1(Form("BichselZ_de_log2dx_%i",(int)log2dx),bichselZ,xStart,xStop,2);
-  if (!bichselZ_de) { std::cout << "De function error" << std::endl; return 1; }
-  bichselZ_de->SetParameters(params); 
-  bichselZ_de->SetNpx(npx);
-
-  params[0] = D_M0_TR;
-  TF1 *bichselZ_tr = new TF1(Form("BichselZ_tr_log2dx_%i",(int)log2dx),bichselZ,xStart,xStop,2);
-  if (!bichselZ_tr) { std::cout << "Tr function error" << std::endl; return 1; }
-  bichselZ_tr->SetParameters(params); 
-  bichselZ_tr->SetNpx(npx);
-  //=========================================================
-  //          END Bichsel Function Setup
-  //=========================================================
-
-
   h_eventCheck->Fill(0); // Count # of events before any cuts
 
   StPicoEvent* event = mPicoDstMaker->picoDst()->event(); // Get Event pointer
