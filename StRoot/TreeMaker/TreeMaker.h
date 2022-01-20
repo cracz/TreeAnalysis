@@ -14,6 +14,7 @@
 #include "TMath.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TF1.h"
 
 // Load STARLibrary header files
 #include "StMaker.h"
@@ -189,7 +190,12 @@ private:
   TH2D*                h2_m2_vs_qp_pr;
   TH2D*                h2_m2_vs_qp_de;
   TH2D*                h2_m2_vs_qp_tr;
-  
+
+
+  TF1*                 bichselZ_de;
+  TF1*                 bichselZ_tr;
+
+
 public:
   TreeMaker(StPicoDstMaker* Maker, std::string configFileName, TString JobId, Int_t EventsNumber, Double_t inputParameter);
   virtual ~TreeMaker();
