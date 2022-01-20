@@ -79,8 +79,9 @@ private:
   Short_t             tree_EPDid[744];
   Float_t             tree_EPDnMip[744];
   UShort_t            tree_nEPDhits;
-  IEvent	      tree_tracks;  
-  /*
+//  IEvent	      tree_tracks;  
+  
+  //This information contained in IEvent (IEventPlane)
   Short_t             tree_PID[N_track];
   Short_t             tree_Charge[N_track];
   Float_t             tree_Px[N_track];
@@ -90,7 +91,7 @@ private:
   Float_t             tree_dEdx[N_track];
   Int_t               tree_nHitsFit[N_track];
   Int_t               tree_nHitsPoss[N_track];
-  */
+  
   
   TH1D*                h_eventCheck;
   TH1D*                h_trackCheck;
