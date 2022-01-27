@@ -29,7 +29,7 @@ Int_t MakeTrees(Int_t nEvents, Int_t nFiles, TString InputFileList, TString Outp
   // Loop over the links in the chain
   if(chain->Init() == kStErr)
     {
-      cout<<"chain->Init();"<<endl;
+      cout << "Init() Error!" << endl;
       return;
     }
     

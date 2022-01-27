@@ -45,6 +45,8 @@ TreeMaker::~TreeMaker() {}
 
 Int_t TreeMaker::Init()
 {
+  if (configs.errorFound()) return kStErr;
+
   outputFile = new TFile(JobIdName,"recreate");
 
   //=========================================================
