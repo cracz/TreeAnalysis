@@ -2,8 +2,6 @@
 #include "stdio.h"
 #include <iostream>
 
-#include "ITrack.h"
-#include "IParticle.h"
 #include "IEventPlane.h"
 
 
@@ -11,17 +9,7 @@ ClassImp(IEvent)
 
 //_________________
 IEvent::IEvent(){
-	mRunNumber = -99;
-	mChronologicalRunId = -99;
-	mEventID = -99;
-	mRefMult = -99;
-	mCentralityID9 = -99;
-	mCentralityID16 = -99;
-	mPrimaryVertex.SetXYZ(-99.0,-99.0,-99.0);
-	mBfield = -99.;
-	mVpdVz = -99.;
-	mqCenter[0] = 0.0;
-	mqCenter[1] = 0.0;
+	ClearEvent();
 }
 
 //__________________
@@ -36,37 +24,44 @@ void IEvent::Init(){
 //_________________
 void IEvent::ClearEvent(){
 
-  mRunNumber = -99;
-  mChronologicalRunId = -99;
-  mEventID = -99;
-  mRefMult = -99;
-  mCentralityID9 = -99;
-  mCentralityID16 = -99;
-  mPrimaryVertex.SetXYZ(-99.0,-99.0,-99.0);
-  mBfield = -99.;
-  mVpdVz = -99.;
-  mTriggers.clear();
-  mEPParticles.clear();
-  mqCenter[0] = 0.0;
-  mqCenter[1] = 0.0;
+	/*
+	mRunNumber = -99;
+	mChronologicalRunId = -99;
+	mEventID = -99;
+	mRefMult = -99;
+	mCentrality = -99;
+	mPrimaryVertex.SetXYZ(-99.0,-99.0,-99.0);
+	mBfield = -99.;
+	mVpdVz = -99.;
+	nEPDhits = -99;
+	mTriggers.clear();
+	EPDid.fill(0);
+	EPDnMip.fill(0);
+	*/
+	
+	mqCenter[0] = 0.0;
+	mqCenter[1] = 0.0;
+	
+	mEPParticles.clear();
 }
 
-void IEvent::CalcQVector(int harmonic, std::vector<double> &nqx, std::vector<double> &nqy){
-	std::vector<double> Qx;
-	std::vector<double> Qy;
+
+void IEvent::CalcQVector(int harmonic, std::vector<float> &nqx, std::vector<float> &nqy){
+	std::vector<float> Qx;
+	std::vector<float> Qy;
 	
 	
 	Qx.push_back(-1*mqCenter[0]);
 	Qy.push_back(-1*mqCenter[1]);
 	
 	for (unsigned int parts = 0; parts < mEPParticles.size(); parts++){
-		double sign = 1;
+		float sign = 1;
 	
 		//For odd harmonics, flip the sign in the negative rapidity region
 		if (harmonic % 2 == 1 && mEPParticles[parts].GetEta() < 0){sign = -1;}
 		
-		double xterm = sign*mEPParticles[parts].QxTerm(harmonic);
-		double yterm = sign*mEPParticles[parts].QyTerm(harmonic);
+		float xterm = sign*mEPParticles[parts].QxTerm(harmonic);
+		float yterm = sign*mEPParticles[parts].QyTerm(harmonic);
 		
 		Qx[0] += xterm;
 		Qy[0] += yterm;
@@ -84,18 +79,18 @@ void IEvent::CalcQVector(int harmonic, std::vector<double> &nqx, std::vector<dou
 	nqy = Qy;
 }
 
-double IEvent::GetQx(int harmonic){
-	std::vector<double> Qx;
-	std::vector<double> Qy;
+Float_t IEvent::GetQx(int harmonic){
+	std::vector<float> Qx;
+	std::vector<float> Qy;
 	
 	CalcQVector(harmonic, Qx, Qy);
 	
 	return Qx[0];
 }
 
-double IEvent::GetQy(int harmonic){
-	std::vector<double> Qx;
-	std::vector<double> Qy;
+Float_t IEvent::GetQy(int harmonic){
+	std::vector<float> Qx;
+	std::vector<float> Qy;
 	
 	CalcQVector(harmonic, Qx, Qy);
 	
@@ -104,11 +99,11 @@ double IEvent::GetQy(int harmonic){
 
 //Returns a vector for the psis for the event. Index 0 is for the whole event and all others
 //are with autocorrelations removed.
-std::vector<double>  IEvent::CalcPsi(int harmonic){
-	std::vector<double> Qx;
-	std::vector<double> Qy;
+std::vector<float>  IEvent::CalcPsi(int harmonic){
+	std::vector<float> Qx;
+	std::vector<float> Qy;
 	
-	std::vector<double> Psi;
+	std::vector<float> Psi;
 	
 	CalcQVector(harmonic, Qx, Qy);
 	
@@ -127,18 +122,20 @@ std::vector<double>  IEvent::CalcPsi(int harmonic){
 	return Psi;
 }
 
-std::vector<double>  IEvent::GetPsi(int harmonic){	
+std::vector<float>  IEvent::GetPsi(int harmonic){	
 	return CalcPsi(harmonic);
 }
 
-std::vector<double>  IEvent::GetPsi(int harmonic, char option, double param1, double param2 = 0.0){
+std::vector<float>  IEvent::GetPsi(int harmonic, char option, float param1, float param2 = 0.0){
 	
 	IEvent subEvent = GetSubEvent(option, param1, param2);
 
 	return subEvent.CalcPsi(harmonic);
 }
 
-IEvent IEvent::GetSubEvent(char option, double param1, double param2 = 0.0){
+//Any sort of subevent can be constructed in this manner
+//But these are the provided types
+IEvent IEvent::GetSubEvent(char option, float param1, float param2 = 0.0){
 	IEvent subEvent = *this; //Use itself as a base; this probably black magic
 	
 	std::vector<IEventPlane> mEPParticlesCopy;
@@ -152,16 +149,9 @@ IEvent IEvent::GetSubEvent(char option, double param1, double param2 = 0.0){
 				}
 			}
 			break;
-		case 'r' : //ring number
-			for (unsigned int parts = 0; parts < mEPParticles.size(); parts++){
-				if (mEPParticles[parts].GetRingNumber() >= (int)param1 && mEPParticles[parts].GetRingNumber() <= (int)param2){
-					mEPParticlesCopy.push_back(mEPParticles[parts]);
-				}
-			}				
-			break;
 		case 'p' : //p_T
 			for (unsigned int parts = 0; parts < mEPParticles.size(); parts++){
-				if (mEPParticles[parts].GetTransverseMomentum() >= param1 && mEPParticles[parts].GetTransverseMomentum() <= param2){
+				if (mEPParticles[parts].GetMomentum().Pt() >= param1 && mEPParticles[parts].GetMomentum().Pt() <= param2){
 					mEPParticlesCopy.push_back(mEPParticles[parts]);
 				}
 			}				
@@ -175,14 +165,14 @@ IEvent IEvent::GetSubEvent(char option, double param1, double param2 = 0.0){
 			break;
 		case 'c' : //charge
 			for (unsigned int parts = 0; parts < mEPParticles.size(); parts++){
-				if (mEPParticles[parts].GetTPCCharge() >= param1 && mEPParticles[parts].GetTPCCharge() <= param2){
+				if (mEPParticles[parts].GetCharge() >= param1 && mEPParticles[parts].GetCharge() <= param2){
 					mEPParticlesCopy.push_back(mEPParticles[parts]);
 				}
 			}				
 			break;
 		case 't' : //ToF	
 			for (unsigned int parts = 0; parts < mEPParticles.size(); parts++){
-				if (mEPParticles[parts].GetTimeOfFlight() >= param1 && mEPParticles[parts].GetTimeOfFlight() <= param2){
+				if (mEPParticles[parts].GetToFBeta() >= param1 && mEPParticles[parts].GetToFBeta() <= param2){
 					mEPParticlesCopy.push_back(mEPParticles[parts]);
 				}
 			}		
@@ -198,7 +188,33 @@ IEvent IEvent::GetSubEvent(char option, double param1, double param2 = 0.0){
 }
 
 
-void IEvent::SetQCenter(double nqx, double nqy){
+void IEvent::SetQCenter(float nqx, float nqy){
 	mqCenter[0] = nqx;
 	mqCenter[1] = nqy;
+}
+
+//Under construction
+IEventPLane IEvent::EPDVector(){
+	std::vector<IEventPlane> mEPParticlesCopy;
+	
+	
+	for (int ew = 0; ew <=1; ew++){
+		for (int pp = 1; pp <=12; pp++){
+			for (int tt = 1; tt <=31; tt++){
+				
+				//Get hit
+				if (EPDnMip[ew][pp - 1][tt - 1]){
+					IEventPlane newParticle;
+					
+					//There's a bunch of stuff that needs to be added here
+					//using EPD geometry to map the EPD into tracks
+				
+					mEPParticlesCopy.Add(newParticle);		
+				}
+				
+			}
+		}
+	}
+	
+	return mEPParticlesCopy;
 }
