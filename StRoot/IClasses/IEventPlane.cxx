@@ -11,7 +11,7 @@ IEventPlane::IEventPlane(){
 }
 
 //______________
-IEventPlane::IEventPlane(float in_phi, f in_weight){
+IEventPlane::IEventPlane(float in_phi, float in_weight){
 	mPhi = in_phi;
 	SetWeight(in_weight);
 	Construct();

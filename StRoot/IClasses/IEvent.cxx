@@ -209,7 +209,7 @@ std::vector<IEventPlane> IEvent::EPDVector(){
 					//There's a bunch of stuff that needs to be added here
 					//using EPD geometry to map the EPD into tracks
 				
-					mEPParticlesCopy.Add(newParticle);		
+					mEPParticlesCopy.push_back(newParticle);		
 				}
 				
 			}

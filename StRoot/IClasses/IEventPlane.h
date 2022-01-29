@@ -17,13 +17,14 @@ class IEventPlane : public TObject {
 		
 		Int_t mPID;
 		Int_t mCharge;
+		Int_t mRingNumber;
 		Float_t mToFBeta;
 		Int_t nHitsFit;
 		Int_t nHitsPoss;
 		Float_t dEdx;
 		
-		//Int_t mtileID;
-		//Float_t nMIP;
+		Int_t mtileID;
+		Float_t nMIP;
 
 		
 		void Construct();
