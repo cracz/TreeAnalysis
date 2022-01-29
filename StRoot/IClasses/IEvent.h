@@ -91,7 +91,7 @@ class IEvent : public TObject {
   void SetEPParticles( const std::vector<IEventPlane> & n){mEPParticles = n;}
   void SetQCenter(float, float);
   
-  IEventPLane EPDVector();
+  std::vector<IEventPlane> EPDVector();
   
   Float_t GetEPDnMip(int ew, int pp, int tt){return EPDnMip[ew][pp - 1][tt - 1];}
 

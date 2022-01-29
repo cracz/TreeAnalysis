@@ -11,7 +11,7 @@ IEventPlane::IEventPlane(){
 }
 
 //______________
-IEventPlane::IEventPlane(double in_phi, double in_weight){
+IEventPlane::IEventPlane(float in_phi, f in_weight){
 	mPhi = in_phi;
 	SetWeight(in_weight);
 	Construct();
@@ -19,21 +19,25 @@ IEventPlane::IEventPlane(double in_phi, double in_weight){
 
 void IEventPlane::Construct(){
 	mEta = 0.0;
+	mMomentum.SetXYZ(0,0,0);
 	mRingNumber = 0;
-	mpT = 0.0;
 	mPID = 0;
-	mTPCCharge = 0;
-	mToF = 0.0;
+	mCharge = 0;
+	mToFBeta = 0.0;
+	nHitsFit = 0;
+	nHitsPoss = 0;
+	mtileID = 0;
+	nMIP = 0.0;
 }
 
 //______________
-double IEventPlane::QxTerm(int harmonic){
-	double Cosine = cos(mPhi*(double)harmonic);
+Float_t IEventPlane::QxTerm(int harmonic){
+	Float_t Cosine = cos(mPhi*(float)harmonic);
 	return mWeight * Cosine;
 }
 
 //______________
-double IEventPlane::QyTerm(int harmonic){
-	double Sine = sin(mPhi*(double)harmonic);
+Float_t IEventPlane::QyTerm(int harmonic){
+	Float_t Sine = sin(mPhi*(float)harmonic);
 	return mWeight * Sine;
 }

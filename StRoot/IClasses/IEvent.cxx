@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "IEventPlane.h"
-
+#include "TMath.h"
 
 ClassImp(IEvent)
 
@@ -194,7 +194,7 @@ void IEvent::SetQCenter(float nqx, float nqy){
 }
 
 //Under construction
-IEventPLane IEvent::EPDVector(){
+std::vector<IEventPlane> IEvent::EPDVector(){
 	std::vector<IEventPlane> mEPParticlesCopy;
 	
 	
