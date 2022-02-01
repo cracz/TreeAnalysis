@@ -33,8 +33,8 @@
 #include "../ConfigReader/ConfigReader.h"
 
 // IEvent file headers
-#include "StRoot/IClasses/IEventPlane.h"
-#include "StRoot/IClasses/IEvent.h"
+//#include "StRoot/IClasses/IEventPlane.h"
+//#include "StRoot/IClasses/IEvent.h"
 
 
 class StPicoDstMaker;
@@ -79,7 +79,6 @@ private:
   UShort_t            tree_nEPDhits;
   Short_t             tree_EPDid[744];
   Float_t             tree_EPDnMip[744];
-  UShort_t            tree_nEPDhits;
 //  IEvent	      tree_tracks;  
   
   //This information contained in IEvent (IEventPlane)
