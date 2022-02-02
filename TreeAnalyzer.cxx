@@ -306,32 +306,15 @@ int main(int argc, char *argv[])
   
   //TH1D *h_tofBeta = new TH1D("h_tofBeta", "TOF #beta;#beta;Tracks", 150, 0, 1.5);
   //TH1D *h_m2 = new TH1D("h_m2", "m^{2};m^{2} (GeV^{2}/c^{4});Tracks", 1000, 0, 10);
-  /*  
-  TH1D *h_pp_dndm = new TH1D("h_pp_dndm", "#pi^{+} Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}", 60, 0, 3);
-  TH1D *h_pm_dndm = new TH1D("h_pm_dndm", "#pi^{-} Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}", 60, 0, 3);
-  TH1D *h_kp_dndm = new TH1D("h_kp_dndm", "K^{+} Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}",   60, 0, 3);
-  TH1D *h_km_dndm = new TH1D("h_km_dndm", "K^{-} Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}",   60, 0, 3);
-  TH1D *h_pr_dndm = new TH1D("h_pr_dndm", "Proton Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}",  60, 0, 3);
-  TH1D *h_de_dndm = new TH1D("h_de_dndm", "Deuteron Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}",60, 0, 3);
-  TH1D *h_tr_dndm = new TH1D("h_tr_dndm", "Triton Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}",  60, 0, 3);
-
-  TH1D *h_pp_dndy = new TH1D("h_pp_dndy", "#pi^{+} Raw Rapidity Spectrum;y;dN/dy", 40, -2, 0);
-  TH1D *h_pm_dndy = new TH1D("h_pm_dndy", "#pi^{-} Raw Rapidity Spectrum;y;dN/dy", 40, -2, 0);
-  TH1D *h_kp_dndy = new TH1D("h_kp_dndy", "K^{+} Raw Rapidity Spectrum;y;dN/dy",   40, -2, 0);
-  TH1D *h_km_dndy = new TH1D("h_km_dndy", "K^{-} Raw Rapidity Spectrum;y;dN/dy",   40, -2, 0);
-  TH1D *h_pr_dndy = new TH1D("h_pr_dndy", "Proton Raw Rapidity Spectrum;y;dN/dy",  40, -2, 0);
-  TH1D *h_de_dndy = new TH1D("h_de_dndy", "Deuteron Raw Rapidity Spectrum;y;dN/dy",40, -2, 0);
-  TH1D *h_tr_dndy = new TH1D("h_tr_dndy", "Triton Raw Rapidity Spectrum;y;dN/dy",  40, -2, 0);
-
-  TH1D *h_pp_pT = new TH1D("h_pp_pT", "#pi^{+} p_{T};p_{T} (GeV);", 100, 0, 5);
-  TH1D *h_pm_pT = new TH1D("h_pm_pT", "#pi^{-} p_{T};p_{T} (GeV);", 100, 0, 5);
-  TH1D *h_kp_pT = new TH1D("h_kp_pT", "K^{+} p_{T};p_{T} (GeV);",   100, 0, 5);
-  TH1D *h_km_pT = new TH1D("h_km_pT", "K^{-} p_{T};p_{T} (GeV);",   100, 0, 5);
-  TH1D *h_pr_pT = new TH1D("h_pr_pT", "Proton p_{T};p_{T} (GeV);",  100, 0, 5);
-  TH1D *h_de_pT = new TH1D("h_de_pT", "Deuteron p_{T};p_{T} (GeV);",100, 0, 5);
-  TH1D *h_tr_pT = new TH1D("h_tr_pT", "Triton p_{T};p_{T} (GeV);",  100, 0, 5);
+  /*
+  TH1D *h_dndm_pp = new TH1D("h_dndm_pp", "#pi^{+} Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}", 60, 0, 3);
+  TH1D *h_dndm_pm = new TH1D("h_dndm_pm", "#pi^{-} Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}", 60, 0, 3);
+  TH1D *h_dndm_kp = new TH1D("h_dndm_kp", "K^{+} Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}",   60, 0, 3);
+  TH1D *h_dndm_km = new TH1D("h_dndm_km", "K^{-} Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}",   60, 0, 3);
+  TH1D *h_dndm_pr = new TH1D("h_dndm_pr", "Proton Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}",  60, 0, 3);
+  TH1D *h_dndm_de = new TH1D("h_dndm_de", "Deuteron Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}",60, 0, 3);
+  TH1D *h_dndm_tr = new TH1D("h_dndm_tr", "Triton Raw m_{T} Spectrum;m_{T}-m_{0} (GeV);dN/dm_{T}",  60, 0, 3);
   */
-
   TH1D *h_mult_pp = (TH1D*)inputFile->Get("h_mult_pp");
   TH1D *h_mult_pm = (TH1D*)inputFile->Get("h_mult_pm");
   TH1D *h_mult_kp = (TH1D*)inputFile->Get("h_mult_kp");
@@ -485,6 +468,9 @@ int main(int argc, char *argv[])
   tempLowBound1  = (configs.fixed_target) ? -6.0 : -6.0;
   tempHighBound1 = (configs.fixed_target) ? -2.0 : 6.0;
   TProfile2D *p2_pp_vs_eta = new TProfile2D("p2_pp_vs_eta","<TnMIP> for Supersectors vs #eta;#eta;Supersector", tempBins1, tempLowBound1, tempHighBound1, 12, 0.5, 12.5);
+
+  TH2D *h2_ring_vs_eta = new TH2D("h2_ring_vs_eta","EPD East Ring vs #eta;#eta;Ring", 500, -6.0, -1.0, 16, 0.5, 16.5);
+
   TH2D *h2_trans_vtx     = (TH2D*)inputFile->Get("h2_trans_vtx");
   TH2D *h2_trans_vtx_cut = (TH2D*)inputFile->Get("h2_trans_vtx_cut");
 
@@ -814,10 +800,9 @@ int main(int argc, char *argv[])
 			  particleInfo.ppTag = true;
 			  particleInfo.rapidity = d_rapidity;
 			  
-			  //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_PI, h_pp_dndy, h_pp_dndm, h2_pp_MvsY);
+			  //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_PI, h_pp_dndy, h_dndm_pp, h2_pp_MvsY);
 			  //h2_y_vs_eta->Fill(d_eta, d_rapidity);
 			  //h2_y_vs_eta_pp->Fill(d_eta, d_rapidity);
-			  //h_pp_pT->Fill(d_pT);
 			  h_pp_mom->Fill(d_mom);
 			}
 		    }
@@ -833,10 +818,9 @@ int main(int argc, char *argv[])
 			  particleInfo.pmTag = true;
 			  particleInfo.rapidity = d_rapidity;
 
-			  //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_PI, h_pm_dndy, h_pm_dndm, h2_pm_MvsY);
+			  //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_PI, h_pm_dndy, h_dndm_pm, h2_pm_MvsY);
 			  //h2_y_vs_eta->Fill(d_eta, d_rapidity);
 			  //h2_y_vs_eta_pm->Fill(d_eta, d_rapidity);
-			  //h_pm_pT->Fill(d_pT);
 			  h_pm_mom->Fill(d_mom);
 			}
 		    }
@@ -855,10 +839,9 @@ int main(int argc, char *argv[])
 			  particleInfo.kpTag = true;
 			  particleInfo.rapidity = d_rapidity;
 
-			  //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_KA, h_kp_dndy, h_kp_dndm, h2_kp_MvsY);
+			  //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_KA, h_kp_dndy, h_dndm_kp, h2_kp_MvsY);
 			  //h2_y_vs_eta->Fill(d_eta, d_rapidity);
 			  //h2_y_vs_eta_kp->Fill(d_eta, d_rapidity);
-			  //h_kp_pT->Fill(d_pT);
 			  h_kp_mom->Fill(d_mom);
 			}
 		    }
@@ -874,10 +857,9 @@ int main(int argc, char *argv[])
 			  particleInfo.kmTag = true;
 			  particleInfo.rapidity = d_rapidity;
 
-			  //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_KA, h_km_dndy, h_km_dndm, h2_km_MvsY);
+			  //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_KA, h_km_dndy, h_dndm_km, h2_km_MvsY);
 			  //h2_y_vs_eta->Fill(d_eta, d_rapidity);
 			  //h2_y_vs_eta_km->Fill(d_eta, d_rapidity);
-			  //h_km_pT->Fill(d_pT);
 			  h_km_mom->Fill(d_mom);
 			}
 		    }
@@ -898,10 +880,9 @@ int main(int argc, char *argv[])
 		      if (d_rapidity - Y_MID > configs.yCM_flow_pr_low && d_rapidity - Y_MID < configs.yCM_pid_pr_high && 
 			  d_pT >= configs.pt_flow_pr_low && d_pT <= configs.pt_flow_pr_high)
 			{
-			  //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_PR, h_pr_dndy, h_pr_dndm, h2_pr_MvsY);
+			  //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_PR, h_pr_dndy, h_dndm_pr, h2_pr_MvsY);
 			  //h2_y_vs_eta->Fill(d_eta, d_rapidity);
 			  //h2_y_vs_eta_pr->Fill(d_eta, d_rapidity);
-			  //h_pr_pT->Fill(d_pT);
 			  h_pr_mom->Fill(d_mom);
 			}
 		    }
@@ -919,10 +900,9 @@ int main(int argc, char *argv[])
 		      particleInfo.deTag = true;
 		      particleInfo.rapidity = d_rapidity;
 
-		      //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_DE, h_de_dndy, h_de_dndm, h2_de_MvsY);
+		      //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_DE, h_de_dndy, h_dndm_de, h2_de_MvsY);
 		      //h2_y_vs_eta->Fill(d_eta, d_rapidity);
 		      //h2_y_vs_eta_de->Fill(d_eta, d_rapidity);
-		      //h_de_pT->Fill(d_pT);
 		      h_de_mom->Fill(d_mom);
 		    }
 		}
@@ -939,10 +919,9 @@ int main(int argc, char *argv[])
 		      particleInfo.trTag = true;
 		      particleInfo.rapidity = d_rapidity;
 
-		      //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_TR, h_tr_dndy, h_tr_dndm, h2_tr_MvsY);
+		      //FlowUtils::fillRawSpect(d_px, d_py, d_pz, D_M0_TR, h_tr_dndy, h_dndm_tr, h2_tr_MvsY);
 		      //h2_y_vs_eta->Fill(d_eta, d_rapidity);
 		      //h2_y_vs_eta_tr->Fill(d_eta, d_rapidity);
-		      //h_tr_pT->Fill(d_pT);
 		      h_tr_mom->Fill(d_mom);
 		    }
 		}
@@ -1017,6 +996,7 @@ int main(int argc, char *argv[])
 	      h_tileWeights->Fill(tileWeight);
 	      h2_phi_vs_eta_EPD->Fill(tileEta, tilePhi);
 	      p2_pp_vs_eta->Fill(tileEta, tileSector, tileWeight);
+	      h2_ring_vs_eta->Fill(tileEta, tileRow);
 
 	      if (ODD_PLANE)
 		{
@@ -1051,6 +1031,8 @@ int main(int argc, char *argv[])
 	      h_tileWeights->Fill(tileWeight);
 	      h2_phi_vs_eta_EPD->Fill(tileEta, tilePhi);
 	      p2_pp_vs_eta->Fill(tileEta, tileSector, tileWeight);
+
+	      if (configs.fixed_target) h2_ring_vs_eta->Fill(tileEta, tileRow);  // Only need the East side for this plot
 
 	      if (ODD_PLANE)
 		{
