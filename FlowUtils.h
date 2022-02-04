@@ -21,6 +21,7 @@ namespace FlowUtils
     Double_t phi;
     Double_t eta;
     Double_t pT;
+    Double_t KT;
     Double_t weight;
     Double_t rapidity;
 
@@ -41,6 +42,8 @@ namespace FlowUtils
     {
       phi = D_BAD_VALUE;
       eta = D_BAD_VALUE;
+      pT  = D_BAD_VALUE;
+      KT  = D_BAD_VALUE;
       weight = 0;
       rapidity = D_BAD_VALUE;
 
@@ -94,9 +97,9 @@ namespace FlowUtils
     Int_t nHitsEpdA;
     Int_t nHitsEpdB;
 
-    bool badEvent;      // Flag for marking events to ignore
     Int_t centID;
     Int_t primTracks;   // Number of primary tracks before track cuts (used for centrality)
+    bool badEvent;      // Flag for marking events to ignore
 
     void reset()//Reset all values in the struct to reuse
     {
