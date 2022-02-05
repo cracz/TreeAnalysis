@@ -100,6 +100,15 @@ Int_t TreeMaker::Init()
 
 
   // QA plots
+
+  // temp variables when histogram bins/bounds depend on the energy
+  int tempBins1 = 0;
+  double tempLowBound1 = 0;
+  double tempHighBound1 = 0;
+  int tempBins2 = 0;
+  double tempLowBound2 = 0;
+  double tempHighBound2 = 0;
+
   h_eventCheck = new TH1D("h_eventCheck","Event number after each cut;;Events", 6, 0, 6);
   h_eventCheck->GetXaxis()->SetBinLabel(1,"No Cuts");
   h_eventCheck->GetXaxis()->SetBinLabel(2,"Bad Run Cut");
@@ -116,9 +125,11 @@ Int_t TreeMaker::Init()
   h_centralities = new TH1D("h_centralities", "Centralities;Centrality ID;Events", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
   h_centralities->GetXaxis()->SetTitle("Centrality bin");
   h_centralities->GetYaxis()->SetTitle("# of events");
-    
-  //h_zvtx = new TH1D("h_zvtx","Primary Vertex Position in z;Distance (cm);Events", 100, 190, 210);
-  h_zvtx = new TH1D("h_zvtx","Primary Vertex Position in z;Distance (cm);Events", 840, -210, 210);
+
+  tempBins1      = (configs.fixed_target) ? 200 : 500;
+  tempLowBound1  = (configs.fixed_target) ? 190.0 : -210.0;
+  tempHighBound1 = 210.0;
+  h_zvtx = new TH1D("h_zvtx","Primary Vertex Position in z;Distance (cm);Events", tempBins1, tempLowBound1, tempHighBound1);
 
   h2_trans_vtx = new TH2D("h2_trans_vtx","Primary Vertex after V_{z} Cut;x (cm);y (cm)", 500, -5, 5, 500, -5, 5);
   h2_trans_vtx_cut = new TH2D("h2_trans_vtx_cut","Final Primary Vertices;x (cm);y (cm)", 500, -5, 5, 500, -5, 5);
@@ -219,13 +230,49 @@ Int_t TreeMaker::Init()
   h2_m2_vs_qp_de = new TH2D("h2_m2_vs_qp_de", "Deuteron m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)",  400, -4, 4, 400, -0.1, 1.5);
   h2_m2_vs_qp_tr = new TH2D("h2_m2_vs_qp_tr", "Triton m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)",  400, -4, 4, 400, -0.1, 1.5);
 
-  h2_pT_vs_yCM_pp = new TH2D("h2_pT_vs_yCM_pp", "#pi^{+};y-y_{mid};p_{T} (GeV/c)", 500, -2.5, 2.5, 500, 0, 3.0);
-  h2_pT_vs_yCM_pm = new TH2D("h2_pT_vs_yCM_pm", "#pi^{-};y-y_{mid};p_{T} (GeV/c)", 500, -2.5, 2.5, 500, 0, 3.0);
-  h2_pT_vs_yCM_kp = new TH2D("h2_pT_vs_yCM_kp", "K^{+};y-y_{mid};p_{T} (GeV/c)",   500, -2.5, 2.5, 500, 0, 3.0);
-  h2_pT_vs_yCM_km = new TH2D("h2_pT_vs_yCM_km", "K^{-};y-y_{mid};p_{T} (GeV/c)",   500, -2.5, 2.5, 500, 0, 3.0);
-  h2_pT_vs_yCM_pr = new TH2D("h2_pT_vs_yCM_pr", "Proton;y-y_{mid};p_{T} (GeV/c)",  500, -2.5, 2.5, 500, 0, 3.0);
-  h2_pT_vs_yCM_de = new TH2D("h2_pT_vs_yCM_de", "Deuteron;y-y_{mid};p_{T} (GeV/c)",  500, -2.5, 2.5, 500, 0, 3.0);
-  h2_pT_vs_yCM_tr = new TH2D("h2_pT_vs_yCM_tr", "Triton;y-y_{mid};p_{T} (GeV/c)",  500, -2.5, 2.5, 500, 0, 3.0);
+  if (configs.sqrt_s_NN == 3.0)
+    {
+      tempBins1 = 300;
+      tempLowBound1 = -1.2;
+      tempHighBound1 = 1.2;
+      tempBins2 = 300;
+      tempLowBound2  = 0.0;
+      tempHighBound2 = 2.5;
+    }
+  else if (configs.sqrt_s_NN == 7.2)
+    {
+      tempBins1 = 300;
+      tempLowBound1 = -0.2;
+      tempHighBound1 = 2.2;
+      tempBins2 = 300;
+      tempLowBound2  = 0.0;
+      tempHighBound2 = 2.5;
+    }
+  else if (configs.sqrt_s_NN == 19.6)
+    {
+      tempBins1 = 400;
+      tempLowBound1 = -2.0;
+      tempHighBound1 = 2.0;
+      tempBins2 = 500;
+      tempLowBound2  = 0.0;
+      tempHighBound2 = 5.0;
+    }
+  else
+    {
+      tempBins1 = 0;
+      tempLowBound1 = 0.0;
+      tempHighBound1 = 0.0;
+      tempBins2 = 0;
+      tempLowBound2  = 0.0;
+      tempHighBound2 = 0.0;
+    }
+  h2_pT_vs_yCM_pp = new TH2D("h2_pT_vs_yCM_pp", "#pi^{+};y-y_{mid};p_{T} (GeV/c)", tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
+  h2_pT_vs_yCM_pm = new TH2D("h2_pT_vs_yCM_pm", "#pi^{-};y-y_{mid};p_{T} (GeV/c)", tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
+  h2_pT_vs_yCM_kp = new TH2D("h2_pT_vs_yCM_kp", "K^{+};y-y_{mid};p_{T} (GeV/c)",   tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
+  h2_pT_vs_yCM_km = new TH2D("h2_pT_vs_yCM_km", "K^{-};y-y_{mid};p_{T} (GeV/c)",   tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
+  h2_pT_vs_yCM_pr = new TH2D("h2_pT_vs_yCM_pr", "Proton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
+  h2_pT_vs_yCM_de = new TH2D("h2_pT_vs_yCM_de", "Deuteron;y-y_{mid};p_{T} (GeV/c)",tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
+  h2_pT_vs_yCM_tr = new TH2D("h2_pT_vs_yCM_tr", "Triton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
 
   return kStOK;
 }
