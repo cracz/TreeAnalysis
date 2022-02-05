@@ -74,13 +74,13 @@ class IEventPlane : public TObject {
 		Float_t GetToFBeta(){return mToFBeta;}
 		Float_t GetdEdx(){return dEdx;}
 		
-		/*
+		
 		Int_t GetEPDtileID(){return mtileID;}
 		Int_t GetEPDew(){return sgn(mtileID);}
 		Int_t GetEPDtt(){return abs(tileID) % 100;}
 		Int_t GetEPDpp(){return (abs(mtileID) - GetEPDtt()) / 100;}
 		Float_t	GetnMIP(){return nMIP;}
-		*/
+		
 		
 		Float_t QxTerm(int);
 		Float_t QyTerm(int);

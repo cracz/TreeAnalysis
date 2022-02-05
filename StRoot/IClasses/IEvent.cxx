@@ -5,6 +5,10 @@
 #include "IEventPlane.h"
 #include "TMath.h"
 
+
+//EPD geometry header file
+#include "StRoot/StEpdUtil/StEpdGeom.h"
+
 ClassImp(IEvent)
 
 //_________________
@@ -193,28 +197,65 @@ void IEvent::SetQCenter(float nqx, float nqy){
 	mqCenter[1] = nqy;
 }
 
-//Under construction
-std::vector<IEventPlane> IEvent::EPDVector(){
+//Convert EPD nMIP information into an IEventPlane vector
+std::vector<IEventPlane> IEvent::EPDVector(TVector3 primaryVertex, float COMrapidity = 0.0){
 	std::vector<IEventPlane> mEPParticlesCopy;
 	
+	Double_t mThresh = 0.3; // EPD EP by hand
+	Double_t mMax = 3.0; // EPD EP by hand
+	StEpdGeom *mEpdGeom = new StEpdGeom();
 	
-	for (int ew = 0; ew <=1; ew++){
+	int num_sides = 1; //1 for east only, 2 for east and west
+	
+	for (int ew = 0; ew < num_sides; ew++){
 		for (int pp = 1; pp <=12; pp++){
 			for (int tt = 1; tt <=31; tt++){
 				
 				//Get hit
 				if (EPDnMip[ew][pp - 1][tt - 1]){
-					IEventPlane newParticle;
+
+					//Construct tileID using ew pp tt
+					int tileID = (pp * 100 + tt);
+					if (ew == 0){tileID *= -1;}
+
+
+					if (nMip<mThresh) continue;
+					float TileWeight = (nMip<mMax)?nMip:mMax;
 					
-					//There's a bunch of stuff that needs to be added here
-					//using EPD geometry to map the EPD into tracks
+					TVector3 StraightLine = mEpdGeom->TileCenter(tileId) - primaryVertex;
+					float phi = StraightLine.Phi();
+					float eta = StraightLine.Eta() - COMrapidity;
+					
+					IEventPlane eventPlane(phi, TileWeight);
+					eventPlane.SetEta(eta);
+					eventPlane.SetTileID(tileID);		
+					eventPlane.SetnMIP(nMip);				
 				
-					mEPParticlesCopy.push_back(newParticle);		
+					mEPParticlesCopy.Add(newParticle);		
 				}
-				
 			}
 		}
 	}
 	
+	mEpdGeom->delete;
+	
 	return mEPParticlesCopy;
+}
+
+void IEvent::setEPDnMip(int in_tileID, float nMip){
+	int ew = sgn(in_tileID);
+	int tt = abs(tileID) % 100;
+	int pp = (abs(mtileID) - tt) / 100;
+	
+	setEPDnMip(ew, pp, tt, nMip);
+}
+
+//Call this this once per event at maximum!
+void IEvent::AddEPDtoTracks(TVector3 primaryVertex, float COMrapidity = 0.0){
+	std::vector<IEventPlane> epdtracks = EPDVector(primaryVertex, COMrapidity);
+	  
+	for (unsigned int hit = 0; hit < epdtracks.size(); hit++){
+		AddEPParticle(epdtracks[hit]);
+	}
+	
 }

@@ -55,7 +55,8 @@ class IEvent : public TObject {
 
   
   void AddEPParticle(IEventPlane n){mEPParticles.push_back(n);}
-  void AddEPParticle(std::vector<IEventPlane> n){mEPParticles = n;}
+  
+  void SetEPParticle(std::vector<IEventPlane> n){mEPParticles = n;}
   
   std::vector<float> GetPsi(int);
   std::vector<float> GetPsi(int, char, float, float);
@@ -91,11 +92,16 @@ class IEvent : public TObject {
   void SetEPParticles( const std::vector<IEventPlane> & n){mEPParticles = n;}
   void SetQCenter(float, float);
   
-  std::vector<IEventPlane> EPDVector();
+  std::vector<IEventPlane> EPDVector(TVector3, float);
+  
+  void setEPDnMip(int ew, int pp, int tt, float nMip){EPDnMip[ew][pp - 1][tt - 1] = nMip;}
+  void setEPDnMip(int tileID, float nMip);
   
   Float_t GetEPDnMip(int ew, int pp, int tt){return EPDnMip[ew][pp - 1][tt - 1];}
 
   IEvent GetSubEvent(char, float, float);
+  
+  void AddEPDtoTracks(TVector3, float);;
 
   ClassDef(IEvent,1)  // my event
 };
