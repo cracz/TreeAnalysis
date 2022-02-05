@@ -4,6 +4,7 @@
 
 #include "TObject.h"
 #include "TVector3.h"
+#include "TMath.h"
 
 class IEventPlane : public TObject {
 
@@ -76,9 +77,9 @@ class IEventPlane : public TObject {
 		
 		
 		Int_t GetEPDtileID(){return mtileID;}
-		Int_t GetEPDew(){return sgn(mtileID);}
-		Int_t GetEPDtt(){return abs(tileID) % 100;}
-		Int_t GetEPDpp(){return (abs(mtileID) - GetEPDtt()) / 100;}
+		Int_t GetEPDew();
+		Int_t GetEPDtt(){return TMath::Abs(mtileID) % 100;}
+		Int_t GetEPDpp(){return (TMath::Abs(mtileID) - GetEPDtt()) / 100;}
 		Float_t	GetnMIP(){return nMIP;}
 		
 		

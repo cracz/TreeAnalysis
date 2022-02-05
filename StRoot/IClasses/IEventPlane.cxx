@@ -41,3 +41,9 @@ Float_t IEventPlane::QyTerm(int harmonic){
 	Float_t Sine = sin(mPhi*(float)harmonic);
 	return mWeight * Sine;
 }
+
+Int_t IEventPlane::GetEPDew(){
+	if (mtileID > 0){return 1;}
+	return 0;
+}
+

@@ -7,7 +7,7 @@
 
 
 //EPD geometry header file
-#include "StRoot/StEpdUtil/StEpdGeom.h"
+#include "../StEpdUtil/StEpdGeom.h"
 
 ClassImp(IEvent)
 
@@ -217,12 +217,14 @@ std::vector<IEventPlane> IEvent::EPDVector(TVector3 primaryVertex, float COMrapi
 					//Construct tileID using ew pp tt
 					int tileID = (pp * 100 + tt);
 					if (ew == 0){tileID *= -1;}
+					
+					Float_t nMip = EPDnMip[ew][pp - 1][tt - 1];
 
 
 					if (nMip<mThresh) continue;
 					float TileWeight = (nMip<mMax)?nMip:mMax;
 					
-					TVector3 StraightLine = mEpdGeom->TileCenter(tileId) - primaryVertex;
+					TVector3 StraightLine = mEpdGeom->TileCenter(tileID) - primaryVertex;
 					float phi = StraightLine.Phi();
 					float eta = StraightLine.Eta() - COMrapidity;
 					
@@ -231,21 +233,24 @@ std::vector<IEventPlane> IEvent::EPDVector(TVector3 primaryVertex, float COMrapi
 					eventPlane.SetTileID(tileID);		
 					eventPlane.SetnMIP(nMip);				
 				
-					mEPParticlesCopy.Add(newParticle);		
+					mEPParticlesCopy.push_back(eventPlane);		
 				}
 			}
 		}
 	}
 	
-	mEpdGeom->delete;
+	delete mEpdGeom;
 	
 	return mEPParticlesCopy;
 }
 
 void IEvent::setEPDnMip(int in_tileID, float nMip){
-	int ew = sgn(in_tileID);
-	int tt = abs(tileID) % 100;
-	int pp = (abs(mtileID) - tt) / 100;
+	int ew;
+	if (in_tileID > 0){ew = 1;}
+	else {ew = 0;}
+	
+	int tt = TMath::Abs(in_tileID) % 100;
+	int pp = (TMath::Abs(in_tileID) - tt) / 100;
 	
 	setEPDnMip(ew, pp, tt, nMip);
 }
