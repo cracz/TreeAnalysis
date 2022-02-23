@@ -123,8 +123,6 @@ Int_t TreeMaker::Init()
   h_trackCheck->GetXaxis()->SetBinLabel(3,"PID Cuts");
     
   h_centralities = new TH1D("h_centralities", "Centralities;Centrality ID;Events", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  h_centralities->GetXaxis()->SetTitle("Centrality bin");
-  h_centralities->GetYaxis()->SetTitle("# of events");
 
   tempBins1      = (configs.fixed_target) ? 200 : 500;
   tempLowBound1  = (configs.fixed_target) ? 190.0 : -210.0;
@@ -519,10 +517,10 @@ Int_t TreeMaker::Make()
 			      Bool_t pion   = false;
 			      Bool_t kaon   = false;
 			      Bool_t proton = (d_TPCnSigmaProton > configs.nSig_pr_low) && (d_TPCnSigmaProton < configs.nSig_pr_high) && (s_charge > 0);
-			      Bool_t deuteron = false;
-			      Bool_t triton   = false;
-			      //Bool_t deuteron = (d_zDeuteron > configs.z_de_low) && (d_zDeuteron < configs.z_de_high);
-			      //Bool_t triton   = (d_zTriton > configs.z_tr_low) && (d_zTriton < configs.z_tr_high);
+			      //Bool_t deuteron = false;
+			      //Bool_t triton   = false;
+			      Bool_t deuteron = (d_zDeuteron > configs.z_de_low) && (d_zDeuteron < configs.z_de_high);
+			      Bool_t triton   = (d_zTriton > configs.z_tr_low) && (d_zTriton < configs.z_tr_high);
 			      // d_zDeuteron and d_zDeuteron already ensure that s_charge > 0
 
 			      if (tofTrack)
@@ -536,7 +534,7 @@ Int_t TreeMaker::Make()
 				         (d_TPCnSigmaKaon < configs.nSig_ka_high) &&
 				         (d_m2 > configs.m2_ka_low) &&
 				         (d_m2 < configs.m2_ka_high);
-
+				  /*
 				  deuteron = (d_zDeuteron > configs.z_de_low) &&
 				             (d_zDeuteron < configs.z_de_high) &&
 				             (d_m2 > configs.m2_de_low) &&
@@ -546,6 +544,7 @@ Int_t TreeMaker::Make()
 				             (d_zTriton < configs.z_tr_high) &&
 				             (d_m2 > configs.m2_tr_low) &&
 				             (d_m2 < configs.m2_tr_high);
+				  */
 				}
 
 			      //if (deuteron) h2_dEdx_vs_qp_half_postZdCut->Fill(s_charge * d_mom, d_dEdx);
@@ -555,34 +554,28 @@ Int_t TreeMaker::Make()
 
 			      if (pion     && proton) { proton = false; }
 			      if (kaon     && proton) { proton = false; }
-			      if (deuteron && proton) { proton = false; }
-			      if (triton   && proton) { proton = false; }
+			      //if (deuteron && proton) { proton = false; }
+			      //if (triton   && proton) { proton = false; }
 
-			      //if (pion && deuteron) { deuteron = false; }
-			      //if (pion && triton)   { triton   = false; }
-			      //if (kaon && deuteron) { deuteron = false; }
-			      //if (kaon && triton)   { triton   = false; }
 
-			      /*
-				if (deuteron && proton) 
+			      if (deuteron && proton) 
 				{ 
-				if (TMath::Abs(d_zDeuteron) < TMath::Abs(d_TPCnSigmaProton)) { proton = false; }
-				else if (TMath::Abs(d_zDeuteron) == TMath::Abs(d_TPCnSigmaProton)) { proton = false; deuteron = false; }
-				else { deuteron = false; }
+				  if (TMath::Abs(d_zDeuteron) < TMath::Abs(d_TPCnSigmaProton)) { proton = false; }
+				  else if (TMath::Abs(d_zDeuteron) == TMath::Abs(d_TPCnSigmaProton)) { proton = false; deuteron = false; }
+				  else { deuteron = false; }
 				}
-				if (triton && proton)
+			      if (triton && proton)
 				{
-				if (TMath::Abs(d_zTriton) < TMath::Abs(d_TPCnSigmaProton)) { proton = false; }
-				else if (TMath::Abs(d_zTriton) == TMath::Abs(d_TPCnSigmaProton)) { proton = false; triton = false; }
-				else { triton = false; }
+				  if (TMath::Abs(d_zTriton) < TMath::Abs(d_TPCnSigmaProton)) { proton = false; }
+				  else if (TMath::Abs(d_zTriton) == TMath::Abs(d_TPCnSigmaProton)) { proton = false; triton = false; }
+				  else { triton = false; }
 				}
-				if (deuteron && triton)
+			      if (deuteron && triton)
 				{
-				if (TMath::Abs(d_zDeuteron) < TMath::Abs(d_zTriton)) { triton = false; }
-				else if (TMath::Abs(d_zDeuteron) == TMath::Abs(d_zTriton)) { triton = false; deuteron = false; }
-				else { deuteron = false; }
+				  if (TMath::Abs(d_zDeuteron) < TMath::Abs(d_zTriton)) { triton = false; }
+				  else if (TMath::Abs(d_zDeuteron) == TMath::Abs(d_zTriton)) { triton = false; deuteron = false; }
+				  else { deuteron = false; }
 				}
-			      */
 			      //=========================================================
 			      //          END PID Cuts
 			      //=========================================================
@@ -660,8 +653,8 @@ Int_t TreeMaker::Make()
 				  h_dndy_pr->Fill(mRapidity);
 				  h2_pT_vs_yCM_pr->Fill(mRapidity - Y_MID, d_pT);
 				  h2_dEdx_vs_qp_pr->Fill(s_charge*d_mom, track->dEdx());
-				  h2_beta_vs_qp_pr->Fill(s_charge*d_mom, 1.0/d_tofBeta);
-				  h2_m2_vs_qp_pr->Fill(s_charge*d_mom, d_m2);
+				  //h2_beta_vs_qp_pr->Fill(s_charge*d_mom, 1.0/d_tofBeta);
+				  //h2_m2_vs_qp_pr->Fill(s_charge*d_mom, d_m2);
 				}		    
 			      else if(deuteron) // PID Deuteron
 				{
