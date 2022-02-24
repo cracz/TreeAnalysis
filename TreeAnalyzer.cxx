@@ -529,6 +529,10 @@ int main(int argc, char *argv[])
   TH2D *h2_dEdx_vs_qp_id_de = new TH2D("h2_dEdx_vs_qp_id_de", ";|p| (GeV/c);dE/dx (keV/cm)", 25, 0.0, 2.5, 500, 0.0, 20.0);
   TH2D *h2_dEdx_vs_qp_id_tr = new TH2D("h2_dEdx_vs_qp_id_tr", ";|p| (GeV/c);dE/dx (keV/cm)", 25, 0.0, 2.5, 500, 0.0, 20.0);
 
+  TH2D *h2_nSigp_vs_mom = (TH2D*)inputFile->Get("h2_nSigp_vs_mom");
+  TH2D *h2_zd_vs_mom = (TH2D*)inputFile->Get("h2_zd_vs_mom");
+  TH2D *h2_zt_vs_mom = (TH2D*)inputFile->Get("h2_zt_vs_mom");
+
   TH2D *h2_beta_vs_qp_pp = (TH2D*)inputFile->Get("h2_beta_vs_qp_pp");
   TH2D *h2_beta_vs_qp_pm = (TH2D*)inputFile->Get("h2_beta_vs_qp_pm");
   TH2D *h2_beta_vs_qp_kp = (TH2D*)inputFile->Get("h2_beta_vs_qp_kp");
@@ -1693,6 +1697,10 @@ int main(int argc, char *argv[])
   h2_dEdx_vs_qp_half->Write();
   h2_beta_vs_qp->Write();
   h2_m2_vs_qp->Write();
+
+  h2_nSigp_vs_mom->Write();
+  h2_zd_vs_mom->Write();
+  h2_zt_vs_mom->Write();
 
   h2_dEdx_vs_qp_pp->Write();
   h2_dEdx_vs_qp_pm->Write();
