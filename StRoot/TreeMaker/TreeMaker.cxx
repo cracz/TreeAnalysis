@@ -272,6 +272,11 @@ Int_t TreeMaker::Init()
   h2_pT_vs_yCM_de = new TH2D("h2_pT_vs_yCM_de", "Deuteron;y-y_{mid};p_{T} (GeV/c)",tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
   h2_pT_vs_yCM_tr = new TH2D("h2_pT_vs_yCM_tr", "Triton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
 
+
+  h2_nSigp_vs_mom = new TH2D("h2_nSigp_vs_mom", ";|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
+  h2_zd_vs_mom = new TH2D("h2_zd_vs_mom", ";|p| (GeV/c);z_{d}", 40, 0.0, 4.0, 140, -0.7, 0.7);
+  h2_zt_vs_mom = new TH2D("h2_zt_vs_mom", ";|p| (GeV/c);z_{t}", 40, 0.0, 4.0, 140, -0.7, 0.7);
+  
   return kStOK;
 }
 
@@ -547,15 +552,13 @@ Int_t TreeMaker::Make()
 				  */
 				}
 
-			      //if (deuteron) h2_dEdx_vs_qp_half_postZdCut->Fill(s_charge * d_mom, d_dEdx);
-			      //if (triton)   h2_dEdx_vs_qp_half_postZtCut->Fill(s_charge * d_mom, d_dEdx);
-	    
-			      //if (!pion && !kaon && !proton) continue;
+			      if (pion && proton) { proton = false; }
+			      if (pion && deuteron) { deuteron = false; }
+			      if (pion && triton) { triton = false; }
 
-			      if (pion     && proton) { proton = false; }
-			      if (kaon     && proton) { proton = false; }
-			      //if (deuteron && proton) { proton = false; }
-			      //if (triton   && proton) { proton = false; }
+			      if (kaon && proton) { proton = false; }
+			      if (kaon && deuteron) { deuteron = false; }
+			      if (kaon && triton) { triton = false; }
 
 
 			      if (deuteron && proton) 
@@ -581,6 +584,15 @@ Int_t TreeMaker::Make()
 			      //=========================================================
 
 			      if (pion || kaon || proton || deuteron || triton) h_trackCheck->Fill(2);
+
+
+			      if (!pion && !kaon) 
+				{
+				  h2_nSigp_vs_mom->Fill(d_mom, d_TPCnSigmaProton);
+				  h2_zd_vs_mom->Fill(d_mom, d_zDeuteron);
+				  h2_zt_vs_mom->Fill(d_mom, d_zTriton);
+				}
+
 
 			      Double_t mRapidity = 999.0;
 
