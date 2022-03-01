@@ -57,6 +57,10 @@ void IEvent::CalcQVector(int harmonic, std::vector<float> &nqx, std::vector<floa
 	if (mEPParticles.size() == 0){
 		Qx.push_back(0);
 		Qy.push_back(0);
+		
+		nqx = Qx;
+		nqy = Qy;
+		
 		return;
 	}
 	
@@ -125,7 +129,6 @@ std::vector<float>  IEvent::CalcPsi(int harmonic){
 			//This will happen if there are no particles to calculate psi
 			//If only one particle exist; which gives psi but not autocorrelated psi
 			//Or of something that shouldn't happen ends up happening
-			if (mEPParticles.size() == 0){return Psi;}
 		}
 		
 	}
