@@ -166,6 +166,10 @@ private:
   TH2D*                h2_pT_vs_yCM_de;
   TH2D*                h2_pT_vs_yCM_tr;
   
+  TH2D*                h2_nSigp_vs_mom;
+  TH2D*                h2_zd_vs_mom;
+  TH2D*                h2_zt_vs_mom;
+
   TH2D*                h2_dEdx_vs_qp_pp;
   TH2D*                h2_dEdx_vs_qp_pm;
   TH2D*                h2_dEdx_vs_qp_kp;
