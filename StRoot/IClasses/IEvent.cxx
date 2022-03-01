@@ -7,7 +7,7 @@
 
 
 //EPD geometry header file
-#include "StRoot/StEpdUtil/StEpdGeom.h"
+#include "../StEpdUtil/StEpdGeom.h"
 
 ClassImp(IEvent)
 
