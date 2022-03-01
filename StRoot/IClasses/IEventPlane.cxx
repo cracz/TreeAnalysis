@@ -20,7 +20,6 @@ IEventPlane::IEventPlane(float in_phi, float in_weight){
 void IEventPlane::Construct(){
 	mEta = 0.0;
 	mMomentum.SetXYZ(0,0,0);
-	mRingNumber = 0;
 	mPID = 0;
 	mCharge = 0;
 	mToFBeta = 0.0;
@@ -42,6 +41,7 @@ Float_t IEventPlane::QyTerm(int harmonic){
 	return mWeight * Sine;
 }
 
+//0 = east, 1 = west
 Int_t IEventPlane::GetEPDew(){
 	if (mtileID > 0){return 1;}
 	return 0;
