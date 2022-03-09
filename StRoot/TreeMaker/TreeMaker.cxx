@@ -5,24 +5,17 @@
 #include "TreeMaker.h"
 
 // Bichsel header
-#include "StRoot/StBichsel/Bichsel.h"
+#include "../StBichsel/Bichsel.h"
 
 // Config header
 #include "../ConfigReader/ConfigReader.h"
 
-// Bichsel Function Functions
+// Bichsel Functions
 Double_t bichselZ(Double_t *x,Double_t *par) 
 {
   Double_t pove   = x[0];
   Double_t poverm = pove/par[0];
   return TMath::Exp(Bichsel::Instance()->GetMostProbableZ(TMath::Log10(poverm),par[1]));
-}
-
-Double_t bichsel70(Double_t *x,Double_t *par) 
-{
-  Double_t pove   = x[0];
-  Double_t poverm = pove/par[0];
-  return TMath::Exp(Bichsel::Instance()->GetI70(TMath::Log10(poverm),par[1]));
 }
 
 // Class implementation in CINT
