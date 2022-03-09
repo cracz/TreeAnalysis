@@ -54,6 +54,15 @@ void IEvent::CalcQVector(int harmonic, std::vector<float> &nqx, std::vector<floa
 	std::vector<float> Qx;
 	std::vector<float> Qy;
 	
+	if (mEPParticles.size() == 0){
+		Qx.push_back(0);
+		Qy.push_back(0);
+		
+		nqx = Qx;
+		nqy = Qy;
+		
+		return;
+	}
 	
 	Qx.push_back(-1*mqCenter[0]);
 	Qy.push_back(-1*mqCenter[1]);
@@ -116,9 +125,10 @@ std::vector<float>  IEvent::CalcPsi(int harmonic){
 			Psi.push_back(TMath::ATan2(Qy[parts],Qx[parts])/((Double_t)harmonic));
 		}
 		else{
-			Psi.push_back(-99); //This shouldn't happen, but bad psi for this particle
-			std::cout << "Warning! Error particle [" << parts;
-			std::cout << " / " << mEPParticles.size() << "] in this event!" << std::endl;
+			Psi.push_back(-99);
+			//This will happen if there are no particles to calculate psi
+			//If only one particle exist; which gives psi but not autocorrelated psi
+			//Or of something that shouldn't happen ends up happening
 		}
 		
 	}

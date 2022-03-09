@@ -18,7 +18,6 @@ class IEventPlane : public TObject {
 		
 		Int_t mPID;
 		Int_t mCharge;
-		Int_t mRingNumber;
 		Float_t mToFBeta;
 		Int_t nHitsFit;
 		Int_t nHitsPoss;
@@ -26,7 +25,6 @@ class IEventPlane : public TObject {
 		
 		Int_t mtileID;
 		Float_t nMIP;
-
 		
 		void Construct();
 
@@ -55,7 +53,6 @@ class IEventPlane : public TObject {
 		void SetHitsFit(float in_Fit){nHitsFit = in_Fit;}
 		void SetHitsPoss(float in_Poss){nHitsFit = in_Poss;}
 		void SetParticleID(int in_PID){mPID = in_PID;}
-		void SetRingNumber(int in_ring){mRingNumber = in_ring;}
 		void SetToFBeta(float in_ToF){mToFBeta = in_ToF;}
 		void SetTileID(int in_TileID){mtileID = in_TileID;}
 		void SetnMIP(float in_mip){nMIP = in_mip;}
@@ -70,8 +67,7 @@ class IEventPlane : public TObject {
 		Int_t GetHitsFit(){return nHitsFit;}
 		Int_t GetHitsPoss(){return nHitsPoss;}		
 		TVector3 GetMomentum(){return mMomentum;}
-		Int_t GetParticleID(){return mPID;}	
-		Int_t GetRingNumber(){return mRingNumber;}				
+		Int_t GetParticleID(){return mPID;}				
 		Float_t GetToFBeta(){return mToFBeta;}
 		Float_t GetdEdx(){return dEdx;}
 		
@@ -80,6 +76,8 @@ class IEventPlane : public TObject {
 		Int_t GetEPDew();
 		Int_t GetEPDtt(){return TMath::Abs(mtileID) % 100;}
 		Int_t GetEPDpp(){return (TMath::Abs(mtileID) - GetEPDtt()) / 100;}
+		Int_t GetRingNumber(){return TMath::Ceil((GetEPDtt() + 1) / 2);}
+		
 		Float_t	GetnMIP(){return nMIP;}
 		
 		
