@@ -14,7 +14,7 @@
 #include "TMath.h"
 #include "TH1D.h"
 #include "TH2D.h"
-#include "TF1.h"
+//#include "TF1.h"
 
 // Load STARLibrary header files
 #include "StMaker.h"
@@ -82,42 +82,51 @@ private:
 //  IEvent	      tree_tracks;  
   
   //This information contained in IEvent (IEventPlane)
-  Short_t             tree_PID[N_track];
+  //Short_t             tree_PID[N_track];
   Short_t             tree_Charge[N_track];
   Float_t             tree_Px[N_track];
   Float_t             tree_Py[N_track];
   Float_t             tree_Pz[N_track];
-  Double_t            tree_Beta[N_track];
+  Float_t             tree_DCA[N_track];
+  Float_t             tree_nSigmaPi[N_track];
+  Float_t             tree_nSigmaKa[N_track];
+  Float_t             tree_nSigmaPr[N_track];
+  Float_t             tree_Beta[N_track];
   Float_t             tree_dEdx[N_track];
+  Int_t               tree_nHits[N_track];
   Int_t               tree_nHitsFit[N_track];
   Int_t               tree_nHitsPoss[N_track];
+  Int_t               tree_nHitsDedx[N_track];
   
   
   TH1D*                h_eventCheck;
-  TH1D*                h_trackCheck;
-  TH1D*                h_centralities;
+  //TH1D*                h_trackCheck;
+  //TH1D*                h_centralities;
   TH1D*                h_zvtx;
   TH1D*                h_trackmult;
   TH1D*                h_refmult;
   TH1D*                h_tofmult;
   TH2D*                h2_trans_vtx;
-  TH2D*                h2_trans_vtx_cut;
+  //TH2D*                h2_trans_vtx_cut;
   TH2D*                h2_refmult_vs_trackmult;
   TH2D*                h2_tofmult_vs_trackmult;
   TH2D*                h2_tofmult_vs_refmult;
-    
+  /*  
   TH1D*                h_nhits_dEdx;
   TH1D*                h_nhits;
   TH1D*                h_nhits_ratio;
   TH1D*                h_DCA;
+
   TH1D*                h_pT;
   TH1D*                h_eta;
   TH1D*                h_phi;
   TH2D*                h2_dEdx_vs_qp;
   TH2D*                h2_dEdx_vs_qp_half;
-  TH2D*                h2_beta_vs_qp;
-  TH2D*                h2_m2_vs_qp;
-
+  */
+  //TH1D*                h_tofBeta_test;
+  //TH2D*                h2_beta_vs_qp_test;
+  //TH2D*                h2_m2_vs_qp_test;
+  /*
   TH1D*                h_mult_pp;
   TH1D*                h_mult_pm;
   TH1D*                h_mult_kp;
@@ -193,10 +202,10 @@ private:
   TH2D*                h2_m2_vs_qp_pr;
   TH2D*                h2_m2_vs_qp_de;
   TH2D*                h2_m2_vs_qp_tr;
+  */
 
-
-  TF1*                 bichselZ_de;
-  TF1*                 bichselZ_tr;
+  //  TF1*                 bichselZ_de;
+  //  TF1*                 bichselZ_tr;
 
 
 public:
