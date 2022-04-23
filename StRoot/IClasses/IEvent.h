@@ -72,7 +72,7 @@ class IEvent : public TObject {
   std::vector<IEventPlane> GetEPParticles(){return mEPParticles;}
   
   void AddEPParticle(IEventPlane n){mEPParticles.push_back(n);} //Add a particle to the event
-  void AddEPParticle(std::vector<IEventPlane> n){mEPParticles = n;} //Add a vector of particles to the event
+  void AddEPParticle(std::vector<IEventPlane> n){mEPParticles.insert( mEPParticles.end(), n.begin(),n.end());} //Add a vector of particles to the event
   
   void RemoveEPParticle(int n){mEPParticles.erase(mEPParticles.begin()+n);} //Remove a particle at index n
 
