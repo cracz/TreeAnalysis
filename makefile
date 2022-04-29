@@ -2,6 +2,7 @@ SRCS = StRoot/ConfigReader/ConfigReader.cxx TreeAnalyzer.cxx
 OBJS = $(SRCS:.cxx=.o)
 DEPS = FlowUtils.h
 TARGET = TreeAnalyzer
+TARGET2 = testPurity
 
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs)
@@ -24,9 +25,12 @@ FLAGS = -Wall -g -fPIC
 COMPILE = $(CC) $(FLAGS)
 
 
-all: $(TARGET)
+all: $(TARGET) $(TARGET2)
 
 $(TARGET): $(OBJS)
+	$(COMPILE) -o $@ $^ $(SOLIBS) $(ROOTCFLAGS) $(ROOTLIBS) $(INCFLAGS) $(LIBFLAGS)
+
+$(TARGET2): testPurity.o
 	$(COMPILE) -o $@ $^ $(SOLIBS) $(ROOTCFLAGS) $(ROOTLIBS) $(INCFLAGS) $(LIBFLAGS)
 
 TreeAnalyzer.o: FlowUtils.h StRoot/ConfigReader/ConfigReader.h TreeAnalyzer.cxx
@@ -35,10 +39,13 @@ TreeAnalyzer.o: FlowUtils.h StRoot/ConfigReader/ConfigReader.h TreeAnalyzer.cxx
 StRoot/ConfigReader/ConfigReader.o: StRoot/ConfigReader/ConfigReader.h StRoot/ConfigReader/ConfigReader.cxx
 	$(COMPILE) -o $@ -c StRoot/ConfigReader/ConfigReader.cxx $(ROOTCFLAGS) $(ROOTLIBS)
 
+testPurity.o: testPurity.cxx
+	$(COMPILE) -o $@ -c testPurity.cxx $(SOLIBS) $(ROOTCFLAGS) $(ROOTLIBS) $(INCFLAGS) $(LIBFLAGS)
+
 .PHONY: clean
 
 clean:
-	rm -f $(TARGET) $(OBJS)
+	rm -f $(TARGET) $(OBJS) testPurity.o testPurity
 
 
 

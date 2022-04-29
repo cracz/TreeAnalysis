@@ -28,21 +28,6 @@ void IEvent::Init(){
 //_________________
 void IEvent::ClearEvent(){
 
-	/*
-	mRunNumber = -99;
-	mChronologicalRunId = -99;
-	mEventID = -99;
-	mRefMult = -99;
-	mCentrality = -99;
-	mPrimaryVertex.SetXYZ(-99.0,-99.0,-99.0);
-	mBfield = -99.;
-	mVpdVz = -99.;
-	nEPDhits = -99;
-	mTriggers.clear();
-	EPDid.fill(0);
-	EPDnMip.fill(0);
-	*/
-	
 	mqCenter[0] = 0.0;
 	mqCenter[1] = 0.0;
 	
@@ -147,6 +132,22 @@ std::vector<float>  IEvent::GetPsi(int harmonic, char option, float param1, floa
 	return subEvent.CalcPsi(harmonic);
 }
 
+std::vector<float>  IEvent::GetAutoCorrelationPsi(int harmonic){
+	std::vector<float> partEvent = GetPsi(harmonic);
+	
+	partEvent.erase(partEvent.begin());
+	
+	return partEvent;
+}
+
+std::vector<float>  IEvent::GetAutoCorrelationPsi(int harmonic, char option, float param1, float param2 = 0.0){
+	std::vector<float> partEvent = GetPsi(harmonic, option, param1, param2);
+	
+	partEvent.erase(partEvent.begin());
+	
+	return partEvent;
+}
+
 //Any sort of subevent can be constructed in this manner
 //But these are the provided types
 IEvent IEvent::GetSubEvent(char option, float param1, float param2 = 0.0){
@@ -179,14 +180,21 @@ IEvent IEvent::GetSubEvent(char option, float param1, float param2 = 0.0){
 			break;
 		case 'c' : //charge
 			for (unsigned int parts = 0; parts < mEPParticles.size(); parts++){
-				if (mEPParticles[parts].GetCharge() >= param1 && mEPParticles[parts].GetCharge() <= param2){
+				if (mEPParticles[parts].GetCharge() == param1){
 					mEPParticlesCopy.push_back(mEPParticles[parts]);
 				}
 			}				
 			break;
-		case 't' : //ToF	
+		case 't' : //ToF Beta	
 			for (unsigned int parts = 0; parts < mEPParticles.size(); parts++){
 				if (mEPParticles[parts].GetToFBeta() >= param1 && mEPParticles[parts].GetToFBeta() <= param2){
+					mEPParticlesCopy.push_back(mEPParticles[parts]);
+				}
+			}		
+			break;
+		case 'r' : //EPD ring number	
+			for (unsigned int parts = 0; parts < mEPParticles.size(); parts++){
+				if (mEPParticles[parts].GetRingNumber() >= param1 && mEPParticles[parts].GetRingNumber() <= param2){
 					mEPParticlesCopy.push_back(mEPParticles[parts]);
 				}
 			}		
@@ -208,11 +216,9 @@ void IEvent::SetQCenter(float nqx, float nqy){
 }
 
 //Convert EPD nMIP information into an IEventPlane vector
-std::vector<IEventPlane> IEvent::EPDVector(TVector3 primaryVertex, float COMrapidity = 0.0){
+std::vector<IEventPlane> IEvent::EPDVector(TVector3 primaryVertex, float etaCorrection = 0.0, float mThresh = 0.3, float mMax = 3.0){
 	std::vector<IEventPlane> mEPParticlesCopy;
 	
-	Double_t mThresh = 0.3; // EPD EP by hand
-	Double_t mMax = 3.0; // EPD EP by hand
 	StEpdGeom *mEpdGeom = new StEpdGeom();
 	
 	int num_sides = 1; //1 for east only, 2 for east and west
@@ -236,7 +242,7 @@ std::vector<IEventPlane> IEvent::EPDVector(TVector3 primaryVertex, float COMrapi
 					
 					TVector3 StraightLine = mEpdGeom->TileCenter(tileID) - primaryVertex;
 					float phi = StraightLine.Phi();
-					float eta = StraightLine.Eta() - COMrapidity;
+					float eta = StraightLine.Eta() - etaCorrection;
 					
 					IEventPlane eventPlane(phi, TileWeight);
 					eventPlane.SetEta(eta);
@@ -254,7 +260,7 @@ std::vector<IEventPlane> IEvent::EPDVector(TVector3 primaryVertex, float COMrapi
 	return mEPParticlesCopy;
 }
 
-void IEvent::setEPDnMip(int in_tileID, float nMip){
+void IEvent::SetEPDnMip(int in_tileID, float nMip){
 	int ew;
 	if (in_tileID > 0){ew = 1;}
 	else {ew = 0;}
@@ -262,9 +268,21 @@ void IEvent::setEPDnMip(int in_tileID, float nMip){
 	int tt = TMath::Abs(in_tileID) % 100;
 	int pp = (TMath::Abs(in_tileID) - tt) / 100;
 	
-	setEPDnMip(ew, pp, tt, nMip);
+	SetEPDnMip(ew, pp, tt, nMip);
 }
 
+Float_t IEvent::GetEPDnMip(int in_tileID){
+	int ew;
+	if (in_tileID > 0){ew = 1;}
+	else {ew = 0;}
+	
+	int tt = TMath::Abs(in_tileID) % 100;
+	int pp = (TMath::Abs(in_tileID) - tt) / 100;
+	
+	return GetEPDnMip(ew, pp, tt);
+}
+
+//Convert the EPD array into an IEventPlane vector and add to event
 //Call this this once per event at maximum!
 void IEvent::AddEPDtoTracks(TVector3 primaryVertex, float COMrapidity = 0.0){
 	std::vector<IEventPlane> epdtracks = EPDVector(primaryVertex, COMrapidity);

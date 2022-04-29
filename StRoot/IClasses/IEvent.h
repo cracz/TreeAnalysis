@@ -53,59 +53,47 @@ class IEvent : public TObject {
   void ClearEvent();
   void Init();
 
-  
-  void AddEPParticle(IEventPlane n){mEPParticles.push_back(n);}
-  
-  void SetEPParticle(std::vector<IEventPlane> n){mEPParticles = n;}
-  
+  //Vector with event psi as well as auto-correlation-removed psis
   std::vector<float> GetPsi(int);
-  std::vector<float> GetPsi(int, char, float, float);
+  std::vector<float> GetPsi(int, char, float, float);  
+  
+  //Get the Q components for the event
   Float_t GetQx(int);
   Float_t GetQy(int);
-
-/*
-  TVector3 PrimaryVertex() {return mPrimaryVertex;}
-  void SetPrimaryVertex(TVector3 pv){mPrimaryVertex = pv;}
-  Int_t GetRunNumber(){return mRunNumber;}
-  Int_t GetChronologicalRunId(){return mChronologicalRunId;}
-  Int_t GetEventID(){return mEventID;}
-  Int_t GetRefMult(){return mRefMult;}
-  Int_t GetCentralityID9(){return mCentrality}
-  Float_t Bfield(){return mBfield;}
-  Float_t GetVpdVz(){return mVpdVz;}
   
-  */
-  //std::vector<unsigned int> GetTriggers(){return mTriggers;}
+  //Get the Psi for the event (or for a subevent)
+  Float_t GetEventPsi(int harmonic){return GetPsi(harmonic)[0];}
+  Float_t GetEventPsi(int harmonic, char option, float param1, float param2 = 0.0){return GetPsi(harmonic, option, param1, param2)[0];}
+  
+  //Get the autocorrelation-corrected Psi for the each particle in an event (or subevent)
+  std::vector<float> GetAutoCorrelationPsi(int);
+  std::vector<float> GetAutoCorrelationPsi(int, char, float, float);
+
   std::vector<IEventPlane> GetEPParticles(){return mEPParticles;}
+  
+  void AddEPParticle(IEventPlane n){mEPParticles.push_back(n);} //Add a particle to the event
+  void AddEPParticle(std::vector<IEventPlane> n){mEPParticles.insert( mEPParticles.end(), n.begin(),n.end());} //Add a vector of particles to the event
+  
+  void RemoveEPParticle(int n){mEPParticles.erase(mEPParticles.begin()+n);} //Remove a particle at index n
 
-/*
-  void SetRunNumber(Int_t rn){mRunNumber=rn;}
-  void SetChronologicalRunId(Int_t rn){mChronologicalRunId=rn;}
-  void SetEventID(Int_t en){mEventID=en;}
-  void SetRefMult(Int_t rm){mRefMult = rm;}
-  void SetCentrality(Int_t cent){mCentrality=cent;}
-  void SetBfield(Float_t f){mBfield=f;}
-  void SetVpdVz(Float_t n){mVpdVz=n;}
-  void SetTriggers( const std::vector<unsigned int> & n){mTriggers = n;}
-*/ 
- 
-  void SetEPParticles( const std::vector<IEventPlane> & n){mEPParticles = n;}
-  void SetQCenter(float, float);
+
+  void SetEPParticles( const std::vector<IEventPlane> & n){mEPParticles = n;} //Set the particles for the event
+  void SetQCenter(float, float); //Set the center for the Q vector - for recentering
   
-  std::vector<IEventPlane> EPDVector(TVector3, float);
+  std::vector<IEventPlane> EPDVector(TVector3, float, float, float);
   
-  void setEPDnMip(int ew, int pp, int tt, float nMip){EPDnMip[ew][pp - 1][tt - 1] = nMip;}
-  void setEPDnMip(int tileID, float nMip);
+  void SetEPDnMip(int ew, int pp, int tt, float nMip){EPDnMip[ew][pp - 1][tt - 1] = nMip;}
+  
+  void SetEPDnMip(int tileID, float nMip);
   
   Float_t GetEPDnMip(int ew, int pp, int tt){return EPDnMip[ew][pp - 1][tt - 1];}
+  Float_t GetEPDnMip(int tileID);
 
   IEvent GetSubEvent(char, float, float);
   
-  void AddEPDtoTracks(TVector3, float);;
+  void AddEPDtoTracks(TVector3, float);
 
   ClassDef(IEvent,1)  // my event
 };
 
 #endif
-
-
