@@ -70,6 +70,7 @@ class IEventPlane : public TObject {
 		Int_t GetParticleID(){return mPID;}				
 		Float_t GetToFBeta(){return mToFBeta;}
 		Float_t GetdEdx(){return dEdx;}
+		Float_t GetRapidity();
 		
 		
 		Int_t GetEPDtileID(){return mtileID;}
