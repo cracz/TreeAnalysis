@@ -101,6 +101,139 @@ namespace FlowUtils
     Int_t primTracks;   // Number of primary tracks before track cuts (used for centrality)
     bool badEvent;      // Flag for marking events to ignore
 
+    void incrementQvectorTPC(Bool_t ODD_PLANE, Double_t ORDER_M, Double_t Y_MID, Double_t eta, Double_t phi, Double_t weight)
+    {
+      if (ODD_PLANE)
+	{
+	  if (eta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
+	    {
+	      XnTpc += weight * TMath::Cos(ORDER_M * phi);
+	      YnTpc += weight * TMath::Sin(ORDER_M * phi);
+	    }
+	  else if (eta < Y_MID)
+	    {
+	      XnTpc -= weight * TMath::Cos(ORDER_M * phi);
+	      YnTpc -= weight * TMath::Sin(ORDER_M * phi);
+	    }
+	}
+      else
+	{
+	  XnTpc += weight * TMath::Cos(ORDER_M * phi);
+	  YnTpc += weight * TMath::Sin(ORDER_M * phi);
+	}
+    }// End incrementQvectorTPC()
+
+
+    void incrementQvectorTPCA(Bool_t ODD_PLANE, Double_t ORDER_M, Double_t Y_MID, Double_t eta, Double_t phi, Double_t weight)
+    {
+      if (ODD_PLANE)
+	{
+	  if (eta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
+	    {
+	      XnTpcA += weight * TMath::Cos(ORDER_M * phi);
+	      YnTpcA += weight * TMath::Sin(ORDER_M * phi);
+	    }
+	  else if (eta < Y_MID)
+	    {
+	      XnTpcA -= weight * TMath::Cos(ORDER_M * phi);
+	      YnTpcA -= weight * TMath::Sin(ORDER_M * phi);
+	    }
+	}
+      else
+	{
+	  XnTpcA += weight * TMath::Cos(ORDER_M * phi);
+	  YnTpcA += weight * TMath::Sin(ORDER_M * phi);
+	}
+    }// End incrementQvectorTPCA()
+
+    void incrementQvectorTPCB(Bool_t ODD_PLANE, Double_t ORDER_M, Double_t Y_MID, Double_t eta, Double_t phi, Double_t weight)
+    {
+      if (ODD_PLANE)
+	{
+	  if (eta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
+	    {
+	      XnTpcB += weight * TMath::Cos(ORDER_M * phi);
+	      YnTpcB += weight * TMath::Sin(ORDER_M * phi);
+	    }
+	  else if (eta < Y_MID)
+	    {
+	      XnTpcB -= weight * TMath::Cos(ORDER_M * phi);
+	      YnTpcB -= weight * TMath::Sin(ORDER_M * phi);
+	    }
+	}
+      else
+	{
+	  XnTpcB += weight * TMath::Cos(ORDER_M * phi);
+	  YnTpcB += weight * TMath::Sin(ORDER_M * phi);
+	}
+    }// End incrementQvectorTPCB()
+
+    void incrementQvectorEPD(Bool_t ODD_PLANE, Double_t ORDER_M, Double_t Y_MID, Double_t eta, Double_t phi, Double_t weight)
+    {
+      if (ODD_PLANE)
+	{
+	  if (eta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
+	    {
+	      XnEpd += weight * TMath::Cos(ORDER_M * phi);
+	      YnEpd += weight * TMath::Sin(ORDER_M * phi);
+	    }
+	  else if (eta < Y_MID)
+	    {
+	      XnEpd -= weight * TMath::Cos(ORDER_M * phi);
+	      YnEpd -= weight * TMath::Sin(ORDER_M * phi);
+	    }
+	}
+      else
+	{
+	  XnEpd += weight * TMath::Cos(ORDER_M * phi);
+	  YnEpd += weight * TMath::Sin(ORDER_M * phi);
+	}
+    }// End incrementQvectorEPD()
+
+    void incrementQvectorEPDA(Bool_t ODD_PLANE, Double_t ORDER_M, Double_t Y_MID, Double_t eta, Double_t phi, Double_t weight)
+    {
+      if (ODD_PLANE)
+	{
+	  if (eta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
+	    {
+	      XnEpdA += weight * TMath::Cos(ORDER_M * phi);
+	      YnEpdA += weight * TMath::Sin(ORDER_M * phi);
+	    }
+	  else if (eta < Y_MID)
+	    {
+	      XnEpdA -= weight * TMath::Cos(ORDER_M * phi);
+	      YnEpdA -= weight * TMath::Sin(ORDER_M * phi);
+	    }
+	}
+      else
+	{
+	  XnEpdA += weight * TMath::Cos(ORDER_M * phi);
+	  YnEpdA += weight * TMath::Sin(ORDER_M * phi);
+	}
+    }// End incrementQvectorEPDA()
+
+    void incrementQvectorEPDB(Bool_t ODD_PLANE, Double_t ORDER_M, Double_t Y_MID, Double_t eta, Double_t phi, Double_t weight)
+    {
+      if (ODD_PLANE)
+	{
+	  if (eta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
+	    {
+	      XnEpdB += weight * TMath::Cos(ORDER_M * phi);
+	      YnEpdB += weight * TMath::Sin(ORDER_M * phi);
+	    }
+	  else if (eta < Y_MID)
+	    {
+	      XnEpdB -= weight * TMath::Cos(ORDER_M * phi);
+	      YnEpdB -= weight * TMath::Sin(ORDER_M * phi);
+	    }
+	}
+      else
+	{
+	  XnEpdB += weight * TMath::Cos(ORDER_M * phi);
+	  YnEpdB += weight * TMath::Sin(ORDER_M * phi);
+	}
+    }// End incrementQvectorEPDB()
+
     void reset()//Reset all values in the struct to reuse
     {
       std::vector<Particle>().swap(tpcParticles);
