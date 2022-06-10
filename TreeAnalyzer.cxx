@@ -126,7 +126,9 @@ int main(int argc, char *argv[])
   //=== INITIALIZE TTREE
   Int_t N_track = 0;  // Max number of tracks in an event. Depends on energy and centrality definition!
   if      (configs.sqrt_s_NN == 3.0)  { N_track = 195;  }
+  else if (configs.sqrt_s_NN == 4.49) { N_track = 195;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
   else if (configs.sqrt_s_NN == 7.2)  { N_track = 240;  }
+  //else if (configs.sqrt_s_NN == 14.5) { N_track = 2048; } // UPDATE THIS WHEN THE CENTRALITY IS OFFICIAL
   else if (configs.sqrt_s_NN == 19.6) { N_track = 2048; } // UPDATE THIS WHEN THE CENTRALITY IS OFFICIAL
   else
     {
@@ -361,12 +363,16 @@ int main(int argc, char *argv[])
 
   TH1D *h_primTracks = new TH1D("h_primTracks","Raw Number of Primary Tracks;Tracks;Events", 200, 0, 200);
 
-  TH1D *h_zvtx = (TH1D*)inputFile->Get("h_zvtx");
+  //TH1D *h_zvtx = (TH1D*)inputFile->Get("h_zvtx");
+  tempBins1      = (configs.fixed_target) ? 200 : 500;
+  tempLowBound1  = (configs.fixed_target) ? 190.0 : -210.0;
+  tempHighBound1 = 210.0;
+  TH1D* h_zvtx = new TH1D("h_zvtx","Primary Vertex Position in z;Distance (cm);Events", tempBins1, tempLowBound1, tempHighBound1);
 
-  TH1D *h_eta_s   = new TH1D("h_eta_s", "Particle #eta_{CM};#eta-#eta_{mid};Particles", 1200, -6, 6);
-  TH1D *h_eta_TPC_s = new TH1D("h_eta_TPC_s", "TPC tracks' #eta_{CM};#eta-#eta_{mid};Particles", 500, -2.5, 2.5);
+  TH1D *h_eta_s   = new TH1D("h_eta_s", "Particle #eta_{CM};#eta-y_{mid};Particles", 1200, -6, 6);
+  TH1D *h_eta_TPC_s = new TH1D("h_eta_TPC_s", "TPC tracks' #eta_{CM};#eta-y_{mid};Particles", 500, -2.5, 2.5);
 
-  TH1D *h_tileWeights = new TH1D("h_tileWeights", "EPD Tile Weights;Hits;nMIP Weights", 5, -1, 4);
+  TH1D *h_tileWeights = new TH1D("h_tileWeights", "EPD Tile Weights;nMIP Weights;Hits", 5, -1, 4);
   TH1D *h_centralities = new TH1D("h_centralities", "Centralities;Centrality ID;Events", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
 
   TH1D *h_trackmult = (TH1D*)inputFile->Get("h_trackmult");
@@ -479,6 +485,15 @@ int main(int argc, char *argv[])
       tempLowBound2  = 0.0;
       tempHighBound2 = 2.5;
     }
+  else if (configs.sqrt_s_NN == 4.49)
+    {
+      tempBins1 = 300;
+      tempLowBound1 = -1.0;
+      tempHighBound1 = 1.7;
+      tempBins2 = 300;
+      tempLowBound2  = 0.0;
+      tempHighBound2 = 2.5;
+    }
   else if (configs.sqrt_s_NN == 7.2)
     {
       tempBins1 = 300;
@@ -532,66 +547,86 @@ int main(int argc, char *argv[])
   TProfile *p_meanpT_vs_yCM_de = new TProfile("p_meanpT_vs_yCM_de","Deuteron <p_{T}>;y-y_{mid};<p_{T}>", 20, -1.0, 1.0);
   TProfile *p_meanpT_vs_yCM_tr = new TProfile("p_meanpT_vs_yCM_tr","Triton <p_{T}>;y-y_{mid};<p_{T}>", 20, -1.0, 1.0);
 
-  //TProfile *p_vn_EpdA = new TProfile("p_vn_EpdA", "v_{"+ORDER_N_STR+"} by Centrality (EPD A);Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
+  //TProfile *p_vn_EpdA = new TProfile("p_vn_EpdA", "v_{"+ORDER_N_STR+"} (EPD A);Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
   //				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  //TProfile *p_vn_EpdB = new TProfile("p_vn_EpdB", "v_{"+ORDER_N_STR+"} by Centrality (EPD B);Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
+  //TProfile *p_vn_EpdB = new TProfile("p_vn_EpdB", "v_{"+ORDER_N_STR+"} (EPD B);Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
   //				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  //TProfile *p_vn_TpcA = new TProfile("p_vn_TpcA", "v_{"+ORDER_N_STR+"} by Centrality (TPC A);Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
+  //TProfile *p_vn_TpcA = new TProfile("p_vn_TpcA", "v_{"+ORDER_N_STR+"} (TPC A);Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
   //				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  //TProfile *p_vn_TpcB = new TProfile("p_vn_TpcB", "v_{"+ORDER_N_STR+"} by Centrality (TPC B);Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
+  //TProfile *p_vn_TpcB = new TProfile("p_vn_TpcB", "v_{"+ORDER_N_STR+"} (TPC B);Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
   //				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
   TProfile *p_vn_Tpc_pT_0p2to2 = 
-    new TProfile("p_vn_Tpc_pT_0p2to2", "v_{"+ORDER_N_STR+"} by Centrality (All TPC 0.2 < p_{T} < 2.0);Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
+    new TProfile("p_vn_Tpc_pT_0p2to2", "v_{"+ORDER_N_STR+"} (All TPC 0.2 < p_{T} < 2.0);Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
 		 CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
 
-  TProfile *p_vn_pp = new TProfile("p_vn_pp", "#pi^{+} v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
+  TProfile *p_vn_pp = new TProfile("p_vn_pp", "#pi^{+} v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
 				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_pm = new TProfile("p_vn_pm", "#pi^{-} v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_kp = new TProfile("p_vn_kp", "K^{+} v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_km = new TProfile("p_vn_km", "K^{-} v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_pr = new TProfile("p_vn_pr", "Proton v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_pr_alt = new TProfile("p_vn_pr_alt", "Proton v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
+  TProfile *p_vn_pm = new TProfile("p_vn_pm", "#pi^{-} v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_kp = new TProfile("p_vn_kp", "K^{+} v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_km = new TProfile("p_vn_km", "K^{-} v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_pr = new TProfile("p_vn_pr", "Proton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_pr_alt = new TProfile("p_vn_pr_alt", "Proton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
 				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_de = new TProfile("p_vn_de", "Deuteron v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
+  TProfile *p_vn_de = new TProfile("p_vn_de", "Deuteron v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
 				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_tr = new TProfile("p_vn_tr", "Triton v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_tr = new TProfile("p_vn_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
 
   // vn profiles at "extended" rapidity range 0.5 < y_CM < 1.0
-  TProfile *p_vn_pp_ext = new TProfile("p_vn_pp_ext", "#pi^{+} v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_pm_ext = new TProfile("p_vn_pm_ext", "#pi^{-} v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_kp_ext = new TProfile("p_vn_kp_ext", "K^{+} v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_km_ext = new TProfile("p_vn_km_ext", "K^{-} v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_pr_ext = new TProfile("p_vn_pr_ext", "Proton v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_pp_ext = new TProfile("p_vn_pp_ext", "#pi^{+} v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_pm_ext = new TProfile("p_vn_pm_ext", "#pi^{-} v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_kp_ext = new TProfile("p_vn_kp_ext", "K^{+} v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_km_ext = new TProfile("p_vn_km_ext", "K^{-} v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_pr_ext = new TProfile("p_vn_pr_ext", "Proton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
   /*
-  TProfile *p_vn_de_ext = new TProfile("p_vn_de_ext", "Deuteron v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_tr_ext = new TProfile("p_vn_tr_ext", "Triton v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+    TProfile *p_vn_de_ext = new TProfile("p_vn_de_ext", "Deuteron v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+    TProfile *p_vn_tr_ext = new TProfile("p_vn_tr_ext", "Triton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
 
-  // pT divided by number of nucleons
+    // pT divided by number of nucleons
 
-  TProfile *p_vn_de_overA = new TProfile("p_vn_de_overA", "Deuteron v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-					CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_tr_overA = new TProfile("p_vn_tr_overA", "Triton v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-					CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_de_ext_overA = new TProfile("p_vn_de_ext_overA", "Deuteron v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-					    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile *p_vn_tr_ext_overA = new TProfile("p_vn_tr_ext_overA", "Triton v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
-					    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+    TProfile *p_vn_de_overA = new TProfile("p_vn_de_overA", "Deuteron v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+    TProfile *p_vn_tr_overA = new TProfile("p_vn_tr_overA", "Triton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+    TProfile *p_vn_de_ext_overA = new TProfile("p_vn_de_ext_overA", "Deuteron v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+    TProfile *p_vn_tr_ext_overA = new TProfile("p_vn_tr_ext_overA", "Triton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
   */
   // vn profiles at the "forward" raidity range y_CM < 0
-  TProfile *p_vn_pr_for = new TProfile("p_vn_pr_for", "Proton v_{"+ORDER_N_STR+"} by Centrality;Centrality;<cos("+ORDER_N_STR+"(#phi - #psi_{"+ORDER_M_STR+"}))>", 
+  TProfile *p_vn_pr_for = new TProfile("p_vn_pr_for", "Proton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+
+
+  // "Observed" flow values (uncorrected by event plane resolution)
+  TProfile *p_vn_pp_obs = new TProfile("p_vn_pp_obs", "#pi^{+} v_{"+ORDER_N_STR+"}^{obs};Centrality;v_{"+ORDER_N_STR+"}^{obs}{#psi_{"+ORDER_M_STR+"}}", 
+				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_pm_obs = new TProfile("p_vn_pm_obs", "#pi^{-} v_{"+ORDER_N_STR+"}^{obs};Centrality;v_{"+ORDER_N_STR+"}^{obs}{#psi_{"+ORDER_M_STR+"}}", 
 				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_kp_obs = new TProfile("p_vn_kp_obs", "K^{+} v_{"+ORDER_N_STR+"}^{obs};Centrality;v_{"+ORDER_N_STR+"}^{obs}{#psi_{"+ORDER_M_STR+"}}", 
+				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_km_obs = new TProfile("p_vn_km_obs", "K^{-} v_{"+ORDER_N_STR+"}^{obs};Centrality;v_{"+ORDER_N_STR+"}^{obs}{#psi_{"+ORDER_M_STR+"}}", 
+				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_pr_obs = new TProfile("p_vn_pr_obs", "Proton v_{"+ORDER_N_STR+"}^{obs};Centrality;v_{"+ORDER_N_STR+"}^{obs}{#psi_{"+ORDER_M_STR+"}}", 
+				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_pr_alt_obs = new TProfile("p_vn_pr_alt_obs", "Proton v_{"+ORDER_N_STR+"}^{obs};Centrality;v_{"+ORDER_N_STR+"}^{obs}{#psi_{"+ORDER_M_STR+"}}", 
+				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_de_obs = new TProfile("p_vn_de_obs", "Deuteron v_{"+ORDER_N_STR+"}^{obs};Centrality;v_{"+ORDER_N_STR+"}^{obs}{#psi_{"+ORDER_M_STR+"}}", 
+				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_tr_obs = new TProfile("p_vn_tr_obs", "Triton v_{"+ORDER_N_STR+"}^{obs};Centrality;v_{"+ORDER_N_STR+"}^{obs}{#psi_{"+ORDER_M_STR+"}}", 
+				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+
 
 
   //TH1D *h_psiEpdA_NoAuto = new TH1D("h_psiEpdA_NoAuto", "EP Angles, No Auto-Correlations (m = "+ORDER_M_STR+", EPD A);#psi_{"+ORDER_M_STR+"};Events", 400, -PSI_BOUNDS, PSI_BOUNDS);
@@ -672,8 +707,9 @@ int main(int argc, char *argv[])
 
   TH2D *h2_ring_vs_eta = new TH2D("h2_ring_vs_eta","EPD East Ring vs #eta;#eta;Ring", 500, -6.0, -1.0, 16, 0.5, 16.5);
 
-  TH2D *h2_trans_vtx     = (TH2D*)inputFile->Get("h2_trans_vtx");
+  //TH2D *h2_trans_vtx     = (TH2D*)inputFile->Get("h2_trans_vtx");
   //TH2D *h2_trans_vtx_cut = (TH2D*)inputFile->Get("h2_trans_vtx_cut");
+  TH2D *h2_trans_vtx = new TH2D("h2_trans_vtx","Primary Vertex after V_{z} Cut;x (cm);y (cm)", 500, -5, 5, 500, -5, 5);
   TH2D *h2_trans_vtx_cut = new TH2D("h2_trans_vtx_cut","Final Primary Vertices;x (cm);y (cm)", 500, -5, 5, 500, -5, 5);
 
   TH2D *h2_refmult_vs_trackmult = (TH2D*)inputFile->Get("h2_refmult_vs_trackmult");
@@ -705,7 +741,7 @@ int main(int argc, char *argv[])
   TH2D *h2_phi_vs_eta_EPD = new TH2D("h2_phi_vs_eta_EPD", "EPD;#eta;#phi", tempBins1, tempLowBound1, tempHighBound1, 300, -4, 4);
 
 
-  if (configs.sqrt_s_NN == 3.0)
+  if (configs.sqrt_s_NN == 3.0 || configs.sqrt_s_NN == 4.49)
     {
       tempBins1 = 300;
       tempLowBound1 = -1.2;
@@ -879,14 +915,17 @@ int main(int argc, char *argv[])
       TVector3 pVtx(f_xvtx, f_yvtx, f_zvtx);
       Double_t d_rvtx = TMath::Sqrt(f_xvtx * f_xvtx + (f_yvtx + 2) * (f_yvtx + 2));
       
+      h_zvtx->Fill(f_zvtx); // All events that pass minbias and wide TreeMaker cuts. Possibly move this past Vz cut.
+
       Bool_t goodVertexZ = (f_zvtx > configs.z_vtx_low && f_zvtx < configs.z_vtx_high);
       if (!goodVertexZ) continue;
       h_eventCheck->Fill(3);    // Count # of events after Vz cut
-      h2_trans_vtx_cut->Fill(pVtx.X(),pVtx.Y()); // transverse vtx position after z cut
+      h2_trans_vtx->Fill(pVtx.X(),pVtx.Y()); // transverse vtx position after z cut
 
       Bool_t goodVertexR = (d_rvtx < configs.r_vtx);
       if(!goodVertexR) continue;
       h_eventCheck->Fill(4);    // Count # of events after Vr cut
+      h2_trans_vtx_cut->Fill(pVtx.X(),pVtx.Y()); // transverse vtx position after z cut and R cut
 
       eventInfo.centID = i_centrality;
       if (i_centrality == -99) continue;  // Remove undefined events
@@ -986,7 +1025,7 @@ int main(int argc, char *argv[])
 	      particleInfo.phi = d_phi;
 	      particleInfo.eta = d_eta;
 	      particleInfo.pT  = d_pT;
-	      particleInfo.weight = (configs.sqrt_s_NN == 7.2) ? d_eta-Y_MID : d_pT;
+	      particleInfo.weight = (configs.sqrt_s_NN == 7.2) ? 1.0/*TMath::Abs(d_eta-Y_MID)*/ : d_pT;
 
 	      h2_phi_vs_eta_TPC->Fill(d_eta, d_phi);
 
@@ -1101,7 +1140,7 @@ int main(int argc, char *argv[])
 	      //=========================================================
 	      Bool_t pion   = false;
 	      Bool_t kaon   = false;
-	      Bool_t proton = (d_nSigmaPr > configs.nSig_pr_low) && (d_nSigmaPr < configs.nSig_pr_high) && (s_charge = 1);
+	      Bool_t proton = (d_nSigmaPr > configs.nSig_pr_low) && (d_nSigmaPr < configs.nSig_pr_high) && (s_charge == 1);
 	      //Bool_t proton = false;
 	      Bool_t deuteron = false;
 	      Bool_t triton   = false;
@@ -1131,10 +1170,27 @@ int main(int argc, char *argv[])
 		    (d_m2 < configs.m2_tr_high);
 		  */
 		}
-	      
+
 	      // 3.0 GeV d and t PID
 	      if (!pion && !kaon && configs.sqrt_s_NN == 3.0)
 		{
+		  deuteron = FlowUtils::momDepDeuteronID(configs.sqrt_s_NN, d_mom, d_zDeuteron, tofTrack, d_m2, 
+		  					 configs.z_de_low, configs.z_de_high, configs.m2_de_low, configs.m2_de_high);
+		  //deuteron = FlowUtils::momDepDeuteronID_lowSystematics(configs.sqrt_s_NN, d_mom, d_zDeuteron, tofTrack, d_m2, 
+		  //							configs.z_de_low, configs.z_de_high, configs.m2_de_low, configs.m2_de_high);
+		  //deuteron = FlowUtils::momDepDeuteronID_highSystematics(configs.sqrt_s_NN, d_mom, d_zDeuteron, tofTrack, d_m2, 
+		  //							 configs.z_de_low, configs.z_de_high, configs.m2_de_low, configs.m2_de_high);
+
+		  triton = FlowUtils::momDepTritonID(configs.sqrt_s_NN, d_mom, d_zTriton, tofTrack, d_m2, 
+		  				     configs.z_tr_low, configs.z_tr_high, configs.m2_tr_low, configs.m2_tr_high);
+		  //triton = FlowUtils::momDepTritonID_lowSystematics(configs.sqrt_s_NN, d_mom, d_zTriton, tofTrack, d_m2, 
+		  //						    configs.z_tr_low, configs.z_tr_high, configs.m2_tr_low, configs.m2_tr_high);
+		  //triton = FlowUtils::momDepTritonID_highSystematics(configs.sqrt_s_NN, d_mom, d_zTriton, tofTrack, d_m2, 
+		  //						     configs.z_tr_low, configs.z_tr_high, configs.m2_tr_low, configs.m2_tr_high);
+
+
+
+		  /*
 		  //  DEUTERON
 		  if (d_mom >= 0.4 && d_mom < 3.0)
 		    {
@@ -1173,7 +1229,9 @@ int main(int argc, char *argv[])
 			  d_m2 < configs.m2_de_high)
 			deuteron = true;
 		    }
+		  */
 
+		  /*
 		  // TRITON
 		  if (d_mom >= 1.0 && d_mom < 4.0)
 		    {
@@ -1216,9 +1274,11 @@ int main(int argc, char *argv[])
 			  d_m2 < configs.m2_tr_high)
 			triton = true;
 		    }
+		  */
+
 		}
 	      // 7.2 GeV d and t PID
-	      else if (!pion && !kaon && configs.sqrt_s_NN == 7.2)
+	      else if (!pion && !kaon && (configs.sqrt_s_NN == 7.2 || configs.sqrt_s_NN == 4.49))
 		{
 		  //  DEUTERON
 		  if (tofTrack)
@@ -1382,7 +1442,7 @@ int main(int argc, char *argv[])
 			}
 
 		    }
-		  if(s_charge < 0)
+		  else if(s_charge < 0)
 		    {
 		      particleInfo.kmTag = true;
 		      N_km++;
@@ -1560,6 +1620,9 @@ int main(int argc, char *argv[])
 	  tilenMip = EPDnMip[iEpdHit];
 	  tileWeight = (tilenMip > configs.epd_threshold) ? ( (tilenMip > configs.epd_max_weight)?configs.epd_max_weight:tilenMip ) : 0;
 
+	  h_eta->Fill(tileEta);
+	  //if (configs.sqrt_s_NN == 7.2) tileWeight *= TMath::Abs(tileEta - Y_MID);
+
 	  if (epdAside)
 	    {
 	      eventInfo.nHitsEpd++;
@@ -1667,7 +1730,10 @@ int main(int argc, char *argv[])
       //            END EPD STUFF
       //=========================================================
 
-
+      /*
+	if (configs.sqrt_s_NN == 3.0 || configs.sqrt_s_NN == 4.49)
+	{
+      */
       if (eventInfo.nTracksTpcA < configs.min_tracks) continue;
       if (eventInfo.nTracksTpcB < configs.min_tracks) continue;
       if (eventInfo.nHitsEpd    < configs.min_tracks) continue;
@@ -1677,8 +1743,15 @@ int main(int argc, char *argv[])
       else if (configs.fixed_target && configs.sqrt_s_NN == 7.2 && eventInfo.nHitsEpdB < configs.min_tracks) continue;
       //if (eventInfo.nHitsEpdB   >= configs.min_tracks) h_eventCheck_EpdB->Fill(0);//h_eventCheck_EpdB->Fill(eventSections_EpdB[0], 1);
       //if (eventInfo.nHitsEpdB   >= configs.min_tracks+4) h_eventCheck_EpdB->Fill(1);//h_eventCheck_EpdB->Fill(eventSections_EpdB[1], 1);
+      /*
+	}
+	else if (configs.sqrt_s_NN == 7.2)
+	{
+	if (eventInfo.nTracksTpcA < configs.min_tracks) continue;
+	else if (eventInfo.nTracksTpcB < configs.min_tracks) continue;
+	}
+      */
 
-      
       FlowUtils::checkZeroQ(eventInfo);
       if (eventInfo.badEvent) continue;
 
@@ -1915,6 +1988,74 @@ int main(int argc, char *argv[])
 		{ p2_v1_eta_cent_EPDB->Fill(centID, jthEta, TMath::Cos(1.0 * (jthPhi - psi_tpcB))); }
 	    }
 
+
+	  // "OBSERVED" FLOW VALUES HERE
+	  for (UInt_t j = 0; j < eventInfo.tpcParticles.size(); j++)
+	    {
+	      jthPhi = eventInfo.tpcParticles.at(j).phi;
+	      jthpT  = eventInfo.tpcParticles.at(j).pT;
+	      jthKT  = eventInfo.tpcParticles.at(j).KT;
+	      jthRapidity = eventInfo.tpcParticles.at(j).rapidity;
+	      if (jthPhi == FlowUtils::D_BAD_VALUE || jthpT == FlowUtils::D_BAD_VALUE || 
+		  jthKT == FlowUtils::D_BAD_VALUE  || jthRapidity == FlowUtils::D_BAD_VALUE) 
+		continue;
+
+	      // PI+
+	      // Normal acceptance 0 < yCM < 0.5
+	      if (eventInfo.tpcParticles.at(j).ppTag && 
+		  jthpT >= configs.pt_norm_pi_low && jthpT <= configs.pt_norm_pi_high &&
+		  jthRapidity - Y_MID > configs.yCM_norm_pi_low && jthRapidity - Y_MID < configs.yCM_norm_pi_high)
+		{ p_vn_pp_obs->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))); }
+	      // PI-
+	      // Normal acceptance 0 < yCM < 0.5
+	      else if (eventInfo.tpcParticles.at(j).pmTag && 
+		       jthpT >= configs.pt_norm_pi_low && jthpT <= configs.pt_norm_pi_high &&
+		       jthRapidity - Y_MID > configs.yCM_norm_pi_low && jthRapidity - Y_MID < configs.yCM_norm_pi_high)
+		{ p_vn_pm_obs->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))); }
+	      // K+
+	      // Normal acceptance 0 < yCM < 0.5
+	      else if (eventInfo.tpcParticles.at(j).kpTag && 
+		       jthpT >= configs.pt_norm_ka_low && jthpT <= configs.pt_norm_ka_high &&
+		       jthRapidity - Y_MID > configs.yCM_norm_ka_low && jthRapidity - Y_MID < configs.yCM_norm_ka_high)
+		{ p_vn_kp_obs->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))); }
+	      // K-
+	      // Normal acceptance 0 < yCM < 0.5
+	      else if (eventInfo.tpcParticles.at(j).kmTag && 
+		       jthpT >= configs.pt_norm_ka_low && jthpT <= configs.pt_norm_ka_high &&
+		       jthRapidity - Y_MID > configs.yCM_norm_ka_low && jthRapidity - Y_MID < configs.yCM_norm_ka_high)
+		{ p_vn_km_obs->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))); }
+	      // PROTON
+	      else if (eventInfo.tpcParticles.at(j).prTag)
+		{
+		  // NORMAL ACCEPTANCE 0 < y_cm < 0.5
+		  if (jthRapidity - Y_MID > configs.yCM_norm_pr_low && jthRapidity - Y_MID < configs.yCM_norm_pr_high &&
+		      jthpT > configs.pt_norm_pr_low && jthpT < configs.pt_norm_pr_high)
+		    { p_vn_pr_obs->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))); }
+		  // ALTERNATE ACCEPTANCE REGION
+		  if (/*jthMom >= 0.4 && jthMom < 2.6 && */
+		      jthKT/1.0 >= 0.04 && jthKT/1.0 <= 0.4 &&
+		      jthRapidity - Y_MID > configs.yCM_alt_pr_low && jthRapidity - Y_MID < configs.yCM_alt_pr_high// &&
+		      /*jthpT > configs.pt_alt_pr_low && jthpT < configs.pt_alt_pr_high*/)
+		    { p_vn_pr_alt_obs->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))); }
+		}
+	      // DEUTERON
+	      else if (eventInfo.tpcParticles.at(j).deTag && 
+		       jthKT/2.0 >= 0.04 && jthKT/2.0 <= 0.4 &&
+		       /*jthpT/2 >= configs.pt_norm_de_low && jthpT/2 <= configs.pt_norm_de_high &&*/
+		       jthRapidity - Y_MID > configs.yCM_norm_de_low && jthRapidity - Y_MID < configs.yCM_norm_de_high)
+		{ p_vn_de_obs->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))); }
+
+	      // TRITON
+	      else if (eventInfo.tpcParticles.at(j).trTag && 
+		       jthKT/3.0 >= 0.04 && jthKT/3.0 <= 0.4 &&
+		       /*jthpT/3 >= configs.pt_norm_tr_low && jthpT/3 <= configs.pt_norm_tr_high &&*/
+		       jthRapidity - Y_MID > configs.yCM_norm_tr_low && jthRapidity - Y_MID < configs.yCM_norm_tr_high)
+		{ p_vn_tr_obs->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))); }
+	    }
+	  //////
+
+
+	  // RESOLUTION CORRECTED FLOW VALUES HERE
 	  if (resolutionsFound)
 	    {
 	      TH1D *resolutionHistogram = (TH1D*)resolutionInputFile->Get("h_resolutions");
@@ -2167,11 +2308,11 @@ int main(int argc, char *argv[])
 
   // Manually write the few plots that were pulled from the trees
   h_eventCheck->Write();
-  h_zvtx->Write();
+  //h_zvtx->Write();
   h_trackmult->Write();
   h_refmult->Write();
   h_tofmult->Write();
-  h2_trans_vtx->Write();
+  //h2_trans_vtx->Write();
   h2_refmult_vs_trackmult->Write();
   h2_tofmult_vs_trackmult->Write();
   h2_tofmult_vs_refmult->Write();

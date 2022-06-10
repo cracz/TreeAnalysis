@@ -125,7 +125,6 @@ Int_t TreeMaker::Make()
 	  for (UInt_t i = 0; i < triggerIDs.size(); i++) 
 	    { if ( configs.triggersMatch(triggerIDs[i]) ) {b_good_trig = true;} }
 	  
-	  
 	  if(b_good_trig) // Minbias cut
 	    { 
 	      h_eventCheck->Fill(2); // Count # of events after minbias trigger id cut
@@ -135,10 +134,10 @@ Int_t TreeMaker::Make()
 	      Double_t d_yvtx = pVtx.y();
 	      Double_t d_zvtx = pVtx.z();
 	      Double_t d_rvtx = TMath::Sqrt(d_xvtx * d_xvtx + (d_yvtx + 2) * (d_yvtx + 2));
-	      
-	      h_zvtx->Fill(pVtx.Z());
-	      h2_trans_vtx->Fill(pVtx.X(),pVtx.Y());
-	      
+	  
+	      //h_zvtx->Fill(pVtx.Z());
+	      //h2_trans_vtx->Fill(pVtx.X(),pVtx.Y());
+
 	      if(d_zvtx > configs.m_z_vtx_low && d_zvtx < configs.m_z_vtx_high) // Vz cut
 		{ 
 		  if(d_rvtx < configs.m_r_vtx) // Vr cut
@@ -166,7 +165,7 @@ Int_t TreeMaker::Make()
 		      Int_t centrality = -99;
 
 		      // 3.0 GeV FXT  --  From Zachary Sweger Nov 11, 2020
-		      if (configs.sqrt_s_NN == 3.0)
+		      if (configs.sqrt_s_NN == 3.0 || configs.sqrt_s_NN == 4.49) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
 			  if     ( primTracks >=   5 && primTracks <=   6 ) centrality =  0;  // 75% - 80% (Peripheral)
 			  else if( primTracks >=   7 && primTracks <=   8 ) centrality =  1;
@@ -187,7 +186,7 @@ Int_t TreeMaker::Make()
 			}
 
 		      // 7.2 GeV FXT
-		      else if (configs.sqrt_s_NN == 7.2)
+		      else if (configs.sqrt_s_NN == 7.2) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
 			  if     ( primTracks >=   2 && primTracks <=   3 ) centrality =  0;  // 75% - 80% (Peripheral)
 			  else if( primTracks >=   4 && primTracks <=   5 ) centrality =  1;
@@ -207,8 +206,30 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 191 && primTracks <= 240 ) centrality = 15;  // 0% - 5% (Central)
 			}
 
+		      // 14.5 GeV COL
+		      /*
+		      else if (configs.sqrt_s_NN == 14.5) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
+			{
+			  if     ( primTracks >=    3 && primTracks <=   10 ) centrality =  0;  // 75% - 80% (Peripheral)
+			  else if( primTracks >=   11 && primTracks <=   21 ) centrality =  1;
+			  else if( primTracks >=    && primTracks <=   ) centrality =  2;
+			  else if( primTracks >=   && primTracks <=   ) centrality =  3;
+			  else if( primTracks >=   && primTracks <=   ) centrality =  4;
+			  else if( primTracks >=   && primTracks <=   ) centrality =  5;
+			  else if( primTracks >=   && primTracks <=   ) centrality =  6;
+			  else if( primTracks >=   && primTracks <=   ) centrality =  7;
+			  else if( primTracks >=   && primTracks <=   ) centrality =  8;
+			  else if( primTracks >=   && primTracks <=   ) centrality =  9;
+			  else if( primTracks >=   && primTracks <=  ) centrality = 10;
+			  else if( primTracks >=  && primTracks <=  ) centrality = 11;
+			  else if( primTracks >=  && primTracks <=  ) centrality = 12;
+			  else if( primTracks >=  && primTracks <=  ) centrality = 13;
+			  else if( primTracks >=  && primTracks <=  ) centrality = 14;
+			  else if( primTracks >=  && primTracks <= ) centrality = 15;  // 0% - 5% (Central)
+			}
+		      */
 		      // 19.6 GeV COL
-		      else if (configs.sqrt_s_NN == 19.6)
+		      else if (configs.sqrt_s_NN == 19.6) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
 			  if     ( primTracks >=   4 && primTracks <=   5 ) centrality =  0;  // 75% - 80% (Peripheral)
 			  else if( primTracks >=   6 && primTracks <=   8 ) centrality =  1;

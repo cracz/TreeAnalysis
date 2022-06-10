@@ -18,11 +18,14 @@ Int_t MakeTrees(Int_t nEvents, Int_t nFiles, TString InputFileList, TString Outp
   gSystem->Load("StPileupUtil");
   gSystem->Load("TreeMaker.so");
   gSystem->Load("ConfigReader.so");
-
+  std::cout << "Loaded" << std::endl;
   // List of member links in the chain
   StChain* chain = new StChain;
+  std::cout << "chain" << std::endl;
   StPicoDstMaker* picoMaker = new StPicoDstMaker(2,InputFileList,"picoDst");
+  std::cout << "picoMaker" << std::endl;
   TreeMaker* doAnalysis = new TreeMaker(picoMaker,configFileName,JobIdName,nEvents,testParameter);
+  std::cout << "doAnalysis" << std::endl;
   
   if (nEvents == 0)  nEvents = 100000000 ;       // Take all events in nFiles if nEvents = 0
     

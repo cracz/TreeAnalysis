@@ -557,7 +557,316 @@ namespace FlowUtils
   }// End shiftPsi()
 
 
+  Bool_t momDepDeuteronID(Double_t sqrt_s_NN, Double_t momentum, Double_t zDeuteron, 
+			  Bool_t tofTrack, Double_t m2, 
+			  Double_t zLowBoundWithTof, Double_t zHighBoundWithTof, Double_t m2LowBoundWithTof, Double_t m2HighBoundWithTof)
+  {
+    Bool_t deuteron = false;
 
-}
+    if (sqrt_s_NN == 3.0)
+      {
+	if (momentum >= 0.4 && momentum < 3.0)
+	  {
+	    if      (momentum >= 0.4 && momentum < 0.5 && zDeuteron > -0.476112 && zDeuteron < 0.248539) deuteron = true;
+	    else if (momentum >= 0.5 && momentum < 0.6 && zDeuteron > -0.445644 && zDeuteron < 0.311067) deuteron = true;
+	    else if (momentum >= 0.6 && momentum < 0.7 && zDeuteron > -0.43008  && zDeuteron < 0.331624) deuteron = true;
+	    else if (momentum >= 0.7 && momentum < 0.8 && zDeuteron > -0.416061 && zDeuteron < 0.341399) deuteron = true;
+	    else if (momentum >= 0.8 && momentum < 0.9 && zDeuteron > -0.404842 && zDeuteron < 0.338091) deuteron = true;
+	    else if (momentum >= 0.9 && momentum < 1.0 && zDeuteron > -0.37419  && zDeuteron < 0.337724) deuteron = true;
+	    else if (momentum >= 1.0 && momentum < 1.1 && zDeuteron > -0.32986  && zDeuteron < 0.332241) deuteron = true;
+	    else if (momentum >= 1.1 && momentum < 1.2 && zDeuteron > -0.332995 && zDeuteron < 0.325582) deuteron = true;
+	    else if (momentum >= 1.2 && momentum < 1.3 && zDeuteron > -0.306145 && zDeuteron < 0.319532) deuteron = true;
+	    else if (momentum >= 1.3 && momentum < 1.4 && zDeuteron > -0.275987 && zDeuteron < 0.313227) deuteron = true;
+	    else if (momentum >= 1.4 && momentum < 1.5 && zDeuteron > -0.250464 && zDeuteron < 0.301911) deuteron = true;
+	    else if (momentum >= 1.5 && momentum < 1.6 && zDeuteron > -0.215135 && zDeuteron < 0.302149) deuteron = true;
+	    else if (momentum >= 1.6 && momentum < 1.7 && zDeuteron > -0.176733 && zDeuteron < 0.308644) deuteron = true;
+	    else if (momentum >= 1.7 && momentum < 1.8 && zDeuteron > -0.160866 && zDeuteron < 0.29673) deuteron = true;
+	    else if (momentum >= 1.8 && momentum < 1.9 && zDeuteron > -0.149249 && zDeuteron < 0.281362) deuteron = true;
+	    else if (momentum >= 1.9 && momentum < 2.0 && zDeuteron > -0.0830817 && zDeuteron < 0.273483) deuteron = true;
+	    else if (momentum >= 2.0 && momentum < 2.1 && zDeuteron > -0.065219 && zDeuteron < 0.269654) deuteron = true;
+	    else if (momentum >= 2.1 && momentum < 2.2 && zDeuteron > -0.04952  && zDeuteron < 0.265074) deuteron = true;
+	    else if (momentum >= 2.2 && momentum < 2.3 && zDeuteron > -0.0358834 && zDeuteron < 0.258749) deuteron = true;
+	    else if (momentum >= 2.3 && momentum < 2.4 && zDeuteron > -0.0218641 && zDeuteron < 0.25294) deuteron = true;
+	    else if (momentum >= 2.4 && momentum < 2.5 && zDeuteron > -0.0114193 && zDeuteron < 0.244108) deuteron = true;
+	    else if (momentum >= 2.5 && momentum < 2.6 && zDeuteron > -0.000659632 && zDeuteron < 0.205416) deuteron = true;
+	    else if (momentum >= 2.6 && momentum < 2.7 && zDeuteron > 0.010662  && zDeuteron < 0.198006) deuteron = true;
+	    else if (momentum >= 2.7 && momentum < 2.8 && zDeuteron > 0.0203815 && zDeuteron < 0.189092) deuteron = true;
+	    else if (momentum >= 2.8 && momentum < 2.9 && zDeuteron > 0.0313737 && zDeuteron < 0.181285) deuteron = true;
+	    else if (momentum >= 2.9 && momentum < 3.0 && zDeuteron > 0.0446902 && zDeuteron < 0.174561) deuteron = true;
+	  }
+	else if (tofTrack)
+	  {
+	    if (zDeuteron > zLowBoundWithTof && zDeuteron < zHighBoundWithTof &&
+		m2 > m2LowBoundWithTof && m2 < m2HighBoundWithTof)
+	      deuteron = true;
+	  }
+      }// End if (3.0 GeV)
+
+    return deuteron;
+  }// End momDepDeuteronID()
+
+
+
+  Bool_t momDepDeuteronID_lowSystematics(Double_t sqrt_s_NN, Double_t momentum, Double_t zDeuteron, 
+					 Bool_t tofTrack, Double_t m2, 
+					 Double_t zLowBoundWithTof, Double_t zHighBoundWithTof, Double_t m2LowBoundWithTof, Double_t m2HighBoundWithTof)
+  {
+    Bool_t deuteron = false;
+
+    if (sqrt_s_NN == 3.0)
+      {
+	if (momentum >= 0.4 && momentum < 3.0)
+	  {
+	    if      (momentum >= 0.4 && momentum < 0.5 && zDeuteron > -0.4036469 && zDeuteron < 0.1760739) deuteron = true;
+	    else if (momentum >= 0.5 && momentum < 0.6 && zDeuteron > -0.3699729 && zDeuteron < 0.2353959) deuteron = true;
+	    else if (momentum >= 0.6 && momentum < 0.7 && zDeuteron > -0.3539096 && zDeuteron < 0.2554536) deuteron = true;
+	    else if (momentum >= 0.7 && momentum < 0.8 && zDeuteron > -0.340315 && zDeuteron < 0.265653) deuteron = true;
+	    else if (momentum >= 0.8 && momentum < 0.9 && zDeuteron > -0.3305487 && zDeuteron < 0.2637977) deuteron = true;
+	    else if (momentum >= 0.9 && momentum < 1.0 && zDeuteron > -0.3029986  && zDeuteron < 0.2665326) deuteron = true;
+	    else if (momentum >= 1.0 && momentum < 1.1 && zDeuteron > -0.2636499  && zDeuteron < 0.2660309) deuteron = true;
+	    else if (momentum >= 1.1 && momentum < 1.2 && zDeuteron > -0.2671373 && zDeuteron < 0.2597243) deuteron = true;
+	    else if (momentum >= 1.2 && momentum < 1.3 && zDeuteron > -0.2435773 && zDeuteron < 0.2569643) deuteron = true;
+	    else if (momentum >= 1.3 && momentum < 1.4 && zDeuteron > -0.2170656 && zDeuteron < 0.2543056) deuteron = true;
+	    else if (momentum >= 1.4 && momentum < 1.5 && zDeuteron > -0.1952265 && zDeuteron < 0.2466735) deuteron = true;
+	    else if (momentum >= 1.5 && momentum < 1.6 && zDeuteron > -0.1634066 && zDeuteron < 0.2504206) deuteron = true;
+	    else if (momentum >= 1.6 && momentum < 1.7 && zDeuteron > -0.1281953 && zDeuteron < 0.2601063) deuteron = true;
+	    else if (momentum >= 1.7 && momentum < 1.8 && zDeuteron > -0.1151064 && zDeuteron < 0.2509704) deuteron = true;
+	    else if (momentum >= 1.8 && momentum < 1.9 && zDeuteron > -0.1061879 && zDeuteron < 0.2383009) deuteron = true;
+	    else if (momentum >= 1.9 && momentum < 2.0 && zDeuteron > -0.04742523 && zDeuteron < 0.23782653) deuteron = true;
+	    else if (momentum >= 2.0 && momentum < 2.1 && zDeuteron > -0.0317317 && zDeuteron < 0.2361667) deuteron = true;
+	    else if (momentum >= 2.1 && momentum < 2.2 && zDeuteron > -0.0180606  && zDeuteron < 0.2336146) deuteron = true;
+	    else if (momentum >= 2.2 && momentum < 2.3 && zDeuteron > -0.00642016 && zDeuteron < 0.22928576) deuteron = true;
+	    else if (momentum >= 2.3 && momentum < 2.4 && zDeuteron > 0.00561631 && zDeuteron < 0.22545959) deuteron = true;
+	    else if (momentum >= 2.4 && momentum < 2.5 && zDeuteron > 0.01413343 && zDeuteron < 0.21855527) deuteron = true;
+	    else if (momentum >= 2.5 && momentum < 2.6 && zDeuteron > 0.019947933 && zDeuteron < 0.184808437) deuteron = true;
+	    else if (momentum >= 2.6 && momentum < 2.7 && zDeuteron > 0.0293964  && zDeuteron < 0.1792716) deuteron = true;
+	    else if (momentum >= 2.7 && momentum < 2.8 && zDeuteron > 0.03725255 && zDeuteron < 0.17222095) deuteron = true;
+	    else if (momentum >= 2.8 && momentum < 2.9 && zDeuteron > 0.04636483 && zDeuteron < 0.16629387) deuteron = true;
+	    else if (momentum >= 2.9 && momentum < 3.0 && zDeuteron > 0.05767728 && zDeuteron < 0.16157392) deuteron = true;
+	  }
+	else if (tofTrack)
+	  {
+	    if (zDeuteron > zLowBoundWithTof && zDeuteron < zHighBoundWithTof &&
+		m2 > m2LowBoundWithTof && m2 < m2HighBoundWithTof)
+	      deuteron = true;
+	  }
+      }// End if (3.0 GeV)
+
+    return deuteron;
+  }// End momDepDeuteronID_lowSystematics()
+
+
+
+  Bool_t momDepDeuteronID_highSystematics(Double_t sqrt_s_NN, Double_t momentum, Double_t zDeuteron, 
+					  Bool_t tofTrack, Double_t m2, 
+					  Double_t zLowBoundWithTof, Double_t zHighBoundWithTof, Double_t m2LowBoundWithTof, Double_t m2HighBoundWithTof)
+  {
+    Bool_t deuteron = false;
+
+    if (sqrt_s_NN == 3.0)
+      {
+	if (momentum >= 0.4 && momentum < 3.0)
+	  {
+	    if      (momentum >= 0.4 && momentum < 0.5 && zDeuteron > -0.5485771 && zDeuteron < 0.3210041) deuteron = true;
+	    else if (momentum >= 0.5 && momentum < 0.6 && zDeuteron > -0.5213151 && zDeuteron < 0.3867381) deuteron = true;
+	    else if (momentum >= 0.6 && momentum < 0.7 && zDeuteron > -0.5062504 && zDeuteron < 0.4077944) deuteron = true;
+	    else if (momentum >= 0.7 && momentum < 0.8 && zDeuteron > -0.491807 && zDeuteron < 0.417145) deuteron = true;
+	    else if (momentum >= 0.8 && momentum < 0.9 && zDeuteron > -0.4791353 && zDeuteron < 0.4123843) deuteron = true;
+	    else if (momentum >= 0.9 && momentum < 1.0 && zDeuteron > -0.4453814  && zDeuteron < 0.4089154) deuteron = true;
+	    else if (momentum >= 1.0 && momentum < 1.1 && zDeuteron > -0.3960701  && zDeuteron < 0.3984511) deuteron = true;
+	    else if (momentum >= 1.1 && momentum < 1.2 && zDeuteron > -0.3988527 && zDeuteron < 0.3914397) deuteron = true;
+	    else if (momentum >= 1.2 && momentum < 1.3 && zDeuteron > -0.3687127 && zDeuteron < 0.3820997) deuteron = true;
+	    else if (momentum >= 1.3 && momentum < 1.4 && zDeuteron > -0.3349084 && zDeuteron < 0.3721484) deuteron = true;
+	    else if (momentum >= 1.4 && momentum < 1.5 && zDeuteron > -0.3057015 && zDeuteron < 0.3571485) deuteron = true;
+	    else if (momentum >= 1.5 && momentum < 1.6 && zDeuteron > -0.2668634 && zDeuteron < 0.3538774) deuteron = true;
+	    else if (momentum >= 1.6 && momentum < 1.7 && zDeuteron > -0.2252707 && zDeuteron < 0.3571817) deuteron = true;
+	    else if (momentum >= 1.7 && momentum < 1.8 && zDeuteron > -0.2066256 && zDeuteron < 0.3424896) deuteron = true;
+	    else if (momentum >= 1.8 && momentum < 1.9 && zDeuteron > -0.1923101 && zDeuteron < 0.3244231) deuteron = true;
+	    else if (momentum >= 1.9 && momentum < 2.0 && zDeuteron > -0.11873817 && zDeuteron < 0.30913947) deuteron = true;
+	    else if (momentum >= 2.0 && momentum < 2.1 && zDeuteron > -0.0987063 && zDeuteron < 0.3031413) deuteron = true;
+	    else if (momentum >= 2.1 && momentum < 2.2 && zDeuteron > -0.0809794  && zDeuteron < 0.2965334) deuteron = true;
+	    else if (momentum >= 2.2 && momentum < 2.3 && zDeuteron > -0.06534664 && zDeuteron < 0.28821224) deuteron = true;
+	    else if (momentum >= 2.3 && momentum < 2.4 && zDeuteron > -0.04934451 && zDeuteron < 0.28042041) deuteron = true;
+	    else if (momentum >= 2.4 && momentum < 2.5 && zDeuteron > -0.03697203 && zDeuteron < 0.26966073) deuteron = true;
+	    else if (momentum >= 2.5 && momentum < 2.6 && zDeuteron > -0.021267193 && zDeuteron < 0.226023563) deuteron = true;
+	    else if (momentum >= 2.6 && momentum < 2.7 && zDeuteron > -0.0080724  && zDeuteron < 0.2167404) deuteron = true;
+	    else if (momentum >= 2.7 && momentum < 2.8 && zDeuteron > 0.00351045 && zDeuteron < 0.20596305) deuteron = true;
+	    else if (momentum >= 2.8 && momentum < 2.9 && zDeuteron > 0.01638257 && zDeuteron < 0.19627613) deuteron = true;
+	    else if (momentum >= 2.9 && momentum < 3.0 && zDeuteron > 0.03170312 && zDeuteron < 0.18754808) deuteron = true;
+	  }
+	else if (tofTrack)
+	  {
+	    if (zDeuteron > zLowBoundWithTof && zDeuteron < zHighBoundWithTof &&
+		m2 > m2LowBoundWithTof && m2 < m2HighBoundWithTof)
+	      deuteron = true;
+	  }
+      }// End if (3.0 GeV)
+
+    return deuteron;
+  }// End momDepDeuteronID_highSystematics()
+
+
+
+  Bool_t momDepTritonID(Double_t sqrt_s_NN, Double_t momentum, Double_t zTriton, 
+			Bool_t tofTrack, Double_t m2, 
+			Double_t zLowBoundWithTof, Double_t zHighBoundWithTof, Double_t m2LowBoundWithTof, Double_t m2HighBoundWithTof)
+  {
+    Bool_t triton = false;
+
+    if (sqrt_s_NN == 3.0)
+      {
+	if (momentum >= 1.0 && momentum < 4.0)
+	  {
+	    if      (momentum >= 1.0 && momentum < 1.1 && zTriton > -0.332011 && zTriton < 0.251103) triton = true;
+	    else if (momentum >= 1.1 && momentum < 1.2 && zTriton > -0.310412 && zTriton < 0.296090) triton = true;
+	    else if (momentum >= 1.2 && momentum < 1.3 && zTriton > -0.293322 && zTriton < 0.334467) triton = true;
+	    else if (momentum >= 1.3 && momentum < 1.4 && zTriton > -0.270550 && zTriton < 0.373857) triton = true;
+	    else if (momentum >= 1.4 && momentum < 1.5 && zTriton > -0.248412 && zTriton < 0.406237) triton = true;
+	    else if (momentum >= 1.5 && momentum < 1.6 && zTriton > -0.228044 && zTriton < 0.333261) triton = true;
+	    else if (momentum >= 1.6 && momentum < 1.7 && zTriton > -0.210093 && zTriton < 0.343588) triton = true;
+	    else if (momentum >= 1.7 && momentum < 1.8 && zTriton > -0.190900 && zTriton < 0.332586) triton = true;
+	    else if (momentum >= 1.8 && momentum < 1.9 && zTriton > -0.183153 && zTriton < 0.334197) triton = true;
+	    else if (momentum >= 1.9 && momentum < 2.0 && zTriton > -0.166020 && zTriton < 0.323303) triton = true;
+	    else if (momentum >= 2.0 && momentum < 2.1 && zTriton > -0.102334 && zTriton < 0.307724) triton = true;
+	    else if (momentum >= 2.1 && momentum < 2.2 && zTriton > -0.091053 && zTriton < 0.294345) triton = true;
+	    else if (momentum >= 2.2 && momentum < 2.3 && zTriton > -0.076457 && zTriton < 0.285978) triton = true;
+	    else if (momentum >= 2.3 && momentum < 2.4 && zTriton > -0.055669 && zTriton < 0.253769) triton = true;
+	    else if (momentum >= 2.4 && momentum < 2.5 && zTriton > -0.035848 && zTriton < 0.254487) triton = true;
+	    else if (momentum >= 2.5 && momentum < 2.6 && zTriton > -0.027266 && zTriton < 0.249350) triton = true;
+	    else if (momentum >= 2.6 && momentum < 2.7 && zTriton > -0.028152 && zTriton < 0.236713) triton = true;
+	    else if (momentum >= 2.7 && momentum < 2.8 && zTriton > -0.027867 && zTriton < 0.227672) triton = true;
+	    else if (momentum >= 2.8 && momentum < 2.9 && zTriton > -0.024675 && zTriton < 0.222215) triton = true;
+	    else if (momentum >= 2.9 && momentum < 3.0 && zTriton > -0.019179 && zTriton < 0.227362) triton = true;
+	    else if (momentum >= 3.0 && momentum < 3.1 && zTriton > -0.013267 && zTriton < 0.236052) triton = true;
+	    else if (momentum >= 3.1 && momentum < 3.2 && zTriton > -0.007851 && zTriton < 0.246071) triton = true;
+	    else if (momentum >= 3.2 && momentum < 3.3 && zTriton > -0.006311 && zTriton < 0.254907) triton = true;
+	    else if (momentum >= 3.3 && momentum < 3.4 && zTriton > 0.019834  && zTriton < 0.244291) triton = true;
+	    else if (momentum >= 3.4 && momentum < 3.5 && zTriton > 0.031221  && zTriton < 0.273652) triton = true;
+	    else if (momentum >= 3.5 && momentum < 3.6 && zTriton > 0.068248  && zTriton < 0.257484) triton = true;
+	    else if (momentum >= 3.6 && momentum < 3.7 && zTriton > 0.088804  && zTriton < 0.260799) triton = true;
+	    else if (momentum >= 3.7 && momentum < 3.8 && zTriton > 0.091490  && zTriton < 0.271776) triton = true;
+	    else if (momentum >= 3.8 && momentum < 3.9 && zTriton > 0.106161  && zTriton < 0.285652) triton = true;
+	    else if (momentum >= 3.9 && momentum < 4.0 && zTriton > 0.103653  && zTriton < 0.299234) triton = true;
+	  }
+	else if (tofTrack)
+	  {
+	    if (zTriton > zLowBoundWithTof && zTriton < zHighBoundWithTof &&
+		m2 > m2LowBoundWithTof && m2 < m2HighBoundWithTof)
+	      triton = true;
+	  }
+      }// End if (3.0 GeV)
+
+    return triton;
+  }// End momDepTritonID()
+
+
+  Bool_t momDepTritonID_lowSystematics(Double_t sqrt_s_NN, Double_t momentum, Double_t zTriton, 
+				       Bool_t tofTrack, Double_t m2, 
+				       Double_t zLowBoundWithTof, Double_t zHighBoundWithTof, Double_t m2LowBoundWithTof, Double_t m2HighBoundWithTof)
+  {
+    Bool_t triton = false;
+
+    if (sqrt_s_NN == 3.0)
+      {
+	if (momentum >= 1.0 && momentum < 4.0)
+	  {
+	    if      (momentum >= 1.0 && momentum < 1.1 && zTriton > -0.2736996 && zTriton < 0.1927916) triton = true;
+	    else if (momentum >= 1.1 && momentum < 1.2 && zTriton > -0.2497618 && zTriton < 0.2354398) triton = true;
+	    else if (momentum >= 1.2 && momentum < 1.3 && zTriton > -0.2305431 && zTriton < 0.2716881) triton = true;
+	    else if (momentum >= 1.3 && momentum < 1.4 && zTriton > -0.2061093 && zTriton < 0.3094163) triton = true;
+	    else if (momentum >= 1.4 && momentum < 1.5 && zTriton > -0.1829471 && zTriton < 0.3407721) triton = true;
+	    else if (momentum >= 1.5 && momentum < 1.6 && zTriton > -0.1719135 && zTriton < 0.2771305) triton = true;
+	    else if (momentum >= 1.6 && momentum < 1.7 && zTriton > -0.1547249 && zTriton < 0.2882199) triton = true;
+	    else if (momentum >= 1.7 && momentum < 1.8 && zTriton > -0.1385514 && zTriton < 0.2802374) triton = true;
+	    else if (momentum >= 1.8 && momentum < 1.9 && zTriton > -0.131418 && zTriton < 0.282462) triton = true;
+	    else if (momentum >= 1.9 && momentum < 2.0 && zTriton > -0.1170877 && zTriton < 0.2743707) triton = true;
+	    else if (momentum >= 2.0 && momentum < 2.1 && zTriton > -0.0613282 && zTriton < 0.2667182) triton = true;
+	    else if (momentum >= 2.1 && momentum < 2.2 && zTriton > -0.0525132 && zTriton < 0.2558052) triton = true;
+	    else if (momentum >= 2.2 && momentum < 2.3 && zTriton > -0.0402135 && zTriton < 0.2497345) triton = true;
+	    else if (momentum >= 2.3 && momentum < 2.4 && zTriton > -0.0247252 && zTriton < 0.2228252) triton = true;
+	    else if (momentum >= 2.4 && momentum < 2.5 && zTriton > -0.0068145 && zTriton < 0.2254535) triton = true;
+	    else if (momentum >= 2.5 && momentum < 2.6 && zTriton > 0.0003956 && zTriton < 0.2216884) triton = true;
+	    else if (momentum >= 2.6 && momentum < 2.7 && zTriton > -0.0016655 && zTriton < 0.2102265) triton = true;
+	    else if (momentum >= 2.7 && momentum < 2.8 && zTriton > -0.0023131 && zTriton < 0.2021181) triton = true;
+	    else if (momentum >= 2.8 && momentum < 2.9 && zTriton > 0.000014 && zTriton < 0.197526) triton = true;
+	    else if (momentum >= 2.9 && momentum < 3.0 && zTriton > 0.0054751 && zTriton < 0.2027079) triton = true;
+	    else if (momentum >= 3.0 && momentum < 3.1 && zTriton > 0.0116649 && zTriton < 0.2111201) triton = true;
+	    else if (momentum >= 3.1 && momentum < 3.2 && zTriton > 0.0175412 && zTriton < 0.2206788) triton = true;
+	    else if (momentum >= 3.2 && momentum < 3.3 && zTriton > 0.0198108 && zTriton < 0.2287852) triton = true;
+	    else if (momentum >= 3.3 && momentum < 3.4 && zTriton > 0.0422797  && zTriton < 0.2218453) triton = true;
+	    else if (momentum >= 3.4 && momentum < 3.5 && zTriton > 0.0554641  && zTriton < 0.2494089) triton = true;
+	    else if (momentum >= 3.5 && momentum < 3.6 && zTriton > 0.0871716  && zTriton < 0.2385604) triton = true;
+	    else if (momentum >= 3.6 && momentum < 3.7 && zTriton > 0.1060035  && zTriton < 0.2435995) triton = true;
+	    else if (momentum >= 3.7 && momentum < 3.8 && zTriton > 0.1095186  && zTriton < 0.2537474) triton = true;
+	    else if (momentum >= 3.8 && momentum < 3.9 && zTriton > 0.1241101  && zTriton < 0.2677029) triton = true;
+	    else if (momentum >= 3.9 && momentum < 4.0 && zTriton > 0.1232111  && zTriton < 0.2796759) triton = true;
+	  } 
+	else if (tofTrack)
+	  {
+	    if (zTriton > zLowBoundWithTof && zTriton < zHighBoundWithTof &&
+		m2 > m2LowBoundWithTof && m2 < m2HighBoundWithTof)
+	      triton = true;
+	  }
+      }// End if (3.0 GeV)
+
+    return triton;
+  }// End momDepTritonID_lowSystematics()
+
+
+
+  Bool_t momDepTritonID_highSystematics(Double_t sqrt_s_NN, Double_t momentum, Double_t zTriton, 
+				       Bool_t tofTrack, Double_t m2, 
+				       Double_t zLowBoundWithTof, Double_t zHighBoundWithTof, Double_t m2LowBoundWithTof, Double_t m2HighBoundWithTof)
+  {
+    Bool_t triton = false;
+
+    if (sqrt_s_NN == 3.0)
+      {
+	if (momentum >= 1.0 && momentum < 4.0)
+	  {
+	    if      (momentum >= 1.0 && momentum < 1.1 && zTriton > -0.3903224 && zTriton < 0.3094144) triton = true;
+	    else if (momentum >= 1.1 && momentum < 1.2 && zTriton > -0.3710622 && zTriton < 0.3567402) triton = true;
+	    else if (momentum >= 1.2 && momentum < 1.3 && zTriton > -0.3561009 && zTriton < 0.3972459) triton = true;
+	    else if (momentum >= 1.3 && momentum < 1.4 && zTriton > -0.3349907 && zTriton < 0.4382977) triton = true;
+	    else if (momentum >= 1.4 && momentum < 1.5 && zTriton > -0.3138769 && zTriton < 0.4717019) triton = true;
+	    else if (momentum >= 1.5 && momentum < 1.6 && zTriton > -0.2841745 && zTriton < 0.3893915) triton = true;
+	    else if (momentum >= 1.6 && momentum < 1.7 && zTriton > -0.2654611 && zTriton < 0.3989561) triton = true;
+	    else if (momentum >= 1.7 && momentum < 1.8 && zTriton > -0.2432486 && zTriton < 0.3849346) triton = true;
+	    else if (momentum >= 1.8 && momentum < 1.9 && zTriton > -0.234888 && zTriton < 0.385932) triton = true;
+	    else if (momentum >= 1.9 && momentum < 2.0 && zTriton > -0.2149523 && zTriton < 0.3722353) triton = true;
+	    else if (momentum >= 2.0 && momentum < 2.1 && zTriton > -0.1433398 && zTriton < 0.3487298) triton = true;
+	    else if (momentum >= 2.1 && momentum < 2.2 && zTriton > -0.1295928 && zTriton < 0.3328848) triton = true;
+	    else if (momentum >= 2.2 && momentum < 2.3 && zTriton > -0.1127005 && zTriton < 0.3222215) triton = true;
+	    else if (momentum >= 2.3 && momentum < 2.4 && zTriton > -0.0866128 && zTriton < 0.2847128) triton = true;
+	    else if (momentum >= 2.4 && momentum < 2.5 && zTriton > -0.0648815 && zTriton < 0.2835205) triton = true;
+	    else if (momentum >= 2.5 && momentum < 2.6 && zTriton > -0.0549276 && zTriton < 0.2770116) triton = true;
+	    else if (momentum >= 2.6 && momentum < 2.7 && zTriton > -0.0546385 && zTriton < 0.2631995) triton = true;
+	    else if (momentum >= 2.7 && momentum < 2.8 && zTriton > -0.0534209 && zTriton < 0.2532259) triton = true;
+	    else if (momentum >= 2.8 && momentum < 2.9 && zTriton > -0.049364 && zTriton < 0.246904) triton = true;
+	    else if (momentum >= 2.9 && momentum < 3.0 && zTriton > -0.0438331 && zTriton < 0.2520161) triton = true;
+	    else if (momentum >= 3.0 && momentum < 3.1 && zTriton > -0.0381989 && zTriton < 0.2609839) triton = true;
+	    else if (momentum >= 3.1 && momentum < 3.2 && zTriton > -0.0332432 && zTriton < 0.2714632) triton = true;
+	    else if (momentum >= 3.2 && momentum < 3.3 && zTriton > -0.0324328 && zTriton < 0.2810288) triton = true;
+	    else if (momentum >= 3.3 && momentum < 3.4 && zTriton > -0.0026117  && zTriton < 0.2667367) triton = true;
+	    else if (momentum >= 3.4 && momentum < 3.5 && zTriton > 0.0069779  && zTriton < 0.2978951) triton = true;
+	    else if (momentum >= 3.5 && momentum < 3.6 && zTriton > 0.0493244  && zTriton < 0.2764076) triton = true;
+	    else if (momentum >= 3.6 && momentum < 3.7 && zTriton > 0.0716045  && zTriton < 0.2779985) triton = true;
+	    else if (momentum >= 3.7 && momentum < 3.8 && zTriton > 0.0734614  && zTriton < 0.2898046) triton = true;
+	    else if (momentum >= 3.8 && momentum < 3.9 && zTriton > 0.0882119  && zTriton < 0.3036011) triton = true;
+	    else if (momentum >= 3.9 && momentum < 4.0 && zTriton > 0.0840949  && zTriton < 0.3187921) triton = true;
+	  }
+	else if (tofTrack)
+	  {
+	    if (zTriton > zLowBoundWithTof && zTriton < zHighBoundWithTof &&
+		m2 > m2LowBoundWithTof && m2 < m2HighBoundWithTof)
+	      triton = true;
+	  }
+      }// End if (3.0 GeV)
+
+    return triton;
+  }// End momDepTritonID_highSystematics()
+
+
+}// End namespace FlowUtils
 
 #endif
