@@ -250,13 +250,12 @@ int main(int argc, char *argv[])
     }
 
   // INPUT FILE FOR TPC EFFICIENCY CORRECTIONS
-  TString tpcEfficiencyFileName = "results_eff_tpc.root";
+  TString tpcEfficiencyFileName = "pdt_efficiency.root";
   TFile *tpcEfficiencyFile;
   Bool_t efficienciesFound = false;
-  TH2D *h2_ratio_pp;
-  TH2D *h2_ratio_kp;
-  TH2D *h2_ratio_km;
-  TH2D *h2_ratio_pr;
+  TH2D *h2_tracking_pr;
+  TH2D *h2_tracking_de;
+  TH2D *h2_tracking_tr;
   if (RUN_ITERATION == 2)
     {
       tpcEfficiencyFile = TFile::Open(tpcEfficiencyFileName, "READ");
@@ -264,11 +263,10 @@ int main(int argc, char *argv[])
       else 
 	{ 
 	  efficienciesFound = true;
-	  std::cout << "TPC efficiency file was found!" << std::endl; 
-	  h2_ratio_pp = (TH2D*)tpcEfficiencyFile->Get("h2_ratio_pp");
-	  h2_ratio_kp = (TH2D*)tpcEfficiencyFile->Get("h2_ratio_kp");
-	  h2_ratio_km = (TH2D*)tpcEfficiencyFile->Get("h2_ratio_km");
-	  h2_ratio_pr = (TH2D*)tpcEfficiencyFile->Get("h2_ratio_pr");
+	  std::cout << "TPC pdt efficiency file was found!" << std::endl; 
+	  h2_tracking_pr = (TH2D*)tpcEfficiencyFile->Get("tracking_p");
+	  h2_tracking_de = (TH2D*)tpcEfficiencyFile->Get("tracking_d");
+	  h2_tracking_tr = (TH2D*)tpcEfficiencyFile->Get("tracking_t");
 	}
     }
 
@@ -526,7 +524,7 @@ int main(int argc, char *argv[])
   TH2D *h2_pT_vs_yCM_kp = new TH2D("h2_pT_vs_yCM_kp", "K^{+};y-y_{mid};p_{T} (GeV/c)",   tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
   TH2D *h2_pT_vs_yCM_km = new TH2D("h2_pT_vs_yCM_km", "K^{-};y-y_{mid};p_{T} (GeV/c)",   tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
   TH2D *h2_pT_vs_yCM_pr = new TH2D("h2_pT_vs_yCM_pr", "Proton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
-  //TH2D *h2_pT_vs_yCM_pr_alt = new TH2D("h2_pT_vs_yCM_pr_alt", "Proton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
+  TH2D *h2_pT_vs_yCM_pr_alt = new TH2D("h2_pT_vs_yCM_pr_alt", "Proton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
   TH2D *h2_pT_vs_yCM_de = new TH2D("h2_pT_vs_yCM_de", "Deuteron;y-y_{mid};p_{T} (GeV/c)",tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
   TH2D *h2_pT_vs_yCM_tr = new TH2D("h2_pT_vs_yCM_tr", "Triton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
 
@@ -639,6 +637,14 @@ int main(int argc, char *argv[])
 						   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 24, -6.0, -3.5);
   TProfile2D *p2_v1_eta_cent_EPDB = new TProfile2D("p2_v1_eta_cent_EPDB", "EPD B v_{1};Centrality;#eta", 
 						   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 24, -6.0, -3.5);
+
+  TProfile2D *p2_v1_pT_eta_TPCB_pp = new TProfile2D("p2_v1_pT_eta_TPCB_pp", "TPC B #pi^{+} v_{1};#eta;p_{T}", 25, -1.0, 0.0, 25, 0, 2.5);
+  TProfile2D *p2_v1_pT_eta_TPCB_pm = new TProfile2D("p2_v1_pT_eta_TPCB_pm", "TPC B #pi^{-} v_{1};#eta;p_{T}", 25, -1.0, 0.0, 25, 0, 2.5);
+  TProfile2D *p2_v1_pT_eta_TPCB_kp = new TProfile2D("p2_v1_pT_eta_TPCB_kp", "TPC B K^{+} v_{1};#eta;p_{T}", 25, -1.0, 0.0, 25, 0, 2.5);
+  TProfile2D *p2_v1_pT_eta_TPCB_km = new TProfile2D("p2_v1_pT_eta_TPCB_km", "TPC B K^{-} v_{1};#eta;p_{T}", 25, -1.0, 0.0, 25, 0, 2.5);
+  TProfile2D *p2_v1_pT_eta_TPCB_pr = new TProfile2D("p2_v1_pT_eta_TPCB_pr", "TPC B Proton v_{1};#eta;p_{T}", 25, -1.0, 0.0, 25, 0, 2.5);
+
+  TProfile *p_v1_EPD_ring = new TProfile("p_v1_EPD_ring", "EPD v_{1} by Ring;Ring;v_{1}", 16, 0.5, 16.5);
 
   TProfile2D *p2_vn_yCM_cent_pp = new TProfile2D("p2_vn_yCM_cent_pp", "#pi^{+} v_{"+ORDER_N_STR+"};Centrality;y-y_{mid}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -1, 1);
   TProfile2D *p2_vn_yCM_cent_pm = new TProfile2D("p2_vn_yCM_cent_pm", "#pi^{-} v_{"+ORDER_N_STR+"};Centrality;y-y_{mid}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -1, 1);
@@ -1505,6 +1511,7 @@ int main(int argc, char *argv[])
 		      h2_dEdx_vs_qp_id_pr_alt->Fill(d_mom, d_dEdx);
 		      p_meanpT_vs_yCM_pr_alt->Fill(d_rapidity - Y_MID, d_pT);
 		      h2_pT_vs_cent_pr->Fill(i_centrality, d_pT);
+		      h2_pT_vs_yCM_pr_alt->Fill(d_rapidity - Y_MID, d_pT);
 		    }
 		}		    
 	      else if(deuteron) // PID Deuteron
@@ -1970,7 +1977,16 @@ int main(int argc, char *argv[])
 		continue;
 		  
 	      if (eventInfo.tpcParticles.at(j).isInTpcB)
-		{ p2_v1_eta_cent_TPCB->Fill(centID, jthEta, TMath::Cos(1.0 * (jthPhi - psi_epdA))); }
+		{ 
+		  p2_v1_eta_cent_TPCB->Fill(centID, jthEta, TMath::Cos(1.0 * (jthPhi - psi_epdA))); 
+
+		  if (eventInfo.tpcParticles.at(j).prTag)
+		    {
+		      p2_v1_pT_eta_TPCB_pr->Fill(jthEta, jthpT, TMath::Cos(1.0 * (jthPhi - psi_epdA)) / tpcEfficiency);
+		    }
+		}
+
+	      
 	    }
 	  // END v1 WEIGHTS
 
@@ -2102,11 +2118,9 @@ int main(int argc, char *argv[])
 		  Double_t tpcEfficiency = 1;  // Default
 		  if (efficienciesFound)
 		    {
-		      if (eventInfo.tpcParticles.at(j).ppTag)      tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_ratio_pp);
-		      else if (eventInfo.tpcParticles.at(j).pmTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_ratio_pp);
-		      else if (eventInfo.tpcParticles.at(j).kpTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_ratio_kp);
-		      else if (eventInfo.tpcParticles.at(j).kmTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_ratio_km);
-		      else if (eventInfo.tpcParticles.at(j).prTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_ratio_pr);
+		      if      (eventInfo.tpcParticles.at(j).prTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_pr);
+		      else if (eventInfo.tpcParticles.at(j).deTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_de);
+		      else if (eventInfo.tpcParticles.at(j).trTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_tr);
 		    }
 		  //if (tpcEfficiency == -1) { h_simulationCheck->Fill(1); continue; }
 
@@ -2324,7 +2338,7 @@ int main(int argc, char *argv[])
   int ret;  
   ret = getrusage(who, &usage);
 
-  if (ret == 0) { std::cout << "Memory usage: " << usage.ru_maxrss / 1000 << " MB" << std::endl; }
+  if (ret == 0) { std::cout << "Ending memory usage: " << usage.ru_maxrss / 1000 << " MB" << std::endl; }
   else { std::cout << "Could not retrieve memory usage!" << std::endl; }
   //
 

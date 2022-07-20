@@ -333,7 +333,7 @@ Int_t TreeMaker::Make()
 			    } // 2nd track loop ends
 
 			  //tree_tracknumber = N_pr + N_pp + N_pm + N_kp + N_km + N_de + N_tr;
-			  tree_tracknumber = realTrackIndex + 1;
+			  tree_tracknumber = realTrackIndex;
 			  FxtTree->Fill();			    
 			} // Good centrality event selection ends
                     } // Vr cut ends
