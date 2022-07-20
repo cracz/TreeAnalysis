@@ -18,6 +18,9 @@ class Variation
   TH1D *h_vn_kp;
   TH1D *h_vn_km;
   TH1D *h_vn_pr;
+  TH1D *h_vn_pr_alt;
+  TH1D *h_vn_de;
+  TH1D *h_vn_tr;
   
   TH1D *h_vn_pp_ext;
   TH1D *h_vn_pm_ext;

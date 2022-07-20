@@ -46,12 +46,12 @@ void eventPlanes(TString jobID)
   h_psiTpcB_FLAT->SetLineWidth(3);
 
 
-  THStack *stackEpdA = new THStack("stackEpdA", "Epd E;#psi;");
+  THStack *stackEpdA = new THStack("stackEpdA", "Epd A;#psi;");
   stackEpdA->Add(h_psiEpdA_RAW);
   stackEpdA->Add(h_psiEpdA_RC);
   stackEpdA->Add(h_psiEpdA_FLAT);
   
-  THStack *stackEpdB = new THStack("stackEpdB", "Epd F;#psi;");
+  THStack *stackEpdB = new THStack("stackEpdB", "Epd B;#psi;");
   stackEpdB->Add(h_psiEpdB_RAW);
   stackEpdB->Add(h_psiEpdB_RC);
   stackEpdB->Add(h_psiEpdB_FLAT);

@@ -14,7 +14,7 @@ void acceptanceCuts(TString jobID)
   TH2D *h2_pT_vs_yCM_kp = (TH2D*)file->Get("h2_pT_vs_yCM_kp");
   TH2D *h2_pT_vs_yCM_km = (TH2D*)file->Get("h2_pT_vs_yCM_km");
   TH2D *h2_pT_vs_yCM_pr = (TH2D*)file->Get("h2_pT_vs_yCM_pr");
-  TH2D *h2_pT_vs_yCM_pr_alt = (TH2D*)file->Get("h2_pT_vs_yCM_pr_alt");
+  //TH2D *h2_pT_vs_yCM_pr_alt = (TH2D*)file->Get("h2_pT_vs_yCM_pr_alt");
   TH2D *h2_pT_vs_yCM_de = (TH2D*)file->Get("h2_pT_vs_yCM_de");
   TH2D *h2_pT_vs_yCM_tr = (TH2D*)file->Get("h2_pT_vs_yCM_tr");
   //TH2D *h2_pToverA_vs_yCM_de = (TH2D*)file->Get("h2_pToverA_vs_yCM_de");
@@ -27,7 +27,7 @@ void acceptanceCuts(TString jobID)
   h2_pT_vs_yCM_kp->SetTitle("");
   h2_pT_vs_yCM_km->SetTitle("");
   h2_pT_vs_yCM_pr->SetTitle("");
-  h2_pT_vs_yCM_pr_alt->SetTitle("");
+  //h2_pT_vs_yCM_pr_alt->SetTitle("");
   h2_pT_vs_yCM_de->SetTitle("");
   h2_pT_vs_yCM_tr->SetTitle("");
   //h2_pToverA_vs_yCM_de->SetTitle("");
@@ -43,7 +43,7 @@ void acceptanceCuts(TString jobID)
   h2_pT_vs_yCM_km->SetMaximum(maxScale);
   h2_pT_vs_yCM_de->SetMaximum(maxScale);
   h2_pT_vs_yCM_tr->SetMaximum(maxScale);
-  h2_pT_vs_yCM_pr_alt->SetMaximum(maxScale);
+  //h2_pT_vs_yCM_pr_alt->SetMaximum(maxScale);
   //h2_pToverA_vs_yCM_de->SetMaximum(maxScale);
   //h2_pToverA_vs_yCM_tr->SetMaximum(maxScale);
 
@@ -294,7 +294,7 @@ void acceptanceCuts(TString jobID)
   //text_Target_pr->Draw("SAME");
   canvas->SaveAs("Acceptance_pr.png");
   canvas->Clear();
-
+  /*
   h2_pT_vs_yCM_pr->GetYaxis()->SetTitle("p_{T}/A (GeV/c)");
   h2_pT_vs_yCM_pr->Draw("colz");
   y_mid->Draw("SAME");
@@ -307,6 +307,7 @@ void acceptanceCuts(TString jobID)
   //text_Target_pr->Draw("SAME");
   canvas->SaveAs("Acceptance_pr_alt.png");
   canvas->Clear();
+  */
   /*
   h2_pT_vs_yCM_de->Draw("colz");
   y_mid->Draw("SAME");
@@ -455,5 +456,103 @@ void acceptanceCuts(TString jobID)
   canvas->Clear();
 
   delete canvas;
+
+
+  
+  TCanvas *bigCanvas = new TCanvas("bigCanvas", "bigCanvas", 1200, 900);
+  bigCanvas->SetLeftMargin(0.08);
+  //bigCanvas->SetGrid();
+  gStyle->SetOptStat(0);
+  bigCanvas->Divide(3,2);
+  
+
+  bigCanvas->cd(1);
+  gPad->SetLogz();
+  gPad->SetTicks();
+  //h2_pT_vs_yCM_pp->SetTitle(";;");
+  h2_pT_vs_yCM_pp->GetXaxis()->SetNdivisions(210);
+  h2_pT_vs_yCM_pp->GetYaxis()->SetNdivisions(3);
+  h2_pT_vs_yCM_pp->GetXaxis()->SetLabelSize(0.08);
+  h2_pT_vs_yCM_pp->GetYaxis()->SetLabelSize(0.08);
+  h2_pT_vs_yCM_pp->GetXaxis()->SetTitleSize(0.06);
+  h2_pT_vs_yCM_pp->GetYaxis()->SetTitleSize(0.06);
+  //h2_pT_vs_yCM_pp->GetZaxis()->SetLabelSize(0.08);
+  h2_pT_vs_yCM_pp->Draw("colz");
+
+  bigCanvas->cd(2);
+  gPad->SetLogz();
+  gPad->SetTicks();
+  //h2_pT_vs_yCM_kp->SetTitle(";;");
+  h2_pT_vs_yCM_kp->GetXaxis()->SetNdivisions(210);
+  h2_pT_vs_yCM_kp->GetYaxis()->SetNdivisions(3);
+  h2_pT_vs_yCM_kp->GetXaxis()->SetLabelSize(0.08);
+  h2_pT_vs_yCM_kp->GetYaxis()->SetLabelSize(0.08);
+  //h2_pT_vs_yCM_kp->GetZaxis()->SetLabelSize(0.08);
+  //h2_pT_vs_yCM_kp->GetZaxis()->SetTickSize(0.08);
+  h2_pT_vs_yCM_kp->Draw("colz");
+
+  bigCanvas->cd(3);
+  gPad->SetLogz();
+  gPad->SetTicks();
+  //h2_pT_vs_yCM_pr->SetTitle(";;");
+  h2_pT_vs_yCM_pr->GetXaxis()->SetNdivisions(210);
+  h2_pT_vs_yCM_pr->GetYaxis()->SetNdivisions(3);
+  h2_pT_vs_yCM_pr->GetXaxis()->SetLabelSize(0.08);
+  h2_pT_vs_yCM_pr->GetYaxis()->SetLabelSize(0.08);
+  //h2_pT_vs_yCM_pr->GetZaxis()->SetLabelSize(0.08);
+  h2_pT_vs_yCM_pr->Draw("colz");
+  /*
+  gPad->Update();
+  TPaletteAxis *palette = (TPaletteAxis*)h2_pT_vs_yCM_kp->GetListOfFunctions()->FindObject("palette");
+  palette->SetX1NDC(0.05);
+  palette->SetY1NDC(0.05);
+  palette->SetX2NDC(0.15);
+  palette->SetY2NDC(0.95);
+  palette->Draw();
+
+  bigCanvas->cd(3);
+  TH2D *placeHolder = new TH2D("placeHolder", ";;", 300, -1.2, 1.2, 300, 0.0, 2.5);
+  placeHolder->SetMaximum(maxScale);
+  placeHolder->GetXaxis()->SetNdivisions(210);
+  placeHolder->GetYaxis()->SetNdivisions(3);
+  placeHolder->GetXaxis()->SetTickLength(0.0);
+  placeHolder->GetYaxis()->SetTickLength(0.0);
+  placeHolder->Draw("colz");
+  */  
+  bigCanvas->cd(4);
+  gPad->SetLogz();
+  gPad->SetTicks();
+  //h2_pT_vs_yCM_pm->SetTitle(";;");
+  h2_pT_vs_yCM_pm->GetXaxis()->SetNdivisions(210);
+  h2_pT_vs_yCM_pm->GetYaxis()->SetNdivisions(3);
+  h2_pT_vs_yCM_pm->GetXaxis()->SetLabelSize(0.08);
+  h2_pT_vs_yCM_pm->GetYaxis()->SetLabelSize(0.08);
+  //h2_pT_vs_yCM_pm->GetZaxis()->SetLabelSize(0.08);
+  h2_pT_vs_yCM_pm->Draw("colz");
+
+  bigCanvas->cd(5);
+  gPad->SetLogz();
+  gPad->SetTicks();
+  //h2_pT_vs_yCM_km->SetTitle(";;");
+  h2_pT_vs_yCM_km->GetXaxis()->SetNdivisions(210);
+  h2_pT_vs_yCM_km->GetYaxis()->SetNdivisions(3);
+  h2_pT_vs_yCM_km->GetXaxis()->SetLabelSize(0.08);
+  h2_pT_vs_yCM_km->GetYaxis()->SetLabelSize(0.08);
+  //h2_pT_vs_yCM_km->GetZaxis()->SetLabelSize(0.08);
+  h2_pT_vs_yCM_km->Draw("colz");
+  gPad->Update();
+  
+  
+  
+  
+  /*
+  bigCanvas->cd(6);
+  gPad->SetLogz();
+  gPad->SetTicks();
+  */
+  
+  bigCanvas->SaveAs("DividedCanvas.png");
+  delete bigCanvas;
+
   file->Close();
 }

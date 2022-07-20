@@ -1403,6 +1403,217 @@ void coefficients(TString jobID, TString order_n_str)
       canvas->SaveAs(jobID + "_allCentralityStack.png");
       canvas->Clear();      
     }
+  else if (order_n_str == "1")
+    {
+      TLegend *piLegend = new TLegend(0.67, 0.71, 0.805, 0.87);
+      piLegend->AddEntry(h_vn_pp,"#pi^{+}");
+      piLegend->AddEntry(h_vn_pm,"#pi^{-}");
+      piLegend->SetFillColorAlpha(0,0);
+      piLegend->SetLineColorAlpha(0,0);
+
+      TLegend *kaLegend = new TLegend(0.7, 0.72, 0.8, 0.87);
+      kaLegend->AddEntry(h_vn_kp,"K^{+}");
+      kaLegend->AddEntry(h_vn_km,"K^{-}");
+      kaLegend->SetFillColorAlpha(0,0);
+      kaLegend->SetLineColorAlpha(0,0);
+
+      TLegend *pdtLegend = new TLegend(0.8, 0.76, 0.9, 0.93);
+      pdtLegend->AddEntry(h_vn_pr,"p");
+      pdtLegend->AddEntry(h_vn_de,"d");
+      pdtLegend->AddEntry(h_vn_tr,"t");
+      pdtLegend->SetFillColorAlpha(0,0);
+      pdtLegend->SetLineColorAlpha(0,0);
+
+      TLegend *prLegend = new TLegend(0.7, 0.7, 0.83, 0.78);
+      prLegend->AddEntry(h_vn_pr,"p");
+      prLegend->SetFillColorAlpha(0,0);
+      prLegend->SetLineColorAlpha(0,0);
+
+      TLegend *deLegend = new TLegend(0.7, 0.7, 0.83, 0.78);
+      deLegend->AddEntry(h_vn_de,"d");
+      deLegend->SetFillColorAlpha(0,0);
+      deLegend->SetLineColorAlpha(0,0);
+
+      TLegend *trLegend = new TLegend(0.7, 0.7, 0.83, 0.78);
+      trLegend->AddEntry(h_vn_tr,"t");
+      trLegend->SetFillColorAlpha(0,0);
+      trLegend->SetLineColorAlpha(0,0);
+
+
+
+      TPaveText *piText = new TPaveText(5, 0.055, 38, 0.1, "NB");
+      piText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      piText->AddText("0 < y_{CM} < 0.5 GeV");
+      piText->AddText("0.18 #leq p_{T} #leq 1.6 GeV");
+      piText->SetFillColorAlpha(0,0);
+      piText->SetLineColorAlpha(0,0);
+
+      TPaveText *kaText = new TPaveText(5, 0.055, 38, 0.1, "NB");
+      kaText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      kaText->AddText("0 < y_{CM} < 0.5 GeV");
+      kaText->AddText("0.18 #leq p_{T} #leq 1.6 GeV");
+      kaText->SetFillColorAlpha(0,0);
+      kaText->SetLineColorAlpha(0,0);
+
+      TPaveText *prText = new TPaveText(5, 0.055, 38, 0.1, "NB");
+      //prText->AddText("Proton");
+      prText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      prText->AddText("0 < y_{CM} < 0.5 GeV");
+      prText->AddText("0.4 #leq p_{T} #leq 2.0 GeV");
+      prText->SetFillColorAlpha(0,0);
+      prText->SetLineColorAlpha(0,0);
+
+      TPaveText *prTextZoom = new TPaveText(7, -0.018, 40, -0.028, "NB");
+      prTextZoom->AddText("Proton");
+      prTextZoom->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
+      prTextZoom->AddText("0 < y_{CM} < 0.5 GeV");
+      prTextZoom->AddText("0.4 #leq p_{T} #leq 2.0 GeV");
+      prTextZoom->SetFillColorAlpha(0,0);
+      prTextZoom->SetLineColorAlpha(0,0);
+      prTextZoom->SetTextSize(0.035);
+
+      TPaveText *prExtText = new TPaveText(5, 0.055, 38, 0.1, "NB");
+      prExtText->AddText("Proton");
+      prExtText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      prExtText->AddText("0.4 #leq p_{T} #leq 2.0 GeV");
+      prExtText->SetFillColorAlpha(0,0);
+      prExtText->SetLineColorAlpha(0,0);
+
+      TPaveText *deText = new TPaveText(5, 0.055, 38, 0.1, "NB");
+      //deText->AddText("Deuteron");
+      deText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      deText->AddText("0.5 < y_{CM} < 1.0 GeV");
+      deText->AddText("0.3 #leq p_{T} #leq 1.0 GeV");
+      deText->SetFillColorAlpha(0,0);
+      deText->SetLineColorAlpha(0,0);
+
+      TPaveText *trText = new TPaveText(5, 0.055, 38, 0.1, "NB");
+      //trText->AddText("Triton");
+      trText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      trText->AddText("0.5 < y_{CM} < 1.0 GeV");
+      trText->AddText("0.3 #leq p_{T} #leq 1.0 GeV");
+      trText->SetFillColorAlpha(0,0);
+      trText->SetLineColorAlpha(0,0);
+
+      TPaveText *pdtText = new TPaveText(5, -0.032, 38, -0.02, "NB");
+      pdtText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      pdtText->AddText("0 < y_{CM} < 1.0 GeV");
+      pdtText->AddText("0.04 #leq (m_{T}-m_{0})/A #leq 0.4 GeV");
+      //pdtText->AddText("0.2 #leq p_{T}/A #leq 1.0 GeV");
+      pdtText->SetFillColorAlpha(0,0);
+      pdtText->SetLineColorAlpha(0,0);
+
+      TPaveText *pdtExtText = new TPaveText(5, -0.12, 38, -0.08, "NB");
+      pdtExtText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      pdtExtText->AddText("0.5 < y_{CM} < 1.0 GeV");
+      pdtExtText->AddText("0.4 #leq p_{T}/A #leq 2.0 GeV");
+      pdtExtText->SetFillColorAlpha(0,0);
+      pdtExtText->SetLineColorAlpha(0,0);
+
+      TPaveText *pdtScaledText = new TPaveText(5, -0.08, 38, -0.04, "NB");
+      pdtScaledText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      pdtScaledText->AddText("0.5 < y_{CM} < 1.0 GeV");
+      pdtScaledText->AddText("0.3 #leq p_{T}/A #leq 1.0 GeV");
+      pdtScaledText->SetFillColorAlpha(0,0);
+      pdtScaledText->SetLineColorAlpha(0,0);
+
+      TPaveText *pdtExtScaledText = new TPaveText(5, -0.12, 38, -0.08, "NB");
+      pdtExtScaledText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      pdtExtScaledText->AddText("0.5 < y_{CM} < 1.0 GeV");
+      pdtExtScaledText->AddText("0.4 #leq p_{T}/A #leq 2.0 GeV");
+      pdtExtScaledText->SetFillColorAlpha(0,0);
+      pdtExtScaledText->SetLineColorAlpha(0,0);
+
+
+      TLine *zeroLine = new TLine(0, 0, 60, 0);
+      zeroLine->SetLineStyle(9);
+      zeroLine->SetLineWidth(3);
+
+      Double_t centralityUpperBounds = 0.25;
+      Double_t centralityLowerBounds = 0.0;
+      
+
+      piCentralityStack->Draw();
+      piCentralityStack->GetYaxis()->SetTitleOffset(1.8);
+      piCentralityStack->GetXaxis()->SetNdivisions(210);
+      piCentralityStack->SetMaximum(0.12);
+      piCentralityStack->SetMinimum(-0.07);
+      piCentralityStack->Draw("NOSTACK E1P");
+      zeroLine->Draw("SAME");
+      piCentralityStack->Draw("NOSTACK E1P SAME");
+      piLegend->Draw();
+      piText->Draw();
+      canvas->SaveAs(jobID + "_piCentralityStack.png");
+      canvas->Clear();
+
+      kaCentralityStack->Draw();
+      kaCentralityStack->GetYaxis()->SetTitleOffset(1.7);
+      kaCentralityStack->GetXaxis()->SetNdivisions(210);
+      kaCentralityStack->SetMaximum(0.12);
+      kaCentralityStack->SetMinimum(-0.07);
+      kaCentralityStack->Draw("NOSTACK E1P");
+      zeroLine->Draw("SAME");
+      kaCentralityStack->Draw("NOSTACK E1P SAME");
+      kaLegend->Draw();
+      kaText->Draw();
+      canvas->SaveAs(jobID + "_kaCentralityStack.png");
+      canvas->Clear();
+
+      
+      pdtCentralityStack->Draw();
+      pdtCentralityStack->GetYaxis()->SetTitleOffset(1.7);
+      pdtCentralityStack->GetXaxis()->SetNdivisions(210);
+      pdtCentralityStack->SetMaximum(0.25);
+      pdtCentralityStack->SetMinimum(0.0);
+      pdtCentralityStack->Draw("NOSTACK E1P");
+      zeroLine->Draw("SAME");
+      pdtCentralityStack->Draw("NOSTACK E1P SAME");
+      pdtLegend->Draw();
+      pdtText->Draw();
+      canvas->SaveAs(jobID + "_pdtCentralityStack.png");
+      canvas->Clear();
+
+      h_vn_pr->SetTitle("");
+      h_vn_pr->GetYaxis()->SetTitleOffset(1.7);
+      h_vn_pr->GetXaxis()->SetNdivisions(210);
+      h_vn_pr->Draw("E1P");
+      h_vn_pr->SetMaximum(centralityUpperBounds);
+      h_vn_pr->SetMinimum(centralityLowerBounds);
+      zeroLine->Draw("SAME");
+      h_vn_pr->Draw("E1P SAME");
+      prLegend->Draw();
+      //prText->Draw();
+      canvas->SaveAs(jobID + "_vn_pr.png");
+      canvas->Clear();
+
+
+      h_vn_de->SetTitle("");
+      h_vn_de->GetYaxis()->SetTitleOffset(1.7);
+      h_vn_de->GetXaxis()->SetNdivisions(210);
+      h_vn_de->Draw("E1P");
+      h_vn_de->SetMaximum(centralityUpperBounds);
+      h_vn_de->SetMinimum(centralityLowerBounds);
+      zeroLine->Draw("SAME");
+      h_vn_de->Draw("E1P SAME");
+      deLegend->Draw();
+      deText->Draw();
+      canvas->SaveAs(jobID + "_vn_de.png");
+      canvas->Clear();
+
+
+      h_vn_tr->SetTitle("");
+      h_vn_tr->GetYaxis()->SetTitleOffset(1.7);
+      h_vn_tr->GetXaxis()->SetNdivisions(210);
+      h_vn_tr->Draw("E1P");
+      h_vn_tr->SetMaximum(centralityUpperBounds);
+      h_vn_tr->SetMinimum(0.0);
+      zeroLine->Draw("SAME");
+      h_vn_tr->Draw("E1P SAME");
+      trLegend->Draw();
+      trText->Draw();
+      canvas->SaveAs(jobID + "_vn_tr.png");
+      canvas->Clear();
+    }
 
   //resolutionInfo_INPUT->Close();
   file->Close();

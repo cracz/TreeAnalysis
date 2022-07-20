@@ -28,6 +28,9 @@ Variation::~Variation()
   delete h_vn_kp;
   delete h_vn_km;
   delete h_vn_pr;
+  delete h_vn_pr_alt;
+  delete h_vn_de;
+  delete h_vn_tr;
   delete h_vn_pp_ext;
   delete h_vn_pm_ext;
   delete h_vn_kp_ext;
@@ -81,6 +84,9 @@ void Variation::initialize(TString order_n_str)
   TProfile *p_vn_kp = (TProfile*)file->Get("p_vn_kp");
   TProfile *p_vn_km = (TProfile*)file->Get("p_vn_km");
   TProfile *p_vn_pr = (TProfile*)file->Get("p_vn_pr");
+  TProfile *p_vn_pr_alt = (TProfile*)file->Get("p_vn_pr_alt");
+  TProfile *p_vn_de = (TProfile*)file->Get("p_vn_de");
+  TProfile *p_vn_tr = (TProfile*)file->Get("p_vn_tr");
   p_vn_kp->Rebin();
   p_vn_km->Rebin();
   
@@ -88,17 +94,26 @@ void Variation::initialize(TString order_n_str)
   h_vn_pm = p_vn_pm->ProjectionX((TString)p_vn_pm->GetName() +"_"+ ID);
   h_vn_kp = p_vn_kp->ProjectionX((TString)p_vn_kp->GetName() +"_"+ ID);
   h_vn_km = p_vn_km->ProjectionX((TString)p_vn_km->GetName() +"_"+ ID);
-  h_vn_pr = p_vn_pr->ProjectionX((TString)p_vn_pr->GetName() +"_"+ ID); 
+  h_vn_pr = p_vn_pr->ProjectionX((TString)p_vn_pr->GetName() +"_"+ ID);
+  h_vn_pr_alt = p_vn_pr_alt->ProjectionX((TString)p_vn_pr_alt->GetName() +"_"+ ID);
+  h_vn_de = p_vn_de->ProjectionX((TString)p_vn_de->GetName() +"_"+ ID);
+  h_vn_tr = p_vn_tr->ProjectionX((TString)p_vn_tr->GetName() +"_"+ ID); 
   h_vn_pp = flipHisto(h_vn_pp);
   h_vn_pm = flipHisto(h_vn_pm);
   h_vn_kp = flipHisto(h_vn_kp);
   h_vn_km = flipHisto(h_vn_km);
   h_vn_pr = flipHisto(h_vn_pr);
+  h_vn_pr_alt = flipHisto(h_vn_pr_alt);
+  h_vn_de = flipHisto(h_vn_de);
+  h_vn_tr = flipHisto(h_vn_tr);
   h_vn_pp = trimCentralityPlot(h_vn_pp);
   h_vn_pm = trimCentralityPlot(h_vn_pm);
   h_vn_kp = trimCentralityPlot(h_vn_kp);
   h_vn_km = trimCentralityPlot(h_vn_km);
   h_vn_pr = trimCentralityPlot(h_vn_pr);
+  h_vn_pr_alt = trimCentralityPlot(h_vn_pr_alt);
+  h_vn_de = trimCentralityPlot(h_vn_de);
+  h_vn_tr = trimCentralityPlot(h_vn_tr);
   
   TProfile *p_vn_pp_ext = (TProfile*)file->Get("p_vn_pp_ext");
   TProfile *p_vn_pm_ext = (TProfile*)file->Get("p_vn_pm_ext");
@@ -412,6 +427,38 @@ void Variation::fixAttributes(TString order_n_str)
       //h_vn_pr->SetMaximum(centralityUpperBounds);
       //h_vn_pr->SetMinimum(centralityLowerBounds);
 
+      h_vn_pr_alt->SetTitle(";Centrality (%);v_{"+order_n_str+"}");
+      h_vn_pr_alt->SetMarkerStyle(20);
+      h_vn_pr_alt->SetMarkerSize(2.5);
+      h_vn_pr_alt->SetMarkerColor(2);
+      h_vn_pr_alt->SetLineColor(2);
+      h_vn_pr_alt->SetLineWidth(3);
+      h_vn_pr_alt->GetYaxis()->SetTitleOffset(1.7);
+      h_vn_pr_alt->GetXaxis()->SetNdivisions(210);
+      //h_vn_pr_alt->SetMaximum(centralityUpperBounds);
+      //h_vn_pr_alt->SetMinimum(centralityLowerBounds);
+
+      h_vn_de->SetTitle(";Centrality (%);v_{"+order_n_str+"}");
+      h_vn_de->SetMarkerStyle(20);
+      h_vn_de->SetMarkerSize(2.5);
+      h_vn_de->SetMarkerColor(2);
+      h_vn_de->SetLineColor(2);
+      h_vn_de->SetLineWidth(3);
+      h_vn_de->GetYaxis()->SetTitleOffset(1.7);
+      h_vn_de->GetXaxis()->SetNdivisions(210);
+      //h_vn_de->SetMaximum(centralityUpperBounds);
+      //h_vn_de->SetMinimum(centralityLowerBounds);
+
+      h_vn_tr->SetTitle(";Centrality (%);v_{"+order_n_str+"}");
+      h_vn_tr->SetMarkerStyle(20);
+      h_vn_tr->SetMarkerSize(2.5);
+      h_vn_tr->SetMarkerColor(2);
+      h_vn_tr->SetLineColor(2);
+      h_vn_tr->SetLineWidth(3);
+      h_vn_tr->GetYaxis()->SetTitleOffset(1.7);
+      h_vn_tr->GetXaxis()->SetNdivisions(210);
+      //h_vn_tr->SetMaximum(centralityUpperBounds);
+      //h_vn_tr->SetMinimum(centralityLowerBounds);
 
 
       //=== vn vs rapidity

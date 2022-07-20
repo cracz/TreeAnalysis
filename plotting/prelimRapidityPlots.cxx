@@ -2,7 +2,7 @@
 
 void prelimRapidityPlots()
 {
-  TString fileName = "Normal.picoDst.result.combined.root";
+  TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
   TFile *file = TFile::Open(fileName);
   if(!file) {cout << "Wrong file!" << endl; return;}
 
@@ -19,6 +19,7 @@ void prelimRapidityPlots()
   gStyle->SetOptStat(0);
   gStyle->SetEndErrorSize(6);
   gStyle->SetLineWidth(3);
+  gStyle->SetOptDate();
 
   TProfile2D *p2_vn_yCM_cent_pr = (TProfile2D*)file->Get("p2_vn_yCM_cent_pr");
   TProfile2D *p2_vn_yCM_cent_pr_symmetry = (TProfile2D*)file->Get("p2_vn_yCM_cent_pr_symmetry");
@@ -61,6 +62,17 @@ void prelimRapidityPlots()
   ////
 
 
+  std::cout << std::endl << "Fitting 10-40% non-symmetric: " << std::endl;
+
+  TF1* function = new TF1("function", "[0]*x + [1]*x*x*x", 0.0, 1.0);
+  TH1D* h_10to40 = (TH1D*)h_vn_yCM_10to40_pr->Clone();
+  h_10to40->Fit(function, "", "", 0.0, 1.0);
+  Double_t slopeMeasured = function->GetParameter(0);
+  
+  std::cout << "done" << std::endl;
+
+  std::cout << std::endl << std::endl << "Now estimating uncertainty from symmetric plot..."
+	    << std::endl << "Fitting 10-40% symmetric: " << std::endl;
   
   TF1* function1 = new TF1("function1", "[0]*x + [1]*x*x*x", 0.0, 0.5);
   function1->SetLineColor(1);
@@ -72,9 +84,15 @@ void prelimRapidityPlots()
   TF1* function3 = new TF1("function3", "[0]*x + [1]*x*x*x", -0.5, 0.5);
   function3->SetLineColor(1);
 
+  Double_t slopeLeft = 0.0;
+  Double_t slopeRight = 0.0;
+  Double_t slopeDiff = 0.0;
+  Double_t slopeAvg = 0.0;
+  Double_t slopeUncertPercent = 0.0;
+
 
   TH1D* h_10to40_symm = (TH1D*)h_vn_yCM_10to40_pr_symm->Clone();
-  TH1D* h_40to60_symm = (TH1D*)h_vn_yCM_40to60_pr_symm->Clone();
+  //TH1D* h_40to60_symm = (TH1D*)h_vn_yCM_40to60_pr_symm->Clone();
 
   // Add systematics with statistics
   for (int i = 6; i <= 15; i++)
@@ -82,13 +100,15 @@ void prelimRapidityPlots()
       Double_t currentError1 = h_10to40_symm->GetBinError(i);
       h_10to40_symm->SetBinError(i, std::sqrt(std::pow(currentError1, 2) +
 					      std::pow(sys_yCM_10to40_pr_symm->GetErrorY(i-1), 2)));
-
+      /*
       Double_t currentError2 = h_40to60_symm->GetBinError(i);
       h_40to60_symm->SetBinError(i, std::sqrt(std::pow(currentError2, 2) +
 					      std::pow(sys_yCM_40to60_pr_symm->GetErrorY(i-1), 2)));
+      */
     }
 
   h_10to40_symm->Fit(function1, "", "", 0.0, 0.5);
+  slopeRight = function1->GetParameter(0);
   std::cout << "Fitting y in [0.0, 0.5]:" << std::endl
 	    << "   Slope = " << function1->GetParameter(0) << std::endl
 	    << "   Error = " << function1->GetParError(0) << std::endl
@@ -96,12 +116,23 @@ void prelimRapidityPlots()
 	    << std::endl;
 
   h_10to40_symm->Fit(function2, "", "", -0.5, 0.0);
+  slopeLeft = function2->GetParameter(0);
   std::cout << "Fitting y in [-0.5, 0.0]:" << std::endl
 	    << "   Slope = " << function2->GetParameter(0) << std::endl
 	    << "   Error = " << function2->GetParError(0) << std::endl
 	    << "   Chi^2/NDF = " << function2->GetChisquare()/function2->GetNDF() << std::endl
 	    << std::endl;
 
+  slopeDiff = TMath::Abs(slopeRight - slopeLeft);
+  slopeAvg  = TMath::Abs((slopeRight + slopeLeft)/2.0);
+  slopeUncertPercent = slopeDiff * 100.0 / (slopeAvg * TMath::Sqrt(12));
+
+  std::cout << "Estimated Percent Uncertainty = " << slopeUncertPercent << "%"
+	    << std::endl
+	    << "Estimated Uncertainty Value = " << TMath::Abs(slopeMeasured) * (slopeUncertPercent/100.0)
+	    << std::endl
+	    << std::endl;
+  /*
   std::cout << "40 - 60%" << std::endl;
   h_40to60_symm->Fit(function3, "", "", -0.5, 0.5);
   std::cout << "Fitting y in [-0.5, 0.5]:" << std::endl
@@ -109,7 +140,10 @@ void prelimRapidityPlots()
 	    << "   Error = " << function3->GetParError(0) << std::endl
 	    << "   Chi^2/NDF = " << function3->GetChisquare()/function3->GetNDF() << std::endl
 	    << std::endl;
+  */
 
+
+  /*
   for (int i = 6; i <= 10; i++)
     {
       Double_t fullError = h_10to40_symm->GetBinError(i);
@@ -129,7 +163,10 @@ void prelimRapidityPlots()
       std::cout << "y_CM = " << h_10to40_symm->GetXaxis()->GetBinCenter(i) << std::endl;
       std::cout << "Sigmas = " << distToLine / fullError << std::endl;
     }  // Get distance from line in sigmas
+  */
 
+
+  /*
   std::cout << std::endl;
   for (int i = 6; i <= 15; i++)
     {
@@ -140,7 +177,11 @@ void prelimRapidityPlots()
       std::cout << "y_CM = " << h_40to60_symm->GetXaxis()->GetBinCenter(i) << std::endl;
       std::cout << "Sigmas = " << distToLine / fullError << std::endl;
     }  // Get distance from line in sigmas
+  */
 
+
+
+  
 
   // FURTHER SYSTEMATIC VARIATION (QM22 poster discussion with FCV March 30, 2022)
   /*
@@ -455,7 +496,7 @@ void prelimRapidityPlots()
   prText_y->SetTextSize(.035);
  
   //TPaveText *prText_y_symm = new TPaveText(-0.6, 0.037, 0.6, 0.075, "NB");
-  TPaveText *prText_y_symm = new TPaveText(-0.8, 0.037, 1.0, 0.075, "NB");
+  TPaveText *prText_y_symm = new TPaveText(-0.8, 0.05, 1.0, 0.095, "NB");
   prText_y_symm->SetTextAlign(32);
   prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
   prText_y_symm->AddText("Proton");
@@ -500,7 +541,7 @@ void prelimRapidityPlots()
   sys_yCM_10to40_pr->Draw("[]");
   prLegend->Draw();
   prText_y->Draw();
-  prelimText->Draw();
+  //prelimText->Draw();
   canvas->SaveAs("v3_prRapidityStack.png");
   canvas->Clear();
 
@@ -514,8 +555,8 @@ void prelimRapidityPlots()
   prRapidityStack_symm->GetXaxis()->SetTitleSize(0.045);
   prRapidityStack_symm->GetYaxis()->SetTitleSize(0.05);
   prRapidityStack_symm->Draw();
-  prRapidityStack_symm->SetMaximum(0.08);
-  prRapidityStack_symm->SetMinimum(-0.095);
+  prRapidityStack_symm->SetMaximum(0.1);
+  prRapidityStack_symm->SetMinimum(-0.12);
   prRapidityStack_symm->Draw("NOSTACK E1P");
   zeroLine_y_pr->Draw("SAME");
   prRapidityStack_symm->Draw("NOSTACK E1P SAME");
@@ -524,7 +565,7 @@ void prelimRapidityPlots()
   sys_yCM_40to60_pr_symm->Draw("[]");
   prLegend_symm->Draw();
   prText_y_symm->Draw();
-  prelimText_symm->Draw();
+  //prelimText_symm->Draw();
   //function1->Draw("C SAME");
   //function2->Draw("C SAME");
   //function3->Draw("C SAME");

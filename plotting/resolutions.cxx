@@ -276,8 +276,10 @@ void resolutions(TString jobID, TString order_n_str)
   h_resolAvsB->GetYaxis()->SetTitleSize(0.065);
   h_resolAvsB->SetMaximum(0.3);
   h_resolAvsB->SetTitle("");
+  h_resolAvsB->SetMarkerColor(1);
+  h_resolAvsB->SetLineColor(1);
   h_resolAvsB->Draw("E1P");
-  legend2->Draw();
+  //legend2->Draw();
   canvas->SaveAs(jobID + "_resolutionAonly.png");
   canvas->Clear();
 

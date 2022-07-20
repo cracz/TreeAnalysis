@@ -596,7 +596,371 @@ void vnVsY(TString jobID, TString order_n_str)
 
 
 
-  if (order_n_str == "2")
+  if (order_n_str == "1")
+    {
+      // Trim and clean up x-axis
+      h_vn_yCM_00to10_kp = PlotUtils::trimRapidityPlot(h_vn_yCM_00to10_kp);
+      h_vn_yCM_10to40_kp = PlotUtils::trimRapidityPlot(h_vn_yCM_10to40_kp);
+      h_vn_yCM_40to60_kp = PlotUtils::trimRapidityPlot(h_vn_yCM_40to60_kp);
+      h_vn_yCM_00to10_km = PlotUtils::trimRapidityPlot(h_vn_yCM_00to10_km);
+      h_vn_yCM_10to40_km = PlotUtils::trimRapidityPlot(h_vn_yCM_10to40_km);
+      h_vn_yCM_40to60_km = PlotUtils::trimRapidityPlot(h_vn_yCM_40to60_km);
+  
+      h_vn_yCM_00to10_pp = PlotUtils::trimRapidityPlot(h_vn_yCM_00to10_pp);
+      h_vn_yCM_10to40_pp = PlotUtils::trimRapidityPlot(h_vn_yCM_10to40_pp);
+      h_vn_yCM_40to60_pp = PlotUtils::trimRapidityPlot(h_vn_yCM_40to60_pp);
+
+      h_vn_yCM_00to10_pm = PlotUtils::trimRapidityPlot(h_vn_yCM_00to10_pm);
+      h_vn_yCM_10to40_pm = PlotUtils::trimRapidityPlot(h_vn_yCM_10to40_pm);
+      h_vn_yCM_40to60_pm = PlotUtils::trimRapidityPlot(h_vn_yCM_40to60_pm);
+
+      h_vn_yCM_00to10_pr_alt = PlotUtils::trimRapidityPlot(h_vn_yCM_00to10_pr_alt);
+      h_vn_yCM_10to40_pr_alt = PlotUtils::trimRapidityPlot(h_vn_yCM_10to40_pr_alt);
+      h_vn_yCM_40to60_pr_alt = PlotUtils::trimRapidityPlot(h_vn_yCM_40to60_pr_alt);
+
+      h_vn_yCM_00to10_de = PlotUtils::trimRapidityPlot(h_vn_yCM_00to10_de);
+      h_vn_yCM_10to40_de = PlotUtils::trimRapidityPlot(h_vn_yCM_10to40_de);
+      h_vn_yCM_40to60_de = PlotUtils::trimRapidityPlot(h_vn_yCM_40to60_de);
+
+      h_vn_yCM_00to10_tr = PlotUtils::trimRapidityPlot(h_vn_yCM_00to10_tr);
+      h_vn_yCM_10to40_tr = PlotUtils::trimRapidityPlot(h_vn_yCM_10to40_tr);
+      h_vn_yCM_40to60_tr = PlotUtils::trimRapidityPlot(h_vn_yCM_40to60_tr);
+
+      
+      ppRapidityStack->Add(h_vn_yCM_00to10_pp);
+      ppRapidityStack->Add(h_vn_yCM_10to40_pp);
+      ppRapidityStack->Add(h_vn_yCM_40to60_pp);
+
+      pmRapidityStack->Add(h_vn_yCM_00to10_pm);
+      pmRapidityStack->Add(h_vn_yCM_10to40_pm);
+      pmRapidityStack->Add(h_vn_yCM_40to60_pm);
+
+      kpRapidityStack->Add(h_vn_yCM_00to10_kp);
+      kpRapidityStack->Add(h_vn_yCM_10to40_kp);
+      kpRapidityStack->Add(h_vn_yCM_40to60_kp);
+
+      kmRapidityStack->Add(h_vn_yCM_10to40_km);
+
+      prRapidityStack->Add(h_vn_yCM_00to10_pr);
+      prRapidityStack->Add(h_vn_yCM_40to60_pr);
+      prRapidityStack->Add(h_vn_yCM_10to40_pr);
+
+      prRapidityStack_alt->Add(h_vn_yCM_00to10_pr_alt);
+      prRapidityStack_alt->Add(h_vn_yCM_10to40_pr_alt);
+      prRapidityStack_alt->Add(h_vn_yCM_40to60_pr_alt);
+
+      prRapidityStack_symm->Add(h_vn_yCM_00to10_pr_symm);
+      prRapidityStack_symm->Add(h_vn_yCM_40to60_pr_symm);
+      prRapidityStack_symm->Add(h_vn_yCM_10to40_pr_symm);
+
+      deRapidityStack->Add(h_vn_yCM_00to10_de);
+      deRapidityStack->Add(h_vn_yCM_10to40_de);
+      deRapidityStack->Add(h_vn_yCM_40to60_de);
+
+      trRapidityStack->Add(h_vn_yCM_00to10_tr);
+      trRapidityStack->Add(h_vn_yCM_10to40_tr);
+      trRapidityStack->Add(h_vn_yCM_40to60_tr);
+
+      TLegend *ppLegend = new TLegend(0.18, 0.72, 0.38, 0.87);
+      ppLegend->AddEntry(h_vn_yCM_00to10_pp, "0 - 10%");
+      ppLegend->AddEntry(h_vn_yCM_10to40_pp, "10 - 40%");
+      ppLegend->AddEntry(h_vn_yCM_40to60_pp, "40 - 60%");
+      ppLegend->SetBorderSize(0);
+      ppLegend->SetFillColorAlpha(0,0);
+
+      TLegend *pmLegend = new TLegend(0.18, 0.72, 0.38, 0.87);
+      pmLegend->AddEntry(h_vn_yCM_00to10_pm, "0 - 10%");
+      pmLegend->AddEntry(h_vn_yCM_10to40_pm, "10 - 40%");
+      pmLegend->AddEntry(h_vn_yCM_40to60_pm, "40 - 60%");
+      pmLegend->SetBorderSize(0);
+      pmLegend->SetFillColorAlpha(0,0);
+
+      TLegend *kpLegend = new TLegend(0.18, 0.72, 0.38, 0.87);
+      kpLegend->AddEntry(h_vn_yCM_00to10_kp, "0 - 10%");
+      kpLegend->AddEntry(h_vn_yCM_10to40_kp, "10 - 40%");
+      kpLegend->AddEntry(h_vn_yCM_40to60_kp, "40 - 60%");
+      kpLegend->SetBorderSize(0);
+      kpLegend->SetFillColorAlpha(0,0);
+
+      TLegend *kmLegend = new TLegend(0.18, 0.77, 0.38, 0.87);
+      //kmLegend->AddEntry(h_vn_yCM_00to10_km, "0 - 10%");
+      kmLegend->AddEntry(h_vn_yCM_10to40_km, "10 - 40%");
+      //kmLegend->AddEntry(h_vn_yCM_40to60_km, "40 - 60%");
+      kmLegend->SetBorderSize(0);
+      kmLegend->SetFillColorAlpha(0,0);
+     
+      TLegend *prLegend = new TLegend(0.19, 0.15, 0.39, 0.3);
+      prLegend->AddEntry(h_vn_yCM_00to10_pr, "0 - 10%");
+      prLegend->AddEntry(h_vn_yCM_10to40_pr, "10 - 40%");
+      prLegend->AddEntry(h_vn_yCM_40to60_pr, "40 - 60%");
+      prLegend->SetBorderSize(0);
+      prLegend->SetFillColorAlpha(0,0);
+      prLegend->SetTextSize(0.04);
+
+      TLegend *prLegend_symm = new TLegend(0.19, 0.15, 0.39, 0.3);
+      prLegend_symm->AddEntry(h_vn_yCM_00to10_pr_symm, "0 - 10%");
+      prLegend_symm->AddEntry(h_vn_yCM_10to40_pr_symm, "10 - 40%");
+      prLegend_symm->AddEntry(h_vn_yCM_40to60_pr_symm, "40 - 60%");
+      prLegend_symm->SetBorderSize(0);
+      prLegend_symm->SetFillColorAlpha(0,0);
+      prLegend_symm->SetTextSize(0.04);
+
+      TLegend *deLegend = new TLegend(0.18, 0.72, 0.38, 0.87);
+      deLegend->AddEntry(h_vn_yCM_00to10_de, "0 - 10%");
+      deLegend->AddEntry(h_vn_yCM_10to40_de, "10 - 40%");
+      deLegend->AddEntry(h_vn_yCM_40to60_de, "40 - 60%");
+      deLegend->SetBorderSize(0);
+      deLegend->SetFillColorAlpha(0,0);
+
+      TLegend *trLegend = new TLegend(0.18, 0.72, 0.38, 0.87);
+      trLegend->AddEntry(h_vn_yCM_00to10_tr, "0 - 10%");
+      trLegend->AddEntry(h_vn_yCM_10to40_tr, "10 - 40%");
+      trLegend->AddEntry(h_vn_yCM_40to60_tr, "40 - 60%");
+      trLegend->SetBorderSize(0);
+      trLegend->SetFillColorAlpha(0,0);
+
+      
+      
+      TPaveText *ppText = new TPaveText(0.5, 0.09, 0.8, 0.16, "NB");
+      ppText->AddText("#pi^{+}");
+      ppText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      ppText->AddText("0.18 #leq p_{T} #leq 1.6 GeV");
+      ppText->SetFillColorAlpha(0,0);
+      ppText->SetLineColorAlpha(0,0);
+      ppText->SetTextSize(.04);
+
+      TPaveText *pmText = new TPaveText(0.5, 0.09, 0.8, 0.16, "NB");
+      pmText->AddText("#pi^{-}");
+      pmText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      pmText->AddText("0.18 #leq p_{T} #leq 1.6 GeV");
+      pmText->SetFillColorAlpha(0,0);
+      pmText->SetLineColorAlpha(0,0);
+      pmText->SetTextSize(.04);
+ 
+      TPaveText *kpText = new TPaveText(0.5, 0.1, 0.8, 0.17, "NB");
+      kpText->AddText("K^{+}");
+      kpText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      kpText->AddText("0.18 #leq p_{T} #leq 1.6 GeV");
+      kpText->SetFillColorAlpha(0,0);
+      kpText->SetLineColorAlpha(0,0);
+      kpText->SetTextSize(.04);
+ 
+      TPaveText *kmText = new TPaveText(0.3, 0.05, 0.7, 0.12, "NB");
+      kmText->AddText("K^{-}");
+      kmText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      kmText->AddText("0.18 #leq p_{T} #leq 1.6 GeV");
+      kmText->SetFillColorAlpha(0,0);
+      kmText->SetLineColorAlpha(0,0);
+      kmText->SetTextSize(.04);
+      
+      TPaveText *prText_y = new TPaveText(-0.35, 0.048, 0.75, 0.075, "NB");
+      prText_y->AddText("Proton");
+      prText_y->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
+      prText_y->AddText("0.4 #leq p_{T} #leq 2.0 GeV");
+      prText_y->SetFillColorAlpha(0,0);
+      prText_y->SetLineColorAlpha(0,0);
+      prText_y->SetTextSize(.035);
+ 
+      TPaveText *prText_y_symm = new TPaveText(-0.4, 0.045, 0.8, 0.075, "NB");
+      prText_y_symm->AddText("Proton");
+      prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
+      prText_y_symm->AddText("1.0 #leq p_{T} #leq 2.5 GeV");
+      prText_y_symm->SetFillColorAlpha(0,0);
+      prText_y_symm->SetLineColorAlpha(0,0);
+      prText_y_symm->SetTextSize(.035);
+
+      TPaveText *prText_alt = new TPaveText(0.2, 0.02, 0.4, 0.1, "NB");
+      prText_alt->AddText("p");
+      prText_alt->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      prText_alt->AddText("1.0 #leq p_{T} #leq 2.5 GeV");
+      prText_alt->SetFillColorAlpha(0,0);
+      prText_alt->SetLineColorAlpha(0,0);
+      prText_alt->SetTextSize(.035);
+
+      TPaveText *deText = new TPaveText(0.2, -0.17, 0.4, -0.1, "NB");
+      deText->AddText("d");
+      deText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      deText->AddText("1.0 #leq p_{T} #leq 2.5 GeV");
+      deText->SetFillColorAlpha(0,0);
+      deText->SetLineColorAlpha(0,0);
+      deText->SetTextSize(.035);
+
+      TPaveText *trText = new TPaveText(0.2, -0.17, 0.4, -0.1, "NB");
+      trText->AddText("t");
+      trText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+      trText->AddText("1.0 #leq p_{T} #leq 2.5 GeV");
+      trText->SetFillColorAlpha(0,0);
+      trText->SetLineColorAlpha(0,0);
+      trText->SetTextSize(.035);
+
+      TPaveText* prelimText_symm = new TPaveText(-0.4, 0.03, 0.8, 0.05, "NB");
+      prelimText_symm->AddText("STAR Preliminary");
+      prelimText_symm->SetTextColor(kRed);
+      prelimText_symm->SetFillColorAlpha(0,0);
+      prelimText_symm->SetTextSize(0.04);
+
+      TPaveText* prelimText = new TPaveText(-0.2, 0.04, 0.6, 0.045, "NB");
+      prelimText->AddText("STAR Preliminary");
+      prelimText->SetTextColor(kRed);
+      prelimText->SetFillColorAlpha(0,0);
+      prelimText->SetTextSize(0.04);
+
+      TLine *zeroLine_y = new TLine(0, 0, 1, 0);
+      zeroLine_y->SetLineStyle(9);
+      zeroLine_y->SetLineWidth(3);
+
+      TLine *zeroLine_y_pr = new TLine(-1, 0, 1, 0);
+      zeroLine_y_pr->SetLineStyle(9);
+      zeroLine_y_pr->SetLineWidth(3);
+
+      Double_t rapidityUpperBound = 0.18;
+      Double_t rapidityLowerBound = -0.15;
+      Double_t rapidityUpperBound_pr = 0.5;
+      Double_t rapidityLowerBound_pr = -0.5;
+      Double_t rapidityUpperBound_pdt = 0.5;
+      Double_t rapidityLowerBound_pdt = -0.5;
+      
+      ppRapidityStack->Draw();
+      ppRapidityStack->GetYaxis()->SetTitleOffset(1.9);
+      ppRapidityStack->GetXaxis()->SetNdivisions(210);
+      ppRapidityStack->Draw();
+      ppRapidityStack->SetMaximum(rapidityUpperBound);
+      ppRapidityStack->SetMinimum(rapidityLowerBound);
+      ppRapidityStack->Draw("NOSTACK E1P");
+      zeroLine_y->Draw("SAME");
+      ppRapidityStack->Draw("NOSTACK E1P SAME");
+      ppLegend->Draw();
+      //ppText->Draw();
+      canvas->SaveAs(jobID + "_ppRapidityStack.png");
+      canvas->Clear();
+
+      pmRapidityStack->Draw();
+      pmRapidityStack->GetYaxis()->SetTitleOffset(1.9);
+      pmRapidityStack->GetXaxis()->SetNdivisions(210);
+      pmRapidityStack->Draw();
+      pmRapidityStack->SetMaximum(rapidityUpperBound);
+      pmRapidityStack->SetMinimum(rapidityLowerBound);
+      pmRapidityStack->Draw("NOSTACK E1P");
+      zeroLine_y->Draw("SAME");
+      pmRapidityStack->Draw("NOSTACK E1P SAME");
+      pmLegend->Draw();
+      //pmText->Draw();
+      canvas->SaveAs(jobID + "_pmRapidityStack.png");
+      canvas->Clear();
+
+      kpRapidityStack->Draw();
+      kpRapidityStack->GetYaxis()->SetTitleOffset(1.7);
+      kpRapidityStack->GetXaxis()->SetNdivisions(210);
+      kpRapidityStack->Draw();
+      kpRapidityStack->SetMaximum(rapidityUpperBound);
+      kpRapidityStack->SetMinimum(rapidityLowerBound);
+      kpRapidityStack->Draw("NOSTACK E1P");
+      zeroLine_y->Draw("SAME");
+      kpRapidityStack->Draw("NOSTACK E1P SAME");
+      kpLegend->Draw();
+      //kpText->Draw();
+      canvas->SaveAs(jobID + "_kpRapidityStack.png");
+      canvas->Clear();
+
+      kmRapidityStack->Draw();
+      kmRapidityStack->GetYaxis()->SetTitleOffset(1.7);
+      kmRapidityStack->GetXaxis()->SetNdivisions(210);
+      kmRapidityStack->Draw();
+      kmRapidityStack->SetMaximum(rapidityUpperBound);
+      kmRapidityStack->SetMinimum(rapidityLowerBound);
+      kmRapidityStack->Draw("NOSTACK E1P");
+      zeroLine_y->Draw("SAME");
+      kmRapidityStack->Draw("NOSTACK E1P SAME");
+      kmLegend->Draw();
+      //kmText->Draw();
+      canvas->SaveAs(jobID + "_kmRapidityStack.png");
+      canvas->Clear();
+
+      prRapidityStack->Draw();
+      prRapidityStack->GetYaxis()->SetLabelSize(0.043);
+      prRapidityStack->GetXaxis()->SetLabelSize(0.043);
+      prRapidityStack->GetYaxis()->SetTitleOffset(1.4);
+      prRapidityStack->GetXaxis()->SetTitleOffset(1.0);
+      prRapidityStack->GetXaxis()->SetNdivisions(210);
+      prRapidityStack->GetXaxis()->SetTitleSize(0.045);
+      prRapidityStack->GetYaxis()->SetTitleSize(0.05);
+      prRapidityStack->Draw();
+      prRapidityStack->SetMaximum(rapidityUpperBound_pr);
+      prRapidityStack->SetMinimum(rapidityLowerBound_pr);
+      prRapidityStack->Draw("NOSTACK E1P");
+      zeroLine_y_pr->Draw("SAME");
+      prRapidityStack->Draw("NOSTACK E1P SAME");
+      prLegend->Draw();
+      //prText_y->Draw();
+      //prelimText->Draw();
+      canvas->SaveAs(jobID + "_prRapidityStack.png");
+      canvas->Clear();
+
+
+      prRapidityStack_alt->Draw();
+      prRapidityStack_alt->GetYaxis()->SetTitleOffset(1.7);
+      prRapidityStack_alt->GetXaxis()->SetNdivisions(210);
+      prRapidityStack_alt->Draw();
+      prRapidityStack_alt->SetMaximum(rapidityUpperBound_pdt);
+      prRapidityStack_alt->SetMinimum(rapidityLowerBound_pdt);
+      prRapidityStack_alt->Draw("NOSTACK E1P");
+      zeroLine_y->Draw("SAME");
+      prRapidityStack_alt->Draw("NOSTACK E1P SAME");
+      prLegend->Draw();
+      //prText_alt->Draw();
+      canvas->SaveAs(jobID + "_prRapidityStack_alt.png");
+      canvas->Clear();
+
+
+      prRapidityStack_symm->Draw();
+      prRapidityStack_symm->GetYaxis()->SetLabelSize(0.043);
+      prRapidityStack_symm->GetXaxis()->SetLabelSize(0.043);
+      prRapidityStack_symm->GetYaxis()->SetTitleOffset(1.4);
+      prRapidityStack_symm->GetXaxis()->SetTitleOffset(1.0);
+      prRapidityStack_symm->GetXaxis()->SetNdivisions(210);
+      prRapidityStack_symm->GetXaxis()->SetTitleSize(0.045);
+      prRapidityStack_symm->GetYaxis()->SetTitleSize(0.05);
+      prRapidityStack_symm->Draw();
+      prRapidityStack_symm->SetMaximum(rapidityUpperBound_pr);
+      prRapidityStack_symm->SetMinimum(rapidityLowerBound_pr);
+      prRapidityStack_symm->Draw("NOSTACK E1P");
+      zeroLine_y_pr->Draw("SAME");
+      prRapidityStack_symm->Draw("NOSTACK E1P SAME");
+      prLegend_symm->Draw();
+      //prText_y_symm->Draw();
+      //prelimText_symm->Draw();
+      canvas->SaveAs(jobID + "_prRapidityStack_symm.png");
+      canvas->Clear();
+
+      deRapidityStack->Draw();
+      deRapidityStack->GetYaxis()->SetTitleOffset(1.7);
+      deRapidityStack->GetXaxis()->SetNdivisions(210);
+      deRapidityStack->Draw();
+      deRapidityStack->SetMaximum(rapidityUpperBound_pdt);
+      deRapidityStack->SetMinimum(rapidityLowerBound_pdt);
+      deRapidityStack->Draw("NOSTACK E1P");
+      zeroLine_y->Draw("SAME");
+      deRapidityStack->Draw("NOSTACK E1P SAME");
+      deLegend->Draw();
+      //deText->Draw();
+      canvas->SaveAs(jobID + "_deRapidityStack.png");
+      canvas->Clear();
+
+      trRapidityStack->Draw();
+      trRapidityStack->GetYaxis()->SetTitleOffset(1.7);
+      trRapidityStack->GetXaxis()->SetNdivisions(210);
+      trRapidityStack->Draw();
+      trRapidityStack->SetMaximum(rapidityUpperBound_pdt);
+      trRapidityStack->SetMinimum(rapidityLowerBound_pdt);
+      trRapidityStack->Draw("NOSTACK E1P");
+      zeroLine_y->Draw("SAME");
+      trRapidityStack->Draw("NOSTACK E1P SAME");
+      trLegend->Draw();
+      //trText->Draw();
+      canvas->SaveAs(jobID + "_trRapidityStack.png");
+      canvas->Clear();
+    }
+  else if (order_n_str == "2")
     {
       ppRapidityStack->Add(h_vn_yCM_00to10_pp);
       ppRapidityStack->Add(h_vn_yCM_10to40_pp);

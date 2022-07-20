@@ -35,6 +35,9 @@ CompositeData::~CompositeData()
   delete barlow_vn_kp;
   delete barlow_vn_km;
   delete barlow_vn_pr;
+  delete barlow_vn_pr_alt;
+  delete barlow_vn_de;
+  delete barlow_vn_tr;
   
   delete barlow_vn_yCM_00to10_pp;
   delete barlow_vn_yCM_10to40_pp;
@@ -81,6 +84,9 @@ void CompositeData::initialize()
   barlow_vn_kp = new TH1D("barlow_vn_kp_"+ID, "kp vs cent;Centrality;#Delta/#sigma_{#Delta}", 6, 0, 60);
   barlow_vn_km = new TH1D("barlow_vn_km_"+ID, "km vs cent;Centrality;#Delta/#sigma_{#Delta}", 6, 0, 60);
   barlow_vn_pr = new TH1D("barlow_vn_pr_"+ID, "pr vs cent;Centrality;#Delta/#sigma_{#Delta}", 12, 0, 60);
+  barlow_vn_pr_alt = new TH1D("barlow_vn_pr_alt_"+ID, "Alternate pr vs cent;Centrality;#Delta/#sigma_{#Delta}", 12, 0, 60);
+  barlow_vn_de = new TH1D("barlow_vn_de_"+ID, "de vs cent;Centrality;#Delta/#sigma_{#Delta}", 12, 0, 60);
+  barlow_vn_tr = new TH1D("barlow_vn_tr_"+ID, "tr vs cent;Centrality;#Delta/#sigma_{#Delta}", 12, 0, 60);
 
   // Pi+ y
   barlow_vn_yCM_00to10_pp = new TH1D("barlow_vn_yCM_00to10_pp_"+ID, "0-10% pp vs yCM;y-y_{mid};#Delta/#sigma_{#Delta}", 10, 0, 1);
@@ -192,6 +198,9 @@ void CompositeData::saveDetails(Variation* normalData)
   addRawValuesToFile(detailsFile, normalData->h_vn_kp->GetName(), v_vn_kp);
   addRawValuesToFile(detailsFile, normalData->h_vn_km->GetName(), v_vn_km);
   addRawValuesToFile(detailsFile, normalData->h_vn_pr->GetName(), v_vn_pr);
+  addRawValuesToFile(detailsFile, normalData->h_vn_pr_alt->GetName(), v_vn_pr_alt);
+  addRawValuesToFile(detailsFile, normalData->h_vn_pr->GetName(), v_vn_de);
+  addRawValuesToFile(detailsFile, normalData->h_vn_pr->GetName(), v_vn_tr);
 
   addRawValuesToFile(detailsFile, normalData->h_vn_yCM_00to10_pp->GetName(), v_vn_yCM_00to10_pp);
   addRawValuesToFile(detailsFile, normalData->h_vn_yCM_10to40_pp->GetName(), v_vn_yCM_10to40_pp);
@@ -244,6 +253,9 @@ void CompositeData::saveDetails(Variation* normalData)
   addBarlowValuesToFile(detailsFile, barlow_vn_kp, v_vn_kp);
   addBarlowValuesToFile(detailsFile, barlow_vn_km, v_vn_km);
   addBarlowValuesToFile(detailsFile, barlow_vn_pr, v_vn_pr);
+  addBarlowValuesToFile(detailsFile, barlow_vn_pr_alt, v_vn_pr_alt);
+  addBarlowValuesToFile(detailsFile, barlow_vn_de, v_vn_de);
+  addBarlowValuesToFile(detailsFile, barlow_vn_tr, v_vn_tr);
 
   addBarlowValuesToFile(detailsFile, barlow_vn_yCM_00to10_pp, v_vn_yCM_00to10_pp);
   addBarlowValuesToFile(detailsFile, barlow_vn_yCM_10to40_pp, v_vn_yCM_10to40_pp);
@@ -355,6 +367,9 @@ void CompositeData::combine(Variation* normalData, Variation* var1Data)
   mergePoints(normalData->h_vn_kp, var1Data->h_vn_kp, v_vn_kp);
   mergePoints(normalData->h_vn_km, var1Data->h_vn_km, v_vn_km);
   mergePoints(normalData->h_vn_pr, var1Data->h_vn_pr, v_vn_pr);
+  mergePoints(normalData->h_vn_pr_alt, var1Data->h_vn_pr_alt, v_vn_pr_alt);
+  mergePoints(normalData->h_vn_de, var1Data->h_vn_de, v_vn_de);
+  mergePoints(normalData->h_vn_tr, var1Data->h_vn_tr, v_vn_tr);
 
   mergePoints(normalData->h_vn_yCM_00to10_pp, var1Data->h_vn_yCM_00to10_pp, v_vn_yCM_00to10_pp);
   mergePoints(normalData->h_vn_yCM_10to40_pp, var1Data->h_vn_yCM_10to40_pp, v_vn_yCM_10to40_pp);
@@ -411,6 +426,9 @@ void CompositeData::combine(Variation* normalData, Variation* var1Data, Variatio
   mergePoints(normalData->h_vn_kp, var1Data->h_vn_kp, var2Data->h_vn_kp, v_vn_kp);
   mergePoints(normalData->h_vn_km, var1Data->h_vn_km, var2Data->h_vn_km, v_vn_km);
   mergePoints(normalData->h_vn_pr, var1Data->h_vn_pr, var2Data->h_vn_pr, v_vn_pr);
+  mergePoints(normalData->h_vn_pr_alt, var1Data->h_vn_pr_alt, var2Data->h_vn_pr_alt, v_vn_pr_alt);
+  mergePoints(normalData->h_vn_de, var1Data->h_vn_de, var2Data->h_vn_de, v_vn_de);
+  mergePoints(normalData->h_vn_tr, var1Data->h_vn_tr, var2Data->h_vn_tr, v_vn_tr);
 
   mergePoints(normalData->h_vn_yCM_00to10_pp, var1Data->h_vn_yCM_00to10_pp, var2Data->h_vn_yCM_00to10_pp, v_vn_yCM_00to10_pp);
   mergePoints(normalData->h_vn_yCM_10to40_pp, var1Data->h_vn_yCM_10to40_pp, var2Data->h_vn_yCM_10to40_pp, v_vn_yCM_10to40_pp);

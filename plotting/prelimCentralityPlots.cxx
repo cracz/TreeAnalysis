@@ -2,7 +2,7 @@
 
 void prelimCentralityPlots()
 {
-  TString fileName = "Normal.picoDst.result.combined.root";
+  TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
   TFile *file = TFile::Open(fileName);
   if(!file) {std::cout << "Wrong file!" << std::endl; return;}
 
@@ -21,31 +21,44 @@ void prelimCentralityPlots()
   gStyle->SetOptStat(0);
   gStyle->SetEndErrorSize(6);
   gStyle->SetLineWidth(3);
+  gStyle->SetOptDate();
 
 
   TProfile *p_vn_pp   = (TProfile*)file->Get("p_vn_pp");
   TProfile *p_vn_pm   = (TProfile*)file->Get("p_vn_pm");
+  TProfile *p_vn_kp   = (TProfile*)file->Get("p_vn_kp");
+  TProfile *p_vn_km   = (TProfile*)file->Get("p_vn_km");
   TProfile *p_vn_pr   = (TProfile*)file->Get("p_vn_pr");
+  p_vn_kp->Rebin();
+  p_vn_km->Rebin();
 
   // Convert profiles to histograms
   TH1D *h_vn_pp = p_vn_pp->ProjectionX();
   TH1D *h_vn_pm = p_vn_pm->ProjectionX();
+  TH1D *h_vn_kp = p_vn_kp->ProjectionX();
+  TH1D *h_vn_km = p_vn_km->ProjectionX();
   TH1D *h_vn_pr = p_vn_pr->ProjectionX();
 
   // Flip centrality plots
   h_vn_pp = PlotUtils::flipHisto(h_vn_pp);
   h_vn_pm = PlotUtils::flipHisto(h_vn_pm);
+  h_vn_kp = PlotUtils::flipHisto(h_vn_kp);
+  h_vn_km = PlotUtils::flipHisto(h_vn_km);
   h_vn_pr = PlotUtils::flipHisto(h_vn_pr);
 
   // Trim and clean up x-axis
   h_vn_pp = PlotUtils::trimCentralityPlot(h_vn_pp);
   h_vn_pm = PlotUtils::trimCentralityPlot(h_vn_pm);
+  h_vn_kp = PlotUtils::trimCentralityPlot(h_vn_kp);
+  h_vn_km = PlotUtils::trimCentralityPlot(h_vn_km);
   h_vn_pr = PlotUtils::trimCentralityPlot(h_vn_pr);
 
   // Retrieve systematic uncertainties
   TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
   TGraphErrors* sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_Normal_flip");
   TGraphErrors* sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_Normal_flip");
+  TGraphErrors* sys_kp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_kp_Normal_flip");
+  TGraphErrors* sys_km = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_km_Normal_flip");
   TGraphErrors* sys_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_Normal_flip");
   ////
   
@@ -56,6 +69,12 @@ void prelimCentralityPlots()
 
   sys_pm->SetMarkerColor(4);
   sys_pm->SetLineColor(4);
+
+  sys_kp->SetMarkerColor(2);
+  sys_kp->SetLineColor(2);
+
+  sys_km->SetMarkerColor(4);
+  sys_km->SetLineColor(4);
 
   //sys_pr should be fine as it is
   
@@ -73,6 +92,20 @@ void prelimCentralityPlots()
   h_vn_pm->SetLineWidth(3);
   h_vn_pm->GetYaxis()->SetTitleOffset(1.7);
 
+  h_vn_kp->SetMarkerStyle(20);
+  h_vn_kp->SetMarkerSize(2.5);
+  h_vn_kp->SetMarkerColor(2);
+  h_vn_kp->SetLineColor(2);
+  h_vn_kp->SetLineWidth(3);
+  h_vn_kp->GetYaxis()->SetTitleOffset(1.7);
+
+  h_vn_km->SetMarkerStyle(24);
+  h_vn_km->SetMarkerSize(3);
+  h_vn_km->SetMarkerColor(4);
+  h_vn_km->SetLineColor(4);
+  h_vn_km->SetLineWidth(3);
+  h_vn_km->GetYaxis()->SetTitleOffset(1.7);
+
   h_vn_pr->SetMarkerStyle(20);
   h_vn_pr->SetMarkerSize(2.5);
   h_vn_pr->SetMarkerColor(kRed-4);
@@ -85,6 +118,10 @@ void prelimCentralityPlots()
   allCentralityStack->Add(h_vn_pr);
   allCentralityStack->Add(h_vn_pp);
   allCentralityStack->Add(h_vn_pm);
+
+  THStack *kaCentralityStack = new THStack("kaCentralityStack", ";Centrality (%);v_{3} {#psi_{1}}");
+  kaCentralityStack->Add(h_vn_km);
+  kaCentralityStack->Add(h_vn_kp);
   
   // Make text boxes, legends, and line at zero
   TPaveText* prelimText = new TPaveText(15, 0.01, 45, 0.014, "NB");
@@ -101,6 +138,14 @@ void prelimCentralityPlots()
   allText->SetLineColorAlpha(0,0);
   allText->SetTextSize(0.045);
 
+  TPaveText *kaText = new TPaveText(15, 0.05, 48, 0.09, "NB");
+  kaText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+  kaText->AddText("0 < y_{CM} < 0.5 GeV");
+  kaText->AddText("0.4 < p_{T} < 1.6 GeV");
+  kaText->SetFillColorAlpha(0,0);
+  kaText->SetLineColorAlpha(0,0);
+  kaText->SetTextSize(0.045);
+
   TLegend *allLegend = new TLegend(0.28, 0.14, 0.6, 0.3);
   allLegend->AddEntry(h_vn_pp,"#pi^{+}, 0.18 #leq p_{T} #leq 1.6 GeV");
   allLegend->AddEntry(h_vn_pm,"#pi^{-}, 0.18 #leq p_{T} #leq 1.6 GeV");
@@ -108,6 +153,14 @@ void prelimCentralityPlots()
   allLegend->SetFillColorAlpha(0,0);
   allLegend->SetLineColorAlpha(0,0);
   allLegend->SetTextSize(0.04);
+
+  TLegend *kaLegend = new TLegend(0.27, 0.72, 0.47, 0.82);
+  kaLegend->AddEntry(h_vn_kp,"K^{+}");
+  kaLegend->AddEntry(h_vn_km,"K^{-}");
+  kaLegend->SetFillColorAlpha(0,0);
+  kaLegend->SetLineColorAlpha(0,0);
+  kaLegend->SetTextSize(0.04);
+
 
   TLine *zeroLine = new TLine(0, 0, 60, 0);
   zeroLine->SetLineStyle(9);
@@ -132,10 +185,32 @@ void prelimCentralityPlots()
   sys_pr->Draw("[]");
   allLegend->Draw();
   allText->Draw();
-  prelimText->Draw();
+  //prelimText->Draw();
   canvas->SaveAs("v3_allCentralityStack.png");
   canvas->Clear();
 
+  kaCentralityStack->Draw();
+  kaCentralityStack->GetXaxis()->SetLabelSize(0.045);
+  kaCentralityStack->GetYaxis()->SetLabelSize(0.045);
+  kaCentralityStack->GetXaxis()->SetTitleOffset(1.0);
+  kaCentralityStack->GetYaxis()->SetTitleOffset(1.4);
+  kaCentralityStack->GetXaxis()->SetTitleSize(0.045);
+  kaCentralityStack->GetYaxis()->SetTitleSize(0.05);
+  kaCentralityStack->GetXaxis()->SetNdivisions(210);
+  kaCentralityStack->SetMaximum(0.1);
+  kaCentralityStack->SetMinimum(-0.1);
+  kaCentralityStack->Draw("NOSTACK E1P");
+  zeroLine->Draw("SAME");
+  kaCentralityStack->Draw("NOSTACK E1P SAME");
+  sys_kp->Draw("[]");
+  sys_km->Draw("[]");
+  kaLegend->Draw();
+  kaText->Draw();
+  //prelimText->Draw();
+  canvas->SaveAs("v3_kaCentralityStack.png");
+  canvas->Clear();
+
+  
   systematicFile->Close();
   file->Close();
 }

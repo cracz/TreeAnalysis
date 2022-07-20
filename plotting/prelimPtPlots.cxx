@@ -1,6 +1,6 @@
 void prelimPtPlots()
 {
-  TString fileName = "Normal.picoDst.result.combined.root";
+  TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
   TFile *file = TFile::Open(fileName);
   if(!file) {std::cout << "Wrong file!" << std::endl; return;}
 
@@ -17,6 +17,7 @@ void prelimPtPlots()
   gStyle->SetOptStat(0);
   gStyle->SetEndErrorSize(6);
   gStyle->SetLineWidth(3);
+  gStyle->SetOptDate();
 
   TProfile2D *p2_vn_pT_cent_pr = (TProfile2D*)file->Get("p2_vn_pT_cent_pr");
   TProfile *p_vn_pT_00to10_pr = p2_vn_pT_cent_pr->ProfileY("p_vn_pT_00to10_pr", 15, 16);
@@ -112,7 +113,7 @@ void prelimPtPlots()
   prPtStack->GetYaxis()->SetTitleSize(0.05);
   prPtStack->Draw();
   prPtStack->SetMaximum(0.06);
-  prPtStack->SetMinimum(-0.09);
+  prPtStack->SetMinimum(-0.12);
   prPtStack->Draw("NOSTACK E1P");
   zeroLine_pt->Draw("SAME");
   prPtStack->Draw("NOSTACK E1P SAME");
@@ -121,7 +122,7 @@ void prelimPtPlots()
   sys_pT_40to60_pr->Draw("[]");
   prLegend->Draw();
   prText->Draw();
-  prelimText->Draw();
+  //prelimText->Draw();
   canvas->SaveAs("v3_prPtStack.png");
   canvas->Clear();
   

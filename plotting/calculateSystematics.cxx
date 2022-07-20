@@ -23,8 +23,14 @@ void calculateSystematics(TString order_n_str)
   Variation* epd_high = new Variation("epd_high", order_n_str);
   Variation* nSigPi_high = new Variation("nSigPi_high", order_n_str);
   Variation* nSigPi_low  = new Variation("nSigPi_low", order_n_str);
+  Variation* nSigKa_high = new Variation("nSigKa_high", order_n_str);
+  Variation* nSigKa_low  = new Variation("nSigKa_low", order_n_str);
   Variation* nSigPr_high = new Variation("nSigPr_high", order_n_str);
   Variation* nSigPr_low  = new Variation("nSigPr_low", order_n_str);
+  Variation* zDe_high = new Variation("zDe_high", order_n_str);
+  Variation* zDe_low  = new Variation("zDe_low", order_n_str);
+  Variation* zTr_high = new Variation("zTr_high", order_n_str);
+  Variation* zTr_low  = new Variation("zTr_low", order_n_str);
   Variation* rvtx_high = new Variation("rvtx_high", order_n_str);
   Variation* rvtx_low  = new Variation("rvtx_low", order_n_str);
   Variation* zvtx_high = new Variation("zvtx_high", order_n_str);
@@ -38,6 +44,14 @@ void calculateSystematics(TString order_n_str)
   Variation* nhitsratio_low  = new Variation("nhitsratio_low", order_n_str);
   Variation* m2Pi_high = new Variation("m2Pi_high", order_n_str);
   Variation* m2Pi_low  = new Variation("m2Pi_low", order_n_str);
+  Variation* m2Ka_high = new Variation("m2Ka_high", order_n_str);
+  Variation* m2Ka_low  = new Variation("m2Ka_low", order_n_str);
+  Variation* m2De_high = new Variation("m2De_high", order_n_str);
+  Variation* m2De_low  = new Variation("m2De_low", order_n_str);
+  Variation* m2Tr_high = new Variation("m2Tr_high", order_n_str);
+  Variation* m2Tr_low  = new Variation("m2Tr_low", order_n_str);
+  Variation* dAndt_high = new Variation("dAndt_high", order_n_str);
+  Variation* dAndt_low = new Variation("dAndt_low", order_n_str);
 
 
   CompositeData* epd = new CompositeData("epd", Normal, epd_high);
@@ -47,15 +61,41 @@ void calculateSystematics(TString order_n_str)
   //return;
   CompositeData* nhits = new CompositeData("nhits", Normal, nhits_high);  
   CompositeData* nSigPi = new CompositeData("nSigPi", Normal, nSigPi_low, nSigPi_high);
+  CompositeData* nSigKa = new CompositeData("nSigKa", Normal, nSigKa_low, nSigKa_high);
   CompositeData* nSigPr = new CompositeData("nSigPr", Normal, nSigPr_low, nSigPr_high);
+  CompositeData* zDe = new CompositeData("zDe", Normal, zDe_low, zDe_high);
+  CompositeData* zTr = new CompositeData("zTr", Normal, zTr_low, zTr_high);
   CompositeData* rvtx = new CompositeData("rvtx", Normal, rvtx_low, rvtx_high);
   CompositeData* zvtx = new CompositeData("zvtx", Normal, zvtx_low, zvtx_high);
   CompositeData* dca  = new CompositeData("dca", Normal, dca_low, dca_high);
   CompositeData* nhitsdEdx = new CompositeData("nhitsdEdx", Normal, nhitsdEdx_low, nhitsdEdx_high);
   CompositeData* nhitsratio = new CompositeData("nhitsratio", Normal, nhitsratio_low, nhitsratio_high);
   CompositeData* m2Pi = new CompositeData("m2Pi", Normal, m2Pi_low, m2Pi_high);
+  CompositeData* m2Ka = new CompositeData("m2Ka", Normal, m2Ka_low, m2Ka_high);
+  CompositeData* m2De = new CompositeData("m2De", Normal, m2De_low, m2De_high);
+  CompositeData* m2Tr = new CompositeData("m2Tr", Normal, m2Tr_low, m2Tr_high);
+  CompositeData* dAndt = new CompositeData("dAndt", Normal, dAndt_low, dAndt_high);
 
-
+  // Any variations applied universally (like epd variation) should not be in this vector.
+  std::vector<CompositeData*> composites;
+  composites.push_back(nhits);
+  composites.push_back(nSigPi);
+  composites.push_back(nSigKa);
+  composites.push_back(nSigPr);
+  composites.push_back(zDe);
+  composites.push_back(zTr);
+  composites.push_back(rvtx);
+  composites.push_back(zvtx);
+  composites.push_back(dca);
+  composites.push_back(nhitsdEdx);
+  composites.push_back(nhitsratio);
+  composites.push_back(m2Pi);
+  composites.push_back(m2Ka);
+  composites.push_back(m2De);
+  composites.push_back(m2Tr);
+  composites.push_back(dAndt);
+  ////
+  
   newFile->cd();
 
   //======= CALCULATION OF SYSTEMATIC ERRORS
@@ -69,11 +109,27 @@ void calculateSystematics(TString order_n_str)
   //=== pi+ vs centrality
   std::vector<Double_t> v_sys_pp;
   bins = Normal->h_vn_pp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
+      //std::cout << "Bin " << ithBin << std::endl;
       quadSum = 0.0;
-      quadSum += epd->v_vn_pp.at(i).variance;
+      quadSum += epd->v_vn_pp.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pp.at(ithBin).deltaByDeltaError > 1.0)
+	    {
+	      quadSum += composites.at(jthVariation)->v_vn_pp.at(ithBin).variance;
+	      /*
+	      std::cout << composites.at(jthVariation)->ID << ": "
+			<< (composites.at(jthVariation)->v_vn_pp.at(ithBin).stdDev/Normal->h_vn_pp->GetBinContent(ithBin+1) ) * 100
+			<< std::endl;
+	      */
+	    }
+	}
+      //std::cout << std::endl;
+      
+      /*
       if (rvtx->v_vn_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pp.at(i).variance;
       if (zvtx->v_vn_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pp.at(i).variance;
       if (dca->v_vn_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pp.at(i).variance;
@@ -81,9 +137,16 @@ void calculateSystematics(TString order_n_str)
       if (nhitsdEdx->v_vn_pp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pp.at(i).variance;
       if (nhitsratio->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pp.at(i).variance;
       if (m2Pi->v_vn_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pp.at(i).variance;
+      if (m2Ka->v_vn_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Ka->v_vn_pp.at(i).variance;
+      if (m2De->v_vn_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2De->v_vn_pp.at(i).variance;
+      if (m2Tr->v_vn_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Tr->v_vn_pp.at(i).variance;
       if (nSigPi->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pp.at(i).variance;
+      if (nSigKa->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigKa->v_vn_pp.at(i).variance;
       if (nSigPr->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pp.at(i).variance;
-      
+      if (zDe->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += zDe->v_vn_pp.at(i).variance;
+      if (zTr->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += zTr->v_vn_pp.at(i).variance;
+      if (dAndt->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += dAndt->v_vn_pp.at(i).variance;
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -94,11 +157,20 @@ void calculateSystematics(TString order_n_str)
   //=== pi- vs centrality
   std::vector<Double_t> v_sys_pm;
   bins = Normal->h_vn_pm->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pm.at(i).variance;
+      quadSum += epd->v_vn_pm.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pm.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pm.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pm.at(i).variance;
       if (zvtx->v_vn_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pm.at(i).variance;
       if (dca->v_vn_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pm.at(i).variance;
@@ -108,7 +180,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pm.at(i).variance;
       if (nSigPi->v_vn_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pm.at(i).variance;
       if (nSigPr->v_vn_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pm.at(i).variance;
-      
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pm.push_back(ithBinSysErr);
     }// End h_vn_pm loop
@@ -119,11 +191,18 @@ void calculateSystematics(TString order_n_str)
   //=== K+ vs centrality
   std::vector<Double_t> v_sys_kp;
   bins = Normal->h_vn_kp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_kp.at(i).variance;
+      quadSum += epd->v_vn_kp.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_kp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_kp.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_kp.at(i).variance;
       if (zvtx->v_vn_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_kp.at(i).variance;
       if (dca->v_vn_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_kp.at(i).variance;
@@ -133,7 +212,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_kp.at(i).variance;
       if (nSigPi->v_vn_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_kp.at(i).variance;
       if (nSigPr->v_vn_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_kp.at(i).variance;
-      
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_kp.push_back(ithBinSysErr);
     }// End h_vn_kp loop
@@ -141,14 +220,23 @@ void calculateSystematics(TString order_n_str)
   quadSum = 0.0;
   //===
 
-  //=== K+ vs centrality
+  //=== K- vs centrality
   std::vector<Double_t> v_sys_km;
   bins = Normal->h_vn_km->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_km.at(i).variance;
+      quadSum += epd->v_vn_km.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_km.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_km.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_km.at(i).variance;
       if (zvtx->v_vn_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_km.at(i).variance;
       if (dca->v_vn_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_km.at(i).variance;
@@ -158,7 +246,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_km.at(i).variance;
       if (nSigPi->v_vn_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_km.at(i).variance;
       if (nSigPr->v_vn_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_km.at(i).variance;
-      
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_km.push_back(ithBinSysErr);
     }// End h_vn_km loop
@@ -167,13 +255,36 @@ void calculateSystematics(TString order_n_str)
   //===
 
   //=== proton vs centrality
+  std::cout << "PROTON VS CENTRALITY" << std::endl;
   std::vector<Double_t> v_sys_pr;
   bins = Normal->h_vn_pr->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
+      std::cout << "Bin " << ithBin << std::endl;
       quadSum = 0.0;
-      quadSum += epd->v_vn_pr.at(i).variance;
+      quadSum += epd->v_vn_pr.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pr.at(ithBin).deltaByDeltaError > 1.0)
+	    {
+	      quadSum += composites.at(jthVariation)->v_vn_pr.at(ithBin).variance;
+
+	      std::cout << composites.at(jthVariation)->ID << ": "
+			<< (composites.at(jthVariation)->v_vn_pr.at(ithBin).stdDev/Normal->h_vn_pr->GetBinContent(ithBin+1) ) * 100
+			<< std::endl;
+	    }
+	}
+      if (epd->v_vn_pr.at(ithBin).deltaByDeltaError > 1.0)
+	{
+	  std::cout << "epd: "
+		    << (epd->v_vn_pr.at(ithBin).stdDev/Normal->h_vn_pr->GetBinContent(ithBin+1) ) * 100
+		    << std::endl;
+	}
+      std::cout << std::endl;
+      
+      /*
       if (rvtx->v_vn_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pr.at(i).variance;
       if (zvtx->v_vn_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pr.at(i).variance;
       if (dca->v_vn_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pr.at(i).variance;
@@ -183,10 +294,131 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pr.at(i).variance;
       if (nSigPi->v_vn_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pr.at(i).variance;
       if (nSigPr->v_vn_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pr.at(i).variance;
-      
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pr.push_back(ithBinSysErr);
     }// End h_vn_pr loop
+  ithBinSysErr = 0;
+  quadSum = 0.0;
+  //===
+
+
+  //=== proton alternate acceptance vs centrality
+  std::cout << "PROTON VS CENTRALITY (ALTERNATE ACCEPTANCE)" << std::endl;
+  std::vector<Double_t> v_sys_pr_alt;
+  bins = Normal->h_vn_pr_alt->GetNbinsX();
+  for (int ithBin = 0; ithBin < bins; ithBin++)
+    {
+      std::cout << "Bin " << ithBin << std::endl;
+      quadSum = 0.0;
+      quadSum += epd->v_vn_pr_alt.at(ithBin).variance;
+
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pr_alt.at(ithBin).deltaByDeltaError > 1.0)
+	    {
+	      quadSum += composites.at(jthVariation)->v_vn_pr_alt.at(ithBin).variance;
+	      std::cout << composites.at(jthVariation)->ID << ": "
+			<< (composites.at(jthVariation)->v_vn_pr_alt.at(ithBin).stdDev/Normal->h_vn_pr_alt->GetBinContent(ithBin+1) ) * 100
+			<< std::endl;
+	    }
+	}
+      if (epd->v_vn_pr_alt.at(ithBin).deltaByDeltaError > 1.0)
+	{
+	  std::cout << "epd: "
+		    << (epd->v_vn_pr_alt.at(ithBin).stdDev/Normal->h_vn_pr_alt->GetBinContent(ithBin+1) ) * 100
+		    << std::endl;
+	}
+      std::cout << std::endl;
+      
+      /*
+      if (rvtx->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pr_alt.at(i).variance;
+      if (zvtx->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pr_alt.at(i).variance;
+      if (dca->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pr_alt.at(i).variance;
+      if (nhits->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pr_alt.at(i).variance;
+      if (nhitsdEdx->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pr_alt.at(i).variance;
+      if (nhitsratio->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pr_alt.at(i).variance;
+      if (m2Pi->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pr_alt.at(i).variance;
+      if (nSigPi->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pr_alt.at(i).variance;
+      if (nSigPr->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pr_alt.at(i).variance;
+      */
+      ithBinSysErr = TMath::Sqrt(quadSum);
+      v_sys_pr_alt.push_back(ithBinSysErr);
+    }// End h_vn_pr_alt loop
+  ithBinSysErr = 0;
+  quadSum = 0.0;
+  //===
+
+
+
+  //=== Deuteron vs centrality
+  std::cout << "DEUTERON VS CENTRALITY" << std::endl;
+  std::vector<Double_t> v_sys_de;
+  bins = Normal->h_vn_de->GetNbinsX();
+  for (int ithBin = 0; ithBin < bins; ithBin++)
+    {
+      std::cout << "Bin " << ithBin << std::endl;
+      quadSum = 0.0;
+      quadSum += epd->v_vn_de.at(ithBin).variance;
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_de.at(ithBin).deltaByDeltaError > 1.0)
+	    {
+	      quadSum += composites.at(jthVariation)->v_vn_de.at(ithBin).variance;
+	      std::cout << composites.at(jthVariation)->ID << ": "
+			<< (composites.at(jthVariation)->v_vn_de.at(ithBin).stdDev/Normal->h_vn_de->GetBinContent(ithBin+1) ) * 100
+			<< std::endl;
+	    }
+	}
+      if (epd->v_vn_de.at(ithBin).deltaByDeltaError > 1.0)
+	{
+	  std::cout << "epd: "
+		    << (epd->v_vn_de.at(ithBin).stdDev/Normal->h_vn_de->GetBinContent(ithBin+1) ) * 100
+		    << std::endl;
+	}
+      std::cout << std::endl;
+      
+      ithBinSysErr = TMath::Sqrt(quadSum);
+      v_sys_de.push_back(ithBinSysErr);
+    }// End h_vn_de loop
+  ithBinSysErr = 0;
+  quadSum = 0.0;
+  //===
+
+
+  //=== Triton vs centrality
+  std::cout << "TRITON VS CENTRALITY" << std::endl;
+  std::vector<Double_t> v_sys_tr;
+  bins = Normal->h_vn_tr->GetNbinsX();
+  for (int ithBin = 0; ithBin < bins; ithBin++)
+    {
+      std::cout << "Bin " << ithBin << std::endl;
+      quadSum = 0.0;
+      quadSum += epd->v_vn_tr.at(ithBin).variance;
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_tr.at(ithBin).deltaByDeltaError > 1.0)
+	    {
+	      quadSum += composites.at(jthVariation)->v_vn_tr.at(ithBin).variance;
+	      std::cout << composites.at(jthVariation)->ID << ": "
+			<< (composites.at(jthVariation)->v_vn_tr.at(ithBin).stdDev/Normal->h_vn_tr->GetBinContent(ithBin+1) ) * 100
+			<< std::endl;
+	    }
+	}
+      if (epd->v_vn_tr.at(ithBin).deltaByDeltaError > 1.0)
+	{
+	  std::cout << "epd: "
+		    << (epd->v_vn_tr.at(ithBin).stdDev/Normal->h_vn_tr->GetBinContent(ithBin+1) ) * 100
+		    << std::endl;
+	}
+      std::cout << std::endl;
+
+      ithBinSysErr = TMath::Sqrt(quadSum);
+      v_sys_tr.push_back(ithBinSysErr);
+    }// End h_vn_tr loop
   ithBinSysErr = 0;
   quadSum = 0.0;
   //===
@@ -197,11 +429,20 @@ void calculateSystematics(TString order_n_str)
   //=== pi+ vs rapidity 0 - 10%
   std::vector<Double_t> v_sys_yCM_00to10_pp;
   bins = Normal->h_vn_yCM_00to10_pp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_00to10_pp.at(i).variance;
+      quadSum += epd->v_vn_yCM_00to10_pp.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_00to10_pp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_00to10_pp.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_00to10_pp.at(i).variance;
       if (zvtx->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_00to10_pp.at(i).variance;
       if (dca->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_00to10_pp.at(i).variance;
@@ -211,7 +452,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_00to10_pp.at(i).variance;
       if (nSigPi->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_00to10_pp.at(i).variance;
       if (nSigPr->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_00to10_pp.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_00to10_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -222,11 +463,20 @@ void calculateSystematics(TString order_n_str)
   //=== pi+ vs rapidity 10 - 40%
   std::vector<Double_t> v_sys_yCM_10to40_pp;
   bins = Normal->h_vn_yCM_10to40_pp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_10to40_pp.at(i).variance;
+      quadSum += epd->v_vn_yCM_10to40_pp.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_10to40_pp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_10to40_pp.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_10to40_pp.at(i).variance;
       if (zvtx->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_10to40_pp.at(i).variance;
       if (dca->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_10to40_pp.at(i).variance;
@@ -236,7 +486,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_10to40_pp.at(i).variance;
       if (nSigPi->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_10to40_pp.at(i).variance;
       if (nSigPr->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_10to40_pp.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_10to40_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -247,11 +497,20 @@ void calculateSystematics(TString order_n_str)
   //=== pi+ vs rapidity 40 - 60%
   std::vector<Double_t> v_sys_yCM_40to60_pp;
   bins = Normal->h_vn_yCM_40to60_pp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_40to60_pp.at(i).variance;
+      quadSum += epd->v_vn_yCM_40to60_pp.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_40to60_pp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_40to60_pp.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_40to60_pp.at(i).variance;
       if (zvtx->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_40to60_pp.at(i).variance;
       if (dca->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_40to60_pp.at(i).variance;
@@ -261,7 +520,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_40to60_pp.at(i).variance;
       if (nSigPi->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_40to60_pp.at(i).variance;
       if (nSigPr->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_40to60_pp.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_40to60_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -273,11 +532,19 @@ void calculateSystematics(TString order_n_str)
   //=== pi- vs rapidity 0 - 10%
   std::vector<Double_t> v_sys_yCM_00to10_pm;
   bins = Normal->h_vn_yCM_00to10_pm->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_00to10_pm.at(i).variance;
+      quadSum += epd->v_vn_yCM_00to10_pm.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_00to10_pm.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_00to10_pm.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_00to10_pm.at(i).variance;
       if (zvtx->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_00to10_pm.at(i).variance;
       if (dca->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_00to10_pm.at(i).variance;
@@ -287,7 +554,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_00to10_pm.at(i).variance;
       if (nSigPi->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_00to10_pm.at(i).variance;
       if (nSigPr->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_00to10_pm.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_00to10_pm.push_back(ithBinSysErr);
     }
@@ -298,11 +565,20 @@ void calculateSystematics(TString order_n_str)
   //=== pi- vs rapidity 10 - 40%
   std::vector<Double_t> v_sys_yCM_10to40_pm;
   bins = Normal->h_vn_yCM_10to40_pm->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_10to40_pm.at(i).variance;
+      quadSum += epd->v_vn_yCM_10to40_pm.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_10to40_pm.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_10to40_pm.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_10to40_pm.at(i).variance;
       if (zvtx->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_10to40_pm.at(i).variance;
       if (dca->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_10to40_pm.at(i).variance;
@@ -312,7 +588,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_10to40_pm.at(i).variance;
       if (nSigPi->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_10to40_pm.at(i).variance;
       if (nSigPr->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_10to40_pm.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_10to40_pm.push_back(ithBinSysErr);
     }
@@ -323,11 +599,20 @@ void calculateSystematics(TString order_n_str)
   //=== pi- vs rapidity 40 - 60%
   std::vector<Double_t> v_sys_yCM_40to60_pm;
   bins = Normal->h_vn_yCM_40to60_pm->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_40to60_pm.at(i).variance;
+      quadSum += epd->v_vn_yCM_40to60_pm.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_40to60_pm.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_40to60_pm.at(ithBin).variance;
+	}
+      
+      
+      /*
       if (rvtx->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_40to60_pm.at(i).variance;
       if (zvtx->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_40to60_pm.at(i).variance;
       if (dca->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_40to60_pm.at(i).variance;
@@ -337,7 +622,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_40to60_pm.at(i).variance;
       if (nSigPi->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_40to60_pm.at(i).variance;
       if (nSigPr->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_40to60_pm.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_40to60_pm.push_back(ithBinSysErr);
     }
@@ -349,11 +634,19 @@ void calculateSystematics(TString order_n_str)
   //=== K+ vs rapidity 0 - 10%
   std::vector<Double_t> v_sys_yCM_00to10_kp;
   bins = Normal->h_vn_yCM_00to10_kp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_00to10_kp.at(i).variance;
+      quadSum += epd->v_vn_yCM_00to10_kp.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_00to10_kp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_00to10_kp.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_00to10_kp.at(i).variance;
       if (zvtx->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_00to10_kp.at(i).variance;
       if (dca->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_00to10_kp.at(i).variance;
@@ -363,7 +656,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_00to10_kp.at(i).variance;
       if (nSigPi->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_00to10_kp.at(i).variance;
       if (nSigPr->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_00to10_kp.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_00to10_kp.push_back(ithBinSysErr);
     }
@@ -374,11 +667,20 @@ void calculateSystematics(TString order_n_str)
   //=== K+ vs rapidity 10 - 40%
   std::vector<Double_t> v_sys_yCM_10to40_kp;
   bins = Normal->h_vn_yCM_10to40_kp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_10to40_kp.at(i).variance;
+      quadSum += epd->v_vn_yCM_10to40_kp.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_10to40_kp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_10to40_kp.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_10to40_kp.at(i).variance;
       if (zvtx->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_10to40_kp.at(i).variance;
       if (dca->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_10to40_kp.at(i).variance;
@@ -388,7 +690,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_10to40_kp.at(i).variance;
       if (nSigPi->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_10to40_kp.at(i).variance;
       if (nSigPr->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_10to40_kp.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_10to40_kp.push_back(ithBinSysErr);
     }
@@ -399,11 +701,19 @@ void calculateSystematics(TString order_n_str)
   //=== K+ vs rapidity 40 - 60%
   std::vector<Double_t> v_sys_yCM_40to60_kp;
   bins = Normal->h_vn_yCM_40to60_kp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_40to60_kp.at(i).variance;
+      quadSum += epd->v_vn_yCM_40to60_kp.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_40to60_kp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_40to60_kp.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_40to60_kp.at(i).variance;
       if (zvtx->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_40to60_kp.at(i).variance;
       if (dca->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_40to60_kp.at(i).variance;
@@ -413,7 +723,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_40to60_kp.at(i).variance;
       if (nSigPi->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_40to60_kp.at(i).variance;
       if (nSigPr->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_40to60_kp.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_40to60_kp.push_back(ithBinSysErr);
     }
@@ -425,11 +735,19 @@ void calculateSystematics(TString order_n_str)
   //=== K- vs rapidity 0 - 10%
   std::vector<Double_t> v_sys_yCM_00to10_km;
   bins = Normal->h_vn_yCM_00to10_km->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_00to10_km.at(i).variance;
+      quadSum += epd->v_vn_yCM_00to10_km.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_00to10_km.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_00to10_km.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_00to10_km.at(i).variance;
       if (zvtx->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_00to10_km.at(i).variance;
       if (dca->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_00to10_km.at(i).variance;
@@ -439,7 +757,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_00to10_km.at(i).variance;
       if (nSigPi->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_00to10_km.at(i).variance;
       if (nSigPr->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_00to10_km.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_00to10_km.push_back(ithBinSysErr);
     }
@@ -450,11 +768,19 @@ void calculateSystematics(TString order_n_str)
   //=== K- vs rapidity 10 - 40%
   std::vector<Double_t> v_sys_yCM_10to40_km;
   bins = Normal->h_vn_yCM_10to40_km->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_10to40_km.at(i).variance;
+      quadSum += epd->v_vn_yCM_10to40_km.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_10to40_km.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_10to40_km.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_10to40_km.at(i).variance;
       if (zvtx->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_10to40_km.at(i).variance;
       if (dca->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_10to40_km.at(i).variance;
@@ -464,7 +790,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_10to40_km.at(i).variance;
       if (nSigPi->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_10to40_km.at(i).variance;
       if (nSigPr->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_10to40_km.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_10to40_km.push_back(ithBinSysErr);
     }
@@ -475,11 +801,18 @@ void calculateSystematics(TString order_n_str)
   //=== K- vs rapidity 40 - 60%
   std::vector<Double_t> v_sys_yCM_40to60_km;
   bins = Normal->h_vn_yCM_40to60_km->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_40to60_km.at(i).variance;
+      quadSum += epd->v_vn_yCM_40to60_km.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_40to60_km.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_40to60_km.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_40to60_km.at(i).variance;
       if (zvtx->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_40to60_km.at(i).variance;
       if (dca->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_40to60_km.at(i).variance;
@@ -489,7 +822,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_40to60_km.at(i).variance;
       if (nSigPi->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_40to60_km.at(i).variance;
       if (nSigPr->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_40to60_km.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_40to60_km.push_back(ithBinSysErr);
     }
@@ -501,11 +834,18 @@ void calculateSystematics(TString order_n_str)
   //=== Proton vs rapidity 0 - 10%
   std::vector<Double_t> v_sys_yCM_00to10_pr;
   bins = Normal->h_vn_yCM_00to10_pr->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_00to10_pr.at(i).variance;
+      quadSum += epd->v_vn_yCM_00to10_pr.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_00to10_pr.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_00to10_pr.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_00to10_pr.at(i).variance;
       if (zvtx->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_00to10_pr.at(i).variance;
       if (dca->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_00to10_pr.at(i).variance;
@@ -515,7 +855,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_00to10_pr.at(i).variance;
       if (nSigPi->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_00to10_pr.at(i).variance;
       if (nSigPr->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_00to10_pr.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_00to10_pr.push_back(ithBinSysErr);
     }
@@ -526,11 +866,20 @@ void calculateSystematics(TString order_n_str)
   //=== Proton vs rapidity 10 - 40%
   std::vector<Double_t> v_sys_yCM_10to40_pr;
   bins = Normal->h_vn_yCM_10to40_pr->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_10to40_pr.at(i).variance;
+      quadSum += epd->v_vn_yCM_10to40_pr.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_10to40_pr.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_10to40_pr.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_10to40_pr.at(i).variance;
       if (zvtx->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_10to40_pr.at(i).variance;
       if (dca->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_10to40_pr.at(i).variance;
@@ -540,7 +889,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_10to40_pr.at(i).variance;
       if (nSigPi->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_10to40_pr.at(i).variance;
       if (nSigPr->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_10to40_pr.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_10to40_pr.push_back(ithBinSysErr);
     }
@@ -551,11 +900,20 @@ void calculateSystematics(TString order_n_str)
   //=== Proton vs rapidity 40 - 60%
   std::vector<Double_t> v_sys_yCM_40to60_pr;
   bins = Normal->h_vn_yCM_40to60_pr->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_40to60_pr.at(i).variance;
+      quadSum += epd->v_vn_yCM_40to60_pr.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_40to60_pr.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_40to60_pr.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_40to60_pr.at(i).variance;
       if (zvtx->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_40to60_pr.at(i).variance;
       if (dca->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_40to60_pr.at(i).variance;
@@ -565,7 +923,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_40to60_pr.at(i).variance;
       if (nSigPi->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_40to60_pr.at(i).variance;
       if (nSigPr->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_40to60_pr.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_40to60_pr.push_back(ithBinSysErr);
     }
@@ -578,11 +936,19 @@ void calculateSystematics(TString order_n_str)
   //=== Proton vs rapidity 0 - 10% symmetric
   std::vector<Double_t> v_sys_yCM_00to10_pr_symm;
   bins = Normal->h_vn_yCM_00to10_pr_symm->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_00to10_pr_symm.at(i).variance;
+      quadSum += epd->v_vn_yCM_00to10_pr_symm.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_00to10_pr_symm.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_00to10_pr_symm.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_00to10_pr_symm.at(i).variance;
       if (zvtx->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_00to10_pr_symm.at(i).variance;
       if (dca->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_00to10_pr_symm.at(i).variance;
@@ -592,7 +958,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_00to10_pr_symm.at(i).variance;
       if (nSigPi->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_00to10_pr_symm.at(i).variance;
       if (nSigPr->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_00to10_pr_symm.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_00to10_pr_symm.push_back(ithBinSysErr);
     }
@@ -603,11 +969,20 @@ void calculateSystematics(TString order_n_str)
   //=== Proton vs rapidity 10 - 40% symmetric
   std::vector<Double_t> v_sys_yCM_10to40_pr_symm;
   bins = Normal->h_vn_yCM_10to40_pr_symm->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_10to40_pr_symm.at(i).variance;
+      quadSum += epd->v_vn_yCM_10to40_pr_symm.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_10to40_pr_symm.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_10to40_pr_symm.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_10to40_pr_symm.at(i).variance;
       if (zvtx->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_10to40_pr_symm.at(i).variance;
       if (dca->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_10to40_pr_symm.at(i).variance;
@@ -617,7 +992,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_10to40_pr_symm.at(i).variance;
       if (nSigPi->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_10to40_pr_symm.at(i).variance;
       if (nSigPr->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_10to40_pr_symm.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_10to40_pr_symm.push_back(ithBinSysErr);
     }
@@ -628,11 +1003,19 @@ void calculateSystematics(TString order_n_str)
   //=== Proton vs rapidity 40 - 60% symmetric
   std::vector<Double_t> v_sys_yCM_40to60_pr_symm;
   bins = Normal->h_vn_yCM_40to60_pr_symm->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_yCM_40to60_pr_symm.at(i).variance;
+      quadSum += epd->v_vn_yCM_40to60_pr_symm.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_yCM_40to60_pr_symm.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_yCM_40to60_pr_symm.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_40to60_pr_symm.at(i).variance;
       if (zvtx->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_40to60_pr_symm.at(i).variance;
       if (dca->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_40to60_pr_symm.at(i).variance;
@@ -642,7 +1025,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_40to60_pr_symm.at(i).variance;
       if (nSigPi->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_40to60_pr_symm.at(i).variance;
       if (nSigPr->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_40to60_pr_symm.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_40to60_pr_symm.push_back(ithBinSysErr);
     }
@@ -655,11 +1038,18 @@ void calculateSystematics(TString order_n_str)
   //=== pi+ vs pT 0 - 10%
   std::vector<Double_t> v_sys_pT_00to10_pp;
   bins = Normal->h_vn_pT_00to10_pp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_00to10_pp.at(i).variance;
+      quadSum += epd->v_vn_pT_00to10_pp.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_00to10_pp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_00to10_pp.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_00to10_pp.at(i).variance;
       if (zvtx->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_00to10_pp.at(i).variance;
       if (dca->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_00to10_pp.at(i).variance;
@@ -669,7 +1059,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_00to10_pp.at(i).variance;
       if (nSigPi->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_00to10_pp.at(i).variance;
       if (nSigPr->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_00to10_pp.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_00to10_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -680,11 +1070,19 @@ void calculateSystematics(TString order_n_str)
   //=== pi+ vs pT 10 - 40%
   std::vector<Double_t> v_sys_pT_10to40_pp;
   bins = Normal->h_vn_pT_10to40_pp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_10to40_pp.at(i).variance;
+      quadSum += epd->v_vn_pT_10to40_pp.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_10to40_pp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_10to40_pp.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_10to40_pp.at(i).variance;
       if (zvtx->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_10to40_pp.at(i).variance;
       if (dca->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_10to40_pp.at(i).variance;
@@ -694,7 +1092,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_10to40_pp.at(i).variance;
       if (nSigPi->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_10to40_pp.at(i).variance;
       if (nSigPr->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_10to40_pp.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_10to40_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -705,11 +1103,19 @@ void calculateSystematics(TString order_n_str)
   //=== pi+ vs pT 40 - 60%
   std::vector<Double_t> v_sys_pT_40to60_pp;
   bins = Normal->h_vn_pT_40to60_pp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_40to60_pp.at(i).variance;
+      quadSum += epd->v_vn_pT_40to60_pp.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_40to60_pp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_40to60_pp.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_40to60_pp.at(i).variance;
       if (zvtx->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_40to60_pp.at(i).variance;
       if (dca->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_40to60_pp.at(i).variance;
@@ -719,7 +1125,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_40to60_pp.at(i).variance;
       if (nSigPi->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_40to60_pp.at(i).variance;
       if (nSigPr->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_40to60_pp.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_40to60_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -731,11 +1137,19 @@ void calculateSystematics(TString order_n_str)
   //=== pi- vs pT 0 - 10%
   std::vector<Double_t> v_sys_pT_00to10_pm;
   bins = Normal->h_vn_pT_00to10_pm->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_00to10_pm.at(i).variance;
+      quadSum += epd->v_vn_pT_00to10_pm.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_00to10_pm.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_00to10_pm.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_00to10_pm.at(i).variance;
       if (zvtx->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_00to10_pm.at(i).variance;
       if (dca->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_00to10_pm.at(i).variance;
@@ -745,7 +1159,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_00to10_pm.at(i).variance;
       if (nSigPi->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_00to10_pm.at(i).variance;
       if (nSigPr->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_00to10_pm.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_00to10_pm.push_back(ithBinSysErr);
     }
@@ -756,11 +1170,19 @@ void calculateSystematics(TString order_n_str)
   //=== pi- vs pT 10 - 40%
   std::vector<Double_t> v_sys_pT_10to40_pm;
   bins = Normal->h_vn_pT_10to40_pm->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_10to40_pm.at(i).variance;
+      quadSum += epd->v_vn_pT_10to40_pm.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_10to40_pm.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_10to40_pm.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_10to40_pm.at(i).variance;
       if (zvtx->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_10to40_pm.at(i).variance;
       if (dca->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_10to40_pm.at(i).variance;
@@ -770,7 +1192,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_10to40_pm.at(i).variance;
       if (nSigPi->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_10to40_pm.at(i).variance;
       if (nSigPr->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_10to40_pm.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_10to40_pm.push_back(ithBinSysErr);
     }
@@ -781,11 +1203,19 @@ void calculateSystematics(TString order_n_str)
   //=== pi- vs pT 40 - 60%
   std::vector<Double_t> v_sys_pT_40to60_pm;
   bins = Normal->h_vn_pT_40to60_pm->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_40to60_pm.at(i).variance;
+      quadSum += epd->v_vn_pT_40to60_pm.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_40to60_pm.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_40to60_pm.at(ithBin).variance;
+	}
+      
+
+      /*
       if (rvtx->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_40to60_pm.at(i).variance;
       if (zvtx->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_40to60_pm.at(i).variance;
       if (dca->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_40to60_pm.at(i).variance;
@@ -795,7 +1225,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_40to60_pm.at(i).variance;
       if (nSigPi->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_40to60_pm.at(i).variance;
       if (nSigPr->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_40to60_pm.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_40to60_pm.push_back(ithBinSysErr);
     }
@@ -807,11 +1237,19 @@ void calculateSystematics(TString order_n_str)
   //=== K+ vs pT 0 - 10%
   std::vector<Double_t> v_sys_pT_00to10_kp;
   bins = Normal->h_vn_pT_00to10_kp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_00to10_kp.at(i).variance;
+      quadSum += epd->v_vn_pT_00to10_kp.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_00to10_kp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_00to10_kp.at(ithBin).variance;
+	}
+      
+      
+      /*
       if (rvtx->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_00to10_kp.at(i).variance;
       if (zvtx->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_00to10_kp.at(i).variance;
       if (dca->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_00to10_kp.at(i).variance;
@@ -821,7 +1259,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_00to10_kp.at(i).variance;
       if (nSigPi->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_00to10_kp.at(i).variance;
       if (nSigPr->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_00to10_kp.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_00to10_kp.push_back(ithBinSysErr);
     }
@@ -832,11 +1270,19 @@ void calculateSystematics(TString order_n_str)
   //=== K+ vs pT 10 - 40%
   std::vector<Double_t> v_sys_pT_10to40_kp;
   bins = Normal->h_vn_pT_10to40_kp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_10to40_kp.at(i).variance;
+      quadSum += epd->v_vn_pT_10to40_kp.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_10to40_kp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_10to40_kp.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_10to40_kp.at(i).variance;
       if (zvtx->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_10to40_kp.at(i).variance;
       if (dca->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_10to40_kp.at(i).variance;
@@ -846,7 +1292,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_10to40_kp.at(i).variance;
       if (nSigPi->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_10to40_kp.at(i).variance;
       if (nSigPr->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_10to40_kp.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_10to40_kp.push_back(ithBinSysErr);
     }
@@ -857,11 +1303,19 @@ void calculateSystematics(TString order_n_str)
   //=== K+ vs pT 40 - 60%
   std::vector<Double_t> v_sys_pT_40to60_kp;
   bins = Normal->h_vn_pT_40to60_kp->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_40to60_kp.at(i).variance;
+      quadSum += epd->v_vn_pT_40to60_kp.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_40to60_kp.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_40to60_kp.at(ithBin).variance;
+	}
+
+      /*
       if (rvtx->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_40to60_kp.at(i).variance;
       if (zvtx->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_40to60_kp.at(i).variance;
       if (dca->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_40to60_kp.at(i).variance;
@@ -871,7 +1325,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_40to60_kp.at(i).variance;
       if (nSigPi->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_40to60_kp.at(i).variance;
       if (nSigPr->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_40to60_kp.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_40to60_kp.push_back(ithBinSysErr);
     }
@@ -883,11 +1337,19 @@ void calculateSystematics(TString order_n_str)
   //=== K- vs pT 0 - 10%
   std::vector<Double_t> v_sys_pT_00to10_km;
   bins = Normal->h_vn_pT_00to10_km->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_00to10_km.at(i).variance;
+      quadSum += epd->v_vn_pT_00to10_km.at(ithBin).variance;
 
+
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_00to10_km.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_00to10_km.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_00to10_km.at(i).variance;
       if (zvtx->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_00to10_km.at(i).variance;
       if (dca->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_00to10_km.at(i).variance;
@@ -897,7 +1359,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_00to10_km.at(i).variance;
       if (nSigPi->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_00to10_km.at(i).variance;
       if (nSigPr->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_00to10_km.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_00to10_km.push_back(ithBinSysErr);
     }
@@ -908,11 +1370,18 @@ void calculateSystematics(TString order_n_str)
   //=== K- vs pT 10 - 40%
   std::vector<Double_t> v_sys_pT_10to40_km;
   bins = Normal->h_vn_pT_10to40_km->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_10to40_km.at(i).variance;
+      quadSum += epd->v_vn_pT_10to40_km.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_10to40_km.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_10to40_km.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_10to40_km.at(i).variance;
       if (zvtx->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_10to40_km.at(i).variance;
       if (dca->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_10to40_km.at(i).variance;
@@ -922,7 +1391,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_10to40_km.at(i).variance;
       if (nSigPi->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_10to40_km.at(i).variance;
       if (nSigPr->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_10to40_km.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_10to40_km.push_back(ithBinSysErr);
     }
@@ -933,11 +1402,18 @@ void calculateSystematics(TString order_n_str)
   //=== K- vs pT 40 - 60%
   std::vector<Double_t> v_sys_pT_40to60_km;
   bins = Normal->h_vn_pT_40to60_km->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_40to60_km.at(i).variance;
+      quadSum += epd->v_vn_pT_40to60_km.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_40to60_km.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_40to60_km.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_40to60_km.at(i).variance;
       if (zvtx->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_40to60_km.at(i).variance;
       if (dca->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_40to60_km.at(i).variance;
@@ -947,7 +1423,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_40to60_km.at(i).variance;
       if (nSigPi->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_40to60_km.at(i).variance;
       if (nSigPr->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_40to60_km.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_40to60_km.push_back(ithBinSysErr);
     }
@@ -959,11 +1435,18 @@ void calculateSystematics(TString order_n_str)
   //=== Proton vs pT 0 - 10%
   std::vector<Double_t> v_sys_pT_00to10_pr;
   bins = Normal->h_vn_pT_00to10_pr->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_00to10_pr.at(i).variance;
+      quadSum += epd->v_vn_pT_00to10_pr.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_00to10_pr.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_00to10_pr.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_00to10_pr.at(i).variance;
       if (zvtx->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_00to10_pr.at(i).variance;
       if (dca->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_00to10_pr.at(i).variance;
@@ -973,7 +1456,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_00to10_pr.at(i).variance;
       if (nSigPi->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_00to10_pr.at(i).variance;
       if (nSigPr->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_00to10_pr.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_00to10_pr.push_back(ithBinSysErr);
     }
@@ -984,11 +1467,18 @@ void calculateSystematics(TString order_n_str)
   //=== Proton vs pT 10 - 40%
   std::vector<Double_t> v_sys_pT_10to40_pr;
   bins = Normal->h_vn_pT_10to40_pr->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_10to40_pr.at(i).variance;
+      quadSum += epd->v_vn_pT_10to40_pr.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_10to40_pr.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_10to40_pr.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_10to40_pr.at(i).variance;
       if (zvtx->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_10to40_pr.at(i).variance;
       if (dca->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_10to40_pr.at(i).variance;
@@ -998,7 +1488,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_10to40_pr.at(i).variance;
       if (nSigPi->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_10to40_pr.at(i).variance;
       if (nSigPr->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_10to40_pr.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_10to40_pr.push_back(ithBinSysErr);
     }
@@ -1009,11 +1499,18 @@ void calculateSystematics(TString order_n_str)
   //=== Proton vs pT 40 - 60%
   std::vector<Double_t> v_sys_pT_40to60_pr;
   bins = Normal->h_vn_pT_40to60_pr->GetNbinsX();
-  for (int i = 0; i < bins; i++)
+  for (int ithBin = 0; ithBin < bins; ithBin++)
     {
       quadSum = 0.0;
-      quadSum += epd->v_vn_pT_40to60_pr.at(i).variance;
+      quadSum += epd->v_vn_pT_40to60_pr.at(ithBin).variance;
 
+      for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
+	{
+	  if (composites.at(jthVariation)->v_vn_pT_40to60_pr.at(ithBin).deltaByDeltaError > 1.0)
+	    quadSum += composites.at(jthVariation)->v_vn_pT_40to60_pr.at(ithBin).variance;
+	}
+      
+      /*
       if (rvtx->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_40to60_pr.at(i).variance;
       if (zvtx->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_40to60_pr.at(i).variance;
       if (dca->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_40to60_pr.at(i).variance;
@@ -1023,7 +1520,7 @@ void calculateSystematics(TString order_n_str)
       if (m2Pi->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_40to60_pr.at(i).variance;
       if (nSigPi->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_40to60_pr.at(i).variance;
       if (nSigPr->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_40to60_pr.at(i).variance;
-
+      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_40to60_pr.push_back(ithBinSysErr);
     }
@@ -1427,6 +1924,66 @@ void calculateSystematics(TString order_n_str)
       zeroLine->Draw("SAME");
       prText->Draw();
       canvas->SaveAs("sys_h_vn_pr.png");
+      delete copyWithNewErrors1;
+      canvas->Clear();
+      //===
+
+
+      //=== Proton Alternate Acceptance vs centrality
+      copyWithNewErrors1 = new TGraphErrors((TH1D*)Normal->h_vn_pr_alt->Clone());
+      for (int i = 0; i < v_sys_pr_alt.size(); i++)
+	{ copyWithNewErrors1->SetPointError(i, 0.0, v_sys_pr_alt.at(i)); }
+
+      copyWithNewErrors1->Write();
+      
+      Normal->h_vn_pr_alt->Draw();
+      Normal->h_vn_pr_alt->SetMinimum(centralityLowerBound);
+      Normal->h_vn_pr_alt->SetMaximum(centralityUpperBound);
+      Normal->h_vn_pr_alt->Draw("E1");
+      copyWithNewErrors1->Draw("[]");
+      zeroLine->Draw("SAME");
+      //prText->Draw();
+      canvas->SaveAs("sys_h_vn_pr_alt.png");
+      delete copyWithNewErrors1;
+      canvas->Clear();
+      //===
+
+
+      //=== Deuteron vs centrality
+      copyWithNewErrors1 = new TGraphErrors((TH1D*)Normal->h_vn_de->Clone());
+      for (int i = 0; i < v_sys_de.size(); i++)
+	{ copyWithNewErrors1->SetPointError(i, 0.0, v_sys_de.at(i)); }
+
+      copyWithNewErrors1->Write();
+      
+      Normal->h_vn_de->Draw();
+      Normal->h_vn_de->SetMinimum(centralityLowerBound);
+      Normal->h_vn_de->SetMaximum(centralityUpperBound);
+      Normal->h_vn_de->Draw("E1");
+      copyWithNewErrors1->Draw("[]");
+      zeroLine->Draw("SAME");
+      //deText->Draw();
+      canvas->SaveAs("sys_h_vn_de.png");
+      delete copyWithNewErrors1;
+      canvas->Clear();
+      //===
+
+
+      //=== Triton vs centrality
+      copyWithNewErrors1 = new TGraphErrors((TH1D*)Normal->h_vn_tr->Clone());
+      for (int i = 0; i < v_sys_tr.size(); i++)
+	{ copyWithNewErrors1->SetPointError(i, 0.0, v_sys_tr.at(i)); }
+
+      copyWithNewErrors1->Write();
+      
+      Normal->h_vn_tr->Draw();
+      Normal->h_vn_tr->SetMinimum(centralityLowerBound);
+      Normal->h_vn_tr->SetMaximum(centralityUpperBound);
+      Normal->h_vn_tr->Draw("E1");
+      copyWithNewErrors1->Draw("[]");
+      zeroLine->Draw("SAME");
+      //deText->Draw();
+      canvas->SaveAs("sys_h_vn_tr.png");
       delete copyWithNewErrors1;
       canvas->Clear();
       //===
