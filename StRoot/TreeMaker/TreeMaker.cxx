@@ -185,6 +185,26 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 142 && primTracks <= 195 ) centrality = 15;  // 0% - 5% (Central)
 			}
 
+		      else if (configs.sqrt_s_NN == 3.22) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
+			{
+			  if     ( primTracks >=   6 && primTracks <=   7 ) centrality =  0;  // 75% - 80% (Peripheral)
+			  else if( primTracks >=   8 && primTracks <=  10 ) centrality =  1;
+			  else if( primTracks >=  11 && primTracks <=  14 ) centrality =  2;
+			  else if( primTracks >=  15 && primTracks <=  19 ) centrality =  3;
+			  else if( primTracks >=  20 && primTracks <=  25 ) centrality =  4;
+			  else if( primTracks >=  26 && primTracks <=  33 ) centrality =  5;
+			  else if( primTracks >=  34 && primTracks <=  42 ) centrality =  6;
+			  else if( primTracks >=  43 && primTracks <=  53 ) centrality =  7;
+			  else if( primTracks >=  54 && primTracks <=  66 ) centrality =  8;
+			  else if( primTracks >=  67 && primTracks <=  81 ) centrality =  9;
+			  else if( primTracks >=  82 && primTracks <=  98 ) centrality = 10;
+			  else if( primTracks >=  99 && primTracks <= 117 ) centrality = 11;
+			  else if( primTracks >= 118 && primTracks <= 140 ) centrality = 12;
+			  else if( primTracks >= 141 && primTracks <= 165 ) centrality = 13;
+			  else if( primTracks >= 166 && primTracks <= 196 ) centrality = 14;
+			  else if( primTracks >= 197 && primTracks <= 287 ) centrality = 15;  // 0% - 5% (Central)
+			}
+
 		      // 7.2 GeV FXT
 		      else if (configs.sqrt_s_NN == 7.2) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{

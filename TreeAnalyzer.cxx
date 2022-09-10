@@ -126,6 +126,7 @@ int main(int argc, char *argv[])
   //=== INITIALIZE TTREE
   Int_t N_track = 0;  // Max number of tracks in an event. Depends on energy and centrality definition!
   if      (configs.sqrt_s_NN == 3.0)  { N_track = 195;  }
+  else if (configs.sqrt_s_NN == 3.22) { N_track = 287;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
   else if (configs.sqrt_s_NN == 4.49) { N_track = 195;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
   else if (configs.sqrt_s_NN == 7.2)  { N_track = 240;  }
   //else if (configs.sqrt_s_NN == 14.5) { N_track = 2048; } // UPDATE THIS WHEN THE CENTRALITY IS OFFICIAL
@@ -333,6 +334,7 @@ int main(int argc, char *argv[])
   double tempLowBound2 = 0;
   double tempHighBound2 = 0;
 
+  TH1D *h_pionWithEff = new TH1D("h_pionWithEff", "Pions with wrong TPC efficiency", 400, -2, 2);
 
   TH1D *h_eventCheck = (TH1D*)inputFile->Get("h_eventCheck");
   h_eventCheck->SetStats(0);
@@ -349,7 +351,9 @@ int main(int argc, char *argv[])
   h_eventCheck_EpdB->SetStats(0);
   */
 
-  TH1D *h_simulationCheck = new TH1D ("h_simulationCheck", "N_{trk} with no TPC efficiency", 3, 0, 3);
+  TH1D *h_simulationCheck_pr = new TH1D ("h_simulationCheck_pr", "N_{pr} with no TPC efficiency", 3, 0, 3);
+  TH1D *h_simulationCheck_de = new TH1D ("h_simulationCheck_de", "N_{de} with no TPC efficiency", 3, 0, 3);
+  TH1D *h_simulationCheck_tr = new TH1D ("h_simulationCheck_tr", "N_{tr} with no TPC efficiency", 3, 0, 3);
   TH1D *h_simulationCheck_total = new TH1D ("h_simulationCheck_total", "Total N_{trk}", 3, 0, 3);
 
   TH1D *h_nhits       = new TH1D("h_nhits", "nHits;Number of hits;Tracks", 50, 0, 50);
@@ -417,6 +421,14 @@ int main(int argc, char *argv[])
   TH1D *h_eta_de = new TH1D("h_eta_de","Deuteron #eta;#eta;Tracks",500,-5.0,5.0);
   TH1D *h_eta_tr = new TH1D("h_eta_tr","Triton #eta;#eta;Tracks",500,-5.0,5.0);
 
+  TH1D *h_eta_forCent_pp = new TH1D("h_eta_forCent_pp","#pi^{+} #eta;#eta;Tracks",500,-5.0,5.0);
+  TH1D *h_eta_forCent_pm = new TH1D("h_eta_forCent_pm","#pi^{-} #eta;#eta;Tracks",500,-5.0,5.0);
+  TH1D *h_eta_forCent_kp = new TH1D("h_eta_forCent_kp","K^{+} #eta;#eta;Tracks",500,-5.0,5.0);
+  TH1D *h_eta_forCent_km = new TH1D("h_eta_forCent_km","K^{-} #eta;#eta;Tracks",500,-5.0,5.0);
+  TH1D *h_eta_forCent_pr = new TH1D("h_eta_forCent_pr","Proton #eta;#eta;Tracks",500,-5.0,5.0);
+  TH1D *h_eta_forCent_de = new TH1D("h_eta_forCent_de","Deuteron #eta;#eta;Tracks",500,-5.0,5.0);
+  TH1D *h_eta_forCent_tr = new TH1D("h_eta_forCent_tr","Triton #eta;#eta;Tracks",500,-5.0,5.0);
+
   TH1D *h_dndy_pp = new TH1D("h_dndy_pp", "#pi^{+} Raw Rapidity Spectrum;y;dN/dy", 80, -2, 2);
   TH1D *h_dndy_pm = new TH1D("h_dndy_pm", "#pi^{-} Raw Rapidity Spectrum;y;dN/dy", 80, -2, 2);
   TH1D *h_dndy_kp = new TH1D("h_dndy_kp", "K^{+} Raw Rapidity Spectrum;y;dN/dy",   80, -2, 2);
@@ -482,6 +494,15 @@ int main(int argc, char *argv[])
       tempLowBound2  = 0.0;
       tempHighBound2 = 2.5;
     }
+  else if (configs.sqrt_s_NN == 3.22)
+    {
+      tempBins1 = 300;
+      tempLowBound1 = -1.2;
+      tempHighBound1 = 1.2;
+      tempBins2 = 300;
+      tempLowBound2  = 0.0;
+      tempHighBound2 = 2.5;
+    }
   else if (configs.sqrt_s_NN == 4.49)
     {
       tempBins1 = 300;
@@ -527,6 +548,9 @@ int main(int argc, char *argv[])
   TH2D *h2_pT_vs_yCM_de = new TH2D("h2_pT_vs_yCM_de", "Deuteron;y-y_{mid};p_{T} (GeV/c)",tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
   TH2D *h2_pT_vs_yCM_tr = new TH2D("h2_pT_vs_yCM_tr", "Triton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
 
+  TH2D *h2_pT_vs_yCM_pr_noEff = new TH2D("h2_pT_vs_yCM_pr_noEff", "Protons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
+  TH2D *h2_pT_vs_yCM_de_noEff = new TH2D("h2_pT_vs_yCM_de_noEff", "Deuterons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
+  TH2D *h2_pT_vs_yCM_tr_noEff = new TH2D("h2_pT_vs_yCM_tr_noEff", "Tritons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
 
   TH1D *h_psiTpc_RAW  = new TH1D("h_psiTpc_RAW", "Raw Event Plane Angles (m = "+ORDER_M_STR+", TPC);#psi_{"+ORDER_M_STR+"};Events", 400, -PSI_BOUNDS, PSI_BOUNDS);
   TH1D *h_psiTpcA_RAW = new TH1D("h_psiTpcA_RAW", "Raw Event Plane Angles (m = "+ORDER_M_STR+", TPC A);#psi_{"+ORDER_M_STR+"};Events", 400, -PSI_BOUNDS, PSI_BOUNDS);
@@ -568,6 +592,10 @@ int main(int argc, char *argv[])
 				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
   TProfile *p_vn_pr_alt = new TProfile("p_vn_pr_alt", "Proton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
 				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_pr_pTlt1 = new TProfile("p_vn_pr_pTlt1", "Proton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+					 CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile *p_vn_pr_pTgt1 = new TProfile("p_vn_pr_pTgt1", "Proton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
+					 CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
   TProfile *p_vn_de = new TProfile("p_vn_de", "Deuteron v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
 				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
   TProfile *p_vn_tr = new TProfile("p_vn_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
@@ -725,7 +753,7 @@ int main(int argc, char *argv[])
   TH2D *h2_phi_vs_eta_EPD = new TH2D("h2_phi_vs_eta_EPD", "EPD;#eta;#phi", tempBins1, tempLowBound1, tempHighBound1, 300, -4, 4);
 
 
-  if (configs.sqrt_s_NN == 3.0 || configs.sqrt_s_NN == 4.49)
+  if (configs.sqrt_s_NN == 3.0 || configs.sqrt_s_NN == 3.22)
     {
       tempBins1 = 300;
       tempLowBound1 = -1.2;
@@ -1115,8 +1143,8 @@ int main(int argc, char *argv[])
 		  //						     configs.z_tr_low, configs.z_tr_high, configs.m2_tr_low, configs.m2_tr_high);
 
 		}
-	      // 7.2 GeV d and t PID
-	      else if (!pion && !kaon && (configs.sqrt_s_NN == 7.2 || configs.sqrt_s_NN == 4.49))
+	      // Basic d and t PID
+	      else if (!pion && !kaon && (configs.sqrt_s_NN == 7.2 || configs.sqrt_s_NN == 3.22))
 		{
 		  //  DEUTERON
 		  if (tofTrack)
@@ -1138,7 +1166,6 @@ int main(int argc, char *argv[])
 			triton = true;
 		    }
 		}
-		  
 
 	      /*
 		if (deuteron && proton) 
@@ -1164,7 +1191,6 @@ int main(int argc, char *argv[])
 	      if (deuteron && triton) { deuteron = false; triton = false; } // Ignore tags of both d and t.
 	      if (deuteron && proton) { proton = false; } // d and t will have some contamination from p, but that has been minimized
 	      if (triton && proton)   { proton = false; }
-
 
 	      if (pion && proton)   { proton = false; }
 	      if (kaon && proton)   { proton = false; }
@@ -1507,6 +1533,7 @@ int main(int argc, char *argv[])
       if (eventInfo.nHitsEpdA   < configs.min_tracks) continue;
       if (eventInfo.nHitsEpdB   < configs.min_tracks) continue;
       if (configs.fixed_target && configs.sqrt_s_NN == 3.0 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
+      else if (configs.fixed_target && configs.sqrt_s_NN == 3.22 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
       else if (configs.fixed_target && configs.sqrt_s_NN == 7.2 && eventInfo.nHitsEpdB < configs.min_tracks) continue;
       //if (eventInfo.nHitsEpdB   >= configs.min_tracks) h_eventCheck_EpdB->Fill(0);//h_eventCheck_EpdB->Fill(eventSections_EpdB[0], 1);
       //if (eventInfo.nHitsEpdB   >= configs.min_tracks+4) h_eventCheck_EpdB->Fill(1);//h_eventCheck_EpdB->Fill(eventSections_EpdB[1], 1);
@@ -1708,10 +1735,11 @@ int main(int argc, char *argv[])
 	  Double_t psi = eventInfo.psiEpdA;
 	  Double_t psi_epdA = eventInfo.psiEpdA;
 	  Double_t psi_tpcB = eventInfo.psiTpcB;
-	  Double_t tpcEfficiency = 1;  // Default
+	  Double_t tpcEfficiency = 1.0;  // Default
 	  Int_t centID = eventInfo.centID;
 
 	  if (configs.sqrt_s_NN == 3.0 && centID < 4) continue;  // ONLY LOOKING AT CENTRALITY 60% AND LOWER FOR 3.0 GeV
+	  else if (configs.sqrt_s_NN == 3.22 && centID < 4) continue;
 
 
 	  // JUST v1 FOR WEIGHTING
@@ -1719,6 +1747,8 @@ int main(int argc, char *argv[])
 	  // TPC B region
 	  for (UInt_t j = 0; j < eventInfo.tpcParticles.size(); j++)
 	    {
+	      tpcEfficiency = 1.0; // Make sure efficiency is reset each time.
+
 	      jthPhi = eventInfo.tpcParticles.at(j).phi;
 	      jthEta = eventInfo.tpcParticles.at(j).eta;
 	      jthpT  = eventInfo.tpcParticles.at(j).pT;
@@ -1858,6 +1888,8 @@ int main(int argc, char *argv[])
 
 	      for (UInt_t j = 0; j < eventInfo.tpcParticles.size(); j++)
 		{
+		  tpcEfficiency = 1.0; // Make sure efficiency is reset each time.
+
 		  jthPhi = eventInfo.tpcParticles.at(j).phi;
 		  jthpT  = eventInfo.tpcParticles.at(j).pT;
 		  jthKT  = eventInfo.tpcParticles.at(j).KT;
@@ -1873,9 +1905,24 @@ int main(int argc, char *argv[])
 		      else if (eventInfo.tpcParticles.at(j).deTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_de);
 		      else if (eventInfo.tpcParticles.at(j).trTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_tr);
 		    }
-		  if (tpcEfficiency == -1) 
+		  if (tpcEfficiency == -1) // Checks here for p,d,t with no recorded efficiency values.
 		    { 
-		      h_simulationCheck->Fill(1); 
+		      if (eventInfo.tpcParticles.at(j).prTag)
+			{
+			  h_simulationCheck_pr->Fill(1);
+			  h2_pT_vs_yCM_pr_noEff->Fill(jthRapidity - Y_MID, jthpT);
+			}
+		      else if (eventInfo.tpcParticles.at(j).deTag) 
+			{
+			  h_simulationCheck_de->Fill(1); 
+			  h2_pT_vs_yCM_de_noEff->Fill(jthRapidity - Y_MID, jthpT);
+			}
+		      else if (eventInfo.tpcParticles.at(j).trTag) 
+			{
+			  h_simulationCheck_tr->Fill(1); 
+			  h2_pT_vs_yCM_tr_noEff->Fill(jthRapidity - Y_MID, jthpT);
+			}
+		      
 		      continue; 
 		    }
 
@@ -1895,10 +1942,14 @@ int main(int argc, char *argv[])
 		      jthpT >= configs.pt_norm_pi_low && jthpT <= configs.pt_norm_pi_high &&
 		      jthRapidity - Y_MID > configs.yCM_norm_pi_low && jthRapidity - Y_MID < configs.yCM_norm_pi_high)
 		    {
+
+		      if (tpcEfficiency != 1.0) { h_pionWithEff->Fill(tpcEfficiency); }
+		      
 		      p2_vn_yCM_cent_pp->Fill(centID, jthRapidity - Y_MID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 		      p_vn_pp->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); 
 		      p2_vn_pT_cent_pp->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 		      p2_vn_KT_cent_pp->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
+		      h_eta_forCent_pp->Fill(eventInfo.tpcParticles.at(j).eta);
 		    }
 		  // Extended rapidity acceptance 0.5 <= yCM < 1.0
 		  else if (eventInfo.tpcParticles.at(j).ppTag && 
@@ -1924,6 +1975,7 @@ int main(int argc, char *argv[])
 		      p_vn_pm->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); 
 		      p2_vn_pT_cent_pm->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 		      p2_vn_KT_cent_pm->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
+		      h_eta_forCent_pm->Fill(eventInfo.tpcParticles.at(j).eta);
 		    }
 		  // Extended rapidity acceptance 0.5 <= yCM < 1.0
 		  else if (eventInfo.tpcParticles.at(j).pmTag && 
@@ -1949,6 +2001,7 @@ int main(int argc, char *argv[])
 		      p_vn_kp->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); 
 		      p2_vn_pT_cent_kp->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 		      p2_vn_KT_cent_kp->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
+		      h_eta_forCent_kp->Fill(eventInfo.tpcParticles.at(j).eta);
 		    }
 		  // Extended rapidity acceptance 0.5 <= yCM < 1.0
 		  else if (eventInfo.tpcParticles.at(j).kpTag && 
@@ -1969,6 +2022,7 @@ int main(int argc, char *argv[])
 		      p_vn_km->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); 
 		      p2_vn_pT_cent_km->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 		      p2_vn_KT_cent_km->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
+		      h_eta_forCent_km->Fill(eventInfo.tpcParticles.at(j).eta);
 		    }
 		  // Extended rapidity acceptance 0.5 <= yCM < 1.0
 		  else if (eventInfo.tpcParticles.at(j).kmTag && 
@@ -1998,6 +2052,12 @@ int main(int argc, char *argv[])
 			  p_vn_pr->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); 
 			  p2_vn_pT_cent_pr->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 			  p2_vn_KT_cent_pr->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
+			  h_eta_forCent_pr->Fill(eventInfo.tpcParticles.at(j).eta);
+
+			  if (jthpT < 1.0)
+			    { p_vn_pr_pTlt1->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); }
+			  else if (jthpT > 1.0)
+			    { p_vn_pr_pTgt1->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); }
 			}
 		      // EXTENDED RAPIDITY 0.5 <= y_cm < 1.0
 		      else if (jthRapidity - Y_MID >= configs.yCM_yExt_pr_low && jthRapidity - Y_MID < configs.yCM_yExt_pr_high &&
@@ -2034,6 +2094,7 @@ int main(int argc, char *argv[])
 		      p_vn_de->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); 
 		      p2_vn_pT_cent_de->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 		      p2_vn_KT_cent_de->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
+		      h_eta_forCent_de->Fill(eventInfo.tpcParticles.at(j).eta);
 		    }
 
 		  // TRITON
@@ -2046,6 +2107,7 @@ int main(int argc, char *argv[])
 		      p_vn_tr->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); 
 		      p2_vn_pT_cent_tr->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 		      p2_vn_KT_cent_tr->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
+		      h_eta_forCent_tr->Fill(eventInfo.tpcParticles.at(j).eta);
 		    }
 		  
 		}// End tpc particles loop
