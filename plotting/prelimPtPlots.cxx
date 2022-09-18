@@ -1,6 +1,9 @@
-void prelimPtPlots()
+void prelimPtPlots(TString jobID)
 {
-  TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
+  //TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
+  if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
+  TString fileName = jobID + ".picoDst.result.combined.root";
+
   TFile *file = TFile::Open(fileName);
   if(!file) {std::cout << "Wrong file!" << std::endl; return;}
 
@@ -87,7 +90,7 @@ void prelimPtPlots()
   prText->SetTextAlign(12);
   prText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
   prText->AddText("Proton");
-  prText->AddText("0 < y_{CM} < 0.5 GeV");
+  prText->AddText("0 < y_{CM} < 0.5");
   prText->SetFillColorAlpha(0,0);
   prText->SetLineColorAlpha(0,0);
   prText->SetTextSize(0.045);

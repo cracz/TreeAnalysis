@@ -18,7 +18,7 @@ void calculateSystematics(TString order_n_str)
 {
   TFile* newFile = new TFile("systematicErrors.root", "RECREATE");
   
-  Variation* Normal = new Variation("Normal", order_n_str);
+  Variation* Normal = new Variation("Normal_September1", order_n_str);
 
   Variation* epd_high = new Variation("epd_high", order_n_str);
   Variation* nSigPi_high = new Variation("nSigPi_high", order_n_str);
@@ -159,6 +159,7 @@ void calculateSystematics(TString order_n_str)
   bins = Normal->h_vn_pm->GetNbinsX();
   for (int ithBin = 0; ithBin < bins; ithBin++)
     {
+      std::cout << "Bin " << ithBin << std::endl;
       quadSum = 0.0;
       quadSum += epd->v_vn_pm.at(ithBin).variance;
 
@@ -166,20 +167,21 @@ void calculateSystematics(TString order_n_str)
       for (int jthVariation = 0; jthVariation < composites.size(); jthVariation++)
 	{
 	  if (composites.at(jthVariation)->v_vn_pm.at(ithBin).deltaByDeltaError > 1.0)
-	    quadSum += composites.at(jthVariation)->v_vn_pm.at(ithBin).variance;
+	    {
+	      quadSum += composites.at(jthVariation)->v_vn_pm.at(ithBin).variance;
+	      /*
+		std::cout << composites.at(jthVariation)->ID << ": "
+			<< (composites.at(jthVariation)->v_vn_pm.at(ithBin).stdDev/Normal->h_vn_pm->GetBinContent(ithBin+1) ) * 100
+			<< std::endl;
+	      */
+	    }
 	}
-      
-
       /*
-      if (rvtx->v_vn_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pm.at(i).variance;
-      if (zvtx->v_vn_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pm.at(i).variance;
-      if (dca->v_vn_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pm.at(i).variance;
-      if (nhits->v_vn_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pm.at(i).variance;
-      if (nhitsdEdx->v_vn_pm.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pm.at(i).variance;
-      if (nhitsratio->v_vn_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pm.at(i).variance;
-      if (m2Pi->v_vn_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pm.at(i).variance;
-      if (nSigPi->v_vn_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pm.at(i).variance;
-      if (nSigPr->v_vn_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pm.at(i).variance;
+      std::cout << "epd: "
+		<< (epd->v_vn_pm.at(ithBin).stdDev/Normal->h_vn_pm->GetBinContent(ithBin+1) ) * 100
+		<< std::endl;
+      
+      std::cout << std::endl;
       */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pm.push_back(ithBinSysErr);
@@ -202,17 +204,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_kp.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_kp.at(i).variance;
-      if (zvtx->v_vn_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_kp.at(i).variance;
-      if (dca->v_vn_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_kp.at(i).variance;
-      if (nhits->v_vn_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_kp.at(i).variance;
-      if (nhitsdEdx->v_vn_kp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_kp.at(i).variance;
-      if (nhitsratio->v_vn_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_kp.at(i).variance;
-      if (m2Pi->v_vn_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_kp.at(i).variance;
-      if (nSigPi->v_vn_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_kp.at(i).variance;
-      if (nSigPr->v_vn_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_kp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_kp.push_back(ithBinSysErr);
     }// End h_vn_kp loop
@@ -236,17 +227,6 @@ void calculateSystematics(TString order_n_str)
 	}
       
 
-      /*
-      if (rvtx->v_vn_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_km.at(i).variance;
-      if (zvtx->v_vn_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_km.at(i).variance;
-      if (dca->v_vn_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_km.at(i).variance;
-      if (nhits->v_vn_km.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_km.at(i).variance;
-      if (nhitsdEdx->v_vn_km.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_km.at(i).variance;
-      if (nhitsratio->v_vn_km.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_km.at(i).variance;
-      if (m2Pi->v_vn_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_km.at(i).variance;
-      if (nSigPi->v_vn_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_km.at(i).variance;
-      if (nSigPr->v_vn_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_km.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_km.push_back(ithBinSysErr);
     }// End h_vn_km loop
@@ -260,7 +240,7 @@ void calculateSystematics(TString order_n_str)
   bins = Normal->h_vn_pr->GetNbinsX();
   for (int ithBin = 0; ithBin < bins; ithBin++)
     {
-      std::cout << "Bin " << ithBin << std::endl;
+      //std::cout << "Bin " << ithBin << std::endl;
       quadSum = 0.0;
       quadSum += epd->v_vn_pr.at(ithBin).variance;
 
@@ -270,12 +250,14 @@ void calculateSystematics(TString order_n_str)
 	  if (composites.at(jthVariation)->v_vn_pr.at(ithBin).deltaByDeltaError > 1.0)
 	    {
 	      quadSum += composites.at(jthVariation)->v_vn_pr.at(ithBin).variance;
-
+	      /*
 	      std::cout << composites.at(jthVariation)->ID << ": "
 			<< (composites.at(jthVariation)->v_vn_pr.at(ithBin).stdDev/Normal->h_vn_pr->GetBinContent(ithBin+1) ) * 100
 			<< std::endl;
+	      */
 	    }
 	}
+      /*
       if (epd->v_vn_pr.at(ithBin).deltaByDeltaError > 1.0)
 	{
 	  std::cout << "epd: "
@@ -283,7 +265,7 @@ void calculateSystematics(TString order_n_str)
 		    << std::endl;
 	}
       std::cout << std::endl;
-      
+      */
       /*
       if (rvtx->v_vn_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pr.at(i).variance;
       if (zvtx->v_vn_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pr.at(i).variance;
@@ -319,19 +301,19 @@ void calculateSystematics(TString order_n_str)
 	  if (composites.at(jthVariation)->v_vn_pr_alt.at(ithBin).deltaByDeltaError > 1.0)
 	    {
 	      quadSum += composites.at(jthVariation)->v_vn_pr_alt.at(ithBin).variance;
+
 	      std::cout << composites.at(jthVariation)->ID << ": "
 			<< (composites.at(jthVariation)->v_vn_pr_alt.at(ithBin).stdDev/Normal->h_vn_pr_alt->GetBinContent(ithBin+1) ) * 100
 			<< std::endl;
 	    }
 	}
-      if (epd->v_vn_pr_alt.at(ithBin).deltaByDeltaError > 1.0)
-	{
-	  std::cout << "epd: "
-		    << (epd->v_vn_pr_alt.at(ithBin).stdDev/Normal->h_vn_pr_alt->GetBinContent(ithBin+1) ) * 100
-		    << std::endl;
-	}
-      std::cout << std::endl;
+
+      std::cout << "epd: "
+		<< (epd->v_vn_pr_alt.at(ithBin).stdDev/Normal->h_vn_pr_alt->GetBinContent(ithBin+1) ) * 100
+		<< std::endl;
       
+      std::cout << std::endl;
+
       /*
       if (rvtx->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pr_alt.at(i).variance;
       if (zvtx->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pr_alt.at(i).variance;
@@ -367,19 +349,19 @@ void calculateSystematics(TString order_n_str)
 	  if (composites.at(jthVariation)->v_vn_de.at(ithBin).deltaByDeltaError > 1.0)
 	    {
 	      quadSum += composites.at(jthVariation)->v_vn_de.at(ithBin).variance;
+
 	      std::cout << composites.at(jthVariation)->ID << ": "
 			<< (composites.at(jthVariation)->v_vn_de.at(ithBin).stdDev/Normal->h_vn_de->GetBinContent(ithBin+1) ) * 100
 			<< std::endl;
 	    }
 	}
-      if (epd->v_vn_de.at(ithBin).deltaByDeltaError > 1.0)
-	{
-	  std::cout << "epd: "
-		    << (epd->v_vn_de.at(ithBin).stdDev/Normal->h_vn_de->GetBinContent(ithBin+1) ) * 100
-		    << std::endl;
-	}
+
+      std::cout << "epd: "
+		<< (epd->v_vn_de.at(ithBin).stdDev/Normal->h_vn_de->GetBinContent(ithBin+1) ) * 100
+		<< std::endl;
+
       std::cout << std::endl;
-      
+
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_de.push_back(ithBinSysErr);
     }// End h_vn_de loop
@@ -403,17 +385,17 @@ void calculateSystematics(TString order_n_str)
 	  if (composites.at(jthVariation)->v_vn_tr.at(ithBin).deltaByDeltaError > 1.0)
 	    {
 	      quadSum += composites.at(jthVariation)->v_vn_tr.at(ithBin).variance;
+
 	      std::cout << composites.at(jthVariation)->ID << ": "
 			<< (composites.at(jthVariation)->v_vn_tr.at(ithBin).stdDev/Normal->h_vn_tr->GetBinContent(ithBin+1) ) * 100
 			<< std::endl;
 	    }
 	}
-      if (epd->v_vn_tr.at(ithBin).deltaByDeltaError > 1.0)
-	{
-	  std::cout << "epd: "
-		    << (epd->v_vn_tr.at(ithBin).stdDev/Normal->h_vn_tr->GetBinContent(ithBin+1) ) * 100
-		    << std::endl;
-	}
+
+      std::cout << "epd: "
+		<< (epd->v_vn_tr.at(ithBin).stdDev/Normal->h_vn_tr->GetBinContent(ithBin+1) ) * 100
+		<< std::endl;
+
       std::cout << std::endl;
 
       ithBinSysErr = TMath::Sqrt(quadSum);

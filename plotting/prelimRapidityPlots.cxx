@@ -1,8 +1,11 @@
 #include "PlotUtils.h"
 
-void prelimRapidityPlots()
+void prelimRapidityPlots(TString jobID)
 {
-  TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
+  //TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
+  if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
+  TString fileName = jobID + ".picoDst.result.combined.root";
+
   TFile *file = TFile::Open(fileName);
   if(!file) {cout << "Wrong file!" << endl; return;}
 
@@ -496,7 +499,7 @@ void prelimRapidityPlots()
   prText_y->SetTextSize(.035);
  
   //TPaveText *prText_y_symm = new TPaveText(-0.6, 0.037, 0.6, 0.075, "NB");
-  TPaveText *prText_y_symm = new TPaveText(-0.8, 0.05, 1.0, 0.095, "NB");
+  TPaveText *prText_y_symm = new TPaveText(-0.8, 0.05, 1.0, 0.1, "NB");
   prText_y_symm->SetTextAlign(32);
   prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
   prText_y_symm->AddText("Proton");
@@ -555,8 +558,8 @@ void prelimRapidityPlots()
   prRapidityStack_symm->GetXaxis()->SetTitleSize(0.045);
   prRapidityStack_symm->GetYaxis()->SetTitleSize(0.05);
   prRapidityStack_symm->Draw();
-  prRapidityStack_symm->SetMaximum(0.1);
-  prRapidityStack_symm->SetMinimum(-0.12);
+  prRapidityStack_symm->SetMaximum(0.11);
+  prRapidityStack_symm->SetMinimum(-0.13);
   prRapidityStack_symm->Draw("NOSTACK E1P");
   zeroLine_y_pr->Draw("SAME");
   prRapidityStack_symm->Draw("NOSTACK E1P SAME");

@@ -1,8 +1,12 @@
 #include "PlotUtils.h"
 
-void prelimCentralityPlots()
+void prelimCentralityPlots(TString jobID)
 {
-  TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
+  //TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
+
+  if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
+  TString fileName = jobID + ".picoDst.result.combined.root";
+
   TFile *file = TFile::Open(fileName);
   if(!file) {std::cout << "Wrong file!" << std::endl; return;}
 
@@ -24,11 +28,11 @@ void prelimCentralityPlots()
   gStyle->SetOptDate();
 
 
-  TProfile *p_vn_pp   = (TProfile*)file->Get("p_vn_pp");
-  TProfile *p_vn_pm   = (TProfile*)file->Get("p_vn_pm");
-  TProfile *p_vn_kp   = (TProfile*)file->Get("p_vn_kp");
-  TProfile *p_vn_km   = (TProfile*)file->Get("p_vn_km");
-  TProfile *p_vn_pr   = (TProfile*)file->Get("p_vn_pr");
+  TProfile *p_vn_pp = (TProfile*)file->Get("p_vn_pp");
+  TProfile *p_vn_pm = (TProfile*)file->Get("p_vn_pm");
+  TProfile *p_vn_kp = (TProfile*)file->Get("p_vn_kp");
+  TProfile *p_vn_km = (TProfile*)file->Get("p_vn_km");
+  TProfile *p_vn_pr = (TProfile*)file->Get("p_vn_pr");
   p_vn_kp->Rebin();
   p_vn_km->Rebin();
 
@@ -55,11 +59,11 @@ void prelimCentralityPlots()
 
   // Retrieve systematic uncertainties
   TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
-  TGraphErrors* sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_Normal_flip");
-  TGraphErrors* sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_Normal_flip");
-  TGraphErrors* sys_kp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_kp_Normal_flip");
-  TGraphErrors* sys_km = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_km_Normal_flip");
-  TGraphErrors* sys_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_Normal_flip");
+  TGraphErrors* sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_"+jobID+"_flip");
+  TGraphErrors* sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_"+jobID+"_flip");
+  TGraphErrors* sys_kp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_kp_"+jobID+"_flip");
+  TGraphErrors* sys_km = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_km_"+jobID+"_flip");
+  TGraphErrors* sys_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_"+jobID+"_flip");
   ////
   
 
@@ -130,17 +134,17 @@ void prelimCentralityPlots()
   prelimText->SetFillColorAlpha(0,0);
   prelimText->SetTextSize(0.04);
 
-  TPaveText *allText = new TPaveText(15, 0.016, 45, 0.027, "NB");
+  TPaveText *allText = new TPaveText(15, 0.026, 45, 0.042, "NB");
   allText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
-  allText->AddText("0 < y_{CM} < 0.5 GeV");
+  allText->AddText("0 < y_{CM} < 0.5");
   //allText->AddText("0.4 #leq p_{T} #leq 2.0 GeV");
   allText->SetFillColorAlpha(0,0);
   allText->SetLineColorAlpha(0,0);
   allText->SetTextSize(0.045);
 
-  TPaveText *kaText = new TPaveText(15, 0.05, 48, 0.09, "NB");
+  TPaveText *kaText = new TPaveText(15, 0.08, 48, 0.18, "NB");
   kaText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
-  kaText->AddText("0 < y_{CM} < 0.5 GeV");
+  kaText->AddText("0 < y_{CM} < 0.5");
   kaText->AddText("0.4 < p_{T} < 1.6 GeV");
   kaText->SetFillColorAlpha(0,0);
   kaText->SetLineColorAlpha(0,0);
@@ -154,7 +158,7 @@ void prelimCentralityPlots()
   allLegend->SetLineColorAlpha(0,0);
   allLegend->SetTextSize(0.04);
 
-  TLegend *kaLegend = new TLegend(0.27, 0.72, 0.47, 0.82);
+  TLegend *kaLegend = new TLegend(0.19, 0.8, 0.39, 0.9);
   kaLegend->AddEntry(h_vn_kp,"K^{+}");
   kaLegend->AddEntry(h_vn_km,"K^{-}");
   kaLegend->SetFillColorAlpha(0,0);
@@ -175,7 +179,7 @@ void prelimCentralityPlots()
   allCentralityStack->GetXaxis()->SetTitleSize(0.045);
   allCentralityStack->GetYaxis()->SetTitleSize(0.05);
   allCentralityStack->GetXaxis()->SetNdivisions(210);
-  allCentralityStack->SetMaximum(0.03);
+  allCentralityStack->SetMaximum(0.045);
   allCentralityStack->SetMinimum(-0.045);
   allCentralityStack->Draw("NOSTACK E1P");
   zeroLine->Draw("SAME");
@@ -197,8 +201,8 @@ void prelimCentralityPlots()
   kaCentralityStack->GetXaxis()->SetTitleSize(0.045);
   kaCentralityStack->GetYaxis()->SetTitleSize(0.05);
   kaCentralityStack->GetXaxis()->SetNdivisions(210);
-  kaCentralityStack->SetMaximum(0.1);
-  kaCentralityStack->SetMinimum(-0.1);
+  kaCentralityStack->SetMaximum(0.2);
+  kaCentralityStack->SetMinimum(-0.2);
   kaCentralityStack->Draw("NOSTACK E1P");
   zeroLine->Draw("SAME");
   kaCentralityStack->Draw("NOSTACK E1P SAME");

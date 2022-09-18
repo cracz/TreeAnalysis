@@ -7,7 +7,7 @@ void acceptanceCombined()
 
   //if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   //TString fileName = jobID + ".picoDst.result.combined.root";
-  TString fileName = "Normal.picoDst.result.combined.root";
+  TString fileName = "Normal_nTracksCorrect_nHits15_pdtEfficiency.picoDst.result.combined.root";
 
   TFile *file = TFile::Open(fileName);
   if(!file) {cout << "Wrong file!" << endl; return;}
@@ -194,9 +194,9 @@ void acceptanceCombined()
   const Int_t Ny = 2;
  
   // Margins
-  Float_t lMargin = 0.07;
+  Float_t lMargin = 0.08;
   Float_t rMargin = 0.08;
-  Float_t bMargin = 0.10;
+  Float_t bMargin = 0.11;
   Float_t tMargin = 0.05;
  
   // Canvas setup
@@ -259,11 +259,11 @@ void acceptanceCombined()
  
       // Format for y axis
       h->GetYaxis()->SetLabelFont(43);
-      h->GetYaxis()->SetLabelSize(16);
+      h->GetYaxis()->SetLabelSize(20);
       h->GetYaxis()->SetLabelOffset(0.02);
       h->GetYaxis()->SetTitleFont(43);
-      h->GetYaxis()->SetTitleSize(20);
-      h->GetYaxis()->SetTitleOffset(2.3);
+      h->GetYaxis()->SetTitleSize(29);
+      h->GetYaxis()->SetTitleOffset(1.9);
  
       h->GetYaxis()->CenterTitle();
       //h->GetYaxis()->SetNdivisions(505);
@@ -273,11 +273,11 @@ void acceptanceCombined()
  
       // Format for x axis
       h->GetXaxis()->SetLabelFont(43);
-      h->GetXaxis()->SetLabelSize(16);
+      h->GetXaxis()->SetLabelSize(20);
       h->GetXaxis()->SetLabelOffset(0.02);
       h->GetXaxis()->SetTitleFont(43);
-      h->GetXaxis()->SetTitleSize(21);
-      h->GetXaxis()->SetTitleOffset(2.3);
+      h->GetXaxis()->SetTitleSize(29);
+      h->GetXaxis()->SetTitleOffset(1.9);
       h->GetXaxis()->CenterTitle();
       h->GetXaxis()->SetNdivisions(505);
  

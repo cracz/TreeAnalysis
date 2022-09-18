@@ -1,8 +1,12 @@
 #include "PlotUtils.h"
 
-void prelimPdtPlots()
+void prelimPdtPlots(TString jobID)
 {
-  TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
+  //TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
+
+  if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
+  TString fileName = jobID + ".picoDst.result.combined.root";
+
   TFile *file = TFile::Open(fileName);
   if(!file) {std::cout << "Wrong file!" << std::endl; return;}
 
@@ -45,9 +49,9 @@ void prelimPdtPlots()
 
   // Retrieve systematic uncertainties
   TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
-  TGraphErrors* sys_de = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_de_Normal_flip");
-  TGraphErrors* sys_tr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_tr_Normal_flip");
-  TGraphErrors* sys_pr_alt = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_alt_Normal_flip");
+  TGraphErrors* sys_de = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_de_"+jobID+"_flip");
+  TGraphErrors* sys_tr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_tr_"+jobID+"_flip");
+  TGraphErrors* sys_pr_alt = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_alt_"+jobID+"_flip");
   ////
 
   // Scale the errors
@@ -126,7 +130,7 @@ void prelimPdtPlots()
 
   TPaveText *pdtText = new TPaveText(15, 0.01, 45, 0.028, "NB");
   pdtText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
-  pdtText->AddText("0 < y_{CM} < 1.0 GeV");
+  pdtText->AddText("0 < y_{CM} < 1.0");
   pdtText->AddText("0.04 #leq (m_{T}-m_{0})/A #leq 0.4 GeV");
   pdtText->SetFillColorAlpha(0,0);
   pdtText->SetLineColorAlpha(0,0);
