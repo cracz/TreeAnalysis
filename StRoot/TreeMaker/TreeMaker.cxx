@@ -185,20 +185,20 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 142 && primTracks <= 195 ) centrality = 15;  // 0% - 5% (Central)
 			}
 
-		      else if (configs.sqrt_s_NN == 3.22) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
+		      else if (configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.9) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
-			  if     ( primTracks >=   6 && primTracks <=   7 ) centrality =  0;  // 75% - 80% (Peripheral)
-			  else if( primTracks >=   8 && primTracks <=  10 ) centrality =  1;
+			  if     ( primTracks >=   5 && primTracks <=   6 ) centrality =  0;  // 75% - 80% (Peripheral)
+			  else if( primTracks >=   7 && primTracks <=  10 ) centrality =  1;
 			  else if( primTracks >=  11 && primTracks <=  14 ) centrality =  2;
 			  else if( primTracks >=  15 && primTracks <=  19 ) centrality =  3;
 			  else if( primTracks >=  20 && primTracks <=  25 ) centrality =  4;
-			  else if( primTracks >=  26 && primTracks <=  33 ) centrality =  5;
-			  else if( primTracks >=  34 && primTracks <=  42 ) centrality =  6;
-			  else if( primTracks >=  43 && primTracks <=  53 ) centrality =  7;
-			  else if( primTracks >=  54 && primTracks <=  66 ) centrality =  8;
-			  else if( primTracks >=  67 && primTracks <=  81 ) centrality =  9;
-			  else if( primTracks >=  82 && primTracks <=  98 ) centrality = 10;
-			  else if( primTracks >=  99 && primTracks <= 117 ) centrality = 11;
+			  else if( primTracks >=  26 && primTracks <=  32 ) centrality =  5;
+			  else if( primTracks >=  33 && primTracks <=  42 ) centrality =  6;
+			  else if( primTracks >=  43 && primTracks <=  52 ) centrality =  7;
+			  else if( primTracks >=  53 && primTracks <=  65 ) centrality =  8;
+			  else if( primTracks >=  66 && primTracks <=  80 ) centrality =  9;
+			  else if( primTracks >=  81 && primTracks <=  97 ) centrality = 10;
+			  else if( primTracks >=  98 && primTracks <= 117 ) centrality = 11;
 			  else if( primTracks >= 118 && primTracks <= 140 ) centrality = 12;
 			  else if( primTracks >= 141 && primTracks <= 165 ) centrality = 13;
 			  else if( primTracks >= 166 && primTracks <= 196 ) centrality = 14;
@@ -370,6 +370,8 @@ Bool_t TreeMaker::IsGoodRun(Int_t runNumber, Double_t sqrt_s_NN)
   Int_t badRunList_3p0GeV[24] = {19151029, 19151045, 19152001, 19152078, 19153023, 19153032, 19153065, 19154012, 19154013, 19154014, 19154015, 19154016, 
     19154017, 19154018, 19154019, 19154020, 19154021, 19154022, 19154023, 19154024, 19154026, 19154046, 19154051, 19154056};
 
+  Int_t badRunList_3p22GeV[10] = {20180005, 20180006, 20180019, 20180025, 20181016, 20182034, 20183001, 20183013, 20183014, 20183019};
+
   Int_t badRunList_19p6GeV[374] = {20057007, 20057025, 20057026, 20057050, 20058001, 20058002, 20058003, 20058004, 20058005, 20060012, 
 				   20060022, 20060025, 20060060, 20060061, 20060062, 20062010, 20062011, 20062012, 20062036, 20063011, 
 				   20063034, 20063035, 20063036, 20063039, 20064008, 20064009, 20064011, 20064012, 20064040, 20065018, 
@@ -416,7 +418,12 @@ Bool_t TreeMaker::IsGoodRun(Int_t runNumber, Double_t sqrt_s_NN)
       for (Int_t i = 0; i < 24; i++) 
 	{ if (runNumber == badRunList_3p0GeV[i]) {b_good_run = false; break;} } 
     }
-  if (sqrt_s_NN == 19.6)
+  else if (sqrt_s_NN == 3.22)
+    {
+      for (Int_t i = 0; i < 10; i++) 
+	{ if (runNumber == badRunList_3p22GeV[i]) {b_good_run = false; break;} } 
+    }
+  else if (sqrt_s_NN == 19.6)
     { 
       for (Int_t i = 0; i < 374; i++) 
 	{ if (runNumber == badRunList_19p6GeV[i]) {b_good_run = false; break;} } 
