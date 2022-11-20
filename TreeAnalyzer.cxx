@@ -255,23 +255,36 @@ int main(int argc, char *argv[])
   ////
 
   // INPUT FILE FOR TPC EFFICIENCY CORRECTIONS
-  TString tpcEfficiencyFileName = "pdt_efficiency.root";
-  TFile *tpcEfficiencyFile;
+  TString pdtEfficiencyFileName = "pdt_efficiency.root";
+  TString pikEfficiencyFileName = "pik_efficiency.root";
+  TFile *pdtEfficiencyFile;
+  TFile *pikEfficiencyFile;
   Bool_t efficienciesFound = false;
+  TH2D *h2_tracking_pp;
+  TH2D *h2_tracking_pm;
+  TH2D *h2_tracking_kp;
+  TH2D *h2_tracking_km;
   TH2D *h2_tracking_pr;
   TH2D *h2_tracking_de;
   TH2D *h2_tracking_tr;
   if (RUN_ITERATION == 2)
     {
-      tpcEfficiencyFile = TFile::Open(tpcEfficiencyFileName, "READ");
-      if (!tpcEfficiencyFile) { std::cout << "No TPC efficiency file was found! Efficiencies will default to 1!" << std::endl; }
+      pdtEfficiencyFile = TFile::Open(pdtEfficiencyFileName, "READ");
+      pikEfficiencyFile = TFile::Open(pikEfficiencyFileName, "READ");
+      if (!pdtEfficiencyFile || !pikEfficiencyFile) { std::cout << "One or both efficiency files missing! All efficiencies will default to 1!" << std::endl; }
       else 
 	{ 
 	  efficienciesFound = true;
-	  std::cout << "TPC pdt efficiency file was found!" << std::endl; 
-	  h2_tracking_pr = (TH2D*)tpcEfficiencyFile->Get("tracking_p");
-	  h2_tracking_de = (TH2D*)tpcEfficiencyFile->Get("tracking_d");
-	  h2_tracking_tr = (TH2D*)tpcEfficiencyFile->Get("tracking_t");
+	  std::cout << "TPC pik and pdt efficiency files were found!" << std::endl; 
+
+	  h2_tracking_pp = (TH2D*)pikEfficiencyFile->Get("h2_ratio_pp");
+	  h2_tracking_pm = (TH2D*)pikEfficiencyFile->Get("h2_ratio_pm");
+	  h2_tracking_kp = (TH2D*)pikEfficiencyFile->Get("h2_ratio_kp");
+	  h2_tracking_km = (TH2D*)pikEfficiencyFile->Get("h2_ratio_km");
+
+	  h2_tracking_pr = (TH2D*)pdtEfficiencyFile->Get("tracking_p");
+	  h2_tracking_de = (TH2D*)pdtEfficiencyFile->Get("tracking_d");
+	  h2_tracking_tr = (TH2D*)pdtEfficiencyFile->Get("tracking_t");
 	}
     }
   ////
@@ -351,6 +364,10 @@ int main(int argc, char *argv[])
   h_trackCheck->SetStats(0);
 
 
+  TH1D *h_simulationCheck_pp = new TH1D ("h_simulationCheck_pp", "N_{#pi+} with no TPC efficiency", 3, 0, 3);
+  TH1D *h_simulationCheck_pm = new TH1D ("h_simulationCheck_pm", "N_{#pi-} with no TPC efficiency", 3, 0, 3);
+  TH1D *h_simulationCheck_kp = new TH1D ("h_simulationCheck_kp", "N_{K+} with no TPC efficiency", 3, 0, 3);
+  TH1D *h_simulationCheck_km = new TH1D ("h_simulationCheck_km", "N_{K-} with no TPC efficiency", 3, 0, 3);
   TH1D *h_simulationCheck_pr = new TH1D ("h_simulationCheck_pr", "N_{pr} with no TPC efficiency", 3, 0, 3);
   TH1D *h_simulationCheck_de = new TH1D ("h_simulationCheck_de", "N_{de} with no TPC efficiency", 3, 0, 3);
   TH1D *h_simulationCheck_tr = new TH1D ("h_simulationCheck_tr", "N_{tr} with no TPC efficiency", 3, 0, 3);
@@ -375,6 +392,7 @@ int main(int argc, char *argv[])
 
   TH1D *h_tileWeights = new TH1D("h_tileWeights", "EPD Tile Weights;nMIP Weights;Hits", 5, -1, 4);
   TH1D *h_centralities = new TH1D("h_centralities", "Centralities;Centrality ID;Events", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
+  TH1D *h_centralities_final = new TH1D("h_centralities_final", "Final Good Centralities;Centrality ID;Events", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
 
   TH1D *h_trackmult = (TH1D*)inputFile->Get("h_trackmult");
   TH1D *h_refmult   = (TH1D*)inputFile->Get("h_refmult");
@@ -544,9 +562,20 @@ int main(int argc, char *argv[])
   TH2D *h2_pT_vs_yCM_de = new TH2D("h2_pT_vs_yCM_de", "Deuteron;y-y_{mid};p_{T} (GeV/c)",tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
   TH2D *h2_pT_vs_yCM_tr = new TH2D("h2_pT_vs_yCM_tr", "Triton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
 
-  TH2D *h2_pT_vs_yCM_pr_noEff = new TH2D("h2_pT_vs_yCM_pr_noEff", "Protons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
-  TH2D *h2_pT_vs_yCM_de_noEff = new TH2D("h2_pT_vs_yCM_de_noEff", "Deuterons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
-  TH2D *h2_pT_vs_yCM_tr_noEff = new TH2D("h2_pT_vs_yCM_tr_noEff", "Tritons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
+  TH2D *h2_pT_vs_yCM_pp_noEff = new TH2D("h2_pT_vs_yCM_pp_noEff", "#pi^{+} with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  
+					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
+  TH2D *h2_pT_vs_yCM_pm_noEff = new TH2D("h2_pT_vs_yCM_pm_noEff", "#pi^{-} with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  
+					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
+  TH2D *h2_pT_vs_yCM_kp_noEff = new TH2D("h2_pT_vs_yCM_kp_noEff", "K^{+} with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  
+					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
+  TH2D *h2_pT_vs_yCM_km_noEff = new TH2D("h2_pT_vs_yCM_km_noEff", "K^{-} with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  
+					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
+  TH2D *h2_pT_vs_yCM_pr_noEff = new TH2D("h2_pT_vs_yCM_pr_noEff", "Protons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  
+					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
+  TH2D *h2_pT_vs_yCM_de_noEff = new TH2D("h2_pT_vs_yCM_de_noEff", "Deuterons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  
+					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
+  TH2D *h2_pT_vs_yCM_tr_noEff = new TH2D("h2_pT_vs_yCM_tr_noEff", "Tritons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  
+					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
 
   TH1D *h_psiTpc_RAW  = new TH1D("h_psiTpc_RAW", "Raw Event Plane Angles (m = "+ORDER_M_STR+", TPC);#psi_{"+ORDER_M_STR+"};Events", 400, -PSI_BOUNDS, PSI_BOUNDS);
   TH1D *h_psiTpcA_RAW = new TH1D("h_psiTpcA_RAW", "Raw Event Plane Angles (m = "+ORDER_M_STR+", TPC A);#psi_{"+ORDER_M_STR+"};Events", 400, -PSI_BOUNDS, PSI_BOUNDS);
@@ -659,11 +688,11 @@ int main(int argc, char *argv[])
   TProfile2D *p2_vn_yCM_cent_tr = new TProfile2D("p2_vn_yCM_cent_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;y-y_{mid}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -1, 1);
 
   TProfile2D *p2_vn_yOverYbeam_cent_pr_alt = 
-    new TProfile2D("p2_vn_yOverYbeam_cent_pr_alt", "Proton v_{"+ORDER_N_STR+"};Centrality;y/y_{beam}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 50, -1.0, 0.0);
-TProfile2D *p2_vn_yOverYbeam_cent_de = 
-    new TProfile2D("p2_vn_yOverYbeam_cent_de", "Deuteron v_{"+ORDER_N_STR+"};Centrality;y/y_{beam}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 50, -1.0, 0.0);
-TProfile2D *p2_vn_yOverYbeam_cent_tr = 
-    new TProfile2D("p2_vn_yOverYbeam_cent_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;y/y_{beam}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 50, -1.0, 0.0);
+    new TProfile2D("p2_vn_yOverYbeam_cent_pr_alt", "Proton v_{"+ORDER_N_STR+"};Centrality;y/|y_{beam}|", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 25, -0.5, 0.0);
+  TProfile2D *p2_vn_yOverYbeam_cent_de = 
+    new TProfile2D("p2_vn_yOverYbeam_cent_de", "Deuteron v_{"+ORDER_N_STR+"};Centrality;y/|y_{beam}|", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 25, -0.5, 0.0);
+  TProfile2D *p2_vn_yOverYbeam_cent_tr = 
+    new TProfile2D("p2_vn_yOverYbeam_cent_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;y/|y_{beam}|", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 25, -0.5, 0.0);
 
   
   TProfile2D *p2_vn_pT_cent_pp = new TProfile2D("p2_vn_pT_cent_pp", "#pi^{+} v_{"+ORDER_N_STR+"};Centrality;p_{T}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 10, 0, 2);
@@ -1517,15 +1546,16 @@ TProfile2D *p2_vn_yOverYbeam_cent_tr =
       //            END EPD STUFF
       //=========================================================
 
-      if (eventInfo.nTracksTpcA < configs.min_tracks) continue;
+      //if (eventInfo.nTracksTpcA < configs.min_tracks) continue;
       if (eventInfo.nTracksTpcB < configs.min_tracks) continue;
-      if (eventInfo.nHitsEpd    < configs.min_tracks) continue;
+      //if (eventInfo.nHitsEpd    < configs.min_tracks) continue;
       if (eventInfo.nHitsEpdA   < configs.min_tracks) continue;
-      if (eventInfo.nHitsEpdB   < configs.min_tracks) continue;
+      //if (eventInfo.nHitsEpdB   < configs.min_tracks) continue;
       if (configs.fixed_target && configs.sqrt_s_NN == 3.0 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
       else if (configs.fixed_target && configs.sqrt_s_NN == 3.22 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
       else if (configs.fixed_target && configs.sqrt_s_NN == 3.9  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
 
+      h_centralities_final->Fill(i_centrality);
 
       FlowUtils::checkZeroQ(eventInfo);  // Remove events with no flow
       if (eventInfo.badEvent) continue;
@@ -1852,13 +1882,37 @@ TProfile2D *p2_vn_yOverYbeam_cent_tr =
 		  h_simulationCheck_total->Fill(1);
 		  if (efficienciesFound && configs.sqrt_s_NN == 3.0)
 		    {
-		      if      (eventInfo.tpcParticles.at(j).prTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_pr);
+		      if      (eventInfo.tpcParticles.at(j).ppTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_pp);
+		      else if (eventInfo.tpcParticles.at(j).pmTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_pm);
+		      else if (eventInfo.tpcParticles.at(j).kpTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_kp);
+		      else if (eventInfo.tpcParticles.at(j).kmTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_km);
+		      else if (eventInfo.tpcParticles.at(j).prTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_pr);
 		      else if (eventInfo.tpcParticles.at(j).deTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_de);
 		      else if (eventInfo.tpcParticles.at(j).trTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_tr);
 		    }
-		  if (tpcEfficiency == -1) // Checks here for p,d,t with no recorded efficiency values.
+		  if (tpcEfficiency == -1) // Checks here for tracks with no recorded efficiency values.
 		    { 
-		      if (eventInfo.tpcParticles.at(j).prTag)
+		      if (eventInfo.tpcParticles.at(j).ppTag)
+			{
+			  h_simulationCheck_pp->Fill(1);
+			  h2_pT_vs_yCM_pp_noEff->Fill(jthRapidity - Y_MID, jthpT);
+			}
+		      else if (eventInfo.tpcParticles.at(j).pmTag)
+			{
+			  h_simulationCheck_pm->Fill(1);
+			  h2_pT_vs_yCM_pm_noEff->Fill(jthRapidity - Y_MID, jthpT);
+			}
+		      else if (eventInfo.tpcParticles.at(j).kpTag)
+			{
+			  h_simulationCheck_kp->Fill(1);
+			  h2_pT_vs_yCM_kp_noEff->Fill(jthRapidity - Y_MID, jthpT);
+			}
+		      else if (eventInfo.tpcParticles.at(j).kmTag)
+			{
+			  h_simulationCheck_km->Fill(1);
+			  h2_pT_vs_yCM_km_noEff->Fill(jthRapidity - Y_MID, jthpT);
+			}
+		      else if (eventInfo.tpcParticles.at(j).prTag)
 			{
 			  h_simulationCheck_pr->Fill(1);
 			  h2_pT_vs_yCM_pr_noEff->Fill(jthRapidity - Y_MID, jthpT);
@@ -2009,7 +2063,6 @@ TProfile2D *p2_vn_yOverYbeam_cent_tr =
 			  p2_vn_pT_cent_pr_alt->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 			  p2_vn_KT_cent_pr_alt->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 			  h2_dndDeltaPhi_vs_cent_pr_alt->Fill(centID, jthPhi - psi);
-			  p2_vn_yOverYbeam_cent_pr_alt->Fill(centID, jthRapidity/Y_BEAM, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 			}
 		      if (jthKT/1.0 >= configs.KT_pdt_low && jthKT/1.0 <= configs.KT_pdt_high &&
 			  jthRapidity - Y_MID > 0.0 && jthRapidity - Y_MID < 0.6)
