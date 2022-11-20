@@ -134,14 +134,14 @@ void vnVsPt(TString jobID, TString order_n_str)
   h_vn_pT_40to60_tr = p_vn_pT_40to60_tr->ProjectionX();
 
 
-  THStack *ppPtStack   = new THStack("ppPtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1} EP}");
-  THStack *pmPtStack   = new THStack("pmPtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1} EP}");
-  THStack *kpPtStack   = new THStack("kpPtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1} EP}");
-  THStack *kmPtStack   = new THStack("kmPtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1} EP}");
-  THStack *prPtStack   = new THStack("prPtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1} EP}");
-  THStack *prPtStack_alt   = new THStack("prPtStack_alt", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1} EP}");
-  THStack *dePtStack   = new THStack("dePtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1} EP}");
-  THStack *trPtStack   = new THStack("trPtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1} EP}");
+  THStack *ppPtStack   = new THStack("ppPtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1}}");
+  THStack *pmPtStack   = new THStack("pmPtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1}}");
+  THStack *kpPtStack   = new THStack("kpPtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1}}");
+  THStack *kmPtStack   = new THStack("kmPtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1}}");
+  THStack *prPtStack   = new THStack("prPtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"} {#psi_{1}}");
+  THStack *prPtStack_alt   = new THStack("prPtStack_alt", ";p_{T} (GeV/c);v_{"+order_n_str+"}/A {#psi_{1}}");
+  THStack *dePtStack   = new THStack("dePtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"}/A {#psi_{1}}");
+  THStack *trPtStack   = new THStack("trPtStack", ";p_{T} (GeV/c);v_{"+order_n_str+"}/A {#psi_{1}}");
 
   TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
   TGraphErrors* sys_pT_00to10_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pT_00to10_pr_px");
@@ -264,6 +264,18 @@ void vnVsPt(TString jobID, TString order_n_str)
   h_vn_pT_00to10_tr->SetLineColor(kRed-4);
   h_vn_pT_10to40_tr->SetLineColor(kBlue-4);
   h_vn_pT_40to60_tr->SetLineColor(kGreen+1);
+
+
+  // Scale deuterons and tritons
+  h_vn_pT_00to10_de->Scale(1.0/2.0);
+  h_vn_pT_10to40_de->Scale(1.0/2.0);
+  h_vn_pT_40to60_de->Scale(1.0/2.0);
+
+  h_vn_pT_00to10_tr->Scale(1.0/3.0);
+  h_vn_pT_10to40_tr->Scale(1.0/3.0);
+  h_vn_pT_40to60_tr->Scale(1.0/3.0);
+  ////
+
 
 
   if (order_n_str == "1")
@@ -765,21 +777,21 @@ void vnVsPt(TString jobID, TString order_n_str)
       TPaveText *prText_alt = new TPaveText(0.2, 0.07, 1.2, 0.18, "NB");
       prText_alt->AddText("Proton");
       prText_alt->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
-      prText_alt->AddText("0.5 < y_{CM} < 1.0 GeV");
+      prText_alt->AddText("0.04 #leq (m_{T}-m_{0})/A #leq 0.4");
       prText_alt->SetFillColorAlpha(0,0);
       prText_alt->SetLineColorAlpha(0,0);
 
       TPaveText *deText = new TPaveText(0.2, 0.07, 1.2, 0.18, "NB");
       deText->AddText("Deuteron");
       deText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
-      deText->AddText("0.5 < y_{CM} < 1.0 GeV");
+      deText->AddText("0.04 #leq (m_{T}-m_{0})/A #leq 0.4");
       deText->SetFillColorAlpha(0,0);
       deText->SetLineColorAlpha(0,0);
 
       TPaveText *trText = new TPaveText(0.2, 0.07, 1.2, 0.18, "NB");
       trText->AddText("Triton");
       trText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
-      trText->AddText("0.5 < y_{CM} < 1.0 GeV");
+      trText->AddText("0.04 #leq (m_{T}-m_{0})/A #leq 0.4");
       trText->SetFillColorAlpha(0,0);
       trText->SetLineColorAlpha(0,0);
 
@@ -879,8 +891,8 @@ void vnVsPt(TString jobID, TString order_n_str)
       prPtStack_alt->GetYaxis()->SetTitleOffset(1.7);
       prPtStack_alt->GetXaxis()->SetNdivisions(210);
       prPtStack_alt->Draw();
-      prPtStack_alt->SetMaximum(ptUpperBound);
-      prPtStack_alt->SetMinimum(ptLowerBound);
+      prPtStack_alt->SetMaximum(0.1);
+      prPtStack_alt->SetMinimum(-0.1);
       prPtStack_alt->Draw("NOSTACK E1P");
       zeroLine_pdt->Draw("SAME");
       prPtStack_alt->Draw("NOSTACK E1P SAME");
@@ -893,8 +905,8 @@ void vnVsPt(TString jobID, TString order_n_str)
       dePtStack->GetYaxis()->SetTitleOffset(1.7);
       dePtStack->GetXaxis()->SetNdivisions(210);
       dePtStack->Draw();
-      dePtStack->SetMaximum(ptUpperBound);
-      dePtStack->SetMinimum(ptLowerBound);
+      dePtStack->SetMaximum(0.1);
+      dePtStack->SetMinimum(-0.1);
       dePtStack->Draw("NOSTACK E1P");
       zeroLine_pdt->Draw("SAME");
       dePtStack->Draw("NOSTACK E1P SAME");
@@ -907,8 +919,8 @@ void vnVsPt(TString jobID, TString order_n_str)
       trPtStack->GetYaxis()->SetTitleOffset(1.7);
       trPtStack->GetXaxis()->SetNdivisions(210);
       trPtStack->Draw();
-      trPtStack->SetMaximum(ptUpperBound);
-      trPtStack->SetMinimum(ptLowerBound);
+      trPtStack->SetMaximum(0.1);
+      trPtStack->SetMinimum(-0.1);
       trPtStack->Draw("NOSTACK E1P");
       zeroLine_pdt->Draw("SAME");
       trPtStack->Draw("NOSTACK E1P SAME");

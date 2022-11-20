@@ -99,7 +99,7 @@ void coefficients(TString jobID, TString order_n_str)
   //TProfile *p_vn_EpdA = (TProfile*)file->Get("p_vn_EpdA");
   //TProfile *p_vn_EpdB = (TProfile*)file->Get("p_vn_EpdB");
   //TProfile *p_vn_TpcB = (TProfile*)file->Get("p_vn_TpcB");
-  TProfile *p_vn_Tpc  = (TProfile*)file->Get("p_vn_Tpc_pT_0p2to2");
+  //TProfile *p_vn_Tpc  = (TProfile*)file->Get("p_vn_Tpc_pT_0p2to2");
   TProfile *p_vn_pp   = (TProfile*)file->Get("p_vn_pp");
   TProfile *p_vn_pm   = (TProfile*)file->Get("p_vn_pm");
   TProfile *p_vn_kp   = (TProfile*)file->Get("p_vn_kp");
@@ -130,7 +130,7 @@ void coefficients(TString jobID, TString order_n_str)
   //TH1D *h_vn_EpdA = p_vn_EpdA->ProjectionX();
   //TH1D *h_vn_EpdB = p_vn_EpdB->ProjectionX();
   //TH1D *h_vn_TpcB = p_vn_TpcB->ProjectionX();
-  TH1D *h_vn_Tpc = p_vn_Tpc->ProjectionX();
+  //TH1D *h_vn_Tpc = p_vn_Tpc->ProjectionX();
 
   TH1D *h_vn_pp = p_vn_pp->ProjectionX();
   TH1D *h_vn_pm = p_vn_pm->ProjectionX();
@@ -155,7 +155,7 @@ void coefficients(TString jobID, TString order_n_str)
   //h_vn_EpdA = PlotUtils::flipHisto(h_vn_EpdA);
   //h_vn_EpdB = PlotUtils::flipHisto(h_vn_EpdB);
   //h_vn_TpcB = PlotUtils::flipHisto(h_vn_TpcB);
-  h_vn_Tpc  = PlotUtils::flipHisto(h_vn_Tpc);
+  //h_vn_Tpc  = PlotUtils::flipHisto(h_vn_Tpc);
 
   h_vn_pp = PlotUtils::flipHisto(h_vn_pp);
   h_vn_pm = PlotUtils::flipHisto(h_vn_pm);
@@ -180,7 +180,7 @@ void coefficients(TString jobID, TString order_n_str)
   //h_vn_EpdA = PlotUtils::trimCentralityPlot(h_vn_EpdA);
   //h_vn_EpdB = PlotUtils::trimCentralityPlot(h_vn_EpdB);
   //h_vn_TpcB = PlotUtils::trimCentralityPlot(h_vn_TpcB);
-  h_vn_Tpc  = PlotUtils::trimCentralityPlot(h_vn_Tpc);
+  //h_vn_Tpc  = PlotUtils::trimCentralityPlot(h_vn_Tpc);
 
   h_vn_pp = PlotUtils::trimCentralityPlot(h_vn_pp);
   h_vn_pm = PlotUtils::trimCentralityPlot(h_vn_pm);
@@ -434,14 +434,14 @@ void coefficients(TString jobID, TString order_n_str)
   h_vn_TpcB->SetLineColor(kGreen+1);
   h_vn_TpcB->SetLineWidth(3);
   h_vn_TpcB->GetYaxis()->SetTitleOffset(1.7);
-  */
+
   h_vn_Tpc->SetMarkerStyle(20);
   h_vn_Tpc->SetMarkerSize(2.5);
   h_vn_Tpc->SetLineWidth(3);
   h_vn_Tpc->GetYaxis()->SetTitleOffset(1.7);
   //vn_Tpc->SetMarkerColor(kGreen+1);
   //vn_Tpc->SetLineColor(kGreen+1);
-
+  */
   
   piCentralityStack->Add(h_vn_pp);
   piCentralityStack->Add(h_vn_pm);
@@ -675,7 +675,7 @@ void coefficients(TString jobID, TString order_n_str)
       zeroLine->Draw("SAME");
       canvas->SaveAs(jobID + "_vn_TpcB.png");
       canvas->Clear();
-      */
+
       h_vn_Tpc->SetMarkerStyle(20);
       h_vn_Tpc->SetMarkerSize(2);
       h_vn_Tpc->GetXaxis()->SetNdivisions(210);
@@ -685,7 +685,7 @@ void coefficients(TString jobID, TString order_n_str)
       zeroLine->Draw("SAME");
       canvas->SaveAs(jobID + "_vn_Tpc.png");
       canvas->Clear();
-
+      */
 
       ppExtCentralityStack->Draw();
       ppExtCentralityStack->GetXaxis()->SetNdivisions(210);
@@ -805,11 +805,12 @@ void coefficients(TString jobID, TString order_n_str)
     }
   else if (order_n_str == "3")
     {
+      /*
       TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
       TGraphErrors* sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_Normal_flip");
       TGraphErrors* sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_Normal_flip");
       TGraphErrors* sys_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_Normal_flip");
-      
+      */
       
       TLegend *piLegend = new TLegend(0.67, 0.71, 0.805, 0.87);
       piLegend->AddEntry(h_vn_pp,"#pi^{+}");
@@ -1003,8 +1004,8 @@ void coefficients(TString jobID, TString order_n_str)
       piCentralityStack->Draw("NOSTACK E1P");
       zeroLine->Draw("SAME");
       piCentralityStack->Draw("NOSTACK E1P SAME");
-      sys_pp->Draw("[]");
-      sys_pm->Draw("[]");
+      //sys_pp->Draw("[]");
+      //sys_pm->Draw("[]");
       piLegend->Draw();
       piText->Draw();
       canvas->SaveAs(jobID + "_piCentralityStack.png");
@@ -1355,15 +1356,15 @@ void coefficients(TString jobID, TString order_n_str)
       h_vn_pp->SetMarkerColor(1);
       h_vn_pp->SetLineColor(1);
 
-      sys_pp->SetMarkerColor(1);
-      sys_pp->SetLineColor(1);
+      //sys_pp->SetMarkerColor(1);
+      //sys_pp->SetLineColor(1);
 
       h_vn_pm->SetMarkerStyle(22);
       h_vn_pm->SetMarkerColor(4);
       h_vn_pm->SetLineColor(4);
 
-      sys_pm->SetMarkerColor(4);
-      sys_pm->SetLineColor(4);
+      //sys_pm->SetMarkerColor(4);
+      //sys_pm->SetLineColor(4);
 
       h_vn_kp->SetMarkerStyle(34);
       h_vn_kp->SetMarkerColor(kGreen+1);
@@ -1394,9 +1395,9 @@ void coefficients(TString jobID, TString order_n_str)
       allCentralityStack->Draw("NOSTACK E1P");
       zeroLine->Draw("SAME");
       allCentralityStack->Draw("NOSTACK E1P SAME");
-      sys_pp->Draw("[]");
-      sys_pm->Draw("[]");
-      sys_pr->Draw("[]");
+      //sys_pp->Draw("[]");
+      //sys_pm->Draw("[]");
+      //sys_pr->Draw("[]");
       allLegend->Draw();
       allText->Draw();
       prelimText->Draw();

@@ -18,7 +18,7 @@ void calculateSystematics(TString order_n_str)
 {
   TFile* newFile = new TFile("systematicErrors.root", "RECREATE");
   
-  Variation* Normal = new Variation("Normal_September1", order_n_str);
+  Variation* Normal = new Variation("Normal_afterDuplication_piKefficiencies_unnecessaryMinHitsRemoved", order_n_str);
 
   Variation* epd_high = new Variation("epd_high", order_n_str);
   Variation* nSigPi_high = new Variation("nSigPi_high", order_n_str);

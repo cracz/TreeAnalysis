@@ -1,6 +1,5 @@
 void prelimPtPlots(TString jobID)
 {
-  //TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
 
@@ -70,7 +69,7 @@ void prelimPtPlots(TString jobID)
   sys_pT_40to60_pr->SetLineColor(kGreen+1);
   ////
   
-  THStack *prPtStack   = new THStack("prPtStack", ";p_{T} (GeV/c);v_{3} {#psi_{1}}");
+  THStack *prPtStack   = new THStack("prPtStack", ";p_{T} (GeV/c);v_{3} {#Psi_{1}}");
   prPtStack->Add(h_vn_pT_00to10_pr);
   prPtStack->Add(h_vn_pT_10to40_pr);
   prPtStack->Add(h_vn_pT_40to60_pr);
@@ -126,7 +125,7 @@ void prelimPtPlots(TString jobID)
   prLegend->Draw();
   prText->Draw();
   //prelimText->Draw();
-  canvas->SaveAs("v3_prPtStack.png");
+  canvas->SaveAs("v3_prPtStack.pdf");
   canvas->Clear();
   
   systematicFile->Close();

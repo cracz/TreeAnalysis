@@ -2,7 +2,6 @@
 
 void prelimRapidityPlots(TString jobID)
 {
-  //TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
 
@@ -108,7 +107,7 @@ void prelimRapidityPlots(TString jobID)
       h_40to60_symm->SetBinError(i, std::sqrt(std::pow(currentError2, 2) +
 					      std::pow(sys_yCM_40to60_pr_symm->GetErrorY(i-1), 2)));
       */
-    }
+  }
 
   h_10to40_symm->Fit(function1, "", "", 0.0, 0.5);
   slopeRight = function1->GetParameter(0);
@@ -459,7 +458,7 @@ void prelimRapidityPlots(TString jobID)
   h_vn_yCM_40to60_pr_mirror->SetLineWidth(3);
   ////
 
-  THStack *prRapidityStack   = new THStack("prRapidityStack", ";y-y_{mid};v_{3} {#psi_{1}}");
+  THStack *prRapidityStack   = new THStack("prRapidityStack", ";y-y_{mid};v_{3} {#Psi_{1}}");
   prRapidityStack->Add(h_vn_yCM_00to10_pr);
   prRapidityStack->Add(h_vn_yCM_40to60_pr);
   prRapidityStack->Add(h_vn_yCM_10to40_pr);
@@ -467,7 +466,7 @@ void prelimRapidityPlots(TString jobID)
   prRapidityStack->Add(h_vn_yCM_40to60_pr_mirror);
   prRapidityStack->Add(h_vn_yCM_10to40_pr_mirror);
 
-  THStack *prRapidityStack_symm = new THStack("prRapidityStack_symm", ";y-y_{mid};v_{3} {#psi_{1}}");
+  THStack *prRapidityStack_symm = new THStack("prRapidityStack_symm", ";y-y_{mid};v_{3} {#Psi_{1}}");
   prRapidityStack_symm->Add(h_vn_yCM_00to10_pr_symm);
   prRapidityStack_symm->Add(h_vn_yCM_40to60_pr_symm);
   prRapidityStack_symm->Add(h_vn_yCM_10to40_pr_symm);
@@ -545,7 +544,7 @@ void prelimRapidityPlots(TString jobID)
   prLegend->Draw();
   prText_y->Draw();
   //prelimText->Draw();
-  canvas->SaveAs("v3_prRapidityStack.png");
+  canvas->SaveAs("v3_prRapidityStack.pdf");
   canvas->Clear();
 
 
@@ -572,7 +571,7 @@ void prelimRapidityPlots(TString jobID)
   //function1->Draw("C SAME");
   //function2->Draw("C SAME");
   //function3->Draw("C SAME");
-  canvas->SaveAs("v3_prRapidityStack_symm.png");
+  canvas->SaveAs("v3_prRapidityStack_symm.pdf");
   canvas->Clear();
 
 

@@ -2,12 +2,11 @@ void CanvasPartition(TCanvas *C,const Int_t Nx = 2,const Int_t Ny = 2,
                      Float_t lMargin = 0.15, Float_t rMargin = 0.05,
                      Float_t bMargin = 0.15, Float_t tMargin = 0.05);
  
-void acceptanceCombined()
+void acceptanceCombined(TString jobID)
 {
-
-  //if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
-  //TString fileName = jobID + ".picoDst.result.combined.root";
-  TString fileName = "Normal_nTracksCorrect_nHits15_pdtEfficiency.picoDst.result.combined.root";
+  if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
+  TString fileName = jobID + ".picoDst.result.combined.root";
+  //TString fileName = "Normal_nTracksCorrect_nHits15_pdtEfficiency.picoDst.result.combined.root";
 
   TFile *file = TFile::Open(fileName);
   if(!file) {cout << "Wrong file!" << endl; return;}
@@ -21,41 +20,18 @@ void acceptanceCombined()
   TH2D *h2_pT_vs_yCM_km = (TH2D*)file->Get("h2_pT_vs_yCM_km");
   TH2D *h2_pT_vs_yCM_pr = (TH2D*)file->Get("h2_pT_vs_yCM_pr");
   //TH2D *h2_pT_vs_yCM_pr_alt = (TH2D*)file->Get("h2_pT_vs_yCM_pr_alt");
-  TH2D *h2_pT_vs_yCM_de = (TH2D*)file->Get("h2_pT_vs_yCM_de");
-  TH2D *h2_pT_vs_yCM_tr = (TH2D*)file->Get("h2_pT_vs_yCM_tr");
-  //TH2D *h2_pToverA_vs_yCM_de = (TH2D*)file->Get("h2_pToverA_vs_yCM_de");
-  //TH2D *h2_pToverA_vs_yCM_tr = (TH2D*)file->Get("h2_pToverA_vs_yCM_tr");
-  TH2D *h2_KToverA_vs_yCM_pr = (TH2D*)file->Get("h2_KToverA_vs_yCM_pr");
-  TH2D *h2_KToverA_vs_yCM_de = (TH2D*)file->Get("h2_KToverA_vs_yCM_de");
-  TH2D *h2_KToverA_vs_yCM_tr = (TH2D*)file->Get("h2_KToverA_vs_yCM_tr");
   h2_pT_vs_yCM_pp->SetTitle("");
   h2_pT_vs_yCM_pm->SetTitle("");
   h2_pT_vs_yCM_kp->SetTitle("");
   h2_pT_vs_yCM_km->SetTitle("");
   h2_pT_vs_yCM_pr->SetTitle("");
-  //h2_pT_vs_yCM_pr_alt->SetTitle("");
-  h2_pT_vs_yCM_de->SetTitle("");
-  h2_pT_vs_yCM_tr->SetTitle("");
-  //h2_pToverA_vs_yCM_de->SetTitle("");
-  //h2_pToverA_vs_yCM_tr->SetTitle("");
-  h2_KToverA_vs_yCM_pr->SetTitle("");
-  h2_KToverA_vs_yCM_de->SetTitle("");
-  h2_KToverA_vs_yCM_tr->SetTitle("");
 
   Double_t maxScale = h2_pT_vs_yCM_pr->GetMaximum();
   h2_pT_vs_yCM_pp->SetMaximum(maxScale);
   h2_pT_vs_yCM_pm->SetMaximum(maxScale);
   h2_pT_vs_yCM_kp->SetMaximum(maxScale);
   h2_pT_vs_yCM_km->SetMaximum(maxScale);
-  h2_pT_vs_yCM_de->SetMaximum(maxScale);
-  h2_pT_vs_yCM_tr->SetMaximum(maxScale);
-  //h2_pT_vs_yCM_pr_alt->SetMaximum(maxScale);
-  //h2_pToverA_vs_yCM_de->SetMaximum(maxScale);
-  //h2_pToverA_vs_yCM_tr->SetMaximum(maxScale);
 
-  Double_t maxScaleKT = h2_KToverA_vs_yCM_pr->GetMaximum();
-  h2_KToverA_vs_yCM_de->SetMaximum(maxScaleKT);
-  h2_KToverA_vs_yCM_tr->SetMaximum(maxScaleKT);
 
 
   TPaveText *text_pp = new TPaveText(-0.9, 0.2, -0.6, 0.5);
@@ -119,20 +95,6 @@ void acceptanceCombined()
   Double_t pT_low_pr   = 0.4;
   Double_t pT_high_pr  = 2.0;
 
-  Double_t yCM_low_de  = 0.0;
-  Double_t yCM_high_de = 1.0;
-  Double_t pT_low_de   = 0.2;
-  Double_t pT_high_de  = 1.0;
-  Double_t KT_low_de   = 0.04;
-  Double_t KT_high_de  = 0.4;
-
-  Double_t yCM_low_tr  = 0.0;
-  Double_t yCM_high_tr = 1.0;
-  Double_t pT_low_tr   = 0.2;
-  Double_t pT_high_tr  = 1.0;
-  Double_t KT_low_tr   = 0.04;
-  Double_t KT_high_tr  = 0.4;
-
   TLine *left_pp = new TLine(yCM_low_pp, pT_low_pp, yCM_low_pp, pT_high_pp);
   TLine *right_pp = new TLine(yCM_high_pp, pT_low_pp, yCM_high_pp, pT_high_pp);
   TLine *top_pp = new TLine(yCM_low_pp, pT_high_pp, yCM_high_pp, pT_high_pp);
@@ -178,6 +140,22 @@ void acceptanceCombined()
   top_pr->SetLineWidth(2);
   bottom_pr->SetLineWidth(2);
 
+  TLine *left_pr_sym = new TLine(-0.5,1.0,-0.5,2.5);
+  TLine *right_pr_sym = new TLine(0.5,1.0,0.5,2.5);
+  TLine *top_pr_sym = new TLine(-0.5,2.5,0.5,2.5);
+  TLine *bottom_pr_sym = new TLine(-0.5,1.0,0.5,1.0);
+  left_pr_sym->SetLineWidth(2);
+  right_pr_sym->SetLineWidth(2);
+  top_pr_sym->SetLineWidth(2);
+  bottom_pr_sym->SetLineWidth(2);
+  //left_pr_sym->SetLineColor(4);
+  //right_pr_sym->SetLineColor(4);
+  //top_pr_sym->SetLineColor(4);
+  //bottom_pr_sym->SetLineColor(4);
+  left_pr_sym->SetLineStyle(2);
+  right_pr_sym->SetLineStyle(2);
+  top_pr_sym->SetLineStyle(2);
+  bottom_pr_sym->SetLineStyle(2);
 
 
   
@@ -345,6 +323,10 @@ void acceptanceCombined()
 	  right_pr->Draw("SAME");
 	  top_pr->Draw("SAME");
 	  bottom_pr->Draw("SAME");
+	  left_pr_sym->Draw("SAME");
+	  right_pr_sym->Draw("SAME");
+	  top_pr_sym->Draw("SAME");
+	  bottom_pr_sym->Draw("SAME");
 	}
       else if (i == 2 && j == 1)
 	{

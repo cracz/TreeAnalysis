@@ -2,8 +2,6 @@
 
 void prelimCentralityPlots(TString jobID)
 {
-  //TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
-
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
 
@@ -58,15 +56,26 @@ void prelimCentralityPlots(TString jobID)
   h_vn_pr = PlotUtils::trimCentralityPlot(h_vn_pr);
 
   // Retrieve systematic uncertainties
+
   TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
+  //jobID = "Normal_afterDuplication_piKefficiencies";
   TGraphErrors* sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_"+jobID+"_flip");
   TGraphErrors* sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_"+jobID+"_flip");
   TGraphErrors* sys_kp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_kp_"+jobID+"_flip");
   TGraphErrors* sys_km = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_km_"+jobID+"_flip");
   TGraphErrors* sys_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_"+jobID+"_flip");
   ////
-  
 
+  /*
+  TFile* systematicFile = TFile::Open("systematicErrors_TESTCOPY.root", "READ");
+  TGraphErrors* sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_Normal_PRELIMINARY_QM22_flip");
+  TGraphErrors* sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_Normal_PRELIMINARY_QM22_flip");
+  //TGraphErrors* sys_kp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_kp_Normal_flip");
+  //TGraphErrors* sys_km = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_km_Normal_flip");
+  TGraphErrors* sys_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_Normal_PRELIMINARY_QM22_flip");
+  ////
+  */
+  
   // Set various aesthetics
   sys_pp->SetMarkerColor(1);
   sys_pp->SetLineColor(1);
@@ -81,7 +90,7 @@ void prelimCentralityPlots(TString jobID)
   sys_km->SetLineColor(4);
 
   //sys_pr should be fine as it is
-  
+
   h_vn_pp->SetMarkerStyle(21);
   h_vn_pp->SetMarkerSize(2.5);
   h_vn_pp->SetMarkerColor(1);
@@ -118,12 +127,12 @@ void prelimCentralityPlots(TString jobID)
   h_vn_pr->GetYaxis()->SetTitleOffset(1.7);
   ////
 
-  THStack *allCentralityStack = new THStack("allCentralityStack", ";Centrality (%);v_{3} {#psi_{1}}");
+  THStack *allCentralityStack = new THStack("allCentralityStack", ";Centrality (%);v_{3} {#Psi_{1}}");
   allCentralityStack->Add(h_vn_pr);
   allCentralityStack->Add(h_vn_pp);
   allCentralityStack->Add(h_vn_pm);
 
-  THStack *kaCentralityStack = new THStack("kaCentralityStack", ";Centrality (%);v_{3} {#psi_{1}}");
+  THStack *kaCentralityStack = new THStack("kaCentralityStack", ";Centrality (%);v_{3} {#Psi_{1}}");
   kaCentralityStack->Add(h_vn_km);
   kaCentralityStack->Add(h_vn_kp);
   
@@ -190,7 +199,7 @@ void prelimCentralityPlots(TString jobID)
   allLegend->Draw();
   allText->Draw();
   //prelimText->Draw();
-  canvas->SaveAs("v3_allCentralityStack.png");
+  canvas->SaveAs("v3_allCentralityStack.pdf");
   canvas->Clear();
 
   kaCentralityStack->Draw();
@@ -211,7 +220,7 @@ void prelimCentralityPlots(TString jobID)
   kaLegend->Draw();
   kaText->Draw();
   //prelimText->Draw();
-  canvas->SaveAs("v3_kaCentralityStack.png");
+  canvas->SaveAs("v3_kaCentralityStack.pdf");
   canvas->Clear();
 
   

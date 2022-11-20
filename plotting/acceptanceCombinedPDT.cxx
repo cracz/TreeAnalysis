@@ -2,12 +2,11 @@ void CanvasPartition(TCanvas *C,const Int_t Nx = 2,const Int_t Ny = 2,
                      Float_t lMargin = 0.15, Float_t rMargin = 0.05,
                      Float_t bMargin = 0.15, Float_t tMargin = 0.05);
  
-void acceptanceCombinedPDT()
+void acceptanceCombinedPDT(TString jobID)
 {
-
-  //if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
-  //TString fileName = jobID + ".picoDst.result.combined.root";
-  TString fileName = "Normal_nTracksCorrect_nHits15_pdtEfficiency.picoDst.result.combined.root";
+  if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
+  TString fileName = jobID + ".picoDst.result.combined.root";
+  //TString fileName = "Normal_September1.picoDst.result.combined.root";
 
   TFile *file = TFile::Open(fileName);
   if(!file) {cout << "Wrong file!" << endl; return;}

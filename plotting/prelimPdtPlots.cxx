@@ -2,13 +2,21 @@
 
 void prelimPdtPlots(TString jobID)
 {
-  //TString fileName = "41DF2BBA3FEAEB292AEF05CFC369B22C.picoDst.result.combined.root";
-
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
 
   TFile *file = TFile::Open(fileName);
   if(!file) {std::cout << "Wrong file!" << std::endl; return;}
+
+  TFile *dAndt_JAM_file = TFile::Open("dAndt_JAM.root");
+  if(!dAndt_JAM_file) {std::cout << "No JAM file!" << std::endl; return;}
+
+  TProfile *p_vn_pr_alt_JAM = (TProfile*)dAndt_JAM_file->Get("p_vn_pr_alt");
+  TProfile *p_vn_de_JAM = (TProfile*)dAndt_JAM_file->Get("p_vn_de");
+  TProfile *p_vn_tr_JAM = (TProfile*)dAndt_JAM_file->Get("p_vn_tr");
+  p_vn_pr_alt_JAM->SetName("p_vn_pr_alt_JAM");
+  p_vn_de_JAM->SetName("p_vn_de_JAM");
+  p_vn_tr_JAM->SetName("p_vn_tr_JAM");
 
   TCanvas *canvas = new TCanvas("canvas", "Canvas", 1000, 1000);//1200, 1200);
   //canvas->SetGridx();
@@ -36,19 +44,29 @@ void prelimPdtPlots(TString jobID)
   TH1D *h_vn_de = p_vn_de->ProjectionX();
   TH1D *h_vn_tr = p_vn_tr->ProjectionX();
   TH1D *h_vn_pr_alt = p_vn_pr_alt->ProjectionX();
+  TH1D *h_vn_pr_alt_JAM = p_vn_pr_alt_JAM->ProjectionX();
+  TH1D *h_vn_de_JAM = p_vn_de_JAM->ProjectionX();
+  TH1D *h_vn_tr_JAM = p_vn_tr_JAM->ProjectionX();
 
   // Flip centrality plots
   h_vn_de = PlotUtils::flipHisto(h_vn_de);
   h_vn_tr = PlotUtils::flipHisto(h_vn_tr);
   h_vn_pr_alt = PlotUtils::flipHisto(h_vn_pr_alt);
+  h_vn_pr_alt_JAM = PlotUtils::flipHisto(h_vn_pr_alt_JAM);
+  h_vn_de_JAM = PlotUtils::flipHisto(h_vn_de_JAM);
+  h_vn_tr_JAM = PlotUtils::flipHisto(h_vn_tr_JAM);
 
   // Trim and clean up x-axis
   h_vn_de = PlotUtils::trimCentralityPlot(h_vn_de);
   h_vn_tr = PlotUtils::trimCentralityPlot(h_vn_tr);
   h_vn_pr_alt = PlotUtils::trimCentralityPlot(h_vn_pr_alt);
-
+  h_vn_pr_alt_JAM = PlotUtils::trimCentralityPlot(h_vn_pr_alt_JAM);
+  h_vn_de_JAM = PlotUtils::trimCentralityPlot(h_vn_de_JAM);
+  h_vn_tr_JAM = PlotUtils::trimCentralityPlot(h_vn_tr_JAM);
+  
   // Retrieve systematic uncertainties
   TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
+  //jobID = "Normal_afterDuplication_piKefficiencies";
   TGraphErrors* sys_de = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_de_"+jobID+"_flip");
   TGraphErrors* sys_tr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_tr_"+jobID+"_flip");
   TGraphErrors* sys_pr_alt = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_alt_"+jobID+"_flip");
@@ -75,7 +93,7 @@ void prelimPdtPlots(TString jobID)
       sys_tr->SetPointY(i, yValue/3.0);
       sys_tr->SetPointError(i, 0.0, yError/3.0);
     }
-////
+  ////
 
   // Set various aesthetics
   sys_de->SetMarkerColor(1);
@@ -106,6 +124,33 @@ void prelimPdtPlots(TString jobID)
   h_vn_pr_alt->SetLineColor(kRed-4);
   h_vn_pr_alt->SetLineWidth(3);
   h_vn_pr_alt->GetYaxis()->SetTitleOffset(1.7);
+
+  //h_vn_pr_alt->SetMarkerStyle(20);
+  h_vn_pr_alt->SetMarkerSize(2.5);
+  h_vn_pr_alt->SetMarkerColor(kRed-4);
+  h_vn_pr_alt_JAM->SetFillColor(kRed-4);
+  h_vn_pr_alt_JAM->SetFillStyle(3244);
+  h_vn_pr_alt->SetLineColor(kRed-4);
+  h_vn_pr_alt->SetLineWidth(3);
+  h_vn_pr_alt->GetYaxis()->SetTitleOffset(1.7);
+
+  //h_vn_de_JAM->SetMarkerStyle(21);
+  h_vn_de_JAM->SetMarkerSize(2.5);
+  h_vn_de_JAM->SetMarkerColor(1);
+  h_vn_de_JAM->SetFillColor(1);
+  h_vn_de_JAM->SetFillStyle(3244);
+  h_vn_de_JAM->SetLineColor(1);
+  h_vn_de_JAM->SetLineWidth(3);
+  h_vn_de_JAM->GetYaxis()->SetTitleOffset(1.7);
+
+  //h_vn_tr_JAM->SetMarkerStyle(22);
+  h_vn_tr_JAM->SetMarkerSize(3);
+  h_vn_tr_JAM->SetMarkerColor(4);
+  h_vn_tr_JAM->SetFillColor(4);
+  h_vn_tr_JAM->SetFillStyle(3244);
+  h_vn_tr_JAM->SetLineColor(4);
+  h_vn_tr_JAM->SetLineWidth(3);
+  h_vn_tr_JAM->GetYaxis()->SetTitleOffset(1.7);
   ////
 
 
@@ -116,13 +161,20 @@ void prelimPdtPlots(TString jobID)
   TH1D *h_vn_tr_scaled = (TH1D*)h_vn_tr->Clone();
   h_vn_tr_scaled->Scale(1.0/3.0);
 
-  THStack *pdtCentralityStack = new THStack("pdtCentralityStack", ";Centrality (%);v_{3} {#psi_{1}} / A");
+  TH1D *h_vn_de_JAM_scaled = (TH1D*)h_vn_de_JAM->Clone();
+  h_vn_de_JAM_scaled->Scale(1.0/2.0);
+
+  TH1D *h_vn_tr_JAM_scaled = (TH1D*)h_vn_tr_JAM->Clone();
+  h_vn_tr_JAM_scaled->Scale(1.0/3.0);
+
+  
+  THStack *pdtCentralityStack = new THStack("pdtCentralityStack", ";Centrality (%);v_{3} {#Psi_{1}} / A");
   pdtCentralityStack->Add(h_vn_de_scaled);
   pdtCentralityStack->Add(h_vn_tr_scaled);
   pdtCentralityStack->Add(h_vn_pr_alt);
   
   // Make text boxes, legends, and line at zero
-  TPaveText* prelimText = new TPaveText(15, 0.01, 45, 0.014, "NB");
+  TPaveText* prelimText = new TPaveText(15, -0.05, 45, -0.04, "NB");
   prelimText->AddText("STAR Preliminary");
   prelimText->SetTextColor(kRed);
   prelimText->SetFillColorAlpha(0,0);
@@ -149,6 +201,10 @@ void prelimPdtPlots(TString jobID)
   zeroLine->SetLineWidth(3);
   ////
 
+  h_vn_pr_alt_JAM->GetYaxis()->SetRangeUser(-0.06, 0.03);
+  h_vn_de_JAM_scaled->GetYaxis()->SetRangeUser(-0.06, 0.03);
+  h_vn_tr_JAM_scaled->GetYaxis()->SetRangeUser(-0.06, 0.03);
+  
   pdtCentralityStack->Draw();
   pdtCentralityStack->GetXaxis()->SetLabelSize(0.045);
   pdtCentralityStack->GetYaxis()->SetLabelSize(0.045);
@@ -161,14 +217,18 @@ void prelimPdtPlots(TString jobID)
   pdtCentralityStack->SetMinimum(-0.06);
   pdtCentralityStack->Draw("NOSTACK E1P");
   zeroLine->Draw("SAME");
+  //h_vn_pr_alt_JAM->Draw("E3 SAME");
+  //h_vn_de_JAM_scaled->Draw("E3 SAME");
+  //h_vn_tr_JAM_scaled->Draw("E3 SAME");
   pdtCentralityStack->Draw("NOSTACK E1P SAME");
   sys_de->Draw("[]");
   sys_tr->Draw("[]");
   sys_pr_alt->Draw("[]");
   pdtLegend->Draw();
   pdtText->Draw();
+  
   //prelimText->Draw();
-  canvas->SaveAs("v3_pdtCentralityStack.png");
+  canvas->SaveAs("v3_pdtCentralityStack.pdf");
   canvas->Clear();
 
   systematicFile->Close();

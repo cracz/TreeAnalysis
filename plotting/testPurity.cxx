@@ -5,13 +5,6 @@ double getIntersection(double amp1, double mean1, double std1, double amp2, doub
   double a = std::pow(std2, 2) - std::pow(std1, 2);
   double b = 2 * mean2 * std::pow(std1, 2) - 2 * mean1 * std::pow(std2, 2);
   double c = std::pow(mean1 * std2, 2) - std::pow(mean2 * std1, 2) - 2 * std::pow(std1 * std2, 2) * std::log(amp1/amp2);
-  /*
-  std::cout << std::endl
-	    << "a = " << a << std::endl
-	    << "b = " << b << std::endl
-	    << "c = " << c << std::endl
-	    << std::endl;
-  */
   double disc = std::pow(b, 2) - 4 * a * c;
   if (disc < 0) return -999.0;
 

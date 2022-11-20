@@ -256,9 +256,21 @@ void resolutions(TString jobID, TString order_n_str)
 
 
   
-  TLegend *legend2 = new TLegend(0.615, 0.8, 0.96, 0.96);
+  TLegend *legend2 = new TLegend(0.65, 0.82, 0.96, 0.96);
   legend2->AddEntry(h_resolAvsB,"Inner EPD #psi_{1}");
-  legend2->SetTextSize(0.06);
+  legend2->SetTextSize(0.05);
+
+  TPaveText *text_extra = new TPaveText(2, 0.25, 28, 0.3);
+  text_extra->AddText("#sqrt{s_{NN}} = 3.0 GeV FXT Au+Au");
+  text_extra->AddText("Collisions at RHIC");
+  //text_extra->SetFillColorAlpha(0,0);
+
+  TPaveText* prelimText = new TPaveText(5, 0.2, 25, 0.23, "NB");
+  prelimText->AddText("STAR Preliminary");
+  prelimText->SetTextColor(kRed);
+  prelimText->SetFillColorAlpha(0,0);
+  prelimText->SetTextSize(0.04);
+
 
   canvas->SetTicks();
   canvas->SetLogy(0);
@@ -276,10 +288,12 @@ void resolutions(TString jobID, TString order_n_str)
   h_resolAvsB->GetYaxis()->SetTitleSize(0.065);
   h_resolAvsB->SetMaximum(0.3);
   h_resolAvsB->SetTitle("");
-  h_resolAvsB->SetMarkerColor(1);
-  h_resolAvsB->SetLineColor(1);
+  //h_resolAvsB->SetMarkerColor(1);
+  //h_resolAvsB->SetLineColor(1);
   h_resolAvsB->Draw("E1P");
-  //legend2->Draw();
+  legend2->Draw();
+  text_extra->Draw();
+  prelimText->Draw();
   canvas->SaveAs(jobID + "_resolutionAonly.png");
   canvas->Clear();
 
