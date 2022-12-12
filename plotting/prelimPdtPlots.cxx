@@ -196,6 +196,14 @@ void prelimPdtPlots(TString jobID)
   pdtLegend->SetLineColorAlpha(0,0);
   pdtLegend->SetTextSize(0.04);
 
+  TLegend *pdtLegend_JAM = new TLegend(0.4, 0.14, 0.65, 0.35);
+  pdtLegend_JAM->AddEntry(h_vn_pr_alt_JAM,"JAM p");
+  pdtLegend_JAM->AddEntry(h_vn_de_JAM_scaled,"JAM d");
+  pdtLegend_JAM->AddEntry(h_vn_tr_JAM_scaled,"JAM t");
+  pdtLegend_JAM->SetFillColorAlpha(0,0);
+  pdtLegend_JAM->SetLineColorAlpha(0,0);
+  pdtLegend_JAM->SetTextSize(0.04);
+
   TLine *zeroLine = new TLine(0, 0, 60, 0);
   zeroLine->SetLineStyle(9);
   zeroLine->SetLineWidth(3);
@@ -225,6 +233,7 @@ void prelimPdtPlots(TString jobID)
   sys_tr->Draw("[]");
   sys_pr_alt->Draw("[]");
   pdtLegend->Draw();
+  //pdtLegend_JAM->Draw();
   pdtText->Draw();
   
   //prelimText->Draw();

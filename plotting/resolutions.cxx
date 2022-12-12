@@ -293,7 +293,7 @@ void resolutions(TString jobID, TString order_n_str)
   h_resolAvsB->Draw("E1P");
   legend2->Draw();
   text_extra->Draw();
-  prelimText->Draw();
+  //prelimText->Draw();
   canvas->SaveAs(jobID + "_resolutionAonly.png");
   canvas->Clear();
 

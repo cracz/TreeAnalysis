@@ -1,15 +1,17 @@
 #!/bin/bash
 
 
-jobID="B788126DD978DB33CEB64D53DD6BEFAD"
+jobID="Normal_afterDuplication_piKefficiencies_unnecessaryMinHitsRemoved"
 order_n="3"
 
-#root -l -b -q plotAll.cxx\(\"${jobID}\"\)
+root -l -b -q plotAll.cxx\(\"${jobID}\"\)
 #root -l -b -q m2BypTBins.cxx\(\"${jobID}\"\)
 #root -l -b -q yVsEtaPlots.cxx\(\"${jobID}\"\)
 #root -l -b -q acceptanceCuts.cxx\(\"${jobID}\"\)
-#root -l -b -q eventPlanes.cxx\(\"${jobID}\"\)
-#root -l -b -q correlations.cxx\(\"${jobID}\",\"${order_n}\"\)
+root -l -b -q acceptanceCombined.cxx\(\"${jobID}\"\)
+root -l -b -q acceptanceCombinedPDT.cxx\(\"${jobID}\"\)
+root -l -b -q eventPlanes.cxx\(\"${jobID}\"\)
+root -l -b -q correlations.cxx\(\"${jobID}\",\"${order_n}\"\)
 
 # Integrated yields
 #root -l -b -q intYield.cxx\(\"${jobID}\",\"E\"\)
@@ -26,5 +28,9 @@ root -l -b -q resolutions.cxx\(\"${jobID}\",\"${order_n}\"\)
 #root -l -b -q meanpT.cxx\(\"${jobID}\",\"${order_n}\"\)
 #root -l -b -q vnVsYscan.cxx\(\"${jobID}\",\"${order_n}\"\)
 
+root -l -b -q prelimCentraltyPlots.cxx\(\"${jobID}\"\)
+root -l -b -q prelimRapidityPlots.cxx\(\"${jobID}\"\)
+root -l -b -q prelimPtPlots.cxx\(\"${jobID}\"\)
+root -l -b -q prelimPdtPlots.cxx\(\"${jobID}\"\)
 
 #root -l -b -q testPurity.cxx\(\"${jobID}\"\)
