@@ -129,8 +129,8 @@ int main(int argc, char *argv[])
   Int_t N_track = 0;  // Max number of tracks in an event. Depends on energy and centrality definition!
   if      (configs.sqrt_s_NN == 3.0)  { N_track = 195;  }
   else if (configs.sqrt_s_NN == 3.22) { N_track = 287;  }
-  else if (configs.sqrt_s_NN == 3.9)  { N_track = 287;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
-  else if (configs.sqrt_s_NN == 4.49) { N_track = 195;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
+  else if (configs.sqrt_s_NN == 3.9)  { N_track = 275;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
+  else if (configs.sqrt_s_NN == 4.49) { N_track = 350;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
   else if (configs.sqrt_s_NN == 7.2)  { N_track = 240;  }
   //else if (configs.sqrt_s_NN == 14.5) { N_track = 2048; } // UPDATE THIS WHEN THE CENTRALITY IS OFFICIAL
   else if (configs.sqrt_s_NN == 19.6) { N_track = 2048; } // UPDATE THIS WHEN THE CENTRALITY IS OFFICIAL
@@ -254,42 +254,55 @@ int main(int argc, char *argv[])
     }
   ////
 
-  // INPUT FILE FOR TPC EFFICIENCY CORRECTIONS
-  TString pdtEfficiencyFileName = "pdt_efficiency.root";
-  TString pikEfficiencyFileName = "pik_efficiency.root";
-  TFile *pdtEfficiencyFile;
-  TFile *pikEfficiencyFile;
+  // INPUT FILE FOR TPC EFFICIENCY CORRECTIONS -- CURRENTLY ONLY 3 GEV FXT !!!
+  //TString pdtEfficiencyFileName = "pdt_efficiency.root";
+  TString pikpEfficiencyFileName = "pikp_efficiency.root";
+  //TFile *pdtEfficiencyFile;
+  TFile *pikpEfficiencyFile;
   Bool_t efficienciesFound = false;
   TH2D *h2_tracking_pp;
   TH2D *h2_tracking_pm;
   TH2D *h2_tracking_kp;
   TH2D *h2_tracking_km;
   TH2D *h2_tracking_pr;
-  TH2D *h2_tracking_de;
-  TH2D *h2_tracking_tr;
-  if (RUN_ITERATION == 2)
+  //TH2D *h2_tracking_de;
+  //TH2D *h2_tracking_tr;
+  if (RUN_ITERATION == 2 && configs.sqrt_s_NN == 3.0)
     {
-      pdtEfficiencyFile = TFile::Open(pdtEfficiencyFileName, "READ");
-      pikEfficiencyFile = TFile::Open(pikEfficiencyFileName, "READ");
-      if (!pdtEfficiencyFile || !pikEfficiencyFile) { std::cout << "One or both efficiency files missing! All efficiencies will default to 1!" << std::endl; }
+      //pdtEfficiencyFile  = TFile::Open(pdtEfficiencyFileName, "READ");
+      pikpEfficiencyFile = TFile::Open(pikpEfficiencyFileName, "READ");
+      
+      if (/*!pdtEfficiencyFile ||*/ !pikpEfficiencyFile) 
+	{ std::cout << "One or both efficiency files missing! All efficiencies will default to 1!" << std::endl; }
       else 
 	{ 
 	  efficienciesFound = true;
-	  std::cout << "TPC pik and pdt efficiency files were found!" << std::endl; 
+	  std::cout << "TPC efficiency files were found!" << std::endl; 
 
-	  h2_tracking_pp = (TH2D*)pikEfficiencyFile->Get("h2_ratio_pp");
-	  h2_tracking_pm = (TH2D*)pikEfficiencyFile->Get("h2_ratio_pm");
-	  h2_tracking_kp = (TH2D*)pikEfficiencyFile->Get("h2_ratio_kp");
-	  h2_tracking_km = (TH2D*)pikEfficiencyFile->Get("h2_ratio_km");
+	  h2_tracking_pp = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_pp");
+	  h2_tracking_pm = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_pm");
+	  h2_tracking_kp = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_kp");
+	  h2_tracking_km = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_km");	  
+	  h2_tracking_pr = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_pr");
 
-	  h2_tracking_pr = (TH2D*)pdtEfficiencyFile->Get("tracking_p");
-	  h2_tracking_de = (TH2D*)pdtEfficiencyFile->Get("tracking_d");
-	  h2_tracking_tr = (TH2D*)pdtEfficiencyFile->Get("tracking_t");
+	  if (!h2_tracking_pp ||
+	      !h2_tracking_pm ||
+	      !h2_tracking_kp ||
+	      !h2_tracking_km ||
+	      !h2_tracking_pr)
+	    { 
+	      std::cout << "FAILED TO RETRIEVE ALL EFFICIENCY HISTOGRAMS!" << std::endl
+			<< "ALL EFFICIENCIES WILL DEFAULT TO 1!" << std::endl;
+
+	      efficienciesFound = false;
+	    }
 	}
     }
+  else if (RUN_ITERATION == 2 && configs.sqrt_s_NN != 3.0)
+    { std::cout << "This energy has no TPC efficiency corrections!" << std::endl; }
   ////
 
-  // OUTPUT FILE FOR CORRECTION INFORMATION
+  // OUTPUT FILE FOR EVENT PLANE CORRECTION INFORMATION
   TString correctionOutputName = "correctionInfo_OUTPUT_"+jobID+".root";
   TFile *correctionOutputFile;
   if (RUN_ITERATION == 0 || RUN_ITERATION == 1) { correctionOutputFile = new TFile(correctionOutputName, "RECREATE"); }
@@ -345,6 +358,12 @@ int main(int argc, char *argv[])
 
   // HISTOGRAMS
 
+  //TH1D *h_test_35 = new TH1D("h_test_35", "-2.9 < #Psi_{1} < -2.83765", 40, 21035000, 21035040);
+  //TH1D *h_test_36 = new TH1D("h_test_36", "-2.9 < #Psi_{1} < -2.83765", 20, 21036000, 21036020);
+  //TH1D *h_test2_35 = new TH1D("h_test2_35", "-2.98223 < #Psi_{1} < -2.96197", 40, 21035000, 21035040);
+  //TH1D *h_test2_36 = new TH1D("h_test2_36", "-2.98223 < #Psi_{1} < -2.96197", 20, 21036000, 21036020);
+
+
   // temporary variables when histogram bins/bounds depend on the energy
   int tempBins1 = 0;
   double tempLowBound1 = 0;
@@ -369,8 +388,8 @@ int main(int argc, char *argv[])
   TH1D *h_simulationCheck_kp = new TH1D ("h_simulationCheck_kp", "N_{K+} with no TPC efficiency", 3, 0, 3);
   TH1D *h_simulationCheck_km = new TH1D ("h_simulationCheck_km", "N_{K-} with no TPC efficiency", 3, 0, 3);
   TH1D *h_simulationCheck_pr = new TH1D ("h_simulationCheck_pr", "N_{pr} with no TPC efficiency", 3, 0, 3);
-  TH1D *h_simulationCheck_de = new TH1D ("h_simulationCheck_de", "N_{de} with no TPC efficiency", 3, 0, 3);
-  TH1D *h_simulationCheck_tr = new TH1D ("h_simulationCheck_tr", "N_{tr} with no TPC efficiency", 3, 0, 3);
+  //TH1D *h_simulationCheck_de = new TH1D ("h_simulationCheck_de", "N_{de} with no TPC efficiency", 3, 0, 3);
+  //TH1D *h_simulationCheck_tr = new TH1D ("h_simulationCheck_tr", "N_{tr} with no TPC efficiency", 3, 0, 3);
   TH1D *h_simulationCheck_total = new TH1D ("h_simulationCheck_total", "Total N_{trk}", 3, 0, 3);
 
   TH1D *h_nhits       = new TH1D("h_nhits", "nHits;Number of hits;Tracks", 50, 0, 50);
@@ -572,10 +591,10 @@ int main(int argc, char *argv[])
 					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
   TH2D *h2_pT_vs_yCM_pr_noEff = new TH2D("h2_pT_vs_yCM_pr_noEff", "Protons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  
 					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
-  TH2D *h2_pT_vs_yCM_de_noEff = new TH2D("h2_pT_vs_yCM_de_noEff", "Deuterons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  
-					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
-  TH2D *h2_pT_vs_yCM_tr_noEff = new TH2D("h2_pT_vs_yCM_tr_noEff", "Tritons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  
-					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
+  //TH2D *h2_pT_vs_yCM_de_noEff = new TH2D("h2_pT_vs_yCM_de_noEff", "Deuterons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  
+  //					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
+  //TH2D *h2_pT_vs_yCM_tr_noEff = new TH2D("h2_pT_vs_yCM_tr_noEff", "Tritons with No TPC Efficiency;y-y_{mid};p_{T} (GeV/c)",  
+  //					 tempBins1, tempLowBound1, tempHighBound1, 500, 0.0, 5.0);
 
   TH1D *h_psiTpc_RAW  = new TH1D("h_psiTpc_RAW", "Raw Event Plane Angles (m = "+ORDER_M_STR+", TPC);#psi_{"+ORDER_M_STR+"};Events", 400, -PSI_BOUNDS, PSI_BOUNDS);
   TH1D *h_psiTpcA_RAW = new TH1D("h_psiTpcA_RAW", "Raw Event Plane Angles (m = "+ORDER_M_STR+", TPC A);#psi_{"+ORDER_M_STR+"};Events", 400, -PSI_BOUNDS, PSI_BOUNDS);
@@ -672,9 +691,7 @@ int main(int argc, char *argv[])
 
 
   // Differential Flow Profiles
-  //TProfile2D *p2_v1_pT_eta_TPCB_pr = new TProfile2D("p2_v1_pT_eta_TPCB_pr", "TPC B Proton v_{1};#eta;p_{T}", 25, -1.0, 0.0, 25, 0, 2.5);
-  //TProfile *p_v1_EPD_ring = new TProfile("p_v1_EPD_ring", "EPD v_{1} by Ring;Ring;v_{1}", 16, 0.5, 16.5);
-
+  
   TProfile2D *p2_vn_yCM_cent_pp = new TProfile2D("p2_vn_yCM_cent_pp", "#pi^{+} v_{"+ORDER_N_STR+"};Centrality;y-y_{mid}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -1, 1);
   TProfile2D *p2_vn_yCM_cent_pm = new TProfile2D("p2_vn_yCM_cent_pm", "#pi^{-} v_{"+ORDER_N_STR+"};Centrality;y-y_{mid}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -1, 1);
   TProfile2D *p2_vn_yCM_cent_kp = new TProfile2D("p2_vn_yCM_cent_kp", "K^{+} v_{"+ORDER_N_STR+"};Centrality;y-y_{mid}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -1, 1);
@@ -688,11 +705,11 @@ int main(int argc, char *argv[])
   TProfile2D *p2_vn_yCM_cent_tr = new TProfile2D("p2_vn_yCM_cent_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;y-y_{mid}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -1, 1);
 
   TProfile2D *p2_vn_yOverYbeam_cent_pr_alt = 
-    new TProfile2D("p2_vn_yOverYbeam_cent_pr_alt", "Proton v_{"+ORDER_N_STR+"};Centrality;y/|y_{beam}|", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 25, -0.5, 0.0);
+    new TProfile2D("p2_vn_yOverYbeam_cent_pr_alt", "Proton v_{"+ORDER_N_STR+"};Centrality;y_{CM}/|y_{beam}|", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 25, 0.0, 0.5);
   TProfile2D *p2_vn_yOverYbeam_cent_de = 
-    new TProfile2D("p2_vn_yOverYbeam_cent_de", "Deuteron v_{"+ORDER_N_STR+"};Centrality;y/|y_{beam}|", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 25, -0.5, 0.0);
+    new TProfile2D("p2_vn_yOverYbeam_cent_de", "Deuteron v_{"+ORDER_N_STR+"};Centrality;y_{CM}/|y_{beam}|", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 25, 0.0, 0.5);
   TProfile2D *p2_vn_yOverYbeam_cent_tr = 
-    new TProfile2D("p2_vn_yOverYbeam_cent_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;y/|y_{beam}|", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 25, -0.5, 0.0);
+    new TProfile2D("p2_vn_yOverYbeam_cent_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;y_{CM}/|y_{beam}|", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 25, 0.0, 0.5);
 
   
   TProfile2D *p2_vn_pT_cent_pp = new TProfile2D("p2_vn_pT_cent_pp", "#pi^{+} v_{"+ORDER_N_STR+"};Centrality;p_{T}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 10, 0, 2);
@@ -703,6 +720,10 @@ int main(int argc, char *argv[])
   TProfile2D *p2_vn_pT_cent_pr_alt = new TProfile2D("p2_vn_pT_cent_pr_alt", "Proton v_{"+ORDER_N_STR+"};Centrality;p_{T}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 15, 0, 2.5);
   TProfile2D *p2_vn_pT_cent_de = new TProfile2D("p2_vn_pT_cent_de", "Deuteron v_{"+ORDER_N_STR+"};Centrality;p_{T}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 15, 0, 2.5);
   TProfile2D *p2_vn_pT_cent_tr = new TProfile2D("p2_vn_pT_cent_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;p_{T}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 15, 0, 2.5);
+
+  // Protons at midrapidity
+  TProfile2D *p2_vn_pT_cent_pr_midy = new TProfile2D("p2_vn_pT_cent_pr_midy", "Proton v_{"+ORDER_N_STR+"};Centrality;p_{T}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 10, 0, 2);
+  ////
 
   // yCM stratified by pT
   TProfile2D *p2_vn_pT_vs_yCM_pp = new TProfile2D("p2_vn_pT_vs_yCM_pp", "#pi^{+} v_{3};y-y_{mid};p_{T} (GeV/c)", 20, -1.0, 1.0, 10, 0.0, 2.0);
@@ -1053,7 +1074,8 @@ int main(int argc, char *argv[])
 	      particleInfo.phi = d_phi;
 	      particleInfo.eta = d_eta;
 	      particleInfo.pT  = d_pT;
-	      particleInfo.weight = (configs.sqrt_s_NN == 7.2) ? 1.0/*TMath::Abs(d_eta-Y_MID)*/ : d_pT;
+	      particleInfo.weight = d_pT;
+	      //particleInfo.weight = (configs.sqrt_s_NN == 7.2) ? 1.0/*TMath::Abs(d_eta-Y_MID)*/ : d_pT;
 
 	      h2_phi_vs_eta_TPC->Fill(d_eta, d_phi);
 
@@ -1111,11 +1133,8 @@ int main(int argc, char *argv[])
 	      Bool_t pion   = false;
 	      Bool_t kaon   = false;
 	      Bool_t proton = (d_nSigmaPr > configs.nSig_pr_low) && (d_nSigmaPr < configs.nSig_pr_high) && (s_charge == 1);
-	      //Bool_t proton = false;
 	      Bool_t deuteron = false;
 	      Bool_t triton   = false;
-	      //Bool_t deuteron = (d_zDeuteron > configs.z_de_low) && (d_zDeuteron < configs.z_de_high);
-	      //Bool_t triton   = (d_zTriton > configs.z_tr_low) && (d_zTriton < configs.z_tr_high);
 
 	      if (tofTrack)
 		{
@@ -1128,17 +1147,6 @@ int main(int argc, char *argv[])
 		    (d_nSigmaKa < configs.nSig_ka_high) &&
 		    (d_m2 > configs.m2_ka_low) &&
 		    (d_m2 < configs.m2_ka_high);
-		  /*
-		  deuteron = (d_zDeuteron > configs.z_de_low) &&
-		    (d_zDeuteron < configs.z_de_high) &&
-		    (d_m2 > configs.m2_de_low) &&
-		    (d_m2 < configs.m2_de_high);
-
-		  triton   = (d_zTriton > configs.z_tr_low) &&
-		  (d_zTriton < configs.z_tr_high) &&
-		    (d_m2 > configs.m2_tr_low) &&
-		    (d_m2 < configs.m2_tr_high);
-		  */
 		}
 
 	      // 3.0 GeV d and t PID
@@ -1552,7 +1560,7 @@ int main(int argc, char *argv[])
       if (eventInfo.nHitsEpdA   < configs.min_tracks) continue;
       //if (eventInfo.nHitsEpdB   < configs.min_tracks) continue;
       if (configs.fixed_target && configs.sqrt_s_NN == 3.0 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
-      else if (configs.fixed_target && configs.sqrt_s_NN == 3.22 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
+      else if (configs.fixed_target && configs.sqrt_s_NN == 3.22 && eventInfo.nHitsEpdB < configs.min_tracks) continue;
       else if (configs.fixed_target && configs.sqrt_s_NN == 3.9  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
 
       h_centralities_final->Fill(i_centrality);
@@ -1588,7 +1596,19 @@ int main(int argc, char *argv[])
       h_psiEpdA_RAW->Fill(eventInfo.psiEpdA);
       h_psiEpdB_RAW->Fill(eventInfo.psiEpdB);
 
+      /*
+      if (eventInfo.psiEpdB >= -2.9 && eventInfo.psiEpdB < -2.83765)
+	{
+	  h_test_35->Fill(i_runID);
+	  h_test_36->Fill(i_runID);
+	}
 
+      if (eventInfo.psiEpdB >= -2.98223 && eventInfo.psiEpdB < -2.96197)
+	{
+	  h_test2_35->Fill(i_runID);
+	  h_test2_36->Fill(i_runID);
+	}
+      */
 
       //=========================================================
       //          Re-centering (Xn, Yn) Distributions
@@ -1666,24 +1686,19 @@ int main(int argc, char *argv[])
 	  // 2D Correlations between event planes
 	  h2_psiEpdATpcA->Fill(eventInfo.psiTpcA,eventInfo.psiEpdA);
 	  h2_psiEpdBTpcA->Fill(eventInfo.psiTpcA,eventInfo.psiEpdB);
-
 	  h2_psiEpdATpcB->Fill(eventInfo.psiTpcB,eventInfo.psiEpdA);
 	  h2_psiEpdBTpcB->Fill(eventInfo.psiTpcB,eventInfo.psiEpdB);
-
 	  h2_psiTpcATpcB->Fill(eventInfo.psiTpcB,eventInfo.psiTpcA);
-
 	  h2_psiEpdAEpdB->Fill(eventInfo.psiEpdB,eventInfo.psiEpdA);
 	  //
 
 
 	  // 1D correlation averages used in calculating resolution using the 3 sub-event method
 	  p_TpcAB->Fill(eventInfo.centID,    TMath::Cos(ORDER_N * (eventInfo.psiTpcA - eventInfo.psiTpcB)));
-
 	  p_TpcAEpdA->Fill(eventInfo.centID, TMath::Cos(ORDER_N * (eventInfo.psiTpcA - eventInfo.psiEpdA)));
 	  p_TpcAEpdB->Fill(eventInfo.centID, TMath::Cos(ORDER_N * (eventInfo.psiTpcA - eventInfo.psiEpdB)));
 	  p_TpcBEpdA->Fill(eventInfo.centID, TMath::Cos(ORDER_N * (eventInfo.psiTpcB - eventInfo.psiEpdA)));
 	  p_TpcBEpdB->Fill(eventInfo.centID, TMath::Cos(ORDER_N * (eventInfo.psiTpcB - eventInfo.psiEpdB)));
-
 	  p_EpdAEpdB->Fill(eventInfo.centID, TMath::Cos(ORDER_N * (eventInfo.psiEpdA - eventInfo.psiEpdB)));
 	  //
 
@@ -1797,6 +1812,8 @@ int main(int argc, char *argv[])
 	    }// End EPD v1
 	  */
 
+
+
 	  // "OBSERVED" FLOW VALUES HERE, no resolutions or efficiencies
 	  for (UInt_t j = 0; j < eventInfo.tpcParticles.size(); j++)
 	    {
@@ -1887,8 +1904,8 @@ int main(int argc, char *argv[])
 		      else if (eventInfo.tpcParticles.at(j).kpTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_kp);
 		      else if (eventInfo.tpcParticles.at(j).kmTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_km);
 		      else if (eventInfo.tpcParticles.at(j).prTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_pr);
-		      else if (eventInfo.tpcParticles.at(j).deTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_de);
-		      else if (eventInfo.tpcParticles.at(j).trTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_tr);
+		      //else if (eventInfo.tpcParticles.at(j).deTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_de);
+		      //else if (eventInfo.tpcParticles.at(j).trTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_tr);
 		    }
 		  if (tpcEfficiency == -1) // Checks here for tracks with no recorded efficiency values.
 		    { 
@@ -1917,6 +1934,7 @@ int main(int argc, char *argv[])
 			  h_simulationCheck_pr->Fill(1);
 			  h2_pT_vs_yCM_pr_noEff->Fill(jthRapidity - Y_MID, jthpT);
 			}
+		      /*
 		      else if (eventInfo.tpcParticles.at(j).deTag) 
 			{
 			  h_simulationCheck_de->Fill(1); 
@@ -1927,7 +1945,7 @@ int main(int argc, char *argv[])
 			  h_simulationCheck_tr->Fill(1); 
 			  h2_pT_vs_yCM_tr_noEff->Fill(jthRapidity - Y_MID, jthpT);
 			}
-		      
+		      */
 		      continue; 
 		    }
 
@@ -2066,20 +2084,14 @@ int main(int argc, char *argv[])
 			}
 		      if (jthKT/1.0 >= configs.KT_pdt_low && jthKT/1.0 <= configs.KT_pdt_high &&
 			  jthRapidity - Y_MID > 0.0 && jthRapidity - Y_MID < 0.6)
-			{
-			  p_vn_pr_alt_y0to0p6->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); 
-			}
-
+			{ p_vn_pr_alt_y0to0p6->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); }
 		      if (jthKT/1.0 >= configs.KT_pdt_low && jthKT/1.0 <= configs.KT_pdt_high &&
 			  jthRapidity - Y_MID > 0.6 && jthRapidity - Y_MID < 1.0)
-			{
-			  p_vn_pr_alt_y0p6to1p0->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); 
-			}
+			{ p_vn_pr_alt_y0p6to1p0->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); }
 		      if (jthKT/1.0 >= configs.KT_pdt_low && jthKT/1.0 <= configs.KT_pdt_high &&
-			  jthRapidity/Y_BEAM > -1.0 && jthRapidity/Y_BEAM < 0.0)
-			{ 
-			  p2_vn_yOverYbeam_cent_pr_alt->Fill(centID, jthRapidity/Y_BEAM, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
-			}
+			  (jthRapidity-Y_MID)/Y_BEAM > 0.0 && (jthRapidity-Y_MID)/Y_BEAM < 0.5)
+			{ p2_vn_yOverYbeam_cent_pr_alt->Fill(centID, (jthRapidity-Y_MID)/Y_BEAM, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); }
+
 		      // RAPIDITY SYMMETRIC ACCEPTANCE REGION
 		      if (jthRapidity - Y_MID > configs.yCM_ySym_pr_low && jthRapidity - Y_MID < configs.yCM_ySym_pr_high && 
 			  jthpT > configs.pt_ySym_pr_low && jthpT < configs.pt_ySym_pr_high)
@@ -2089,6 +2101,11 @@ int main(int argc, char *argv[])
 		      if (jthRapidity - Y_MID > configs.yCM_yFor_pr_low && jthRapidity - Y_MID < configs.yCM_yFor_pr_high && 
 			  jthpT > configs.pt_yFor_pr_low && jthpT < configs.pt_yFor_pr_high)
 			{ p_vn_pr_for->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); }
+
+		      // ONLY MIDRAPIDITY VS pT
+		      if (jthRapidity - Y_MID > -0.1 && jthRapidity - Y_MID < 0.1 &&
+			  jthpT > configs.pt_norm_pr_low && jthpT < configs.pt_norm_pr_high)
+			{ p2_vn_pT_cent_pr_midy->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency)); }
 		    }
 
 		  // DEUTERON
@@ -2118,9 +2135,9 @@ int main(int argc, char *argv[])
 			}
 
 		      if (jthKT/2.0 >= configs.KT_pdt_low && jthKT/2.0 <= configs.KT_pdt_high &&
-			  jthRapidity/Y_BEAM > -1.0 && jthRapidity/Y_BEAM < 0.0)
+			  (jthRapidity-Y_MID)/Y_BEAM > 0.0 && (jthRapidity-Y_MID)/Y_BEAM < 0.5)
 			{
-			  p2_vn_yOverYbeam_cent_de->Fill(centID, jthRapidity/Y_BEAM, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
+			  p2_vn_yOverYbeam_cent_de->Fill(centID, (jthRapidity-Y_MID)/Y_BEAM, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 			}
 		    }
 
@@ -2151,9 +2168,9 @@ int main(int argc, char *argv[])
 			}
 
 		      if (jthKT/3.0 >= configs.KT_pdt_low && jthKT/3.0 <= configs.KT_pdt_high &&
-			  jthRapidity/Y_BEAM > -1.0 && jthRapidity/Y_BEAM < 0.0)
+			  (jthRapidity-Y_MID)/Y_BEAM > 0.0 && (jthRapidity-Y_MID)/Y_BEAM < 0.5)
 			{
-			  p2_vn_yOverYbeam_cent_tr->Fill(centID, jthRapidity/Y_BEAM, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
+			  p2_vn_yOverYbeam_cent_tr->Fill(centID, (jthRapidity-Y_MID)/Y_BEAM, TMath::Cos(ORDER_N * (jthPhi - psi)) / (resolution * tpcEfficiency));
 			}
 
 		    }
