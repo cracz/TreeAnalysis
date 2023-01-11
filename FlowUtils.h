@@ -412,7 +412,7 @@ namespace FlowUtils
     Int_t xBin = h2_ratio->GetXaxis()->FindBin(yCM);
     Int_t yBin = h2_ratio->GetYaxis()->FindBin(pT);
     Double_t efficiency = h2_ratio->GetBinContent(xBin, yBin);
-    return (efficiency == 0) ? -1 : efficiency;
+    return (efficiency == 0 || efficiency > 1.3) ? -1 : efficiency;
   }
 
 
