@@ -34,7 +34,7 @@ If nothing went wrong, then everything is all set!
 
 ## Making Trees
 
-The trees are made with the ROOT macro `MakeTrees.C`, which uses the `StRoot/TreeMaker/` class. If you need to modify what is saved within the produced trees, go to `StRoot/TreeMaker/`. When submitting jobs to make trees, you need to send `MakeTrees.C`, your config file, and the whole `StRoot/` directory. An example command section of the .xml file is shown here:
+The trees are made with the ROOT macro `MakeTrees.C`, which uses the `StRoot/TreeMaker/` class. If you need to modify what is saved within the produced trees, go to `StRoot/TreeMaker/`. When submitting jobs to make trees, you need to send `MakeTrees.C`, your config file, and the whole `StRoot/` directory. An example .xml file is `treeMake.xml`, but the command section of the .xml file is shown here:
 
 ```xml
 <command>
@@ -56,7 +56,7 @@ The `TreeAnalyzer` will be an executable, so you only invoke it by name and supp
 4) Name of the file with correction info (for re-centering and Fourier shifting) (produced by TreeAnalyzer if not present).
 5) Name of the file with event plane resolutions (produced by you, see below).
 
-For your .xml file, send `TreeAnalyzer`, the correction and resolution files, the config file, and the `libs/` directory. An example command section would look like this: 
+For your .xml file, send `TreeAnalyzer`, the correction and resolution files, the config file, and the `libs/` directory. An example .xml file is `treeAnalyze.xml`, but at least the command section should look like this: 
 
 ```xml
 <command>
@@ -89,3 +89,7 @@ For event plane resolutions, this info will be present in the following TProfile
 `p_EpdAEpdB`
 
 Currently, the analyzer requires that the resolution file contains a `TH1D` of resolution vs centrality ID called `h_resolutions`. The x-axis should NOT be in percentages! It should be following the normal ID that can be seen in the section of `TreeAnalyzer.cxx` where the `centrality` variable is assigned. So essentially `h_resolutions` will have an x-axis from 0 to 16, with 16 bins, and will look like a backwards version of the resolutions vs centrality percentages.
+
+In the `plotting/` directory, use `resolutions.cxx` to calculate the event plane resolution file that is supplied back to the analysis code for the final iteration. The `makePlots.sh` script is also there to help run this and all other macros in that directory. `resolutions.cxx` will create the file `resolutionInfo_INPUT.root` and this file should be supplied back to the analysis for the final iteration; as seen in the xml command above. 
+
+If there are issues with running `resolutions.cxx` it may be because it was only run and developed on a local copy of ROOT 6 and not ROOT 5. Switching versions or using it on a machine with ROOT 6 and copying `resolutionInfo_INPUT.root` back to RCF should work.
