@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<job maxFilesPerProcess="20" filesPerHour="1" fileListSyntax="xrootd" simulateSubmission="false">
+  
+  <command>
+    starver SL20d
+    cons
+    root4star -q -b -l MakeTrees.C\(0,$INPUTFILECOUNT,\"$FILELIST\",\"$SCRATCH\",\"$JOBID\",\"config_3p0GeV.txt\",0\)
+  </command>
+  
+  <SandBox installer="ZIP">
+    <Package>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/MakeTrees.C</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/config_3p0GeV.txt</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/StRoot</File>
+    </Package>
+  </SandBox>
+
+  <!-- Get input files from get_file_lis.pl -->
+  <input URL="filelist:/star/u/cracz/work/flow/input/fxt_3p0GeV_SL20d_nTracksErrorFixed_afterDuplication_file.list" nFiles="all"/>
+  
+  <!-- Run log & error messages -->
+  <stdout URL="file:/star/data01/pwg/cracz/Data_3p0GeV_FXT/out/$JOBID.out" />
+  <stderr URL="file:/star/data01/pwg/cracz/Data_3p0GeV_FXT/out/$JOBID.err" />
+  <output fromScratch="$JOBID.root" toURL="file:/star/data01/pwg/cracz/Data_3p0GeV_FXT/"/>
+
+</job>
