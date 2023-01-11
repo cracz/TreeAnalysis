@@ -64,7 +64,7 @@ void acceptanceCombined(TString jobID)
   y_mid->SetLineColor(kRed);
   y_mid->SetLineWidth(2);
 
-  TLine *y_target = new TLine(1.05, 0, 1.05, 2.5);
+  TLine *y_target = new TLine(1.14, 0, 1.14, 2.5);
   y_target->SetLineStyle(9);
   y_target->SetLineColor(kRed);
   y_target->SetLineWidth(2);

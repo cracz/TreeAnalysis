@@ -56,7 +56,7 @@ void prelimCentralityPlots(TString jobID)
   h_vn_pr = PlotUtils::trimCentralityPlot(h_vn_pr);
 
   // Retrieve systematic uncertainties
-
+  /*
   TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
   //jobID = "Normal_afterDuplication_piKefficiencies";
   TGraphErrors* sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_"+jobID+"_flip");
@@ -75,7 +75,7 @@ void prelimCentralityPlots(TString jobID)
   TGraphErrors* sys_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_Normal_PRELIMINARY_QM22_flip");
   ////
   */
-  
+  /*
   // Set various aesthetics
   sys_pp->SetMarkerColor(1);
   sys_pp->SetLineColor(1);
@@ -90,7 +90,7 @@ void prelimCentralityPlots(TString jobID)
   sys_km->SetLineColor(4);
 
   //sys_pr should be fine as it is
-
+  */
   h_vn_pp->SetMarkerStyle(21);
   h_vn_pp->SetMarkerSize(2.5);
   h_vn_pp->SetMarkerColor(1);
@@ -193,9 +193,9 @@ void prelimCentralityPlots(TString jobID)
   allCentralityStack->Draw("NOSTACK E1P");
   zeroLine->Draw("SAME");
   allCentralityStack->Draw("NOSTACK E1P SAME");
-  sys_pp->Draw("[]");
-  sys_pm->Draw("[]");
-  sys_pr->Draw("[]");
+  //sys_pp->Draw("[]");
+  //sys_pm->Draw("[]");
+  //sys_pr->Draw("[]");
   allLegend->Draw();
   allText->Draw();
   //prelimText->Draw();
@@ -215,8 +215,8 @@ void prelimCentralityPlots(TString jobID)
   kaCentralityStack->Draw("NOSTACK E1P");
   zeroLine->Draw("SAME");
   kaCentralityStack->Draw("NOSTACK E1P SAME");
-  sys_kp->Draw("[]");
-  sys_km->Draw("[]");
+  //sys_kp->Draw("[]");
+  //sys_km->Draw("[]");
   kaLegend->Draw();
   kaText->Draw();
   //prelimText->Draw();
@@ -224,6 +224,6 @@ void prelimCentralityPlots(TString jobID)
   canvas->Clear();
 
   
-  systematicFile->Close();
+  //systematicFile->Close();
   file->Close();
 }

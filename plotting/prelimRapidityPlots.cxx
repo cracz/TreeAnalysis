@@ -52,7 +52,7 @@ void prelimRapidityPlots(TString jobID)
   h_vn_yCM_00to10_pr_symm = p_vn_yCM_00to10_pr_symm->ProjectionX();
   h_vn_yCM_10to40_pr_symm = p_vn_yCM_10to40_pr_symm->ProjectionX();
   h_vn_yCM_40to60_pr_symm = p_vn_yCM_40to60_pr_symm->ProjectionX();
-
+  /*
   // Retrieve systematic uncertainties
   TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
   TGraphErrors* sys_yCM_00to10_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_00to10_pr_px");
@@ -62,7 +62,7 @@ void prelimRapidityPlots(TString jobID)
   TGraphErrors* sys_yCM_10to40_pr_symm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_10to40_pr_symm_px");
   TGraphErrors* sys_yCM_40to60_pr_symm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_40to60_pr_symm_px");
   ////
-
+  */
 
   std::cout << std::endl << "Fitting 10-40% non-symmetric: " << std::endl;
 
@@ -95,7 +95,7 @@ void prelimRapidityPlots(TString jobID)
 
   TH1D* h_10to40_symm = (TH1D*)h_vn_yCM_10to40_pr_symm->Clone();
   //TH1D* h_40to60_symm = (TH1D*)h_vn_yCM_40to60_pr_symm->Clone();
-
+  /*
   // Add systematics with statistics
   for (int i = 6; i <= 15; i++)
     {
@@ -107,7 +107,7 @@ void prelimRapidityPlots(TString jobID)
       h_40to60_symm->SetBinError(i, std::sqrt(std::pow(currentError2, 2) +
 					      std::pow(sys_yCM_40to60_pr_symm->GetErrorY(i-1), 2)));
       */
-  }
+  //}
 
   h_10to40_symm->Fit(function1, "", "", 0.0, 0.5);
   slopeRight = function1->GetParameter(0);
@@ -380,7 +380,7 @@ void prelimRapidityPlots(TString jobID)
 	  h_vn_yCM_40to60_pr_mirror->SetBinError(j, h_vn_yCM_40to60_pr->GetBinError(i));
 	}
     }
-
+  /*
   int j = 19;
   for (int i = 0; i < 10; i++)
     {
@@ -392,7 +392,7 @@ void prelimRapidityPlots(TString jobID)
       sys_yCM_40to60_pr->SetPointError(i,0.0, sys_yCM_40to60_pr->GetErrorY(j));
       j--;
     }
-
+  */
   
   // Set various aesthetics
   h_vn_yCM_00to10_pr->SetMarkerStyle(21);
@@ -426,7 +426,7 @@ void prelimRapidityPlots(TString jobID)
   h_vn_yCM_00to10_pr_symm->SetLineWidth(3);
   h_vn_yCM_10to40_pr_symm->SetLineWidth(3);
   h_vn_yCM_40to60_pr_symm->SetLineWidth(3);
-
+  /*
   sys_yCM_00to10_pr->SetMarkerColor(kRed-4);
   sys_yCM_10to40_pr->SetMarkerColor(kBlue-4);
   sys_yCM_40to60_pr->SetMarkerColor(kGreen+1);
@@ -440,7 +440,7 @@ void prelimRapidityPlots(TString jobID)
   sys_yCM_00to10_pr_symm->SetLineColor(kRed-4);
   sys_yCM_10to40_pr_symm->SetLineColor(kBlue-4);
   sys_yCM_40to60_pr_symm->SetLineColor(kGreen+1);
-
+  */
   h_vn_yCM_00to10_pr_mirror->SetMarkerStyle(25);
   h_vn_yCM_10to40_pr_mirror->SetMarkerStyle(24);
   h_vn_yCM_40to60_pr_mirror->SetMarkerStyle(26);
@@ -538,9 +538,9 @@ void prelimRapidityPlots(TString jobID)
   prRapidityStack->Draw("NOSTACK E1P");
   zeroLine_y_pr->Draw("SAME");
   prRapidityStack->Draw("NOSTACK E1P SAME");
-  sys_yCM_40to60_pr->Draw("[]");
-  sys_yCM_00to10_pr->Draw("[]");
-  sys_yCM_10to40_pr->Draw("[]");
+  //sys_yCM_40to60_pr->Draw("[]");
+  //sys_yCM_00to10_pr->Draw("[]");
+  //sys_yCM_10to40_pr->Draw("[]");
   prLegend->Draw();
   prText_y->Draw();
   //prelimText->Draw();
@@ -562,9 +562,9 @@ void prelimRapidityPlots(TString jobID)
   prRapidityStack_symm->Draw("NOSTACK E1P");
   zeroLine_y_pr->Draw("SAME");
   prRapidityStack_symm->Draw("NOSTACK E1P SAME");
-  sys_yCM_00to10_pr_symm->Draw("[]");
-  sys_yCM_10to40_pr_symm->Draw("[]");
-  sys_yCM_40to60_pr_symm->Draw("[]");
+  //sys_yCM_00to10_pr_symm->Draw("[]");
+  //sys_yCM_10to40_pr_symm->Draw("[]");
+  //sys_yCM_40to60_pr_symm->Draw("[]");
   prLegend_symm->Draw();
   prText_y_symm->Draw();
   //prelimText_symm->Draw();
@@ -575,6 +575,6 @@ void prelimRapidityPlots(TString jobID)
   canvas->Clear();
 
 
-  systematicFile->Close();
+  //systematicFile->Close();
   file->Close();
 }

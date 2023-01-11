@@ -341,18 +341,18 @@ void vnVsY(TString jobID, TString order_n_str)
   //canvas->SaveAs("test.png");
   //return;
 
-  THStack *ppRapidityStack   = new THStack("ppRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#psi_{1}}");
-  THStack *pmRapidityStack   = new THStack("pmRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#psi_{1}}");
-  THStack *kpRapidityStack   = new THStack("kpRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#psi_{1}}");
-  THStack *kmRapidityStack   = new THStack("kmRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#psi_{1}}");
-  THStack *prRapidityStack   = new THStack("prRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#psi_{1}}");
-  THStack *prRapidityStack_alt = new THStack("prRapidityStack_alt", ";y-y_{mid};v_{"+order_n_str+"}{#psi_{1}}");
-  THStack *prRapidityStack_symm = new THStack("prRapidityStack_symm", ";y-y_{mid};v_{"+order_n_str+"}{#psi_{1}}");
-  THStack *deRapidityStack   = new THStack("deRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#psi_{1}}/A");
-  THStack *trRapidityStack   = new THStack("trRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#psi_{1}}/A");
-  THStack *pdtRapidity_00to10 = new THStack("pdtRapidity_00to10", ";y-y_{mid};v_{"+order_n_str+"}{#psi_{1}}/A");
-  THStack *pdtRapidity_10to40 = new THStack("pdtRapidity_10to40", ";y-y_{mid};v_{"+order_n_str+"}{#psi_{1}}/A");
-  THStack *pdtRapidity_40to60 = new THStack("pdtRapidity_40to60", ";y-y_{mid};v_{"+order_n_str+"}{#psi_{1}}/A");
+  THStack *ppRapidityStack   = new THStack("ppRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#Psi_{1}}");
+  THStack *pmRapidityStack   = new THStack("pmRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#Psi_{1}}");
+  THStack *kpRapidityStack   = new THStack("kpRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#Psi_{1}}");
+  THStack *kmRapidityStack   = new THStack("kmRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#Psi_{1}}");
+  THStack *prRapidityStack   = new THStack("prRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#Psi_{1}}");
+  THStack *prRapidityStack_alt = new THStack("prRapidityStack_alt", ";y-y_{mid};v_{"+order_n_str+"}{#Psi_{1}}");
+  THStack *prRapidityStack_symm = new THStack("prRapidityStack_symm", ";y-y_{mid};v_{"+order_n_str+"}{#Psi_{1}}");
+  THStack *deRapidityStack   = new THStack("deRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#Psi_{1}}/A");
+  THStack *trRapidityStack   = new THStack("trRapidityStack", ";y-y_{mid};v_{"+order_n_str+"}{#Psi_{1}}/A");
+  THStack *pdtRapidity_00to10 = new THStack("pdtRapidity_00to10", ";y-y_{mid};v_{"+order_n_str+"}{#Psi_{1}}/A");
+  THStack *pdtRapidity_10to40 = new THStack("pdtRapidity_10to40", ";y-y_{mid};v_{"+order_n_str+"}{#Psi_{1}}/A");
+  THStack *pdtRapidity_40to60 = new THStack("pdtRapidity_40to60", ";y-y_{mid};v_{"+order_n_str+"}{#Psi_{1}}/A");
 
 
   sh_y_pp->SetMarkerStyle(25);
