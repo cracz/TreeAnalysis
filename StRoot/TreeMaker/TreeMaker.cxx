@@ -394,8 +394,8 @@ Bool_t TreeMaker::IsGoodRun(Int_t runNumber, Double_t sqrt_s_NN)
   Int_t badRunList_3p22GeV[badRuns_3p22GeV] = {20180005, 20180006, 20180019, 20180025, 20181016, 20182034, 20183001, 20183013, 20183014, 20183019};
 
   // From Erik Loyd 2022
-  const Int_t badRuns_3p9GeV = 6;
-  Int_t badRunList_3p9GeV[badRuns_3p9GeV] = {20169051, 21035008, 21035014, 21035025, 21035031, 21036007};
+  const Int_t badRuns_3p9GeV = 7;
+  Int_t badRunList_3p9GeV[badRuns_3p9GeV] = {20169051, 21035008, 21035014, 21035011, 21035025, 21035031, 21036007};
 
   const Int_t badRuns_19p6GeV = 374;
   Int_t badRunList_19p6GeV[badRuns_19p6GeV] = {20057007, 20057025, 20057026, 20057050, 20058001, 20058002, 20058003, 20058004, 20058005, 20060012, 
