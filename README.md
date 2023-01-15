@@ -35,6 +35,8 @@ If nothing went wrong, then everything is all set!
 
 ## Making Trees
 
+Before making or analyzing trees, make sure the .xml files `treeMake.xml` and `treeAnalyze.xml` will be sending their output files into your own directories where you want them to go!
+
 The trees are made with the ROOT macro `MakeTrees.C`, which uses the `StRoot/TreeMaker/` class. If you need to modify what is saved within the produced trees, go to `StRoot/TreeMaker/`. When submitting jobs to make trees, you need to send `MakeTrees.C`, your config file, and the whole `StRoot/` directory. An example .xml file is `treeMake.xml`, but the command section of the .xml file is shown here:
 
 ```xml
@@ -44,6 +46,14 @@ The trees are made with the ROOT macro `MakeTrees.C`, which uses the `StRoot/Tre
   root4star -q -b -l MakeTrees.C\(0,$INPUTFILECOUNT,\"$FILELIST\",\"$SCRATCH\",\"$JOBID\",\"config_3p0GeV.txt\",0\)
 </command>
 ```
+
+Once the trees are created, you need to make a file list of all of those trees and supply that list to the `TreeAnalyzer` with `treeAnalyze.xml`. If you add the `Scripts/` directory to your path, you can make use of the `getFileList.sh` script to quickly make a file list by going to the directory with all of the trees and running the command
+
+```bash
+getFileList.sh [jobIDofTheTrees]
+```
+
+If you need to rerun any jobs that failed to make a tree, use the script `findHolesInTrees.sh` in a similar way by supplying the job ID as the first argument and the number of total jobs submitted as the second argument. This will produce the command necessary to resubmit the failed jobs when you return to the directory where you submitted the original jobs.
 
 ## Analyzing Trees
 
@@ -65,6 +75,8 @@ For your .xml file, send `TreeAnalyzer`, the correction and resolution files, th
   TreeAnalyzer $INPUTFILE0 $JOBID config_3p0GeV.txt correctionInfo_INPUT.root resolutionInfo_INPUT.root
 </command>
 ```
+
+If you need to rerun any jobs that failed, use the script `Scripts/findHoles.sh` by supplying the job ID as the first argument and the number of total jobs submitted as the second argument. This will produce the command necessary to resubmit the failed jobs when you return to the directory where you submitted the original jobs.
 
 `TreeAnalyzer` uses the event plane method with re-centering and Fourier shifting, so it takes 3 iterations to produce flow results. Currently it also applies event plane resolutions particle-by-particle, so it actually takes 4 iterations. For re-centering and Fourier shifting, the program will save the necessary information to files called `correctionInfo_OUTPUT_*.root`. You'll need to `hadd` these into one file and supply them back to the program for the next iteration. I usually just call it `correctionInfo_INPUT.root`, but the new name could be whatever you want. 
 
