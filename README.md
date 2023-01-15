@@ -27,8 +27,9 @@ The `ConfigReader` is used to read text files that contain the values of cuts th
 ## Compiling
 
 1) Set your version of STAR libraries with the command `starver SL20d` (or whatever library version you need). This package was developed with `SL20d` so use that if there's problems with others.
-2) In the `TreeAnalysis/` directory, run the command `make` to execute the makefile to compile `TreeAnalyzer.cxx` into an executable.
-3) Same directory, run the command `cons` to produce the necessary \*.so files of everything in the StRoot directory. These are required by the `TreeMaker`.
+2) In the `TreeAnalysis/` directory, run the command `cons` to produce the necessary \*.so files of everything in the StRoot directory. These are required by the `TreeMaker`.
+3) If it is not present, create a `libs/` directory and copy `StRoot/StEpdUtil/libStEpdUtil.so`, `StRoot/StPicoEvent/libStPicoDst.so`, and `.sl73_gcc485/obj/StRoot/StBichsel/StBichsel.so` into this `libs/` directory. Make sure you rename `StBichsel.so` to `libStBichsel.so`! This will be useful for the makefile for `TreeAnalyzer.cxx`.
+2) Finally, run the command `make` to execute the makefile to compile `TreeAnalyzer.cxx` into an executable.
 
 If nothing went wrong, then everything is all set!
 
