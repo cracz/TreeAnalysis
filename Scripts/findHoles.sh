@@ -3,8 +3,6 @@
 if [ $# -ne 2 ]; then
     echo
     echo "Usage: ./findHoles.sh [job ID] [expected # of files]"
-    #echo "Be sure to first remove all job IDs with the following command:"
-    #echo "rename [job ID]_ \"\" *"
     exit
 fi
 
@@ -51,18 +49,18 @@ else
 	COUNTER=$[$COUNTER+1]
     done
 
-    #echo
-    #echo "Command for resubmission:"
-    #echo
-    #echo "${COMMAND} ${JOBID}.session.xml"
-
     echo
-    echo ${HOLECOUNTER}" holes found in file list."
+    echo "Command for resubmission:"
     echo
-    read -p "Resubmit these jobs? [y||n] " choice
+    echo "${COMMAND} ${JOBID}.session.xml"
 
-    if [ "$choice" = "y" ]; then
-	cd ~/work/flow/
-	${COMMAND} sched${JOBID}.session.xml
-    fi
+    #echo
+    #echo ${HOLECOUNTER}" holes found in file list."
+    #echo
+    #read -p "Resubmit these jobs? [y||n] " choice
+
+    #if [ "$choice" = "y" ]; then
+	#cd ~/TreeAnalysis/flow/
+	#${COMMAND} sched${JOBID}.session.xml
+    #fi
 fi
