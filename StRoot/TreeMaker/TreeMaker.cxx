@@ -396,9 +396,18 @@ Bool_t TreeMaker::IsGoodRun(Int_t runNumber, Double_t sqrt_s_NN)
   const Int_t badRuns_3p22GeV = 10;
   Int_t badRunList_3p22GeV[badRuns_3p22GeV] = {20180005, 20180006, 20180019, 20180025, 20181016, 20182034, 20183001, 20183013, 20183014, 20183019};
 
-  // From Erik Loyd 2022
+  // FXT above 3.22 GeV:
+  // https://drupal.star.bnl.gov/STAR/pwg/common/bes-ii-run-qa/FXT-datasets
+  const Int_t badRuns_3p5GeV = 8;
+  Int_t badRunList_3p5GeV[badRuns_3p5GeV] = {20355020, 20355021, 21044023, 21045024, 21045025, 21044027, 21044035, 21045004};
+
   const Int_t badRuns_3p9GeV = 7;
-  Int_t badRunList_3p9GeV[badRuns_3p9GeV] = {20169051, 21035008, 21035014, 21035011, 21035025, 21035031, 21036007};
+  Int_t badRunList_3p9GeV[badRuns_3p9GeV] = {20107029, 20113042, 20113043, 20169033, 20169043, 21035011};
+
+  const Int_t badRuns_4p5GeV = 1;
+  Int_t badRunList_4p5GeV[badRuns_4p5GeV] = {21032001};
+
+
 
   const Int_t badRuns_19p6GeV = 374;
   Int_t badRunList_19p6GeV[badRuns_19p6GeV] = {20057007, 20057025, 20057026, 20057050, 20058001, 20058002, 20058003, 20058004, 20058005, 20060012, 
@@ -441,36 +450,18 @@ Bool_t TreeMaker::IsGoodRun(Int_t runNumber, Double_t sqrt_s_NN)
 					       20093005, 20093010, 20093016, 20093025, 20093035};
 
   Bool_t b_good_run = true;
-  /*
-  if (sqrt_s_NN == 3.0)
-    { 
-      for (Int_t i = 0; i < 24; i++) 
-	{ if (runNumber == badRunList_3p0GeV[i]) {b_good_run = false; break;} } 
-    }
-  else if (sqrt_s_NN == 3.22)
-    {
-      for (Int_t i = 0; i < 10; i++) 
-	{ if (runNumber == badRunList_3p22GeV[i]) {b_good_run = false; break;} } 
-    }
-  else if (sqrt_s_NN == 3.9)
-    {
-      for (Int_t i = 0; i < 1; i++) 
-	{ if (runNumber == badRunList_3p22GeV[i]) {b_good_run = false; break;} } 
-    }
-  else if (sqrt_s_NN == 19.6)
-    { 
-      for (Int_t i = 0; i < 374; i++) 
-	{ if (runNumber == badRunList_19p6GeV[i]) {b_good_run = false; break;} } 
-    }
-  */
 
   // Run is good if NOT found in the bad run list.
   if (sqrt_s_NN == 3.0)
     b_good_run = !foundInArray(runNumber, badRunList_3p0GeV, badRuns_3p0GeV);
   else if (sqrt_s_NN == 3.22)
     b_good_run = !foundInArray(runNumber, badRunList_3p22GeV, badRuns_3p22GeV);
+  else if (sqrt_s_NN == 3.5)
+    b_good_run = !foundInArray(runNumber, badRunList_3p5GeV, badRuns_3p5GeV);
   else if (sqrt_s_NN == 3.9)
     b_good_run = !foundInArray(runNumber, badRunList_3p9GeV, badRuns_3p9GeV);
+  else if (sqrt_s_NN == 4.5)
+    b_good_run = !foundInArray(runNumber, badRunList_4p5GeV, badRuns_4p5GeV);
   else if (sqrt_s_NN == 19.6)
     b_good_run = !foundInArray(runNumber, badRunList_19p6GeV, badRuns_19p6GeV);
 
