@@ -484,6 +484,8 @@ int main(int argc, char *argv[])
   TH2D *h2_beta_vs_qp = new TH2D("h2_beta_vs_qp","1/#beta vs Momentum;q*|p| (GeV);1/#beta", 300, -3, 3, 300, 0.5, 3.5);
   TH2D *h2_m2_vs_qp = new TH2D("h2_m2_vs_qp", "m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)", 400, -4, 4, 400, -0.1, 1.5);
 
+  TH3D *h3_lndEdx_qp_y = new TH3D("h3_lndEdx_qp_y", ";q*|p|;ln(dE/dx)", 2000, -10, 10, 500, 0, 4.5, 40, 0, 4);
+
   TH1D *h_tofBeta = new TH1D("h_tofBeta", "TOF #beta;#beta;Tracks", 150, 0, 1.5);
   TH1D *h_m2 = new TH1D("h_m2", "m^{2};m^{2} (GeV^{2}/c^{4});Tracks", 1000, 0, 15);
   TH1D *h_m2_alpha_he3 = new TH1D("h_m2_alpha_he3", "m^{2};m^{2} (GeV^{2}/c^{4});Tracks", 1000, 0, 15);
@@ -551,6 +553,8 @@ int main(int argc, char *argv[])
   TH1D *h_mult_pr = new TH1D("h_mult_pr","Proton track multiplicity;Proton Mult;Events",1001,-0.5,1000.5);
   TH1D *h_mult_de = new TH1D("h_mult_de","Deuteron track multiplicity;Deuteron Mult;Events",1001,-0.5,1000.5);
   TH1D *h_mult_tr = new TH1D("h_mult_tr","Triton track multiplicity;Triton Mult;Events",1001,-0.5,1000.5);
+
+  TH1D *h_dEdxError_pr = new TH1D("h_dEdxError_pr", "Proton dEdx Uncertainties;#sigma_{dEdx};Identified protons", 100, -10, 10);
   
   TH2D *h2_dEdx_vs_qp_pp = new TH2D("h2_dEdx_vs_qp_pp", "#pi^{+} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 400, -2, 2, 500, 0, 10);
   TH2D *h2_dEdx_vs_qp_pm = new TH2D("h2_dEdx_vs_qp_pm", "#pi^{-} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 400, -2, 2, 500, 0, 10);
@@ -1067,6 +1071,7 @@ int main(int argc, char *argv[])
       Double_t d_nSigmaPr;
       Double_t d_tofBeta;
       Double_t d_dEdx;
+      Double_t d_dEdxError;
       Double_t d_rapidity_assumingProton;
       Int_t i_nHits;
       Int_t i_nHitsFit;
@@ -1149,6 +1154,7 @@ int main(int argc, char *argv[])
 	  h2_pT_vs_eta->Fill(d_eta, d_pT);
 	  h2_dEdx_vs_qp->Fill(s_charge * d_mom, d_dEdx);
 	  if (s_charge == 1) h2_dEdx_vs_qp_half->Fill(s_charge * d_mom, d_dEdx);
+	  h3_lndEdx_qp_y->Fill(s_charge * d_mom, TMath::Log(d_dEdx), d_rapidity_assumingProton);
 
 	  // Get event planes from the TPC here before the TOF cut
 	  if (s_charge != 0)
