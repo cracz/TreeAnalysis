@@ -1,3 +1,4 @@
 [submodule "StRoot/ConfigReader"]
 	path = StRoot/ConfigReader
 	url = https://github.com/cracz/ConfigReader.git
+	branch = main
