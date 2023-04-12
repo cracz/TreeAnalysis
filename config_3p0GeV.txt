@@ -110,20 +110,20 @@ yCM_yFor_pr_low=-0.5
 yCM_yFor_pr_high=0.0
 pt_yFor_pr_low=1.0
 pt_yFor_pr_high=2.5
-yCM_alt_pr_low=0.1
+yCM_alt_pr_low=0.0
 yCM_alt_pr_high=1.0
 pt_alt_pr_low=0.2
 pt_alt_pr_high=1.0
 
-yCM_norm_de_low=0.1
+yCM_norm_de_low=0.0
 yCM_norm_de_high=1.0
 pt_norm_de_low=0.2
 pt_norm_de_high=1.0
 
-yCM_norm_tr_low=0.1
+yCM_norm_tr_low=0.0
 yCM_norm_tr_high=1.0
 pt_norm_tr_low=0.2
 pt_norm_tr_high=1.0
 
-KT_pdt_low=0.05
+KT_pdt_low=0.04
 KT_pdt_high=0.4

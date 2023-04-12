@@ -2,8 +2,11 @@
 #define FLOWUTILS_H
 
 #include <iostream>
+#include <string>
 #include "TFile.h"
 #include "TH1.h"
+#include "TF1.h"
+#include "TGraph.h"
 #include "TProfile.h"
 #include "TProfile2D.h"
 #include "TString.h"
@@ -24,6 +27,9 @@ namespace FlowUtils
     Double_t KT;
     Double_t weight;
     Double_t rapidity;
+    Double_t EPDTnMIP;
+
+    Int_t EPDring;
 
     Bool_t ppTag;
     Bool_t pmTag;
@@ -46,6 +52,9 @@ namespace FlowUtils
       KT  = D_BAD_VALUE;
       weight = 0;
       rapidity = D_BAD_VALUE;
+      EPDTnMIP = D_BAD_VALUE;
+
+      EPDring = I_BAD_VALUE;
 
       ppTag = false;
       pmTag = false;
@@ -60,7 +69,7 @@ namespace FlowUtils
       isInEpdA = false;
       isInEpdB = false;
     }
-  };
+  }; // End struct Particle
 
 
 
@@ -269,8 +278,220 @@ namespace FlowUtils
       primTracks = 0;
       centID = I_BAD_VALUE;
     }
-  };
+  }; // End struct Event
 
+
+  struct NewNSigmaProton3p22GeV
+  {
+    //**************************************************************************************************
+    //**************** The following code can be used to implement the new nσ_p ************************
+    //********************************************** Code **********************************************
+  
+    const static int numRapidityWindows = 17;
+    const static int numRapidityWindowsToUsePointwiseCorrection = 3;
+    TF1* bichselFunction_mean[numRapidityWindows];
+    TF1* bichselFunction_1sig[numRapidityWindows];
+  
+    TGraph* mean_graph[3];
+    TGraph* sig1_graph[3];
+    
+    // Pointwise-correction parameters to be used at low momenta and low rapidities 
+    double lowestMomWhichHasAFit[3];
+    double lowestMomUsedForBichselFit[3];
+    
+    double pointwise_momentum_0[20] = {0.005, 0.015, 0.025, 0.035, 0.045, 0.055, 0.065, 0.075, 0.085, 0.095, 0.105, 0.115, 0.125, 0.135, 0.145, 0.155, 0.165, 0.175, 0.185, 0.195};
+    double pointwise_mean_0[20] = {4.07005, 4.07005, 4.07005, 4.07005, 4.07005, 4.07005, 4.07005, 4.07005, 
+				   4.07005, 4.07005, 4.07005, 4.07005, 4.07005, 4.07005, 4.0297, 3.98871, 3.93897, 3.88467, 3.82839, 3.77154};
+    double pointwise_1sig_0[20] = {4.01181, 4.01181, 4.01181, 4.01181, 4.01181, 4.01181, 4.01181, 4.01181, 
+				   4.01181, 4.01181, 4.01181, 4.01181, 4.01181, 4.01181, 3.96494, 3.92333, 3.87653, 3.82684, 3.77564, 3.72078};
+    
+    double pointwise_momentum_1[24] = {0.005, 0.015, 0.025, 0.035, 0.045, 0.055, 0.065, 0.075, 0.085, 0.095, 0.105, 0.115, 
+				       0.125, 0.135, 0.145, 0.155, 0.165, 0.175, 0.185, 0.195, 0.205, 0.215, 0.225, 0.235};
+    double pointwise_mean_1[24] = {3.84422, 3.84422, 3.84422, 3.84422, 3.84422, 3.84422, 3.84422, 3.84422, 3.84422, 3.84422, 
+				   3.84422, 3.84422, 3.84422, 3.84422, 3.84422, 3.84422, 3.84422, 3.84422, 3.79324, 3.74542, 3.69679, 3.64574, 3.59203, 3.537};
+    double pointwise_1sig_1[24] = {3.77462, 3.77462, 3.77462, 3.77462, 3.77462, 3.77462, 3.77462, 3.77462, 3.77462, 3.77462, 
+				   3.77462, 3.77462, 3.77462, 3.77462, 3.77462, 3.77462, 3.77462, 3.77462, 3.72506, 3.68064, 3.63513, 3.58583, 3.53271, 3.47861};
+    
+    double pointwise_momentum_2[32] = {0.005, 0.015, 0.025, 0.035, 0.045, 0.055, 0.065, 0.075, 0.085, 0.095, 0.105, 0.115, 
+				       0.125, 0.135, 0.145, 0.155, 0.165, 0.175, 0.185, 0.195, 0.205, 0.215, 0.225, 0.235, 0.245, 0.255, 0.265, 0.275, 0.285, 0.295, 0.305, 0.315};
+    double pointwise_mean_2[32] = {3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 
+				   3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 
+				   3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 3.40009, 3.35262, 3.30464, 3.25334, 3.20198, 3.1514, 3.10295};
+    double pointwise_1sig_2[32] = {3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 
+				   3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 
+				   3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 3.33009, 3.28262, 3.23464, 3.18334, 3.13342, 3.08537, 3.03957};
+    
+
+    // Parameters from Bichsel curve fits (H. Bichsel / Nuclear Instruments and Methods in Physics Research A 562 (2006) page 195) 
+    double meanBichselParameters[numRapidityWindows][6] = {
+      {-5.141330,-4.605085,1.986481,0.951782,1.908647,0.938000},
+      {-0.174776,-1.929899,1.681636,1.133727,2.534694,0.938000},
+      {-5.128737,-4.605543,2.012423,0.921413,2.070305,0.938000},
+      {-5.094534,-4.660380,1.951221,0.933111,2.088334,0.938000},
+      {-5.069162,-4.721723,1.897411,0.920773,2.138482,0.938000},
+      {-5.072757,-4.779960,1.874566,0.727895,2.358116,0.938000},
+      {-5.047109,-4.832496,1.840607,0.403700,2.646944,0.938000},
+      {-0.144720,-2.946088,0.989209,0.101381,3.264879,0.938000},
+      {2.141951,-2.171655,0.497909,-0.299899,3.761835,0.938000},
+      {-5.033564,-5.124145,1.688028,0.383665,2.885763,0.938000},
+      {-4.927111,-5.316412,1.571083,1.245790,2.441705,0.938000},
+      {-4.880357,-5.864842,1.377256,1.406169,2.670642,0.938000},
+      {-4.185822,-6.984285,0.997941,-0.176737,4.723153,0.938000},
+      {-3.833604,-7.124846,0.946295,1.724259,2.819881,0.938000},
+      {-14.571006,-12.731894,1.444600,1.155655,2.393369,0.938000},
+      {-27.749556,-18.025495,2.010033,0.663528,2.479596,0.938000},
+      {-6.083697,-5.821953,1.712394,0.299414,3.116444,0.938000}
+    };
+    double sig1BichselParameters[numRapidityWindows][6] = {
+      {-5.253659,-3.860611,2.722785,0.938063,1.831117,1.121600},
+      {-0.337862,-3.795008,0.814606,1.042412,2.534717,0.643936},
+      {3.657587,-2.147362,0.233230,1.517358,2.983071,0.523100},
+      {-5.150241,-4.649925,1.944546,0.845950,2.229480,0.906125},
+      {-2.614199,-4.245613,1.250001,0.923550,2.404442,0.784636},
+      {-5.149159,-4.653147,1.939991,0.630485,2.466005,0.934273},
+      {-5.147741,-4.637226,1.955622,0.121486,2.933515,0.945826},
+      {-3.298422,-3.040149,2.581071,-0.053511,3.403947,1.222049},
+      {-3.721689,-3.095312,2.857154,-0.654774,4.103774,1.309822},
+      {-14.781475,-6.670506,5.016989,0.427622,2.424976,1.353251},
+      {-5.133429,-4.657034,1.945658,0.492435,2.762268,0.992960},
+      {-5.119586,-4.668256,1.951927,1.488254,2.388292,1.053244},
+      {-5.128534,-4.660921,1.946557,-0.338899,6.280077,1.238813},
+      {-10.012040,-8.059375,1.800773,1.406721,2.520363,1.163635},
+      {-9.990270,-8.015409,1.803408,1.325243,2.521330,1.218257},
+      {-5.125269,-4.662303,1.949754,0.908734,2.720948,1.186670},
+      {-5.063713,-4.698326,1.975382,1.417511,3.683013,1.544924}
+    };
+
+    TF1* getLnBichselFunction(std::string a_functionName,double a_mass, bool IsNegativeMomentum=false){
+      //H. Bichsel / Nuclear Instruments and Methods in Physics Research A 562 (2006) page 195
+      TF1* funct;
+      if(IsNegativeMomentum) funct = new TF1(a_functionName.c_str(), "log(pow(sqrt([5]*[5] + x*x)/(-1.0*x),[3]) * ([0] - [1]*log([2] + pow([5]/(-1.0*x),[4]))) - [1])",-10.0,-0.5);
+      else funct = new TF1(a_functionName.c_str(), "log(pow(sqrt([5]*[5] + x*x)/x,[3]) * ([0] - [1]*log([2] + pow([5]/x,[4]))) - [1])",0.0,10.0);
+      //   ln(   (beta)^-D * (A - B ln(C + betagamma^-E)) - B   )
+      /*funct->SetParNames("A","B","C","D","E","m");
+	funct->SetParameter(0,-5.18614e+00);// A
+	funct->SetParameter(1,-4.51905e+00);// B
+	funct->SetParameter(2, 2.25999e+00); //C
+	funct->SetParameter(3, 7.86756e-01); //D
+	funct->SetParameter(4, 2.32399e+00);// E
+	funct->SetParameter(5,a_mass); // m*/
+      funct->SetParNames("A","B","C","D","E","m");
+      funct->SetParameter(0,-5.14284e+00);// A
+      funct->SetParameter(1,-4.65154e+00);// B
+      funct->SetParameter(2, 1.94239e+00); //C
+      funct->SetParameter(3,-9.90463e-02); //D
+      funct->SetParameter(4, 3.19269e+00);// E
+      funct->SetParameter(5,a_mass); // m
+
+
+      funct->SetNpx(1000);
+      return funct;
+    }
+
+    void initialize()
+    {
+      lowestMomWhichHasAFit[0]=0.130000;
+      lowestMomUsedForBichselFit[0]=0.200000;
+
+      mean_graph[0] = new TGraph(20,pointwise_momentum_0,pointwise_mean_0);
+      sig1_graph[0] = new TGraph(20,pointwise_momentum_0,pointwise_1sig_0);
+      lowestMomWhichHasAFit[1]=0.170000;
+      lowestMomUsedForBichselFit[1]=0.240000;
+    
+      mean_graph[1] = new TGraph(24,pointwise_momentum_1,pointwise_mean_1);
+      sig1_graph[1] = new TGraph(24,pointwise_momentum_1,pointwise_1sig_1);
+      lowestMomWhichHasAFit[2]=0.250000;
+      lowestMomUsedForBichselFit[2]=0.320000;
+    
+      mean_graph[2] = new TGraph(32,pointwise_momentum_2,pointwise_mean_2);
+      sig1_graph[2] = new TGraph(32,pointwise_momentum_2,pointwise_1sig_2);
+        
+      // Loop over rapidity steps 
+      for(int i=0; i<numRapidityWindows; i++)
+	{
+	  bichselFunction_mean[i] = getLnBichselFunction(Form("bichselFunction_mean_%d",i),0.938);
+	  bichselFunction_1sig[i] = getLnBichselFunction(Form("bichselFunction_1sig_%d",i),0.938);
+	  for(int j=0; j<6; j++){
+	    bichselFunction_mean[i]->SetParameter(j,meanBichselParameters[i][j]);
+	    bichselFunction_1sig[i]->SetParameter(j,sig1BichselParameters[i][j]);
+	  }
+	}
+    } // End initialize()
+
+
+    double getNewNSigmaProton(double rapidity, double momentum, double dedx)
+    {
+      // Later when the rapidity, momentum, and dedx of a track has been grabbed, calculate the nσ_p value  
+      double nSigmaProton = 999; 
+      double lndedx = log(dedx); 
+      rapidity = fabs(rapidity); // take absolute value of rapidity
+      //int rapIndex = TMath::FloorNint(10.0*rapidity);
+      int rapIndex_lo = TMath::FloorNint(10.0*(-0.05+TMath::Abs(rapidity)));
+      int rapIndex_hi = rapIndex_lo + 1;
+      if(rapIndex_lo==-1) rapIndex_lo=0;
+      if(rapIndex_hi==-1) rapIndex_hi=0;
+      if(rapIndex_hi>=17) rapIndex_hi=16;
+      if(rapIndex_lo>=17) rapIndex_lo=16;
+      //double rapPointwiseCutoff = 10.0*numRapidityWindowsToUsePointwiseCorrection;
+      double shiftValue_lo = 0.0;
+      double shiftValue_hi = 0.0;
+      double shiftValue = 0.0;
+      double stretchValue_lo = 1.0;
+      double stretchValue_hi = 1.0;
+      double stretchValue = 1.0;
+      if(rapIndex_lo < numRapidityWindowsToUsePointwiseCorrection && momentum < lowestMomUsedForBichselFit[rapIndex_lo])
+	{
+	  shiftValue_lo = mean_graph[rapIndex_lo]->Eval(momentum); 
+	  stretchValue_lo = sig1_graph[rapIndex_lo]->Eval(momentum); 
+	  if(momentum < lowestMomWhichHasAFit[rapIndex_lo])
+	    {
+	      shiftValue_lo = mean_graph[rapIndex_lo]->GetY()[0]; 
+	      stretchValue_lo = sig1_graph[rapIndex_lo]->GetY()[0];
+	    } 
+	}
+      else 
+	{ 
+	  shiftValue_lo = bichselFunction_mean[rapIndex_lo]->Eval(momentum); 
+	  stretchValue_lo = bichselFunction_1sig[rapIndex_lo]->Eval(momentum); 
+	}
+      if(rapIndex_hi < numRapidityWindowsToUsePointwiseCorrection && momentum < lowestMomUsedForBichselFit[rapIndex_hi])
+	{
+	  shiftValue_hi = mean_graph[rapIndex_hi]->Eval(momentum); 
+	  stretchValue_hi = sig1_graph[rapIndex_hi]->Eval(momentum);
+	  if(momentum < lowestMomWhichHasAFit[rapIndex_hi])
+	    {
+	      shiftValue_hi = mean_graph[rapIndex_hi]->GetY()[0]; 
+	      stretchValue_hi = sig1_graph[rapIndex_hi]->GetY()[0];
+	    } 
+	}
+      else 
+	{ shiftValue_hi = bichselFunction_mean[rapIndex_hi]->Eval(momentum); 
+	  stretchValue_hi = bichselFunction_1sig[rapIndex_hi]->Eval(momentum); 
+	}
+     
+      double rapidity_lo = 0.05+0.1*(rapIndex_lo);
+      double rapidity_hi = 0.05+0.1*(rapIndex_hi);
+      double relativeWeight;
+      if(rapidity_lo == rapidity_hi) relativeWeight = 0.5;
+
+      if(rapidity < rapidity_lo) relativeWeight = 0.0;
+      else if(rapidity > rapidity_hi) relativeWeight = 1.0;
+      else relativeWeight = (rapidity-rapidity_lo)/(rapidity_hi-rapidity_lo);
+
+      shiftValue = relativeWeight*shiftValue_hi + (1.0-relativeWeight)*shiftValue_lo;
+      stretchValue = relativeWeight*stretchValue_hi + (1.0-relativeWeight)*stretchValue_lo;
+     
+      // Now shift and stretch ln(de/dx) to get nSigmaProton 
+      double shiftedLnDedx = lndedx-shiftValue;
+      nSigmaProton = shiftedLnDedx/(shiftValue-stretchValue);
+     
+      // Reject tracks with the following traits 
+      //if(nHitsDedx<20) nSigmaProton = 999; 
+      if(momentum<0.0 || momentum > 10.0) nSigmaProton = 999; 
+
+      return nSigmaProton;
+    } // End getNewNSigmaProton()
+  }; // End struct NewNSigmaProton3p22GeV
 
 
   
@@ -315,12 +536,12 @@ namespace FlowUtils
   ////////
   void checkZeroQ(Event &event)
   {
-    if (event.XnTpc == 0 && event.YnTpc == 0) { event.badEvent = true; }
-    //else if (event.XnTpcA == 0 && event.YnTpcA == 0) { event.badEvent = true; }
+    //if (event.XnTpc == 0 && event.YnTpc == 0) { event.badEvent = true; }
+    if (event.XnTpcA == 0 && event.YnTpcA == 0) { event.badEvent = true; }
     if (event.XnTpcB == 0 && event.YnTpcB == 0) { event.badEvent = true; }
-    else if (event.XnEpd  == 0 && event.YnEpd  == 0) { event.badEvent = true; }
-    else if (event.XnEpdA == 0 && event.YnEpdA == 0) { event.badEvent = true; }
-    else if (event.XnEpdB == 0 && event.YnEpdB == 0) { event.badEvent = true; }
+    //else if (event.XnEpd  == 0 && event.YnEpd  == 0) { event.badEvent = true; }
+    if (event.XnEpdA == 0 && event.YnEpdA == 0) { event.badEvent = true; }
+    if (event.XnEpdB == 0 && event.YnEpdB == 0) { event.badEvent = true; }
   }
 
 
@@ -412,7 +633,30 @@ namespace FlowUtils
     Int_t xBin = h2_ratio->GetXaxis()->FindBin(yCM);
     Int_t yBin = h2_ratio->GetYaxis()->FindBin(pT);
     Double_t efficiency = h2_ratio->GetBinContent(xBin, yBin);
-    return (efficiency == 0 || efficiency > 1.3) ? -1 : efficiency;
+    return (efficiency == 0.0 || efficiency > 1.3) ? -1.0 : efficiency;
+  }
+
+
+  Double_t getTofEff(Double_t eta, Double_t pT, TH2D *h2_ratio)
+  {
+    Int_t xBin = h2_ratio->GetXaxis()->FindBin(eta);
+    Int_t yBin = h2_ratio->GetYaxis()->FindBin(pT);
+    Double_t efficiency = h2_ratio->GetBinContent(xBin, yBin);
+    return (efficiency == 0.0) ? -1.0 : efficiency;
+  }
+
+  Double_t getTPCv1Weight(Double_t centID, Double_t eta, TProfile2D* p2_TPCv1Weights)
+  {
+    Int_t xBin = p2_TPCv1Weights->GetXaxis()->FindBin(centID);
+    Int_t yBin = p2_TPCv1Weights->GetYaxis()->FindBin(eta);
+    return p2_TPCv1Weights->GetBinContent(xBin, yBin);
+  }
+
+  Double_t getEPDv1Weight(Double_t centID, Double_t ring, TProfile2D* p2_EPDv1Weights)
+  {
+    Int_t xBin = p2_EPDv1Weights->GetXaxis()->FindBin(centID);
+    Int_t yBin = p2_EPDv1Weights->GetYaxis()->FindBin(ring);
+    return p2_EPDv1Weights->GetBinContent(xBin, yBin);
   }
 
 

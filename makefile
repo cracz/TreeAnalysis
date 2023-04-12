@@ -20,7 +20,7 @@ SOLIBS = -lStPicoDst -lStEpdUtil -lStBichsel
 #-L./StRoot/StPicoEvent -Wl,-R./StRoot/StPicoEvent -L./StRoot/StEpdUtil -Wl,-R./StRoot/StEpdUtil
 
 CC = g++ #-m32
-FLAGS = -Wall -g -fPIC
+FLAGS = -Wall -g -fPIC -std=c++11
 
 COMPILE = $(CC) $(FLAGS)
 

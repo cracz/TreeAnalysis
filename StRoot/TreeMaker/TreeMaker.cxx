@@ -54,6 +54,7 @@ Int_t TreeMaker::Init()
   FxtTree->Branch("EPDnMip",tree_EPDnMip,"EPDnMip[nEPDhits]/F");
   FxtTree->Branch("tofBeta",tree_Beta,"tofBeta[tracknumber]/F");
   FxtTree->Branch("dEdx",tree_dEdx,"dEdx[tracknumber]/F");
+  FxtTree->Branch("dEdxError",tree_dEdxError,"dEdxError[tracknumber]/F");
   FxtTree->Branch("nHits",tree_nHits,"nHits[tracknumber]/I");
   FxtTree->Branch("nHitsFit",tree_nHitsFit,"nHitsFit[tracknumber]/I");
   FxtTree->Branch("nHitsPoss",tree_nHitsPoss,"nHitsPoss[tracknumber]/I");
@@ -115,6 +116,15 @@ Int_t TreeMaker::Make()
     
   if(event) // Ensure event pointer is not NULL
     { 
+      TVector3 pVtx = event->primaryVertex();
+      Double_t d_xvtx = pVtx.x();
+      Double_t d_yvtx = pVtx.y();
+      Double_t d_zvtx = pVtx.z();
+      Double_t d_rvtx = TMath::Sqrt(d_xvtx * d_xvtx + (d_yvtx + 2) * (d_yvtx + 2));
+
+      h_zvtx->Fill(pVtx.Z());
+      h2_trans_vtx->Fill(pVtx.X(),pVtx.Y());
+
       if( IsGoodRun(event->runId(), configs.sqrt_s_NN) )  // Select only good runs
 	{ 
 	  h_eventCheck->Fill(1); // Count # of good run events
@@ -128,16 +138,7 @@ Int_t TreeMaker::Make()
 	  if(b_good_trig) // Minbias cut
 	    { 
 	      h_eventCheck->Fill(2); // Count # of events after minbias trigger id cut
-	      
-	      TVector3 pVtx = event->primaryVertex();
-	      Double_t d_xvtx = pVtx.x();
-	      Double_t d_yvtx = pVtx.y();
-	      Double_t d_zvtx = pVtx.z();
-	      Double_t d_rvtx = TMath::Sqrt(d_xvtx * d_xvtx + (d_yvtx + 2) * (d_yvtx + 2));
-	  
-	      //h_zvtx->Fill(pVtx.Z());
-	      //h2_trans_vtx->Fill(pVtx.X(),pVtx.Y());
-
+	      	      
 	      if(d_zvtx > configs.m_z_vtx_low && d_zvtx < configs.m_z_vtx_high) // Vz cut
 		{ 
 		  if(d_rvtx < configs.m_r_vtx) // Vr cut
@@ -185,7 +186,7 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 142 && primTracks <= 195 ) centrality = 15;  // 0% - 5% (Central)
 			}
 		      // 3.22 GeV FXT  --  From Eric Loyd 2022
-		      else if (configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.9 || configs.sqrt_s_NN == 4.49) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
+		      else if (configs.sqrt_s_NN == 3.22) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
 			  if     ( primTracks >=   5 && primTracks <=   6 ) centrality =  0;  // 75% - 80% (Peripheral)
 			  else if( primTracks >=   7 && primTracks <=  10 ) centrality =  1;
@@ -345,6 +346,7 @@ Int_t TreeMaker::Make()
 			      Float_t d_py = track->pMom().Y();
 			      Float_t d_pz = track->pMom().Z();
 			      Float_t d_dEdx = track->dEdx();
+			      Float_t d_dEdxError = track->dEdxError();
 			      Short_t s_charge = track->charge();
 			      Float_t d_nSigmaPi = track->nSigmaPion();
 			      Float_t d_nSigmaKa = track->nSigmaKaon();
@@ -364,6 +366,7 @@ Int_t TreeMaker::Make()
 			      tree_nSigmaPr[realTrackIndex] = d_nSigmaPr;
                               tree_Beta[realTrackIndex] = d_tofBeta;
 			      tree_dEdx[realTrackIndex] = d_dEdx;
+			      tree_dEdxError[realTrackIndex] = d_dEdxError;
 			      tree_nHits[realTrackIndex]  = i_nHits;
 			      tree_nHitsFit[realTrackIndex]  = i_nHitsFit;
 		              tree_nHitsPoss[realTrackIndex] = i_nHitsPoss;
