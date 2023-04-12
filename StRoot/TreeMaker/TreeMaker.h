@@ -91,6 +91,7 @@ private:
   Float_t             tree_nSigmaPr[N_track];
   Float_t             tree_Beta[N_track];
   Float_t             tree_dEdx[N_track];
+  Float_t             tree_dEdxError[N_track];
   Int_t               tree_nHits[N_track];
   Int_t               tree_nHitsFit[N_track];
   Int_t               tree_nHitsPoss[N_track];
