@@ -76,7 +76,7 @@ Int_t TreeMaker::Init()
   h_eventCheck->GetXaxis()->SetBinLabel(5,"V_{r} Cut");
   h_eventCheck->GetXaxis()->SetBinLabel(6,"Centrality Cut");
 
-  tempBins1      = (configs.fixed_target) ? 200 : 500;
+  tempBins1      = (configs.fixed_target) ? 300 : 500;
   tempLowBound1  = (configs.fixed_target) ? 190.0 : -210.0;
   tempHighBound1 = 210.0;
   h_zvtx = new TH1D("h_zvtx","Primary Vertex Position in z;Distance (cm);Events", tempBins1, tempLowBound1, tempHighBound1);
@@ -186,6 +186,7 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 142 && primTracks <= 195 ) centrality = 15;  // 0% - 5% (Central)
 			}
 		      // 3.22 GeV FXT  --  From Eric Loyd 2022
+		      // https://drupal.star.bnl.gov/STAR/pwg/common/BES-II-Centrality-Calibration
 		      else if (configs.sqrt_s_NN == 3.22) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
 			  if     ( primTracks >=   5 && primTracks <=   6 ) centrality =  0;  // 75% - 80% (Peripheral)
@@ -204,6 +205,27 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 141 && primTracks <= 165 ) centrality = 13;
 			  else if( primTracks >= 166 && primTracks <= 196 ) centrality = 14;
 			  else if( primTracks >= 197 && primTracks <= 287 ) centrality = 15;  // 0% - 5% (Central)
+			}
+		      // 3.5 GeV FXT  --  From Eric Loyd 2023
+		      // 
+		      else if (configs.sqrt_s_NN == 3.5) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
+			{
+			  if     ( primTracks >=   6 && primTracks <=   7 ) centrality =  0;  // 75% - 80% (Peripheral)
+			  else if( primTracks >=   8 && primTracks <=  11 ) centrality =  1;
+			  else if( primTracks >=  12 && primTracks <=  15 ) centrality =  2;
+			  else if( primTracks >=  16 && primTracks <=  20 ) centrality =  3;
+			  else if( primTracks >=  21 && primTracks <=  27 ) centrality =  4;
+			  else if( primTracks >=  28 && primTracks <=  36 ) centrality =  5;
+			  else if( primTracks >=  37 && primTracks <=  46 ) centrality =  6;
+			  else if( primTracks >=  47 && primTracks <=  58 ) centrality =  7;
+			  else if( primTracks >=  59 && primTracks <=  72 ) centrality =  8;
+			  else if( primTracks >=  73 && primTracks <=  88 ) centrality =  9;
+			  else if( primTracks >=  89 && primTracks <= 107 ) centrality = 10;
+			  else if( primTracks >= 108 && primTracks <= 127 ) centrality = 11;
+			  else if( primTracks >= 128 && primTracks <= 152 ) centrality = 12;
+			  else if( primTracks >= 153 && primTracks <= 180 ) centrality = 13;
+			  else if( primTracks >= 181 && primTracks <= 215 ) centrality = 14;
+			  else if( primTracks >= 216 && primTracks <= 325 ) centrality = 15;  // 0% - 5% (Central)
 			}
 		      // 3.9 GeV FXT ***PRELIMINARY! NOT OFFICIAL!***  --  From Eric Loyd 2022
 		      else if (configs.sqrt_s_NN == 3.9 || configs.sqrt_s_NN == 4.49) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!

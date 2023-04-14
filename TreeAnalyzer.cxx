@@ -129,6 +129,7 @@ int main(int argc, char *argv[])
   Int_t N_track = 0;  // Max number of tracks in an event. Depends on energy and centrality definition!
   if      (configs.sqrt_s_NN == 3.0)  { N_track = 195;  }
   else if (configs.sqrt_s_NN == 3.22) { N_track = 287;  }
+  else if (configs.sqrt_s_NN == 3.5)  { N_track = 325;  }
   else if (configs.sqrt_s_NN == 3.9)  { N_track = 275;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
   else if (configs.sqrt_s_NN == 4.49) { N_track = 350;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
   else if (configs.sqrt_s_NN == 7.2)  { N_track = 240;  }
@@ -162,6 +163,7 @@ int main(int argc, char *argv[])
   Int_t nHitsPoss[N_track];
   Int_t nHitsDedx[N_track];
   Float_t dEdx[N_track];
+  Float_t dEdxError[N_track];
   UShort_t i_nEPDhits;
   Short_t EPDids[744];
   Float_t EPDnMip[744];
@@ -189,6 +191,7 @@ int main(int argc, char *argv[])
   tree->SetBranchAddress("nSigmaPr",&nSigmaPr);
   tree->SetBranchAddress("tofBeta",&tofBeta);
   tree->SetBranchAddress("dEdx",&dEdx);
+  tree->SetBranchAddress("dEdxError",&dEdxError);
   tree->SetBranchAddress("nHits",&nHits);
   tree->SetBranchAddress("nHitsFit",&nHitsFit);
   tree->SetBranchAddress("nHitsPoss",&nHitsPoss);
@@ -307,6 +310,9 @@ int main(int argc, char *argv[])
   TString tofEfficiencyFileName = "tof_efficiency.root";
   if (configs.sqrt_s_NN == 3.22)
     tofEfficiencyFileName = "tof_efficiency_3p22GeV.root";
+  else if (configs.sqrt_s_NN == 3.5)
+    tofEfficiencyFileName = "tof_efficiency_3p5GeV.root";
+  
   TFile *tofEfficiencyFile;
   TH2D *h2_ratio_tof;
   Bool_t tofEfficienciesFound = false;
@@ -484,8 +490,6 @@ int main(int argc, char *argv[])
   TH2D *h2_beta_vs_qp = new TH2D("h2_beta_vs_qp","1/#beta vs Momentum;q*|p| (GeV);1/#beta", 300, -3, 3, 300, 0.5, 3.5);
   TH2D *h2_m2_vs_qp = new TH2D("h2_m2_vs_qp", "m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)", 400, -4, 4, 400, -0.1, 1.5);
 
-  TH3D *h3_lndEdx_qp_y = new TH3D("h3_lndEdx_qp_y", ";q*|p|;ln(dE/dx)", 2000, -10, 10, 500, 0, 4.5, 40, 0, 4);
-
   TH1D *h_tofBeta = new TH1D("h_tofBeta", "TOF #beta;#beta;Tracks", 150, 0, 1.5);
   TH1D *h_m2 = new TH1D("h_m2", "m^{2};m^{2} (GeV^{2}/c^{4});Tracks", 1000, 0, 15);
   TH1D *h_m2_alpha_he3 = new TH1D("h_m2_alpha_he3", "m^{2};m^{2} (GeV^{2}/c^{4});Tracks", 1000, 0, 15);
@@ -554,7 +558,7 @@ int main(int argc, char *argv[])
   TH1D *h_mult_de = new TH1D("h_mult_de","Deuteron track multiplicity;Deuteron Mult;Events",1001,-0.5,1000.5);
   TH1D *h_mult_tr = new TH1D("h_mult_tr","Triton track multiplicity;Triton Mult;Events",1001,-0.5,1000.5);
 
-  TH1D *h_dEdxError_pr = new TH1D("h_dEdxError_pr", "Proton dEdx Uncertainties;#sigma_{dEdx};Identified protons", 100, -10, 10);
+  TH1D *h_dEdxError_pr = new TH1D("h_dEdxError_pr", "dEdx Uncertainties for Identified Protons;#delta_{dEdx} (keV/cm);Identified protons", 100, 0, 0.5);
   
   TH2D *h2_dEdx_vs_qp_pp = new TH2D("h2_dEdx_vs_qp_pp", "#pi^{+} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 400, -2, 2, 500, 0, 10);
   TH2D *h2_dEdx_vs_qp_pm = new TH2D("h2_dEdx_vs_qp_pm", "#pi^{-} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 400, -2, 2, 500, 0, 10);
@@ -589,7 +593,7 @@ int main(int argc, char *argv[])
       tempLowBound2  = 0.0;
       tempHighBound2 = 2.5;
     }
-  else if (configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.9)
+  else if (configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.5 || configs.sqrt_s_NN == 3.9)
     {
       tempBins1 = 300;
       tempLowBound1 = -1.2;
@@ -855,8 +859,8 @@ int main(int argc, char *argv[])
   TH2D *h2_dEdx_vs_qp_id_de = new TH2D("h2_dEdx_vs_qp_id_de", ";|p| (GeV/c);dE/dx (keV/cm)", 25, 0.0, 2.5, 500, 0.0, 20.0);
   TH2D *h2_dEdx_vs_qp_id_tr = new TH2D("h2_dEdx_vs_qp_id_tr", ";|p| (GeV/c);dE/dx (keV/cm)", 25, 0.0, 2.5, 500, 0.0, 20.0);
 
-  TH2D *h2_nSigp_vs_mom = new TH2D("h2_nSigp_vs_mom", ";|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
   TH2D *h2_nSigp_vs_mom_all = new TH2D("h2_nSigp_vs_mom_all", ";|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
+  TH2D *h2_nSigp_vs_mom_original = new TH2D("h2_nSigp_vs_mom_original", ";|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
   TH2D *h2_zd_vs_mom = new TH2D("h2_zd_vs_mom", ";|p| (GeV/c);z_{d}", 40, 0.0, 4.0, 140, -0.7, 0.7);
   TH2D *h2_zt_vs_mom = new TH2D("h2_zt_vs_mom", ";|p| (GeV/c);z_{t}", 40, 0.0, 4.0, 140, -0.7, 0.7);
   
@@ -872,7 +876,7 @@ int main(int argc, char *argv[])
   TH2D *h2_phi_vs_eta_EPD = new TH2D("h2_phi_vs_eta_EPD", "EPD;#eta;#phi", tempBins1, tempLowBound1, tempHighBound1, 300, -4, 4);
 
 
-  if (configs.sqrt_s_NN == 3.0 || configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.9)
+  if (configs.sqrt_s_NN == 3.0 || configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.5 || configs.sqrt_s_NN == 3.9)
     {
       tempBins1 = 300;
       tempLowBound1 = -1.2;
@@ -1111,22 +1115,17 @@ int main(int argc, char *argv[])
 	  d_nSigmaPr = nSigmaPr[iTrk];
 	  d_tofBeta = tofBeta[iTrk];
 	  d_dEdx = dEdx[iTrk];
+	  d_dEdxError = dEdxError[iTrk];
 	  d_rapidity_assumingProton = FlowUtils::rapidity(d_px, d_py, d_pz, D_M0_PR);
 	  i_nHits = nHits[iTrk];
 	  i_nHitsFit = nHitsFit[iTrk];
 	  i_nHitsPoss = nHitsPoss[iTrk];
 	  i_nHitsDedx = nHitsDedx[iTrk];
 
+	  // Check the original nSigmaPr values.
+	  h2_nSigp_vs_mom_original->Fill(d_mom, d_nSigmaPr);
 	  ////
-	  // Make a correction to TPC nSigma Proton for 3.2 GeV
-	  ////
-	  if (configs.sqrt_s_NN == 3.22)
-	    {
-	      d_nSigmaPr = nSigmaCorrection3p22GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx);
-	      h2_nSigp_vs_mom_all->Fill(d_mom, d_nSigmaPr);
-	    }
-	  ////
-
+	  
 	  h_nhits->Fill(i_nHits);
 	  h_nhitsFit->Fill(i_nHitsFit);
 	  h_nhitsPoss->Fill(i_nHitsPoss);
@@ -1154,7 +1153,17 @@ int main(int argc, char *argv[])
 	  h2_pT_vs_eta->Fill(d_eta, d_pT);
 	  h2_dEdx_vs_qp->Fill(s_charge * d_mom, d_dEdx);
 	  if (s_charge == 1) h2_dEdx_vs_qp_half->Fill(s_charge * d_mom, d_dEdx);
-	  h3_lndEdx_qp_y->Fill(s_charge * d_mom, TMath::Log(d_dEdx), d_rapidity_assumingProton);
+
+
+	  ////
+	  // Make a correction to TPC nSigma Proton for collisions > 3.0 GeV
+	  ////
+	  if (configs.sqrt_s_NN == 3.22)
+	    { 
+	      d_nSigmaPr = nSigmaCorrection3p22GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      h2_nSigp_vs_mom_all->Fill(d_mom, d_nSigmaPr);
+	    }
+	  ////
 
 	  // Get event planes from the TPC here before the TOF cut
 	  if (s_charge != 0)
@@ -1262,7 +1271,7 @@ int main(int argc, char *argv[])
 
 		}
 	      // Basic d and t PID
-	      else if (!pion && !kaon && (configs.sqrt_s_NN == 7.2 || configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.9))
+	      else if (!pion && !kaon && (configs.sqrt_s_NN == 7.2 || configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.5 || configs.sqrt_s_NN == 3.9))
 		{
 		  //  DEUTERON
 		  if (tofTrack)
@@ -1320,7 +1329,6 @@ int main(int argc, char *argv[])
 
 	      if (!pion && !kaon) 
 		{
-		  h2_nSigp_vs_mom->Fill(d_mom, d_nSigmaPr);
 		  h2_zd_vs_mom->Fill(d_mom, d_zDeuteron);
 		  h2_zt_vs_mom->Fill(d_mom, d_zTriton);
 		}
@@ -1461,6 +1469,7 @@ int main(int argc, char *argv[])
 		  h2_pT_vs_yCM_pr->Fill(d_rapidity - Y_MID, d_pT);
 		  h2_KToverA_vs_yCM_pr->Fill(d_rapidity - Y_MID, (d_mT - D_M0_PR)/1.0);
 		  h2_dEdx_vs_qp_pr->Fill(s_charge*d_mom, d_dEdx);
+		  h_dEdxError_pr->Fill(d_dEdxError);
 		  //h2_beta_vs_qp_pr->Fill(s_charge*d_mom, 1.0/d_tofBeta);
 		  //h2_m2_vs_qp_pr->Fill(s_charge*d_mom, d_m2);
 
@@ -1664,6 +1673,7 @@ int main(int argc, char *argv[])
       //if (eventInfo.nHitsEpdB   < configs.min_tracks) continue;
       if (configs.fixed_target && configs.sqrt_s_NN == 3.0 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
       else if (configs.fixed_target && configs.sqrt_s_NN == 3.22 && eventInfo.nHitsEpdB < configs.min_tracks+2) continue;
+      else if (configs.fixed_target && configs.sqrt_s_NN == 3.5  && eventInfo.nHitsEpdB < configs.min_tracks+2) continue;
       else if (configs.fixed_target && configs.sqrt_s_NN == 3.9  && eventInfo.nHitsEpdB < configs.min_tracks) continue;
 
       h_centralities_final->Fill(i_centrality);
@@ -1854,6 +1864,7 @@ int main(int argc, char *argv[])
 
 	  if (configs.sqrt_s_NN == 3.0 && centID < 4) continue;  // ONLY LOOKING AT CENTRALITY 60% AND LOWER FOR 3.0 GeV
 	  else if (configs.sqrt_s_NN == 3.22 && centID < 4) continue;
+	  else if (configs.sqrt_s_NN == 3.5  && centID < 4) continue;
 
 
 	  // JUST v1 FOR WEIGHTING
