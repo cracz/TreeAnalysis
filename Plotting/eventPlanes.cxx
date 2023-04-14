@@ -73,7 +73,7 @@ void eventPlanes(TString jobID)
   gPad->SetRightMargin(0);
   stackEpdA->Draw();
   stackEpdA->SetMinimum(2e5);
-  stackEpdA->SetMaximum(7e5);
+  stackEpdA->SetMaximum(13e5);
   stackEpdA->Draw("NOSTACK");
   legend->Draw();
   
@@ -83,7 +83,7 @@ void eventPlanes(TString jobID)
   gPad->SetRightMargin(0);
   stackEpdB->Draw();
   stackEpdB->SetMinimum(2e5);
-  stackEpdB->SetMaximum(7e5);
+  stackEpdB->SetMaximum(13e5);
   stackEpdB->Draw("NOSTACK");
 
   canvas->cd(3);  
@@ -91,7 +91,7 @@ void eventPlanes(TString jobID)
   gPad->SetLeftMargin(0);
   stackTpcB->Draw();
   stackTpcB->SetMinimum(2e5);
-  stackTpcB->SetMaximum(7e5);
+  stackTpcB->SetMaximum(13e5);
   stackTpcB->Draw("NOSTACK");
 
   canvas->SaveAs(jobID+"_psiCombined.png");

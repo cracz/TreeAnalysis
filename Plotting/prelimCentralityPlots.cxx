@@ -16,14 +16,14 @@ void prelimCentralityPlots(TString jobID)
   canvas->SetTopMargin(0.04);
   canvas->SetRightMargin(0.04);
   canvas->SetBottomMargin(0.1);
-  canvas->SetLeftMargin(0.15);
+  canvas->SetLeftMargin(0.17);
   canvas->cd();
   
   gStyle->SetErrorX(0);
   gStyle->SetOptStat(0);
   gStyle->SetEndErrorSize(6);
   gStyle->SetLineWidth(3);
-  gStyle->SetOptDate();
+  //gStyle->SetOptDate();
 
 
   TProfile *p_vn_pp = (TProfile*)file->Get("p_vn_pp");
@@ -57,25 +57,18 @@ void prelimCentralityPlots(TString jobID)
 
   // Retrieve systematic uncertainties
   /*
+  //TFile* systematicFile = TFile::Open("systematicErrors_30percent.root", "READ");
+  //TFile* systematicFile = TFile::Open("systematicErrors_20and30percentVariations_GaussianStdDev.root", "READ");
+  //TFile* systematicFile = TFile::Open("systematicErrors_epd_scaled.root", "READ");
   TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
-  //jobID = "Normal_afterDuplication_piKefficiencies";
+  //jobID = "Normal_30";
   TGraphErrors* sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_"+jobID+"_flip");
   TGraphErrors* sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_"+jobID+"_flip");
   TGraphErrors* sys_kp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_kp_"+jobID+"_flip");
   TGraphErrors* sys_km = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_km_"+jobID+"_flip");
   TGraphErrors* sys_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_"+jobID+"_flip");
   ////
-
-  /*
-  TFile* systematicFile = TFile::Open("systematicErrors_TESTCOPY.root", "READ");
-  TGraphErrors* sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_Normal_PRELIMINARY_QM22_flip");
-  TGraphErrors* sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_Normal_PRELIMINARY_QM22_flip");
-  //TGraphErrors* sys_kp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_kp_Normal_flip");
-  //TGraphErrors* sys_km = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_km_Normal_flip");
-  TGraphErrors* sys_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_Normal_PRELIMINARY_QM22_flip");
-  ////
-  */
-  /*
+  
   // Set various aesthetics
   sys_pp->SetMarkerColor(1);
   sys_pp->SetLineColor(1);
@@ -88,9 +81,9 @@ void prelimCentralityPlots(TString jobID)
 
   sys_km->SetMarkerColor(4);
   sys_km->SetLineColor(4);
-
-  //sys_pr should be fine as it is
   */
+  //sys_pr should be fine as it is
+
   h_vn_pp->SetMarkerStyle(21);
   h_vn_pp->SetMarkerSize(2.5);
   h_vn_pp->SetMarkerColor(1);
@@ -143,15 +136,15 @@ void prelimCentralityPlots(TString jobID)
   prelimText->SetFillColorAlpha(0,0);
   prelimText->SetTextSize(0.04);
 
-  TPaveText *allText = new TPaveText(15, 0.026, 45, 0.042, "NB");
+  TPaveText *allText = new TPaveText(15, 0.01, 45, 0.018, "NB");
   allText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
   allText->AddText("0 < y_{CM} < 0.5");
   //allText->AddText("0.4 #leq p_{T} #leq 2.0 GeV");
   allText->SetFillColorAlpha(0,0);
   allText->SetLineColorAlpha(0,0);
-  allText->SetTextSize(0.045);
+  allText->SetTextSize(0.04);
 
-  TPaveText *kaText = new TPaveText(15, 0.08, 48, 0.18, "NB");
+  TPaveText *kaText = new TPaveText(15, 0.05, 48, 0.09, "NB");
   kaText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
   kaText->AddText("0 < y_{CM} < 0.5");
   kaText->AddText("0.4 < p_{T} < 1.6 GeV");
@@ -167,7 +160,7 @@ void prelimCentralityPlots(TString jobID)
   allLegend->SetLineColorAlpha(0,0);
   allLegend->SetTextSize(0.04);
 
-  TLegend *kaLegend = new TLegend(0.19, 0.8, 0.39, 0.9);
+  TLegend *kaLegend = new TLegend(0.2, 0.8, 0.4, 0.9);
   kaLegend->AddEntry(h_vn_kp,"K^{+}");
   kaLegend->AddEntry(h_vn_km,"K^{-}");
   kaLegend->SetFillColorAlpha(0,0);
@@ -184,15 +177,15 @@ void prelimCentralityPlots(TString jobID)
   allCentralityStack->GetXaxis()->SetLabelSize(0.045);
   allCentralityStack->GetYaxis()->SetLabelSize(0.045);
   allCentralityStack->GetXaxis()->SetTitleOffset(1.0);
-  allCentralityStack->GetYaxis()->SetTitleOffset(1.4);
+  allCentralityStack->GetYaxis()->SetTitleOffset(1.7);
   allCentralityStack->GetXaxis()->SetTitleSize(0.045);
   allCentralityStack->GetYaxis()->SetTitleSize(0.05);
   allCentralityStack->GetXaxis()->SetNdivisions(210);
-  allCentralityStack->SetMaximum(0.045);
-  allCentralityStack->SetMinimum(-0.045);
-  allCentralityStack->Draw("NOSTACK E1P");
+  allCentralityStack->SetMaximum(0.02);
+  allCentralityStack->SetMinimum(-0.03);
+  allCentralityStack->Draw("NOSTACK EP");
   zeroLine->Draw("SAME");
-  allCentralityStack->Draw("NOSTACK E1P SAME");
+  allCentralityStack->Draw("NOSTACK EP SAME");
   //sys_pp->Draw("[]");
   //sys_pm->Draw("[]");
   //sys_pr->Draw("[]");
@@ -200,27 +193,29 @@ void prelimCentralityPlots(TString jobID)
   allText->Draw();
   //prelimText->Draw();
   canvas->SaveAs("v3_allCentralityStack.pdf");
+  canvas->SaveAs("v3_allCentralityStack.png");
   canvas->Clear();
 
   kaCentralityStack->Draw();
   kaCentralityStack->GetXaxis()->SetLabelSize(0.045);
   kaCentralityStack->GetYaxis()->SetLabelSize(0.045);
   kaCentralityStack->GetXaxis()->SetTitleOffset(1.0);
-  kaCentralityStack->GetYaxis()->SetTitleOffset(1.4);
+  kaCentralityStack->GetYaxis()->SetTitleOffset(1.7);
   kaCentralityStack->GetXaxis()->SetTitleSize(0.045);
   kaCentralityStack->GetYaxis()->SetTitleSize(0.05);
   kaCentralityStack->GetXaxis()->SetNdivisions(210);
-  kaCentralityStack->SetMaximum(0.2);
-  kaCentralityStack->SetMinimum(-0.2);
-  kaCentralityStack->Draw("NOSTACK E1P");
+  kaCentralityStack->SetMaximum(0.1);
+  kaCentralityStack->SetMinimum(-0.1);
+  kaCentralityStack->Draw("NOSTACK EP");
   zeroLine->Draw("SAME");
-  kaCentralityStack->Draw("NOSTACK E1P SAME");
+  kaCentralityStack->Draw("NOSTACK EP SAME");
   //sys_kp->Draw("[]");
   //sys_km->Draw("[]");
   kaLegend->Draw();
   kaText->Draw();
   //prelimText->Draw();
   canvas->SaveAs("v3_kaCentralityStack.pdf");
+  canvas->SaveAs("v3_kaCentralityStack.png");
   canvas->Clear();
 
   

@@ -19,7 +19,7 @@ void prelimPtPlots(TString jobID)
   gStyle->SetOptStat(0);
   gStyle->SetEndErrorSize(6);
   gStyle->SetLineWidth(3);
-  gStyle->SetOptDate();
+  //gStyle->SetOptDate();
 
   TProfile2D *p2_vn_pT_cent_pr = (TProfile2D*)file->Get("p2_vn_pT_cent_pr");
   TProfile *p_vn_pT_00to10_pr = p2_vn_pT_cent_pr->ProfileY("p_vn_pT_00to10_pr", 15, 16);
@@ -37,6 +37,9 @@ void prelimPtPlots(TString jobID)
 
   /*
   // Retrieve systematic uncertainties
+  //TFile* systematicFile = TFile::Open("systematicErrors_30percent.root", "READ");
+  //TFile* systematicFile = TFile::Open("systematicErrors_20and30percentVariations_GaussianStdDev.root", "READ");
+  //TFile* systematicFile = TFile::Open("systematicErrors_epd_scaled.root", "READ");
   TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
   TGraphErrors* sys_pT_00to10_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pT_00to10_pr_px");
   TGraphErrors* sys_pT_10to40_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pT_10to40_pr_px");
@@ -47,26 +50,26 @@ void prelimPtPlots(TString jobID)
   // Set various aesthetics
   h_vn_pT_00to10_pr->SetMarkerStyle(21);
   h_vn_pT_10to40_pr->SetMarkerStyle(20);
-  h_vn_pT_40to60_pr->SetMarkerStyle(22);
+  h_vn_pT_40to60_pr->SetMarkerStyle(33);
   h_vn_pT_00to10_pr->SetMarkerColor(kRed-4);
-  h_vn_pT_10to40_pr->SetMarkerColor(kBlue-4);
-  h_vn_pT_40to60_pr->SetMarkerColor(kGreen+1);
+  //h_vn_pT_10to40_pr->SetMarkerColor(kBlue-4);
+  h_vn_pT_40to60_pr->SetMarkerColor(kBlue-4);
   h_vn_pT_00to10_pr->SetMarkerSize(2);
   h_vn_pT_10to40_pr->SetMarkerSize(2);
-  h_vn_pT_40to60_pr->SetMarkerSize(2.5);
+  h_vn_pT_40to60_pr->SetMarkerSize(3);
   h_vn_pT_00to10_pr->SetLineColor(kRed-4);
-  h_vn_pT_10to40_pr->SetLineColor(kBlue-4);
-  h_vn_pT_40to60_pr->SetLineColor(kGreen+1);
+  //h_vn_pT_10to40_pr->SetLineColor(kBlue-4);
+  h_vn_pT_40to60_pr->SetLineColor(kBlue-4);
   h_vn_pT_00to10_pr->SetLineWidth(3);
   h_vn_pT_10to40_pr->SetLineWidth(3);
   h_vn_pT_40to60_pr->SetLineWidth(3);
   /*
   sys_pT_00to10_pr->SetMarkerColor(kRed-4);
-  sys_pT_10to40_pr->SetMarkerColor(kBlue-4);
-  sys_pT_40to60_pr->SetMarkerColor(kGreen+1);
+  //sys_pT_10to40_pr->SetMarkerColor(kBlue-4);
+  sys_pT_40to60_pr->SetMarkerColor(kBlue-4);
   sys_pT_00to10_pr->SetLineColor(kRed-4);
-  sys_pT_10to40_pr->SetLineColor(kBlue-4);
-  sys_pT_40to60_pr->SetLineColor(kGreen+1);
+  //sys_pT_10to40_pr->SetLineColor(kBlue-4);
+  sys_pT_40to60_pr->SetLineColor(kBlue-4);
   ////
   */
   THStack *prPtStack   = new THStack("prPtStack", ";p_{T} (GeV/c);v_{3} {#Psi_{1}}");
@@ -85,14 +88,14 @@ void prelimPtPlots(TString jobID)
   prLegend->SetTextSize(0.04);
 
   //TPaveText *prText = new TPaveText(0.28, 0.03, 1.28, 0.055, "NB");
-  TPaveText *prText = new TPaveText(0.0, 0.02, 1.8, 0.055, "NB");
+  TPaveText *prText = new TPaveText(0.0, 0.008, 1.8, 0.035, "NB");
   prText->SetTextAlign(12);
   prText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
   prText->AddText("Proton");
   prText->AddText("0 < y_{CM} < 0.5");
   prText->SetFillColorAlpha(0,0);
   prText->SetLineColorAlpha(0,0);
-  prText->SetTextSize(0.045);
+  prText->SetTextSize(0.04);
 
   //TPaveText* prelimText = new TPaveText(0.3, 0.02, 1.28, 0.03, "NB");
   TPaveText* prelimText = new TPaveText(0.7, -0.08, 1.4, -0.07, "NB");
@@ -114,18 +117,19 @@ void prelimPtPlots(TString jobID)
   prPtStack->GetXaxis()->SetTitleSize(0.045);
   prPtStack->GetYaxis()->SetTitleSize(0.05);
   prPtStack->Draw();
-  prPtStack->SetMaximum(0.06);
+  prPtStack->SetMaximum(0.04);
   prPtStack->SetMinimum(-0.12);
-  prPtStack->Draw("NOSTACK E1P");
+  prPtStack->Draw("NOSTACK EP");
   zeroLine_pt->Draw("SAME");
-  prPtStack->Draw("NOSTACK E1P SAME");
   //sys_pT_00to10_pr->Draw("[]");
-  //sys_pT_10to40_pr->Draw("[]");
   //sys_pT_40to60_pr->Draw("[]");
+  //sys_pT_10to40_pr->Draw("[]");
+  prPtStack->Draw("NOSTACK EP SAME");
   prLegend->Draw();
   prText->Draw();
   //prelimText->Draw();
   canvas->SaveAs("v3_prPtStack.pdf");
+  canvas->SaveAs("v3_prPtStack.png");
   canvas->Clear();
   
   //systematicFile->Close();

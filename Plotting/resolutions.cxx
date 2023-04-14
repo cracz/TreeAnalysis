@@ -156,9 +156,9 @@ void resolutions(TString jobID, TString order_n_str)
 				     (dEpdAEpdB/(2*EpdAEpdB))*(dEpdAEpdB/(2*EpdAEpdB)));
 
 
-      if(TMath::IsNaN(R_AvsB) || dR_AvsB > 0.1) { R_AvsB = 0; dR_AvsB = 0; }
-      if(TMath::IsNaN(R_BvsA) || dR_BvsA > 0.1) { R_BvsA = 0; dR_BvsA = 0; }
-      if(TMath::IsNaN(R_TpcB) || dR_TpcB > 0.1) { R_TpcB = 0; dR_TpcB = 0; }
+      if(TMath::IsNaN(R_AvsB)) { R_AvsB = 0; dR_AvsB = 0; }
+      if(TMath::IsNaN(R_BvsA)) { R_BvsA = 0; dR_BvsA = 0; }
+      if(TMath::IsNaN(R_TpcB)) { R_TpcB = 0; dR_TpcB = 0; }
       //if(TMath::IsNaN(R_AvsB_save)) { R_AvsB_save = 0; dR_AvsB_save = 0.1; }      
 
       h_resolAvsB->SetBinContent(i, R_AvsB);
@@ -261,7 +261,8 @@ void resolutions(TString jobID, TString order_n_str)
   legend2->SetTextSize(0.05);
 
   TPaveText *text_extra = new TPaveText(2, 0.25, 28, 0.3);
-  text_extra->AddText("#sqrt{s_{NN}} = 3.0 GeV FXT Au+Au");
+  //text_extra->AddText("#sqrt{s_{NN}} = 3.0 GeV FXT Au+Au");
+  text_extra->AddText("#sqrt{s_{NN}} = 3.2 GeV FXT Au+Au");
   text_extra->AddText("Collisions at RHIC");
   //text_extra->SetFillColorAlpha(0,0);
 
@@ -287,12 +288,14 @@ void resolutions(TString jobID, TString order_n_str)
   h_resolAvsB->GetXaxis()->SetTitleSize(0.045);
   h_resolAvsB->GetYaxis()->SetTitleSize(0.065);
   h_resolAvsB->SetMaximum(0.3);
+  //h_resolAvsB->SetMaximum(1.0);
+  h_resolAvsB->SetMinimum(0.0);
   h_resolAvsB->SetTitle("");
-  //h_resolAvsB->SetMarkerColor(1);
-  //h_resolAvsB->SetLineColor(1);
+   h_resolAvsB->SetMarkerColor(1);
+   h_resolAvsB->SetLineColor(1);
   h_resolAvsB->Draw("E1P");
-  legend2->Draw();
-  text_extra->Draw();
+  //legend2->Draw();
+  //text_extra->Draw();
   //prelimText->Draw();
   canvas->SaveAs(jobID + "_resolutionAonly.png");
   canvas->Clear();

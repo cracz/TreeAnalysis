@@ -68,11 +68,16 @@ void correlations(TString jobID, TString order_n_str)
 
   gStyle->SetOptStat(0);
   gStyle->SetErrorX(0);
+
+  TLine *zeroLine = new TLine(0., 0., 60., 0.);
+  zeroLine->SetLineStyle(9);
+  zeroLine->SetLineWidth(3);
   
   h_EpdAEpdB->Draw("E1P");
+  zeroLine->Draw("same");
   canvas->SaveAs(jobID + "_correlEpdAEpdB.png");
   canvas->Clear();
-  
+  /*
   h_TpcAB->Draw("E1P");
   canvas->SaveAs(jobID + "_correlTpcAB.png");
   canvas->Clear();
@@ -84,12 +89,14 @@ void correlations(TString jobID, TString order_n_str)
   h_TpcAEpdB->Draw("E1P");
   canvas->SaveAs(jobID + "_correlTpcAEpdB.png");
   canvas->Clear();
-
+  */
   h_TpcBEpdA->Draw("E1P");
+  zeroLine->Draw("same");
   canvas->SaveAs(jobID + "_correlTpcBEpdA.png");
   canvas->Clear();
 
   h_TpcBEpdB->Draw("E1P");
+  zeroLine->Draw("same");
   canvas->SaveAs(jobID + "_correlTpcBEpdB.png");
   canvas->Clear();
 
