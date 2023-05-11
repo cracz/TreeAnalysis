@@ -47,6 +47,7 @@
 
 // My Util Header
 #include "FlowUtils.h"
+#include "NSigmaCorrectionUtils.h"
 
 // Bichsel Function
 Double_t bichselZ(Double_t *x,Double_t *par) 
@@ -130,11 +131,9 @@ int main(int argc, char *argv[])
   if      (configs.sqrt_s_NN == 3.0)  { N_track = 195;  }
   else if (configs.sqrt_s_NN == 3.22) { N_track = 287;  }
   else if (configs.sqrt_s_NN == 3.5)  { N_track = 325;  }
-  else if (configs.sqrt_s_NN == 3.9)  { N_track = 275;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
-  else if (configs.sqrt_s_NN == 4.49) { N_track = 350;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
-  else if (configs.sqrt_s_NN == 7.2)  { N_track = 240;  }
-  //else if (configs.sqrt_s_NN == 14.5) { N_track = 2048; } // UPDATE THIS WHEN THE CENTRALITY IS OFFICIAL
-  else if (configs.sqrt_s_NN == 19.6) { N_track = 2048; } // UPDATE THIS WHEN THE CENTRALITY IS OFFICIAL
+  else if (configs.sqrt_s_NN == 3.9)  { N_track = 344;  }
+  else if (configs.sqrt_s_NN == 4.5)  { N_track = 367;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
+  else if (configs.sqrt_s_NN == 7.2)  { N_track = 240;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
   else
     {
       std::cout << "Unknown energy! N_track is not set!" << std::endl;
@@ -312,6 +311,11 @@ int main(int argc, char *argv[])
     tofEfficiencyFileName = "tof_efficiency_3p22GeV.root";
   else if (configs.sqrt_s_NN == 3.5)
     tofEfficiencyFileName = "tof_efficiency_3p5GeV.root";
+  else if (configs.sqrt_s_NN == 3.9)
+    tofEfficiencyFileName = "tof_efficiency_3p9GeV.root";
+  else if (configs.sqrt_s_NN == 4.5)
+    tofEfficiencyFileName = "tof_efficiency_4p5GeV.root";
+
   
   TFile *tofEfficiencyFile;
   TH2D *h2_ratio_tof;
@@ -473,6 +477,8 @@ int main(int argc, char *argv[])
   */
 
   TH1D* h_zvtx = (TH1D*)inputFile->Get("h_zvtx");
+  TH1D* h_zvtx_2019 = new TH1D("h_zvtx_2019","Primary Vertex Position in z;Distance (cm);Events", 500, 190, 210);
+  TH1D* h_zvtx_2020 = new TH1D("h_zvtx_2020","Primary Vertex Position in z;Distance (cm);Events", 500, 190, 210);
 
   TH1D *h_tileWeights = new TH1D("h_tileWeights", "EPD Tile Weights;nMIP Weights;Hits", 100, -1, 4);
   TH1D *h_centralities = new TH1D("h_centralities", "Centralities;Centrality ID;Events", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
@@ -593,7 +599,7 @@ int main(int argc, char *argv[])
       tempLowBound2  = 0.0;
       tempHighBound2 = 2.5;
     }
-  else if (configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.5 || configs.sqrt_s_NN == 3.9)
+  else if (configs.sqrt_s_NN == 3.22)
     {
       tempBins1 = 300;
       tempLowBound1 = -1.2;
@@ -602,32 +608,32 @@ int main(int argc, char *argv[])
       tempLowBound2  = 0.0;
       tempHighBound2 = 2.5;
     }
-  else if (configs.sqrt_s_NN == 4.49)
+  else if (configs.sqrt_s_NN == 3.5)
     {
       tempBins1 = 300;
       tempLowBound1 = -1.0;
-      tempHighBound1 = 1.7;
+      tempHighBound1 = 1.4;
       tempBins2 = 300;
       tempLowBound2  = 0.0;
       tempHighBound2 = 2.5;
     }
-  else if (configs.sqrt_s_NN == 7.2)
+  else if (configs.sqrt_s_NN == 3.9)
     {
       tempBins1 = 300;
-      tempLowBound1 = -0.2;
-      tempHighBound1 = 2.2;
+      tempLowBound1 = -0.9;
+      tempHighBound1 = 1.5;
       tempBins2 = 300;
       tempLowBound2  = 0.0;
       tempHighBound2 = 2.5;
     }
-  else if (configs.sqrt_s_NN == 19.6)
+  else if (configs.sqrt_s_NN == 4.5)
     {
-      tempBins1 = 400;
-      tempLowBound1 = -2.0;
-      tempHighBound1 = 2.0;
-      tempBins2 = 500;
+      tempBins1 = 300;
+      tempLowBound1 = -0.8;
+      tempHighBound1 = 1.6;
+      tempBins2 = 300;
       tempLowBound2  = 0.0;
-      tempHighBound2 = 5.0;
+      tempHighBound2 = 2.5;
     }
   else
     {
@@ -876,7 +882,7 @@ int main(int argc, char *argv[])
   TH2D *h2_phi_vs_eta_EPD = new TH2D("h2_phi_vs_eta_EPD", "EPD;#eta;#phi", tempBins1, tempLowBound1, tempHighBound1, 300, -4, 4);
 
 
-  if (configs.sqrt_s_NN == 3.0 || configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.5 || configs.sqrt_s_NN == 3.9)
+  if (configs.sqrt_s_NN == 3.0 || configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.5 || configs.sqrt_s_NN == 3.9 || configs.sqrt_s_NN == 4.5)
     {
       tempBins1 = 300;
       tempLowBound1 = -1.2;
@@ -926,7 +932,7 @@ int main(int argc, char *argv[])
   /////
 
   // Here the name refers to the eta region that will be displayed/searched using the event plane angle from the opposite region
-  tempBins1      = (configs.fixed_target) ?  50  :  100;
+  tempBins1      = (configs.fixed_target) ?  150 :  100;
   tempLowBound1  = (configs.fixed_target) ? -2.0 : -2.3;
   tempHighBound1 = (configs.fixed_target) ?  0.0 :  2.3;
   TProfile2D *h2_vnScanTpc = new TProfile2D("h2_vnScanTpc", "<cos("+ORDER_N_STR+"(#phi^{TPC} - #psi^{EPD}_{"+ORDER_M_STR+"}))>;#eta;Centrality (%)", 
@@ -1027,9 +1033,15 @@ int main(int argc, char *argv[])
   
   FlowUtils::Event eventInfo;        // These hold info for each event
   FlowUtils::Particle particleInfo;  // These hold info for each track/hit
-  FlowUtils::NewNSigmaProton3p22GeV nSigmaCorrection3p22GeV; // This is to get corrected proton nSigma values for 3.22 GeV
+  NSigmaCorrectionUtils::NewNSigmaProton3p22GeV nSigmaCorrection3p22GeV; // These are to get corrected proton nSigma values for
+  NSigmaCorrectionUtils::NewNSigmaProton3p5GeV  nSigmaCorrection3p5GeV;  // FXT energies where the TPC calibration is bad.
+  NSigmaCorrectionUtils::NewNSigmaProton3p9GeV  nSigmaCorrection3p9GeV;
+  NSigmaCorrectionUtils::NewNSigmaProton4p5GeV  nSigmaCorrection4p5GeV;
   if (configs.sqrt_s_NN == 3.22) nSigmaCorrection3p22GeV.initialize();
-  StEpdGeom *epdGeom = new StEpdGeom();
+  else if (configs.sqrt_s_NN == 3.5) nSigmaCorrection3p5GeV.initialize();
+  else if (configs.sqrt_s_NN == 3.9) nSigmaCorrection3p9GeV.initialize();
+  else if (configs.sqrt_s_NN == 4.5) nSigmaCorrection4p5GeV.initialize();
+  StEpdGeom *epdGeom = new StEpdGeom();  // This is to translate EPD tile IDs into phi and eta
 
   // EVENT LOOP
   Int_t events2read = tree->GetEntries();
@@ -1038,7 +1050,18 @@ int main(int argc, char *argv[])
     {
       eventInfo.reset();
 
+      // TEMPORARY
+      // These runs have bad EPD behavior but are not in the official bad run list.
+      //The bad tiles will be marked bad once the data is reproduced and the runs 
+      //may be usable again afterward.
+      if (configs.sqrt_s_NN == 3.5 && i_runID == 21044031) continue;
+      if (configs.sqrt_s_NN == 3.9 && (i_runID == 21035025 || i_runID == 21035031 || i_runID == 21036007)) continue; 
+      ////
+
       tree->GetEntry(ievent);
+
+      if (configs.sqrt_s_NN == 3.9 && (i_runID / 1000000 == 21)) h_zvtx_2019->Fill(f_zvtx);
+      if (configs.sqrt_s_NN == 3.9 && (i_runID / 1000000 == 20)) h_zvtx_2020->Fill(f_zvtx);
 
       // At this point, all bad runs and bad trigger events are removed by TreeMaker.
       // Now check event vertex
@@ -1163,6 +1186,21 @@ int main(int argc, char *argv[])
 	      d_nSigmaPr = nSigmaCorrection3p22GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
 	      h2_nSigp_vs_mom_all->Fill(d_mom, d_nSigmaPr);
 	    }
+	  else if (configs.sqrt_s_NN == 3.5)
+	    { 
+	      d_nSigmaPr = nSigmaCorrection3p5GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      h2_nSigp_vs_mom_all->Fill(d_mom, d_nSigmaPr);
+	    }
+	  else if (configs.sqrt_s_NN == 3.9)
+	    { 
+	      d_nSigmaPr = nSigmaCorrection3p9GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      h2_nSigp_vs_mom_all->Fill(d_mom, d_nSigmaPr);
+	    }
+	  else if (configs.sqrt_s_NN == 4.5)
+	    { 
+	      d_nSigmaPr = nSigmaCorrection4p5GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      h2_nSigp_vs_mom_all->Fill(d_mom, d_nSigmaPr);
+	    }
 	  ////
 
 	  // Get event planes from the TPC here before the TOF cut
@@ -1271,7 +1309,12 @@ int main(int argc, char *argv[])
 
 		}
 	      // Basic d and t PID
-	      else if (!pion && !kaon && (configs.sqrt_s_NN == 7.2 || configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.5 || configs.sqrt_s_NN == 3.9))
+	      else if (!pion && !kaon && 
+		       (configs.sqrt_s_NN == 7.2 || 
+			configs.sqrt_s_NN == 3.22 || 
+			configs.sqrt_s_NN == 3.5 || 
+			configs.sqrt_s_NN == 3.9 || 
+			configs.sqrt_s_NN == 4.5))
 		{
 		  //  DEUTERON
 		  if (tofTrack)
@@ -1640,7 +1683,6 @@ int main(int argc, char *argv[])
 	      p2_pp_vs_eta->Fill(tileEta, tileSector, tileWeight);
 
 	      eventInfo.incrementQvectorEPDA(ODD_PLANE, ORDER_M, Y_MID, tileEta, tilePhi, tileWeight);
-	      eventInfo.epdParticles.push_back(epdParticleInfo);
 	    }
 	  else if (epdBside && tileRow >= configs.epdB_inner_row && tileRow <= configs.epdB_outer_row)
 	    {
@@ -1657,8 +1699,9 @@ int main(int argc, char *argv[])
 	      if (configs.fixed_target) h2_ring_vs_eta->Fill(tileEta, tileRow);  // Only need the East side for this plot
 
 	      eventInfo.incrementQvectorEPDB(ODD_PLANE, ORDER_M, Y_MID, tileEta, tilePhi, tileWeight);
-	      eventInfo.epdParticles.push_back(epdParticleInfo);
 	    }
+
+	  eventInfo.epdParticles.push_back(epdParticleInfo);
 	}// End EPD hit loop
       epdParticleInfo.reset();
       //=========================================================
@@ -1672,9 +1715,10 @@ int main(int argc, char *argv[])
       if (eventInfo.nHitsEpdA   < configs.min_tracks) continue;
       //if (eventInfo.nHitsEpdB   < configs.min_tracks) continue;
       if (configs.fixed_target && configs.sqrt_s_NN == 3.0 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
-      else if (configs.fixed_target && configs.sqrt_s_NN == 3.22 && eventInfo.nHitsEpdB < configs.min_tracks+2) continue;
-      else if (configs.fixed_target && configs.sqrt_s_NN == 3.5  && eventInfo.nHitsEpdB < configs.min_tracks+2) continue;
-      else if (configs.fixed_target && configs.sqrt_s_NN == 3.9  && eventInfo.nHitsEpdB < configs.min_tracks) continue;
+      else if (configs.fixed_target && configs.sqrt_s_NN == 3.22 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
+      else if (configs.fixed_target && configs.sqrt_s_NN == 3.5  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
+      else if (configs.fixed_target && configs.sqrt_s_NN == 3.9  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
+      else if (configs.fixed_target && configs.sqrt_s_NN == 4.5  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
 
       h_centralities_final->Fill(i_centrality);
 
@@ -1861,11 +1905,12 @@ int main(int argc, char *argv[])
 	  Double_t tofEfficiency = 1.0;  // Default
 	  Int_t centID = eventInfo.centID;
 	  Int_t jthRing;
-
+	  /*
 	  if (configs.sqrt_s_NN == 3.0 && centID < 4) continue;  // ONLY LOOKING AT CENTRALITY 60% AND LOWER FOR 3.0 GeV
 	  else if (configs.sqrt_s_NN == 3.22 && centID < 4) continue;
 	  else if (configs.sqrt_s_NN == 3.5  && centID < 4) continue;
-
+	  */
+	  if (centID < 4) continue;
 
 	  // JUST v1 FOR WEIGHTING
 	  //Weights are only accumulated when they have not already been applied.
