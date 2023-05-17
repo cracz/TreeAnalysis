@@ -39,7 +39,6 @@ void plotAll(TString jobID)
 
       if (cl->InheritsFrom("TH2"))                       //Keep this if/else order!! A TH2 still inherits from TH1.
 	{
-	  /*
 	  canvas->SetRightMargin(0.14);
 	  canvas->SetLeftMargin(0.12);
 	  hist->SetTitleOffset(1.2, "y");
@@ -75,12 +74,11 @@ void plotAll(TString jobID)
 
 	  hist->Draw("COLZ");
 	  canvas->Update();
-	  */
 	}
       else if (cl->InheritsFrom("TH1"))
 	{
 	  hist->SetTitleOffset(1.2, "y");
-	  /*
+	  
 	  if (name.Contains("sinAvgs") || name.Contains("cosAvgs") || name.Contains("Xn") || name.Contains("Yn"))
 	    {
 	      continue;
@@ -102,19 +100,21 @@ void plotAll(TString jobID)
 	      hist->GetYaxis()->SetRangeUser(0.1,10E+7);
 	      gStyle->SetOptStat(11);
 	    }
-	    else*/ if (name.Contains("eventCheck"))
+	    else if (name.Contains("eventCheck"))
 	    {
 	      hist->SetFillColorAlpha(4,0.6);
 	      hist->GetXaxis()->SetLabelSize(0.05);
-	      hist->SetMinimum(1e7);
+	      hist->SetMinimum(13e7);
+	      hist->SetMaximum(19e7);
 	    }
 	  else if (name.Contains("trackCheck"))
 	    {
 	      hist->SetFillColorAlpha(4,0.6);
 	      hist->GetXaxis()->SetLabelSize(0.07);
 	      canvas->SetBottomMargin(0.15);
-	      hist->SetMinimum(2e9);
-	    }/*
+	      hist->SetMinimum(5e9);
+	      hist->SetMaximum(15e9);
+	    }
 	  else if (name.Contains("dndm")) 
 	    { 
 	      hist->SetMinimum(0.1);
@@ -122,7 +122,7 @@ void plotAll(TString jobID)
 	      errors = true;
 	    }
 
-	     */
+	     
 	  if (errors) 
 	    hist->Draw("E1");
 	  else 

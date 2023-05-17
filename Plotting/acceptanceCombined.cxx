@@ -64,7 +64,14 @@ void acceptanceCombined(TString jobID)
   y_mid->SetLineColor(kRed);
   y_mid->SetLineWidth(2);
 
-  TLine *y_target = new TLine(1.14, 0, 1.14, 2.5);
+  //3.2 GeV
+  //TLine *y_target = new TLine(1.14, 0, 1.14, 2.5);
+
+  //3.5 GeV
+  //TLine *y_target = new TLine(1.25, 0, 1.25, 2.5);
+
+  //3.9 GeV
+  TLine *y_target = new TLine(1.37, 0, 1.37, 2.5);
   y_target->SetLineStyle(9);
   y_target->SetLineColor(kRed);
   y_target->SetLineWidth(2);
@@ -323,10 +330,10 @@ void acceptanceCombined(TString jobID)
 	  right_pr->Draw("SAME");
 	  top_pr->Draw("SAME");
 	  bottom_pr->Draw("SAME");
-	  //left_pr_sym->Draw("SAME");
-	  //right_pr_sym->Draw("SAME");
-	  //top_pr_sym->Draw("SAME");
-	  //bottom_pr_sym->Draw("SAME");
+	  left_pr_sym->Draw("SAME");
+	  right_pr_sym->Draw("SAME");
+	  top_pr_sym->Draw("SAME");
+	  bottom_pr_sym->Draw("SAME");
 	}
       else if (i == 2 && j == 1)
 	{

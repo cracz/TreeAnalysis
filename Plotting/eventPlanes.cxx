@@ -67,13 +67,16 @@ void eventPlanes(TString jobID)
   legend->AddEntry(h_psiEpdA_FLAT, "Recentered and shifted");
   legend->SetFillColorAlpha(0,0);
   legend->SetLineColorAlpha(0,0);
-  
+
+  double min = 3e5;
+  double max = 6e5;
+
   canvas->cd(1);
   gPad->SetTicky();
   gPad->SetRightMargin(0);
   stackEpdA->Draw();
-  stackEpdA->SetMinimum(2e5);
-  stackEpdA->SetMaximum(13e5);
+  stackEpdA->SetMinimum(min);
+  stackEpdA->SetMaximum(max);
   stackEpdA->Draw("NOSTACK");
   legend->Draw();
   
@@ -82,16 +85,16 @@ void eventPlanes(TString jobID)
   gPad->SetLeftMargin(0);
   gPad->SetRightMargin(0);
   stackEpdB->Draw();
-  stackEpdB->SetMinimum(2e5);
-  stackEpdB->SetMaximum(13e5);
+  stackEpdB->SetMinimum(min);
+  stackEpdB->SetMaximum(max);
   stackEpdB->Draw("NOSTACK");
 
   canvas->cd(3);  
   gPad->SetTicky();
   gPad->SetLeftMargin(0);
   stackTpcB->Draw();
-  stackTpcB->SetMinimum(2e5);
-  stackTpcB->SetMaximum(13e5);
+  stackTpcB->SetMinimum(min);
+  stackTpcB->SetMaximum(max);
   stackTpcB->Draw("NOSTACK");
 
   canvas->SaveAs(jobID+"_psiCombined.png");

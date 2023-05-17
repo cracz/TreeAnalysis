@@ -18,19 +18,20 @@ void calculateSystematics(TString order_n_str)
 {
   TFile* newFile = new TFile("systematicErrors.root", "RECREATE");
   
-  Variation* Normal = new Variation("Normal_afterDuplication_piKefficiencies_unnecessaryMinHitsRemoved", order_n_str);
+  Variation* Normal = new Variation("Normal", order_n_str);
 
   Variation* epd_high = new Variation("epd_high", order_n_str);
+  Variation* epd_low = new Variation("epd_low", order_n_str);
   Variation* nSigPi_high = new Variation("nSigPi_high", order_n_str);
   Variation* nSigPi_low  = new Variation("nSigPi_low", order_n_str);
   Variation* nSigKa_high = new Variation("nSigKa_high", order_n_str);
   Variation* nSigKa_low  = new Variation("nSigKa_low", order_n_str);
   Variation* nSigPr_high = new Variation("nSigPr_high", order_n_str);
   Variation* nSigPr_low  = new Variation("nSigPr_low", order_n_str);
-  Variation* zDe_high = new Variation("zDe_high", order_n_str);
-  Variation* zDe_low  = new Variation("zDe_low", order_n_str);
-  Variation* zTr_high = new Variation("zTr_high", order_n_str);
-  Variation* zTr_low  = new Variation("zTr_low", order_n_str);
+  //Variation* zDe_high = new Variation("zDe_high", order_n_str);
+  //Variation* zDe_low  = new Variation("zDe_low", order_n_str);
+  //Variation* zTr_high = new Variation("zTr_high", order_n_str);
+  //Variation* zTr_low  = new Variation("zTr_low", order_n_str);
   Variation* rvtx_high = new Variation("rvtx_high", order_n_str);
   Variation* rvtx_low  = new Variation("rvtx_low", order_n_str);
   Variation* zvtx_high = new Variation("zvtx_high", order_n_str);
@@ -38,43 +39,42 @@ void calculateSystematics(TString order_n_str)
   Variation* dca_high = new Variation("dca_high", order_n_str);
   Variation* dca_low  = new Variation("dca_low", order_n_str);
   Variation* nhits_high = new Variation("nhits_high", order_n_str);
+  Variation* nhits_low = new Variation("nhits_low", order_n_str);
   Variation* nhitsdEdx_high = new Variation("nhitsdEdx_high", order_n_str);
-  Variation* nhitsdEdx_low  = new Variation("nhitsdEdx_low", order_n_str);
+  //Variation* nhitsdEdx_low  = new Variation("nhitsdEdx_low", order_n_str);
   Variation* nhitsratio_high = new Variation("nhitsratio_high", order_n_str);
   Variation* nhitsratio_low  = new Variation("nhitsratio_low", order_n_str);
   Variation* m2Pi_high = new Variation("m2Pi_high", order_n_str);
   Variation* m2Pi_low  = new Variation("m2Pi_low", order_n_str);
   Variation* m2Ka_high = new Variation("m2Ka_high", order_n_str);
   Variation* m2Ka_low  = new Variation("m2Ka_low", order_n_str);
-  Variation* m2De_high = new Variation("m2De_high", order_n_str);
-  Variation* m2De_low  = new Variation("m2De_low", order_n_str);
-  Variation* m2Tr_high = new Variation("m2Tr_high", order_n_str);
-  Variation* m2Tr_low  = new Variation("m2Tr_low", order_n_str);
-  Variation* dAndt_high = new Variation("dAndt_high", order_n_str);
-  Variation* dAndt_low = new Variation("dAndt_low", order_n_str);
+  //Variation* m2De_high = new Variation("m2De_high", order_n_str);
+  //Variation* m2De_low  = new Variation("m2De_low", order_n_str);
+  //Variation* m2Tr_high = new Variation("m2Tr_high", order_n_str);
+  //Variation* m2Tr_low  = new Variation("m2Tr_low", order_n_str);
+  //Variation* dAndt_high = new Variation("dAndt_high", order_n_str);
+  //Variation* dAndt_low = new Variation("dAndt_low", order_n_str);
 
 
-  CompositeData* epd = new CompositeData("epd", Normal, epd_high);
-  //std::cout << Normal->h_vn_yCM_00to10_pp->GetNbinsX() << std::endl;
-  //std::cout << epd_high->h_vn_yCM_00to10_pp->GetNbinsX() << std::endl;
-  //std::cout << epd->v_vn_yCM_00to10_pp.size() << std::endl;
-  //return;
-  CompositeData* nhits = new CompositeData("nhits", Normal, nhits_high);  
+  //CompositeData* epd = new CompositeData("epd", Normal, epd_high);
+  CompositeData* epd = new CompositeData("epd", Normal, epd_low, epd_high);
+  CompositeData* nhits = new CompositeData("nhits", Normal, nhits_low, nhits_high);  
   CompositeData* nSigPi = new CompositeData("nSigPi", Normal, nSigPi_low, nSigPi_high);
   CompositeData* nSigKa = new CompositeData("nSigKa", Normal, nSigKa_low, nSigKa_high);
   CompositeData* nSigPr = new CompositeData("nSigPr", Normal, nSigPr_low, nSigPr_high);
-  CompositeData* zDe = new CompositeData("zDe", Normal, zDe_low, zDe_high);
-  CompositeData* zTr = new CompositeData("zTr", Normal, zTr_low, zTr_high);
+  //CompositeData* zDe = new CompositeData("zDe", Normal, zDe_low, zDe_high);
+  //CompositeData* zTr = new CompositeData("zTr", Normal, zTr_low, zTr_high);
   CompositeData* rvtx = new CompositeData("rvtx", Normal, rvtx_low, rvtx_high);
   CompositeData* zvtx = new CompositeData("zvtx", Normal, zvtx_low, zvtx_high);
   CompositeData* dca  = new CompositeData("dca", Normal, dca_low, dca_high);
-  CompositeData* nhitsdEdx = new CompositeData("nhitsdEdx", Normal, nhitsdEdx_low, nhitsdEdx_high);
+  //CompositeData* nhitsdEdx = new CompositeData("nhitsdEdx", Normal, nhitsdEdx_low, nhitsdEdx_high);
+  CompositeData* nhitsdEdx = new CompositeData("nhitsdEdx", Normal, nhitsdEdx_high);
   CompositeData* nhitsratio = new CompositeData("nhitsratio", Normal, nhitsratio_low, nhitsratio_high);
   CompositeData* m2Pi = new CompositeData("m2Pi", Normal, m2Pi_low, m2Pi_high);
   CompositeData* m2Ka = new CompositeData("m2Ka", Normal, m2Ka_low, m2Ka_high);
-  CompositeData* m2De = new CompositeData("m2De", Normal, m2De_low, m2De_high);
-  CompositeData* m2Tr = new CompositeData("m2Tr", Normal, m2Tr_low, m2Tr_high);
-  CompositeData* dAndt = new CompositeData("dAndt", Normal, dAndt_low, dAndt_high);
+  //CompositeData* m2De = new CompositeData("m2De", Normal, m2De_low, m2De_high);
+  //CompositeData* m2Tr = new CompositeData("m2Tr", Normal, m2Tr_low, m2Tr_high);
+  //CompositeData* dAndt = new CompositeData("dAndt", Normal, dAndt_low, dAndt_high);
 
   // Any variations applied universally (like epd variation) should not be in this vector.
   std::vector<CompositeData*> composites;
@@ -82,8 +82,8 @@ void calculateSystematics(TString order_n_str)
   composites.push_back(nSigPi);
   composites.push_back(nSigKa);
   composites.push_back(nSigPr);
-  composites.push_back(zDe);
-  composites.push_back(zTr);
+  //composites.push_back(zDe);
+  //composites.push_back(zTr);
   composites.push_back(rvtx);
   composites.push_back(zvtx);
   composites.push_back(dca);
@@ -91,9 +91,9 @@ void calculateSystematics(TString order_n_str)
   composites.push_back(nhitsratio);
   composites.push_back(m2Pi);
   composites.push_back(m2Ka);
-  composites.push_back(m2De);
-  composites.push_back(m2Tr);
-  composites.push_back(dAndt);
+  //composites.push_back(m2De);
+  //composites.push_back(m2Tr);
+  //composites.push_back(dAndt);
   ////
   
   newFile->cd();
@@ -2492,7 +2492,7 @@ void calculateSystematics(TString order_n_str)
   delete nhits;
   delete nhits_high;
   delete nhitsdEdx;
-  delete nhitsdEdx_low;
+  //delete nhitsdEdx_low;
   delete nhitsdEdx_high;
   delete nhitsratio;
   delete nhitsratio_low;

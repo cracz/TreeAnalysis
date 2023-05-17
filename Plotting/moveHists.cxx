@@ -7,26 +7,27 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
 {
   TFile *file = TFile::Open(fileName);
 
-  TProfile *p_vn_Tpc_pT_0p2to2 = (TProfile*)file->Get("p_vn_Tpc_pT_0p2to2");
+  //TProfile *p_vn_Tpc_pT_0p2to2 = (TProfile*)file->Get("p_vn_Tpc_pT_0p2to2");
     
   TProfile *p_vn_pp = (TProfile*)file->Get("p_vn_pp");
   TProfile *p_vn_pm = (TProfile*)file->Get("p_vn_pm");
   TProfile *p_vn_kp = (TProfile*)file->Get("p_vn_kp");
   TProfile *p_vn_km = (TProfile*)file->Get("p_vn_km");
   TProfile *p_vn_pr = (TProfile*)file->Get("p_vn_pr");
+  /*
   TProfile *p_vn_pr_alt = (TProfile*)file->Get("p_vn_pr_alt");
   TProfile *p_vn_de = (TProfile*)file->Get("p_vn_de");
   TProfile *p_vn_tr = (TProfile*)file->Get("p_vn_tr");
-
+  */
   TProfile2D *p2_vn_yCM_cent_pp = (TProfile2D*)file->Get("p2_vn_yCM_cent_pp");
   TProfile2D *p2_vn_yCM_cent_pm = (TProfile2D*)file->Get("p2_vn_yCM_cent_pm");
   TProfile2D *p2_vn_yCM_cent_kp = (TProfile2D*)file->Get("p2_vn_yCM_cent_kp");
   TProfile2D *p2_vn_yCM_cent_km = (TProfile2D*)file->Get("p2_vn_yCM_cent_km");
   TProfile2D *p2_vn_yCM_cent_pr = (TProfile2D*)file->Get("p2_vn_yCM_cent_pr");
-  TProfile2D *p2_vn_yCM_cent_pr_alt = (TProfile2D*)file->Get("p2_vn_yCM_cent_pr_alt");
+  //TProfile2D *p2_vn_yCM_cent_pr_alt = (TProfile2D*)file->Get("p2_vn_yCM_cent_pr_alt");
   TProfile2D *p2_vn_yCM_cent_pr_symmetry = (TProfile2D*)file->Get("p2_vn_yCM_cent_pr_symmetry");
-  TProfile2D *p2_vn_yCM_cent_de = (TProfile2D*)file->Get("p2_vn_yCM_cent_de");
-  TProfile2D *p2_vn_yCM_cent_tr = (TProfile2D*)file->Get("p2_vn_yCM_cent_tr");
+  //TProfile2D *p2_vn_yCM_cent_de = (TProfile2D*)file->Get("p2_vn_yCM_cent_de");
+  //TProfile2D *p2_vn_yCM_cent_tr = (TProfile2D*)file->Get("p2_vn_yCM_cent_tr");
 
   p2_vn_yCM_cent_kp->RebinY();
   p2_vn_yCM_cent_km->RebinY();
@@ -36,9 +37,9 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   TProfile2D *p2_vn_pT_cent_kp = (TProfile2D*)file->Get("p2_vn_pT_cent_kp");
   TProfile2D *p2_vn_pT_cent_km = (TProfile2D*)file->Get("p2_vn_pT_cent_km");
   TProfile2D *p2_vn_pT_cent_pr = (TProfile2D*)file->Get("p2_vn_pT_cent_pr");
-  TProfile2D *p2_vn_pT_cent_pr_alt = (TProfile2D*)file->Get("p2_vn_pT_cent_pr_alt");
-  TProfile2D *p2_vn_pT_cent_de = (TProfile2D*)file->Get("p2_vn_pT_cent_de");
-  TProfile2D *p2_vn_pT_cent_tr = (TProfile2D*)file->Get("p2_vn_pT_cent_tr");
+  //TProfile2D *p2_vn_pT_cent_pr_alt = (TProfile2D*)file->Get("p2_vn_pT_cent_pr_alt");
+  //TProfile2D *p2_vn_pT_cent_de = (TProfile2D*)file->Get("p2_vn_pT_cent_de");
+  //TProfile2D *p2_vn_pT_cent_tr = (TProfile2D*)file->Get("p2_vn_pT_cent_tr");
 
   p2_vn_pT_cent_kp->RebinY();
   p2_vn_pT_cent_km->RebinY();
@@ -62,15 +63,15 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   TProfile *p_vn_yCM_00to10_pr = p2_vn_yCM_cent_pr->ProfileY("p_vn_yCM_00to10_pr", 15, 16);
   TProfile *p_vn_yCM_10to40_pr = p2_vn_yCM_cent_pr->ProfileY("p_vn_yCM_10to40_pr", 9, 14);
   TProfile *p_vn_yCM_40to60_pr = p2_vn_yCM_cent_pr->ProfileY("p_vn_yCM_40to60_pr", 5, 8);
-
+  /*
   TProfile *p_vn_yCM_00to10_pr_alt = p2_vn_yCM_cent_pr_alt->ProfileY("p_vn_yCM_00to10_pr_alt", 15, 16);
   TProfile *p_vn_yCM_10to40_pr_alt = p2_vn_yCM_cent_pr_alt->ProfileY("p_vn_yCM_10to40_pr_alt", 9, 14);
   TProfile *p_vn_yCM_40to60_pr_alt = p2_vn_yCM_cent_pr_alt->ProfileY("p_vn_yCM_40to60_pr_alt", 5, 8);
-
+  */
   TProfile *p_vn_yCM_00to10_pr_symm = p2_vn_yCM_cent_pr_symmetry->ProfileY("p_vn_yCM_00to10_pr_symm", 15, 16);
   TProfile *p_vn_yCM_10to40_pr_symm = p2_vn_yCM_cent_pr_symmetry->ProfileY("p_vn_yCM_10to40_pr_symm", 9, 14);
   TProfile *p_vn_yCM_40to60_pr_symm = p2_vn_yCM_cent_pr_symmetry->ProfileY("p_vn_yCM_40to60_pr_symm", 5, 8);
-
+  /*
   TProfile *p_vn_yCM_00to10_de = p2_vn_yCM_cent_de->ProfileY("p_vn_yCM_00to10_de", 15, 16);
   TProfile *p_vn_yCM_10to40_de = p2_vn_yCM_cent_de->ProfileY("p_vn_yCM_10to40_de", 9, 14);
   TProfile *p_vn_yCM_40to60_de = p2_vn_yCM_cent_de->ProfileY("p_vn_yCM_40to60_de", 5, 8);
@@ -78,7 +79,7 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   TProfile *p_vn_yCM_00to10_tr = p2_vn_yCM_cent_tr->ProfileY("p_vn_yCM_00to10_tr", 15, 16);
   TProfile *p_vn_yCM_10to40_tr = p2_vn_yCM_cent_tr->ProfileY("p_vn_yCM_10to40_tr", 9, 14);
   TProfile *p_vn_yCM_40to60_tr = p2_vn_yCM_cent_tr->ProfileY("p_vn_yCM_40to60_tr", 5, 8);
-
+  */
 
   TProfile *p_vn_pT_00to10_pp = p2_vn_pT_cent_pp->ProfileY("p_vn_pT_00to10_pp", 15, 16);
   TProfile *p_vn_pT_10to40_pp = p2_vn_pT_cent_pp->ProfileY("p_vn_pT_10to40_pp", 9, 14);
@@ -99,7 +100,7 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   TProfile *p_vn_pT_00to10_pr = p2_vn_pT_cent_pr->ProfileY("p_vn_pT_00to10_pr", 15, 16);
   TProfile *p_vn_pT_10to40_pr = p2_vn_pT_cent_pr->ProfileY("p_vn_pT_10to40_pr", 9, 14);
   TProfile *p_vn_pT_40to60_pr = p2_vn_pT_cent_pr->ProfileY("p_vn_pT_40to60_pr", 5, 8);
-
+  /*
   TProfile *p_vn_pT_00to10_pr_alt = p2_vn_pT_cent_pr_alt->ProfileY("p_vn_pT_00to10_pr_alt", 15, 16);
   TProfile *p_vn_pT_10to40_pr_alt = p2_vn_pT_cent_pr_alt->ProfileY("p_vn_pT_10to40_pr_alt", 9, 14);
   TProfile *p_vn_pT_40to60_pr_alt = p2_vn_pT_cent_pr_alt->ProfileY("p_vn_pT_40to60_pr_alt", 5, 8);
@@ -111,19 +112,19 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   TProfile *p_vn_pT_00to10_tr = p2_vn_pT_cent_tr->ProfileY("p_vn_pT_00to10_tr", 15, 16);
   TProfile *p_vn_pT_10to40_tr = p2_vn_pT_cent_tr->ProfileY("p_vn_pT_10to40_tr", 9, 14);
   TProfile *p_vn_pT_40to60_tr = p2_vn_pT_cent_tr->ProfileY("p_vn_pT_40to60_tr", 5, 8);
+  */
 
-
-
-  TH1D *h_vn_Tpc_pT_0p2to2 = p_vn_Tpc_pT_0p2to2->ProjectionX();
+  
+  //TH1D *h_vn_Tpc_pT_0p2to2 = p_vn_Tpc_pT_0p2to2->ProjectionX();
   TH1D *h_vn_pp = p_vn_pp->ProjectionX();
   TH1D *h_vn_pm = p_vn_pm->ProjectionX();
   TH1D *h_vn_kp = p_vn_kp->ProjectionX();
   TH1D *h_vn_km = p_vn_km->ProjectionX();
   TH1D *h_vn_pr = p_vn_pr->ProjectionX();
-  TH1D *h_vn_pr_alt = p_vn_pr_alt->ProjectionX();
-  TH1D *h_vn_de = p_vn_de->ProjectionX();
-  TH1D *h_vn_tr = p_vn_tr->ProjectionX();
-
+  //TH1D *h_vn_pr_alt = p_vn_pr_alt->ProjectionX();
+  //TH1D *h_vn_de = p_vn_de->ProjectionX();
+  //TH1D *h_vn_tr = p_vn_tr->ProjectionX();
+  
   TH1D *h_vn_yCM_00to10_pp = p_vn_yCM_00to10_pp->ProjectionX();
   TH1D *h_vn_yCM_10to40_pp = p_vn_yCM_10to40_pp->ProjectionX();
   TH1D *h_vn_yCM_40to60_pp = p_vn_yCM_40to60_pp->ProjectionX();
@@ -144,14 +145,14 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   TH1D *h_vn_yCM_10to40_pr = p_vn_yCM_10to40_pr->ProjectionX();
   TH1D *h_vn_yCM_40to60_pr = p_vn_yCM_40to60_pr->ProjectionX();
 
-  TH1D *h_vn_yCM_00to10_pr_alt = p_vn_yCM_00to10_pr_alt->ProjectionX();
-  TH1D *h_vn_yCM_10to40_pr_alt = p_vn_yCM_10to40_pr_alt->ProjectionX();
-  TH1D *h_vn_yCM_40to60_pr_alt = p_vn_yCM_40to60_pr_alt->ProjectionX();
+  //TH1D *h_vn_yCM_00to10_pr_alt = p_vn_yCM_00to10_pr_alt->ProjectionX();
+  //TH1D *h_vn_yCM_10to40_pr_alt = p_vn_yCM_10to40_pr_alt->ProjectionX();
+  //TH1D *h_vn_yCM_40to60_pr_alt = p_vn_yCM_40to60_pr_alt->ProjectionX();
 
   TH1D *h_vn_yCM_00to10_pr_symm = p_vn_yCM_00to10_pr_symm->ProjectionX();
   TH1D *h_vn_yCM_10to40_pr_symm = p_vn_yCM_10to40_pr_symm->ProjectionX();
   TH1D *h_vn_yCM_40to60_pr_symm = p_vn_yCM_40to60_pr_symm->ProjectionX();
-
+  /*
   TH1D *h_vn_yCM_00to10_de = p_vn_yCM_00to10_de->ProjectionX();
   TH1D *h_vn_yCM_10to40_de = p_vn_yCM_10to40_de->ProjectionX();
   TH1D *h_vn_yCM_40to60_de = p_vn_yCM_40to60_de->ProjectionX();
@@ -159,7 +160,7 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   TH1D *h_vn_yCM_00to10_tr = p_vn_yCM_00to10_tr->ProjectionX();
   TH1D *h_vn_yCM_10to40_tr = p_vn_yCM_10to40_tr->ProjectionX();
   TH1D *h_vn_yCM_40to60_tr = p_vn_yCM_40to60_tr->ProjectionX();
-
+  */
 
   TH1D *h_vn_pT_00to10_pp = p_vn_pT_00to10_pp->ProjectionX();
   TH1D *h_vn_pT_10to40_pp = p_vn_pT_10to40_pp->ProjectionX();
@@ -180,7 +181,7 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   TH1D *h_vn_pT_00to10_pr = p_vn_pT_00to10_pr->ProjectionX();
   TH1D *h_vn_pT_10to40_pr = p_vn_pT_10to40_pr->ProjectionX();
   TH1D *h_vn_pT_40to60_pr = p_vn_pT_40to60_pr->ProjectionX();
-
+  /*
   TH1D *h_vn_pT_00to10_pr_alt = p_vn_pT_00to10_pr_alt->ProjectionX();
   TH1D *h_vn_pT_10to40_pr_alt = p_vn_pT_10to40_pr_alt->ProjectionX();
   TH1D *h_vn_pT_40to60_pr_alt = p_vn_pT_40to60_pr_alt->ProjectionX();
@@ -192,29 +193,29 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   TH1D *h_vn_pT_00to10_tr = p_vn_pT_00to10_tr->ProjectionX();
   TH1D *h_vn_pT_10to40_tr = p_vn_pT_10to40_tr->ProjectionX();
   TH1D *h_vn_pT_40to60_tr = p_vn_pT_40to60_tr->ProjectionX();
+  */
 
-
-  h_vn_Tpc_pT_0p2to2 = PlotUtils::flipHisto(h_vn_Tpc_pT_0p2to2);
+  //h_vn_Tpc_pT_0p2to2 = PlotUtils::flipHisto(h_vn_Tpc_pT_0p2to2);
   
   h_vn_pp = PlotUtils::flipHisto(h_vn_pp);
   h_vn_pm = PlotUtils::flipHisto(h_vn_pm);
   h_vn_kp = PlotUtils::flipHisto(h_vn_kp);
   h_vn_km = PlotUtils::flipHisto(h_vn_km);
   h_vn_pr = PlotUtils::flipHisto(h_vn_pr);
-  h_vn_pr_alt = PlotUtils::flipHisto(h_vn_pr_alt);
-  h_vn_de = PlotUtils::flipHisto(h_vn_de);
-  h_vn_tr = PlotUtils::flipHisto(h_vn_tr);
+  //h_vn_pr_alt = PlotUtils::flipHisto(h_vn_pr_alt);
+  //h_vn_de = PlotUtils::flipHisto(h_vn_de);
+  //h_vn_tr = PlotUtils::flipHisto(h_vn_tr);
 
-  h_vn_Tpc_pT_0p2to2 = PlotUtils::trimCentralityPlot(h_vn_Tpc_pT_0p2to2);
+  //h_vn_Tpc_pT_0p2to2 = PlotUtils::trimCentralityPlot(h_vn_Tpc_pT_0p2to2);
 
   h_vn_pp = PlotUtils::trimCentralityPlot(h_vn_pp);
   h_vn_pm = PlotUtils::trimCentralityPlot(h_vn_pm);
   h_vn_kp = PlotUtils::trimCentralityPlot(h_vn_kp);
   h_vn_km = PlotUtils::trimCentralityPlot(h_vn_km);
   h_vn_pr = PlotUtils::trimCentralityPlot(h_vn_pr);
-  h_vn_pr_alt = PlotUtils::trimCentralityPlot(h_vn_pr_alt);
-  h_vn_de = PlotUtils::trimCentralityPlot(h_vn_de);
-  h_vn_tr = PlotUtils::trimCentralityPlot(h_vn_tr);
+  //h_vn_pr_alt = PlotUtils::trimCentralityPlot(h_vn_pr_alt);
+  //h_vn_de = PlotUtils::trimCentralityPlot(h_vn_de);
+  //h_vn_tr = PlotUtils::trimCentralityPlot(h_vn_tr);
   
   h_vn_yCM_00to10_pp = PlotUtils::trimRapidityPlot(h_vn_yCM_00to10_pp);
   h_vn_yCM_10to40_pp = PlotUtils::trimRapidityPlot(h_vn_yCM_10to40_pp);
@@ -236,16 +237,16 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   TFile *newFile = new TFile("v3_results.root", "RECREATE");
   newFile->cd();
 
-  h_vn_Tpc_pT_0p2to2->Write();
+  //h_vn_Tpc_pT_0p2to2->Write();
 
   h_vn_pp->Write();
   h_vn_pm->Write();
   h_vn_kp->Write();
   h_vn_km->Write();
   h_vn_pr->Write();
-  h_vn_pr_alt->Write();
-  h_vn_de->Write();
-  h_vn_tr->Write();
+  //h_vn_pr_alt->Write();
+  //h_vn_de->Write();
+  //h_vn_tr->Write();
 
   h_vn_yCM_00to10_pp->Write();
   h_vn_yCM_10to40_pp->Write();
@@ -266,15 +267,15 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   h_vn_yCM_00to10_pr->Write();
   h_vn_yCM_10to40_pr->Write();
   h_vn_yCM_40to60_pr->Write();
-
+  /*
   h_vn_yCM_00to10_pr_alt->Write();
   h_vn_yCM_10to40_pr_alt->Write();
   h_vn_yCM_40to60_pr_alt->Write();
-
+  */
   h_vn_yCM_00to10_pr_symm->Write();
   h_vn_yCM_10to40_pr_symm->Write();
   h_vn_yCM_40to60_pr_symm->Write();
-
+  /*
   h_vn_yCM_00to10_de->Write();
   h_vn_yCM_10to40_de->Write();
   h_vn_yCM_40to60_de->Write();
@@ -282,7 +283,7 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   h_vn_yCM_00to10_tr->Write();
   h_vn_yCM_10to40_tr->Write();
   h_vn_yCM_40to60_tr->Write();
-
+  */
   h_vn_pT_00to10_pp->Write();
   h_vn_pT_10to40_pp->Write();
   h_vn_pT_40to60_pp->Write();
@@ -302,7 +303,7 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   h_vn_pT_00to10_pr->Write();
   h_vn_pT_10to40_pr->Write();
   h_vn_pT_40to60_pr->Write();
-
+  /*
   h_vn_pT_00to10_pr_alt->Write();
   h_vn_pT_10to40_pr_alt->Write();
   h_vn_pT_40to60_pr_alt->Write();
@@ -314,7 +315,7 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   h_vn_pT_00to10_tr->Write();
   h_vn_pT_10to40_tr->Write();
   h_vn_pT_40to60_tr->Write();
-
+  */
 
   file->Close();
   newFile->Close();

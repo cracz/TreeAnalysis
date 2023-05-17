@@ -56,12 +56,8 @@ void prelimCentralityPlots(TString jobID)
   h_vn_pr = PlotUtils::trimCentralityPlot(h_vn_pr);
 
   // Retrieve systematic uncertainties
-  /*
-  //TFile* systematicFile = TFile::Open("systematicErrors_30percent.root", "READ");
-  //TFile* systematicFile = TFile::Open("systematicErrors_20and30percentVariations_GaussianStdDev.root", "READ");
-  //TFile* systematicFile = TFile::Open("systematicErrors_epd_scaled.root", "READ");
   TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
-  //jobID = "Normal_30";
+  jobID = "Normal";
   TGraphErrors* sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_"+jobID+"_flip");
   TGraphErrors* sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_"+jobID+"_flip");
   TGraphErrors* sys_kp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_kp_"+jobID+"_flip");
@@ -81,7 +77,7 @@ void prelimCentralityPlots(TString jobID)
 
   sys_km->SetMarkerColor(4);
   sys_km->SetLineColor(4);
-  */
+
   //sys_pr should be fine as it is
 
   h_vn_pp->SetMarkerStyle(21);
@@ -186,14 +182,14 @@ void prelimCentralityPlots(TString jobID)
   allCentralityStack->Draw("NOSTACK EP");
   zeroLine->Draw("SAME");
   allCentralityStack->Draw("NOSTACK EP SAME");
-  //sys_pp->Draw("[]");
-  //sys_pm->Draw("[]");
-  //sys_pr->Draw("[]");
+  sys_pp->Draw("[]");
+  sys_pm->Draw("[]");
+  sys_pr->Draw("[]");
   allLegend->Draw();
   allText->Draw();
   //prelimText->Draw();
   canvas->SaveAs("v3_allCentralityStack.pdf");
-  canvas->SaveAs("v3_allCentralityStack.png");
+  //canvas->SaveAs("v3_allCentralityStack.png");
   canvas->Clear();
 
   kaCentralityStack->Draw();
@@ -209,16 +205,16 @@ void prelimCentralityPlots(TString jobID)
   kaCentralityStack->Draw("NOSTACK EP");
   zeroLine->Draw("SAME");
   kaCentralityStack->Draw("NOSTACK EP SAME");
-  //sys_kp->Draw("[]");
-  //sys_km->Draw("[]");
+  sys_kp->Draw("[]");
+  sys_km->Draw("[]");
   kaLegend->Draw();
   kaText->Draw();
   //prelimText->Draw();
   canvas->SaveAs("v3_kaCentralityStack.pdf");
-  canvas->SaveAs("v3_kaCentralityStack.png");
+  //canvas->SaveAs("v3_kaCentralityStack.png");
   canvas->Clear();
 
   
-  //systematicFile->Close();
+  systematicFile->Close();
   file->Close();
 }

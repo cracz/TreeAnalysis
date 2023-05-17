@@ -35,17 +35,14 @@ void prelimPtPlots(TString jobID)
   h_vn_pT_10to40_pr = p_vn_pT_10to40_pr->ProjectionX();
   h_vn_pT_40to60_pr = p_vn_pT_40to60_pr->ProjectionX();
 
-  /*
+
   // Retrieve systematic uncertainties
-  //TFile* systematicFile = TFile::Open("systematicErrors_30percent.root", "READ");
-  //TFile* systematicFile = TFile::Open("systematicErrors_20and30percentVariations_GaussianStdDev.root", "READ");
-  //TFile* systematicFile = TFile::Open("systematicErrors_epd_scaled.root", "READ");
   TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
   TGraphErrors* sys_pT_00to10_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pT_00to10_pr_px");
   TGraphErrors* sys_pT_10to40_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pT_10to40_pr_px");
   TGraphErrors* sys_pT_40to60_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pT_40to60_pr_px");
   ////
-  */
+
 
   // Set various aesthetics
   h_vn_pT_00to10_pr->SetMarkerStyle(21);
@@ -63,7 +60,7 @@ void prelimPtPlots(TString jobID)
   h_vn_pT_00to10_pr->SetLineWidth(3);
   h_vn_pT_10to40_pr->SetLineWidth(3);
   h_vn_pT_40to60_pr->SetLineWidth(3);
-  /*
+
   sys_pT_00to10_pr->SetMarkerColor(kRed-4);
   //sys_pT_10to40_pr->SetMarkerColor(kBlue-4);
   sys_pT_40to60_pr->SetMarkerColor(kBlue-4);
@@ -71,7 +68,7 @@ void prelimPtPlots(TString jobID)
   //sys_pT_10to40_pr->SetLineColor(kBlue-4);
   sys_pT_40to60_pr->SetLineColor(kBlue-4);
   ////
-  */
+
   THStack *prPtStack   = new THStack("prPtStack", ";p_{T} (GeV/c);v_{3} {#Psi_{1}}");
   prPtStack->Add(h_vn_pT_00to10_pr);
   prPtStack->Add(h_vn_pT_10to40_pr);
@@ -121,17 +118,17 @@ void prelimPtPlots(TString jobID)
   prPtStack->SetMinimum(-0.12);
   prPtStack->Draw("NOSTACK EP");
   zeroLine_pt->Draw("SAME");
-  //sys_pT_00to10_pr->Draw("[]");
-  //sys_pT_40to60_pr->Draw("[]");
-  //sys_pT_10to40_pr->Draw("[]");
+  sys_pT_00to10_pr->Draw("[]");
+  sys_pT_40to60_pr->Draw("[]");
+  sys_pT_10to40_pr->Draw("[]");
   prPtStack->Draw("NOSTACK EP SAME");
   prLegend->Draw();
   prText->Draw();
   //prelimText->Draw();
   canvas->SaveAs("v3_prPtStack.pdf");
-  canvas->SaveAs("v3_prPtStack.png");
+  //canvas->SaveAs("v3_prPtStack.png");
   canvas->Clear();
   
-  //systematicFile->Close();
+  systematicFile->Close();
   file->Close();
 }

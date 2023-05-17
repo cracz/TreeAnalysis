@@ -1,10 +1,10 @@
 #!/bin/bash
 
 
-jobID="DA7ABAFD776178B4A30DEA59808C55E6"
+jobID="results_3p5GeV_EPDA1to5_EPDref6to10"
 order_n="3"
 
-#root -l -b -q plotAll.cxx\(\"${jobID}\"\)
+root -l -b -q plotAll.cxx\(\"${jobID}\"\)
 #root -l -b -q m2BypTBins.cxx\(\"${jobID}\"\)
 #root -l -b -q yVsEtaPlots.cxx\(\"${jobID}\"\)
 #root -l -b -q acceptanceCuts.cxx\(\"${jobID}\"\)
@@ -19,7 +19,7 @@ order_n="3"
 #root -l -b -q overlay.cxx\(\"${jobID}\",\"E\"\)
 
 # EP Resolution and Flow Calculations
-root -l -b -q resolutions.cxx\(\"${jobID}\",\"${order_n}\"\)
+#root -l -b -q resolutions.cxx\(\"${jobID}\",\"${order_n}\"\)
 #root -l -b -q coefficients.cxx\(\"${jobID}\",\"${order_n}\"\)
 #root -l -b -q vnVsY.cxx\(\"${jobID}\",\"${order_n}\"\)
 #root -l -b -q vnVsPt.cxx\(\"${jobID}\",\"${order_n}\"\)

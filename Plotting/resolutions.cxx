@@ -234,7 +234,7 @@ void resolutions(TString jobID, TString order_n_str)
   legend->AddEntry(h_resolAvsB,"EPD A");
   legend->AddEntry(h_resolBvsA,"EPD B");
   legend->AddEntry(h_resolTpcB,"TPC B");
-
+  /*
   canvas->SetTicks();
   stack->Draw("NOSTACK E1P");
   legend->Draw();
@@ -253,7 +253,7 @@ void resolutions(TString jobID, TString order_n_str)
   h_centralities_flip->Draw();
   canvas->SaveAs(jobID + "_h_centralities_flip.png");
   canvas->Clear();
-
+  */
 
   
   TLegend *legend2 = new TLegend(0.65, 0.82, 0.96, 0.96);
@@ -287,74 +287,18 @@ void resolutions(TString jobID, TString order_n_str)
   h_resolAvsB->GetYaxis()->SetTitleOffset(0.9);
   h_resolAvsB->GetXaxis()->SetTitleSize(0.045);
   h_resolAvsB->GetYaxis()->SetTitleSize(0.065);
-  h_resolAvsB->SetMaximum(0.3);
+  h_resolAvsB->SetMaximum(0.25);
   //h_resolAvsB->SetMaximum(1.0);
   h_resolAvsB->SetMinimum(0.0);
   h_resolAvsB->SetTitle("");
-   h_resolAvsB->SetMarkerColor(1);
-   h_resolAvsB->SetLineColor(1);
+  h_resolAvsB->SetMarkerColor(1);
+  h_resolAvsB->SetLineColor(1);
   h_resolAvsB->Draw("E1P");
   //legend2->Draw();
   //text_extra->Draw();
   //prelimText->Draw();
   canvas->SaveAs(jobID + "_resolutionAonly.png");
   canvas->Clear();
-
-
-  
-/*  
-  canvas->SetLogy(0);
-  h_resolAvsB->Draw();
-  canvas->SaveAs("h_resolAvsB.png");
-  canvas->Clear();
-
-  h_resolAvsC->Draw();
-  canvas->SaveAs("h_resolAvsC.png");
-  canvas->Clear();
-
-  h_resolAvsD->Draw();
-  canvas->SaveAs("h_resolAvsD.png");
-  canvas->Clear();
-
-
-  h_resolBvsA->Draw();
-  canvas->SaveAs("h_resolBvsA.png");
-  canvas->Clear();
-
-  h_resolBvsC->Draw();
-  canvas->SaveAs("h_resolBvsC.png");
-  canvas->Clear();
-
-  h_resolBvsD->Draw();
-  canvas->SaveAs("h_resolBvsD.png");
-  canvas->Clear();
-
-
-  h_resolCvsA->Draw();
-  canvas->SaveAs("h_resolCvsA.png");
-  canvas->Clear();
-
-  h_resolCvsB->Draw();
-  canvas->SaveAs("h_resolCvsB.png");
-  canvas->Clear();
-
-  h_resolCvsD->Draw();
-  canvas->SaveAs("h_resolCvsD.png");
-  canvas->Clear();
-
-
-  h_resolDvsA->Draw();
-  canvas->SaveAs("h_resolDvsA.png");
-  canvas->Clear();
-
-  h_resolDvsB->Draw();
-  canvas->SaveAs("h_resolDvsB.png");
-  canvas->Clear();
-
-  h_resolDvsC->Draw();
-  canvas->SaveAs("h_resolDvsC.png");
-  canvas->Clear();
-  */
 
   resolutionInfo_INPUT->Close();
   file->Close();
