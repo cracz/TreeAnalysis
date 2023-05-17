@@ -76,7 +76,7 @@ Int_t TreeMaker::Init()
   h_eventCheck->GetXaxis()->SetBinLabel(5,"V_{r} Cut");
   h_eventCheck->GetXaxis()->SetBinLabel(6,"Centrality Cut");
 
-  tempBins1      = (configs.fixed_target) ? 200 : 500;
+  tempBins1      = (configs.fixed_target) ? 500 : 800;
   tempLowBound1  = (configs.fixed_target) ? 190.0 : -210.0;
   tempHighBound1 = 210.0;
   h_zvtx = new TH1D("h_zvtx","Primary Vertex Position in z;Distance (cm);Events", tempBins1, tempLowBound1, tempHighBound1);
@@ -113,17 +113,18 @@ Int_t TreeMaker::Make()
   h_eventCheck->Fill(0); // Count # of events before any cuts
 
   StPicoEvent* event = mPicoDstMaker->picoDst()->event(); // Get Event pointer
+
+  TVector3 pVtx = event->primaryVertex();
+  Double_t d_xvtx = pVtx.x();
+  Double_t d_yvtx = pVtx.y();
+  Double_t d_zvtx = pVtx.z();
+  Double_t d_rvtx = TMath::Sqrt(d_xvtx * d_xvtx + (d_yvtx + 2) * (d_yvtx + 2));
+
+  h_zvtx->Fill(d_zvtx);
+  h2_trans_vtx->Fill(d_xvtx,d_yvtx);
     
   if(event) // Ensure event pointer is not NULL
     { 
-      TVector3 pVtx = event->primaryVertex();
-      Double_t d_xvtx = pVtx.x();
-      Double_t d_yvtx = pVtx.y();
-      Double_t d_zvtx = pVtx.z();
-      Double_t d_rvtx = TMath::Sqrt(d_xvtx * d_xvtx + (d_yvtx + 2) * (d_yvtx + 2));
-
-      h_zvtx->Fill(pVtx.Z());
-      h2_trans_vtx->Fill(pVtx.X(),pVtx.Y());
 
       if( IsGoodRun(event->runId(), configs.sqrt_s_NN) )  // Select only good runs
 	{ 
@@ -186,6 +187,7 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 142 && primTracks <= 195 ) centrality = 15;  // 0% - 5% (Central)
 			}
 		      // 3.22 GeV FXT  --  From Eric Loyd 2022
+		      // https://drupal.star.bnl.gov/STAR/pwg/common/BES-II-Centrality-Calibration
 		      else if (configs.sqrt_s_NN == 3.22) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
 			  if     ( primTracks >=   5 && primTracks <=   6 ) centrality =  0;  // 75% - 80% (Peripheral)
@@ -205,8 +207,30 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 166 && primTracks <= 196 ) centrality = 14;
 			  else if( primTracks >= 197 && primTracks <= 287 ) centrality = 15;  // 0% - 5% (Central)
 			}
-		      // 3.9 GeV FXT ***PRELIMINARY! NOT OFFICIAL!***  --  From Eric Loyd 2022
-		      else if (configs.sqrt_s_NN == 3.9 || configs.sqrt_s_NN == 4.49) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
+		      // 3.5 GeV FXT  --  From Eric Loyd 2023
+		      // https://drupal.star.bnl.gov/STAR/pwg/common/BES-II-Centrality-Calibration
+		      else if (configs.sqrt_s_NN == 3.5) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
+			{
+			  if     ( primTracks >=   6 && primTracks <=   7 ) centrality =  0;  // 75% - 80% (Peripheral)
+			  else if( primTracks >=   8 && primTracks <=  11 ) centrality =  1;
+			  else if( primTracks >=  12 && primTracks <=  15 ) centrality =  2;
+			  else if( primTracks >=  16 && primTracks <=  20 ) centrality =  3;
+			  else if( primTracks >=  21 && primTracks <=  27 ) centrality =  4;
+			  else if( primTracks >=  28 && primTracks <=  36 ) centrality =  5;
+			  else if( primTracks >=  37 && primTracks <=  46 ) centrality =  6;
+			  else if( primTracks >=  47 && primTracks <=  58 ) centrality =  7;
+			  else if( primTracks >=  59 && primTracks <=  72 ) centrality =  8;
+			  else if( primTracks >=  73 && primTracks <=  88 ) centrality =  9;
+			  else if( primTracks >=  89 && primTracks <= 107 ) centrality = 10;
+			  else if( primTracks >= 108 && primTracks <= 127 ) centrality = 11;
+			  else if( primTracks >= 128 && primTracks <= 152 ) centrality = 12;
+			  else if( primTracks >= 153 && primTracks <= 180 ) centrality = 13;
+			  else if( primTracks >= 181 && primTracks <= 215 ) centrality = 14;
+			  else if( primTracks >= 216 && primTracks <= 325 ) centrality = 15;  // 0% - 5% (Central)
+			}
+		      // 3.9 GeV FXT ***2019 RUN ONLY!***  --  From Eric Loyd 2022
+		      // https://drupal.star.bnl.gov/STAR/pwg/common/BES-II-Centrality-Calibration
+		      else if (configs.sqrt_s_NN == 3.9 && ((int)event->runId() / (int)1000000 == 21)) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
 			  if     ( primTracks >=   7 && primTracks <=   8 ) centrality =  0;  // 75% - 80% (Peripheral)
 			  else if( primTracks >=   9 && primTracks <=  12 ) centrality =  1;
@@ -223,7 +247,49 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 141 && primTracks <= 167 ) centrality = 12;
 			  else if( primTracks >= 168 && primTracks <= 197 ) centrality = 13;
 			  else if( primTracks >= 198 && primTracks <= 234 ) centrality = 14;
-			  else if( primTracks >= 235 && primTracks <= 275 ) centrality = 15;  // 0% - 5% (Central)
+			  else if( primTracks >= 235 && primTracks <= 344 ) centrality = 15;  // 0% - 5% (Central)
+			}
+		      // 3.9 GeV FXT ***2020 RUN ONLY!***  --  From Eric Loyd 2023
+		      // https://drupal.star.bnl.gov/STAR/pwg/common/BES-II-Centrality-Calibration
+		      else if (configs.sqrt_s_NN == 3.9 && ((int)event->runId() / (int)1000000 == 20)) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
+			{
+			  if     ( primTracks >=   6 && primTracks <=   8 ) centrality =  0;  // 75% - 80% (Peripheral)
+			  else if( primTracks >=   9 && primTracks <=  12 ) centrality =  1;
+			  else if( primTracks >=  13 && primTracks <=  16 ) centrality =  2;
+			  else if( primTracks >=  17 && primTracks <=  22 ) centrality =  3;
+			  else if( primTracks >=  23 && primTracks <=  30 ) centrality =  4;
+			  else if( primTracks >=  31 && primTracks <=  39 ) centrality =  5;
+			  else if( primTracks >=  40 && primTracks <=  50 ) centrality =  6;
+			  else if( primTracks >=  51 && primTracks <=  63 ) centrality =  7;
+			  else if( primTracks >=  64 && primTracks <=  79 ) centrality =  8;
+			  else if( primTracks >=  80 && primTracks <=  96 ) centrality =  9;
+			  else if( primTracks >=  97 && primTracks <= 117 ) centrality = 10;
+			  else if( primTracks >= 118 && primTracks <= 140 ) centrality = 11;
+			  else if( primTracks >= 141 && primTracks <= 166 ) centrality = 12;
+			  else if( primTracks >= 167 && primTracks <= 197 ) centrality = 13;
+			  else if( primTracks >= 198 && primTracks <= 235 ) centrality = 14;
+			  else if( primTracks >= 236 && primTracks <= 344 ) centrality = 15;  // 0% - 5% (Central)
+			}
+		      // 4.5 GeV  --  From Eric Loyd 2023
+		      // https://drupal.star.bnl.gov/STAR/pwg/common/BES-II-Centrality-Calibration
+		      else if (configs.sqrt_s_NN == 4.5) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
+			{
+			  if     ( primTracks >=   7 && primTracks <=   9 ) centrality =  0;  // 75% - 80% (Peripheral)
+			  else if( primTracks >=  10 && primTracks <=  13 ) centrality =  1;
+			  else if( primTracks >=  14 && primTracks <=  19 ) centrality =  2;
+			  else if( primTracks >=  20 && primTracks <=  25 ) centrality =  3;
+			  else if( primTracks >=  26 && primTracks <=  34 ) centrality =  4;
+			  else if( primTracks >=  35 && primTracks <=  44 ) centrality =  5;
+			  else if( primTracks >=  45 && primTracks <=  56 ) centrality =  6;
+			  else if( primTracks >=  57 && primTracks <=  70 ) centrality =  7;
+			  else if( primTracks >=  71 && primTracks <=  87 ) centrality =  8;
+			  else if( primTracks >=  88 && primTracks <= 106 ) centrality =  9;
+			  else if( primTracks >= 107 && primTracks <= 129 ) centrality = 10;
+			  else if( primTracks >= 130 && primTracks <= 153 ) centrality = 11;
+			  else if( primTracks >= 154 && primTracks <= 182 ) centrality = 12;
+			  else if( primTracks >= 183 && primTracks <= 215 ) centrality = 13;
+			  else if( primTracks >= 216 && primTracks <= 256 ) centrality = 14;
+			  else if( primTracks >= 257 && primTracks <= 367 ) centrality = 15;  // 0% - 5% (Central)
 			}
 
 		      // 7.2 GeV FXT
@@ -246,50 +312,6 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 154 && primTracks <= 190 ) centrality = 14;
 			  else if( primTracks >= 191 && primTracks <= 240 ) centrality = 15;  // 0% - 5% (Central)
 			}
-
-		      // 14.5 GeV COL
-		      /*
-		      else if (configs.sqrt_s_NN == 14.5) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
-			{
-			  if     ( primTracks >=    3 && primTracks <=   10 ) centrality =  0;  // 75% - 80% (Peripheral)
-			  else if( primTracks >=   11 && primTracks <=   21 ) centrality =  1;
-			  else if( primTracks >=    && primTracks <=   ) centrality =  2;
-			  else if( primTracks >=   && primTracks <=   ) centrality =  3;
-			  else if( primTracks >=   && primTracks <=   ) centrality =  4;
-			  else if( primTracks >=   && primTracks <=   ) centrality =  5;
-			  else if( primTracks >=   && primTracks <=   ) centrality =  6;
-			  else if( primTracks >=   && primTracks <=   ) centrality =  7;
-			  else if( primTracks >=   && primTracks <=   ) centrality =  8;
-			  else if( primTracks >=   && primTracks <=   ) centrality =  9;
-			  else if( primTracks >=   && primTracks <=  ) centrality = 10;
-			  else if( primTracks >=  && primTracks <=  ) centrality = 11;
-			  else if( primTracks >=  && primTracks <=  ) centrality = 12;
-			  else if( primTracks >=  && primTracks <=  ) centrality = 13;
-			  else if( primTracks >=  && primTracks <=  ) centrality = 14;
-			  else if( primTracks >=  && primTracks <= ) centrality = 15;  // 0% - 5% (Central)
-			}
-		      */
-		      // 19.6 GeV COL
-		      else if (configs.sqrt_s_NN == 19.6) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
-			{
-			  if     ( primTracks >=   4 && primTracks <=   5 ) centrality =  0;  // 75% - 80% (Peripheral)
-			  else if( primTracks >=   6 && primTracks <=   8 ) centrality =  1;
-			  else if( primTracks >=   9 && primTracks <=  11 ) centrality =  2;
-			  else if( primTracks >=  12 && primTracks <=  16 ) centrality =  3;
-			  else if( primTracks >=  17 && primTracks <=  23 ) centrality =  4;
-			  else if( primTracks >=  24 && primTracks <=  31 ) centrality =  5;
-			  else if( primTracks >=  32 && primTracks <=  42 ) centrality =  6;
-			  else if( primTracks >=  43 && primTracks <=  56 ) centrality =  7;
-			  else if( primTracks >=  57 && primTracks <=  72 ) centrality =  8;
-			  else if( primTracks >=  73 && primTracks <=  93 ) centrality =  9;
-			  else if( primTracks >=  94 && primTracks <= 118 ) centrality = 10;
-			  else if( primTracks >= 119 && primTracks <= 149 ) centrality = 11;
-			  else if( primTracks >= 150 && primTracks <= 186 ) centrality = 12;
-			  else if( primTracks >= 187 && primTracks <= 232 ) centrality = 13;
-			  else if( primTracks >= 233 && primTracks <= 290 ) centrality = 14;
-			  else if( primTracks >= 291 && primTracks <= 2048) centrality = 15;  // 0% - 5% (Central)
-			}
-
 
 		      // Select only good centrality valued events
 		      if(centrality >= FIRST_CENT)
@@ -401,53 +423,13 @@ Bool_t TreeMaker::IsGoodRun(Int_t runNumber, Double_t sqrt_s_NN)
   const Int_t badRuns_3p5GeV = 8;
   Int_t badRunList_3p5GeV[badRuns_3p5GeV] = {20355020, 20355021, 21044023, 21045024, 21045025, 21044027, 21044035, 21045004};
 
+  //const Int_t badRuns_3p9GeV = 7;
+  //Int_t badRunList_3p9GeV[badRuns_3p9GeV] = {20107029, 20113042, 20113043, 20169033, 20169043, 21035011};
   const Int_t badRuns_3p9GeV = 7;
-  Int_t badRunList_3p9GeV[badRuns_3p9GeV] = {20107029, 20113042, 20113043, 20169033, 20169043, 21035011};
+  Int_t badRunList_3p9GeV[badRuns_3p9GeV] = {20107029, 20113042, 20113043, 20169033, 20169043, 21035011, 21036012};
 
   const Int_t badRuns_4p5GeV = 1;
   Int_t badRunList_4p5GeV[badRuns_4p5GeV] = {21032001};
-
-
-
-  const Int_t badRuns_19p6GeV = 374;
-  Int_t badRunList_19p6GeV[badRuns_19p6GeV] = {20057007, 20057025, 20057026, 20057050, 20058001, 20058002, 20058003, 20058004, 20058005, 20060012, 
-					       20060022, 20060025, 20060060, 20060061, 20060062, 20062010, 20062011, 20062012, 20062036, 20063011, 
-					       20063034, 20063035, 20063036, 20063039, 20064008, 20064009, 20064011, 20064012, 20064040, 20065018, 
-					       20067014, 20067023, 20067024, 20067029, 20067030, 20067045, 20067046, 20069030, 20069032, 20069054, 
-					       20070042, 20070043, 20070044, 20070047, 20071001, 20071004, 20071005, 20071006, 20071027, 20071037, 
-					       20072034, 20072035, 20072036, 20072039, 20072041, 20072045, 20072047, 20073071, 20073072, 20073076, 
-					       20074001, 20074003, 20074004, 20074005, 20074007, 20074008, 20074009, 20074012, 20074014, 20074017, 
-					       20074018, 20074020, 20074021, 20074026, 20074027, 20074029, 20074032, 20074033, 20074034, 20074044, 
-					       20074045, 20075001, 20075002, 20075006, 20075007, 20075009, 20075011, 20075013, 20081002, 20081014, 
-					       20082060, 20082065, 20083024, 20086012, 20087007, 20089008, 20090024, 20091011, 20092054,
-					       20062007, 20062009, 20065017, 20065056, 20065060, 20066001, 20066008, 20066015, 20066019, 20066023, 
-					       20066026, 20066066, 20066067, 20066068, 20066073, 20066078, 20067001, 20067004, 20067009, 20067012, 
-					       20067015, 20067016, 20067019, 20067028, 20067038, 20067041, 20067047, 20068001, 20068004, 20068008,
-					       20068012, 20068019, 20068026, 20068034, 20068051, 20068055, 20068058, 20068060, 20068064, 20069001, 
-					       20069004, 20069007, 20069010, 20069020, 20069023, 20069026, 20069031, 20069033, 20069042, 20069050, 
-					       20069053, 20069057, 20069060, 20070002, 20070005, 20070010, 20070013, 20070016, 20070019, 20070041,
-					       20070045, 20071003, 20071007, 20071010, 20071013, 20071016, 20071019, 20071024, 20071029, 20071036,
-					       20071041, 20071044, 20071047, 20071050, 20071053, 20071056, 20071059, 20071063, 20072002, 20072005,
-					       20072009, 20072012, 20072016, 20072037, 20072038, 20072046, 20072050, 20072055, 20073002, 20073006,
-					       20073013, 20073017, 20073022, 20073025, 20073074, 20074002, 20074006, 20074010, 20074011, 20074016, 
-					       20074019, 20074023, 20074030, 20074043, 20074046, 20075004, 20075008, 20075014, 20075010, 20075015,
-					       20075020, 20075025, 20075031, 20075035, 20075039, 20075043, 20075048, 20075054, 20075057, 20075060, 
-					       20075066, 20076001, 20076004, 20076007, 20076010, 20076013, 20076017, 20076021, 20076025, 20076028, 
-					       20076031, 20076034, 20076037, 20076040, 20076045, 20076048, 20076051, 20076054, 20076059, 20077002, 
-					       20077005, 20077008, 20077011, 20077014, 20077017, 20077018, 20078001, 20078007, 20078013, 20078016, 
-					       20078019, 20078022, 20078028, 20078032, 20078035, 20078040, 20078043, 20078046, 20078051, 20078054, 
-					       20078057, 20078060, 20078063, 20078067, 20079006, 20079009, 20079013, 20079017, 20079020, 20079023, 
-					       20079044, 20080006, 20080009, 20080012, 20080016, 20080020, 20081001, 20081004, 20081007, 20081012, 
-					       20081015, 20081018, 20081025, 20082002, 20082005, 20082010, 20082013, 20082016, 20082019, 20082024, 
-					       20082029, 20082034, 20082038, 20082047, 20082050, 20082053, 20082056, 20082059, 20082063, 20082066, 
-					       20083001, 20083004, 20083019, 20083022, 20083025, 20083029, 20083032, 20083074, 20083077, 20083079,
-					       20084001, 20084002, 20084005, 20084009, 20084013, 20084016, 20084022, 20085006, 20085009, 20085017, 
-					       20086002, 20086005, 20086056, 20086011, 20086015, 20087008, 20087012, 20087021, 20088005, 20088009, 
-					       20088012, 20088030, 20088033, 20088037, 20089003, 20089006, 20089009, 20089012, 20089015, 20089018, 
-					       20089028, 20090002, 20090005, 20090008, 20090011, 20090014, 20090017, 20090021, 20090031, 20090048, 
-					       20091003, 20091006, 20091009, 20091012, 20091016, 20091019, 20091020, 20092005, 20092012, 20092015, 
-					       20092018, 20092021, 20092024, 20092027, 20092030, 20092033, 20092038, 20092053, 20092057, 20093001, 
-					       20093005, 20093010, 20093016, 20093025, 20093035};
 
   Bool_t b_good_run = true;
 
@@ -462,8 +444,6 @@ Bool_t TreeMaker::IsGoodRun(Int_t runNumber, Double_t sqrt_s_NN)
     b_good_run = !foundInArray(runNumber, badRunList_3p9GeV, badRuns_3p9GeV);
   else if (sqrt_s_NN == 4.5)
     b_good_run = !foundInArray(runNumber, badRunList_4p5GeV, badRuns_4p5GeV);
-  else if (sqrt_s_NN == 19.6)
-    b_good_run = !foundInArray(runNumber, badRunList_19p6GeV, badRuns_19p6GeV);
 
   return b_good_run;
 }

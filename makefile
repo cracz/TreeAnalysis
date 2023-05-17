@@ -1,8 +1,8 @@
 SRCS = StRoot/ConfigReader/ConfigReader.cxx TreeAnalyzer.cxx
 OBJS = $(SRCS:.cxx=.o)
-DEPS = FlowUtils.h
+DEPS = FlowUtils.h NSigmaCorrectionUtils.h
 TARGET = TreeAnalyzer
-#TARGET2 = testPurity
+TARGET2 = nSigmaInfo
 
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs)
@@ -25,27 +25,27 @@ FLAGS = -Wall -g -fPIC -std=c++11
 COMPILE = $(CC) $(FLAGS)
 
 
-all: $(TARGET) #$(TARGET2)
+all: $(TARGET) $(TARGET2)
 
 $(TARGET): $(OBJS)
 	$(COMPILE) -o $@ $^ $(SOLIBS) $(ROOTCFLAGS) $(ROOTLIBS) $(INCFLAGS) $(LIBFLAGS)
 
-#$(TARGET2): testPurity.o
-#	$(COMPILE) -o $@ $^ $(SOLIBS) $(ROOTCFLAGS) $(ROOTLIBS) $(INCFLAGS) $(LIBFLAGS)
+$(TARGET2): nSigmaInfo.o StRoot/ConfigReader/ConfigReader.o
+	$(COMPILE) -o $@ $^ $(SOLIBS) $(ROOTCFLAGS) $(ROOTLIBS) $(INCFLAGS) $(LIBFLAGS)
 
-TreeAnalyzer.o: FlowUtils.h StRoot/ConfigReader/ConfigReader.h TreeAnalyzer.cxx
+TreeAnalyzer.o: $(DEPS) StRoot/ConfigReader/ConfigReader.h TreeAnalyzer.cxx
 	$(COMPILE) -o $@ -c TreeAnalyzer.cxx $(SOLIBS) $(ROOTCFLAGS) $(ROOTLIBS) $(INCFLAGS) $(LIBFLAGS)
 
 StRoot/ConfigReader/ConfigReader.o: StRoot/ConfigReader/ConfigReader.h StRoot/ConfigReader/ConfigReader.cxx
 	$(COMPILE) -o $@ -c StRoot/ConfigReader/ConfigReader.cxx $(ROOTCFLAGS) $(ROOTLIBS)
 
-testPurity.o: testPurity.cxx
-	$(COMPILE) -o $@ -c testPurity.cxx $(SOLIBS) $(ROOTCFLAGS) $(ROOTLIBS) $(INCFLAGS) $(LIBFLAGS)
+nSigmaInfo.o: nSigmaInfo.cxx StRoot/ConfigReader/ConfigReader.cxx
+	$(COMPILE) -o $@ -c nSigmaInfo.cxx $(SOLIBS) $(ROOTCFLAGS) $(ROOTLIBS) $(INCFLAGS) $(LIBFLAGS)
 
 .PHONY: clean
 
 clean:
-	rm -f $(TARGET) $(OBJS) #testPurity.o testPurity
+	rm -f $(TARGET) $(OBJS) nSigmaInfo.o nSigmaInfo
 
 
 
