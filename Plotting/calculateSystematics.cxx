@@ -28,10 +28,7 @@ void calculateSystematics(TString order_n_str)
   Variation* nSigKa_low  = new Variation("nSigKa_low", order_n_str);
   Variation* nSigPr_high = new Variation("nSigPr_high", order_n_str);
   Variation* nSigPr_low  = new Variation("nSigPr_low", order_n_str);
-  //Variation* zDe_high = new Variation("zDe_high", order_n_str);
-  //Variation* zDe_low  = new Variation("zDe_low", order_n_str);
-  //Variation* zTr_high = new Variation("zTr_high", order_n_str);
-  //Variation* zTr_low  = new Variation("zTr_low", order_n_str);
+
   Variation* rvtx_high = new Variation("rvtx_high", order_n_str);
   Variation* rvtx_low  = new Variation("rvtx_low", order_n_str);
   Variation* zvtx_high = new Variation("zvtx_high", order_n_str);
@@ -48,13 +45,7 @@ void calculateSystematics(TString order_n_str)
   Variation* m2Pi_low  = new Variation("m2Pi_low", order_n_str);
   Variation* m2Ka_high = new Variation("m2Ka_high", order_n_str);
   Variation* m2Ka_low  = new Variation("m2Ka_low", order_n_str);
-  //Variation* m2De_high = new Variation("m2De_high", order_n_str);
-  //Variation* m2De_low  = new Variation("m2De_low", order_n_str);
-  //Variation* m2Tr_high = new Variation("m2Tr_high", order_n_str);
-  //Variation* m2Tr_low  = new Variation("m2Tr_low", order_n_str);
-  //Variation* dAndt_high = new Variation("dAndt_high", order_n_str);
-  //Variation* dAndt_low = new Variation("dAndt_low", order_n_str);
-
+  
 
   //CompositeData* epd = new CompositeData("epd", Normal, epd_high);
   CompositeData* epd = new CompositeData("epd", Normal, epd_low, epd_high);
@@ -62,8 +53,6 @@ void calculateSystematics(TString order_n_str)
   CompositeData* nSigPi = new CompositeData("nSigPi", Normal, nSigPi_low, nSigPi_high);
   CompositeData* nSigKa = new CompositeData("nSigKa", Normal, nSigKa_low, nSigKa_high);
   CompositeData* nSigPr = new CompositeData("nSigPr", Normal, nSigPr_low, nSigPr_high);
-  //CompositeData* zDe = new CompositeData("zDe", Normal, zDe_low, zDe_high);
-  //CompositeData* zTr = new CompositeData("zTr", Normal, zTr_low, zTr_high);
   CompositeData* rvtx = new CompositeData("rvtx", Normal, rvtx_low, rvtx_high);
   CompositeData* zvtx = new CompositeData("zvtx", Normal, zvtx_low, zvtx_high);
   CompositeData* dca  = new CompositeData("dca", Normal, dca_low, dca_high);
@@ -72,9 +61,6 @@ void calculateSystematics(TString order_n_str)
   CompositeData* nhitsratio = new CompositeData("nhitsratio", Normal, nhitsratio_low, nhitsratio_high);
   CompositeData* m2Pi = new CompositeData("m2Pi", Normal, m2Pi_low, m2Pi_high);
   CompositeData* m2Ka = new CompositeData("m2Ka", Normal, m2Ka_low, m2Ka_high);
-  //CompositeData* m2De = new CompositeData("m2De", Normal, m2De_low, m2De_high);
-  //CompositeData* m2Tr = new CompositeData("m2Tr", Normal, m2Tr_low, m2Tr_high);
-  //CompositeData* dAndt = new CompositeData("dAndt", Normal, dAndt_low, dAndt_high);
 
   // Any variations applied universally (like epd variation) should not be in this vector.
   std::vector<CompositeData*> composites;
@@ -82,8 +68,6 @@ void calculateSystematics(TString order_n_str)
   composites.push_back(nSigPi);
   composites.push_back(nSigKa);
   composites.push_back(nSigPr);
-  //composites.push_back(zDe);
-  //composites.push_back(zTr);
   composites.push_back(rvtx);
   composites.push_back(zvtx);
   composites.push_back(dca);
@@ -91,9 +75,6 @@ void calculateSystematics(TString order_n_str)
   composites.push_back(nhitsratio);
   composites.push_back(m2Pi);
   composites.push_back(m2Ka);
-  //composites.push_back(m2De);
-  //composites.push_back(m2Tr);
-  //composites.push_back(dAndt);
   ////
   
   newFile->cd();
@@ -120,33 +101,9 @@ void calculateSystematics(TString order_n_str)
 	  if (composites.at(jthVariation)->v_vn_pp.at(ithBin).deltaByDeltaError > 1.0)
 	    {
 	      quadSum += composites.at(jthVariation)->v_vn_pp.at(ithBin).variance;
-	      /*
-	      std::cout << composites.at(jthVariation)->ID << ": "
-			<< (composites.at(jthVariation)->v_vn_pp.at(ithBin).stdDev/Normal->h_vn_pp->GetBinContent(ithBin+1) ) * 100
-			<< std::endl;
-	      */
 	    }
 	}
-      //std::cout << std::endl;
-      
-      /*
-      if (rvtx->v_vn_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pp.at(i).variance;
-      if (zvtx->v_vn_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pp.at(i).variance;
-      if (dca->v_vn_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pp.at(i).variance;
-      if (nhits->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pp.at(i).variance;
-      if (nhitsdEdx->v_vn_pp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pp.at(i).variance;
-      if (nhitsratio->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pp.at(i).variance;
-      if (m2Pi->v_vn_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pp.at(i).variance;
-      if (m2Ka->v_vn_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Ka->v_vn_pp.at(i).variance;
-      if (m2De->v_vn_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2De->v_vn_pp.at(i).variance;
-      if (m2Tr->v_vn_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Tr->v_vn_pp.at(i).variance;
-      if (nSigPi->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pp.at(i).variance;
-      if (nSigKa->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigKa->v_vn_pp.at(i).variance;
-      if (nSigPr->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pp.at(i).variance;
-      if (zDe->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += zDe->v_vn_pp.at(i).variance;
-      if (zTr->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += zTr->v_vn_pp.at(i).variance;
-      if (dAndt->v_vn_pp.at(i).deltaByDeltaError > 1.0) quadSum += dAndt->v_vn_pp.at(i).variance;
-      */
+
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -169,20 +126,9 @@ void calculateSystematics(TString order_n_str)
 	  if (composites.at(jthVariation)->v_vn_pm.at(ithBin).deltaByDeltaError > 1.0)
 	    {
 	      quadSum += composites.at(jthVariation)->v_vn_pm.at(ithBin).variance;
-	      /*
-		std::cout << composites.at(jthVariation)->ID << ": "
-			<< (composites.at(jthVariation)->v_vn_pm.at(ithBin).stdDev/Normal->h_vn_pm->GetBinContent(ithBin+1) ) * 100
-			<< std::endl;
-	      */
 	    }
 	}
-      /*
-      std::cout << "epd: "
-		<< (epd->v_vn_pm.at(ithBin).stdDev/Normal->h_vn_pm->GetBinContent(ithBin+1) ) * 100
-		<< std::endl;
-      
-      std::cout << std::endl;
-      */
+
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pm.push_back(ithBinSysErr);
     }// End h_vn_pm loop
@@ -250,33 +196,9 @@ void calculateSystematics(TString order_n_str)
 	  if (composites.at(jthVariation)->v_vn_pr.at(ithBin).deltaByDeltaError > 1.0)
 	    {
 	      quadSum += composites.at(jthVariation)->v_vn_pr.at(ithBin).variance;
-	      /*
-	      std::cout << composites.at(jthVariation)->ID << ": "
-			<< (composites.at(jthVariation)->v_vn_pr.at(ithBin).stdDev/Normal->h_vn_pr->GetBinContent(ithBin+1) ) * 100
-			<< std::endl;
-	      */
 	    }
 	}
-      /*
-      if (epd->v_vn_pr.at(ithBin).deltaByDeltaError > 1.0)
-	{
-	  std::cout << "epd: "
-		    << (epd->v_vn_pr.at(ithBin).stdDev/Normal->h_vn_pr->GetBinContent(ithBin+1) ) * 100
-		    << std::endl;
-	}
-      std::cout << std::endl;
-      */
-      /*
-      if (rvtx->v_vn_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pr.at(i).variance;
-      if (zvtx->v_vn_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pr.at(i).variance;
-      if (dca->v_vn_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pr.at(i).variance;
-      if (nhits->v_vn_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pr.at(i).variance;
-      if (nhitsdEdx->v_vn_pr.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pr.at(i).variance;
-      if (nhitsratio->v_vn_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pr.at(i).variance;
-      if (m2Pi->v_vn_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pr.at(i).variance;
-      if (nSigPi->v_vn_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pr.at(i).variance;
-      if (nSigPr->v_vn_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pr.at(i).variance;
-      */
+
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pr.push_back(ithBinSysErr);
     }// End h_vn_pr loop
@@ -301,30 +223,9 @@ void calculateSystematics(TString order_n_str)
 	  if (composites.at(jthVariation)->v_vn_pr_alt.at(ithBin).deltaByDeltaError > 1.0)
 	    {
 	      quadSum += composites.at(jthVariation)->v_vn_pr_alt.at(ithBin).variance;
-
-	      std::cout << composites.at(jthVariation)->ID << ": "
-			<< (composites.at(jthVariation)->v_vn_pr_alt.at(ithBin).stdDev/Normal->h_vn_pr_alt->GetBinContent(ithBin+1) ) * 100
-			<< std::endl;
 	    }
 	}
 
-      std::cout << "epd: "
-		<< (epd->v_vn_pr_alt.at(ithBin).stdDev/Normal->h_vn_pr_alt->GetBinContent(ithBin+1) ) * 100
-		<< std::endl;
-      
-      std::cout << std::endl;
-
-      /*
-      if (rvtx->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pr_alt.at(i).variance;
-      if (zvtx->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pr_alt.at(i).variance;
-      if (dca->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pr_alt.at(i).variance;
-      if (nhits->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pr_alt.at(i).variance;
-      if (nhitsdEdx->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pr_alt.at(i).variance;
-      if (nhitsratio->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pr_alt.at(i).variance;
-      if (m2Pi->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pr_alt.at(i).variance;
-      if (nSigPi->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pr_alt.at(i).variance;
-      if (nSigPr->v_vn_pr_alt.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pr_alt.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pr_alt.push_back(ithBinSysErr);
     }// End h_vn_pr_alt loop
@@ -349,18 +250,8 @@ void calculateSystematics(TString order_n_str)
 	  if (composites.at(jthVariation)->v_vn_de.at(ithBin).deltaByDeltaError > 1.0)
 	    {
 	      quadSum += composites.at(jthVariation)->v_vn_de.at(ithBin).variance;
-
-	      std::cout << composites.at(jthVariation)->ID << ": "
-			<< (composites.at(jthVariation)->v_vn_de.at(ithBin).stdDev/Normal->h_vn_de->GetBinContent(ithBin+1) ) * 100
-			<< std::endl;
 	    }
 	}
-
-      std::cout << "epd: "
-		<< (epd->v_vn_de.at(ithBin).stdDev/Normal->h_vn_de->GetBinContent(ithBin+1) ) * 100
-		<< std::endl;
-
-      std::cout << std::endl;
 
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_de.push_back(ithBinSysErr);
@@ -385,18 +276,8 @@ void calculateSystematics(TString order_n_str)
 	  if (composites.at(jthVariation)->v_vn_tr.at(ithBin).deltaByDeltaError > 1.0)
 	    {
 	      quadSum += composites.at(jthVariation)->v_vn_tr.at(ithBin).variance;
-
-	      std::cout << composites.at(jthVariation)->ID << ": "
-			<< (composites.at(jthVariation)->v_vn_tr.at(ithBin).stdDev/Normal->h_vn_tr->GetBinContent(ithBin+1) ) * 100
-			<< std::endl;
 	    }
 	}
-
-      std::cout << "epd: "
-		<< (epd->v_vn_tr.at(ithBin).stdDev/Normal->h_vn_tr->GetBinContent(ithBin+1) ) * 100
-		<< std::endl;
-
-      std::cout << std::endl;
 
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_tr.push_back(ithBinSysErr);
@@ -423,18 +304,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_00to10_pp.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_00to10_pp.at(i).variance;
-      if (zvtx->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_00to10_pp.at(i).variance;
-      if (dca->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_00to10_pp.at(i).variance;
-      if (nhits->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_00to10_pp.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_00to10_pp.at(i).variance;
-      if (nhitsratio->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_00to10_pp.at(i).variance;
-      if (m2Pi->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_00to10_pp.at(i).variance;
-      if (nSigPi->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_00to10_pp.at(i).variance;
-      if (nSigPr->v_vn_yCM_00to10_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_00to10_pp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_00to10_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -457,18 +326,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_10to40_pp.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_10to40_pp.at(i).variance;
-      if (zvtx->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_10to40_pp.at(i).variance;
-      if (dca->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_10to40_pp.at(i).variance;
-      if (nhits->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_10to40_pp.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_10to40_pp.at(i).variance;
-      if (nhitsratio->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_10to40_pp.at(i).variance;
-      if (m2Pi->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_10to40_pp.at(i).variance;
-      if (nSigPi->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_10to40_pp.at(i).variance;
-      if (nSigPr->v_vn_yCM_10to40_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_10to40_pp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_10to40_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -491,18 +348,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_40to60_pp.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_40to60_pp.at(i).variance;
-      if (zvtx->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_40to60_pp.at(i).variance;
-      if (dca->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_40to60_pp.at(i).variance;
-      if (nhits->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_40to60_pp.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_40to60_pp.at(i).variance;
-      if (nhitsratio->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_40to60_pp.at(i).variance;
-      if (m2Pi->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_40to60_pp.at(i).variance;
-      if (nSigPi->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_40to60_pp.at(i).variance;
-      if (nSigPr->v_vn_yCM_40to60_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_40to60_pp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_40to60_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -526,17 +371,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_00to10_pm.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_00to10_pm.at(i).variance;
-      if (zvtx->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_00to10_pm.at(i).variance;
-      if (dca->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_00to10_pm.at(i).variance;
-      if (nhits->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_00to10_pm.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_00to10_pm.at(i).variance;
-      if (nhitsratio->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_00to10_pm.at(i).variance;
-      if (m2Pi->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_00to10_pm.at(i).variance;
-      if (nSigPi->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_00to10_pm.at(i).variance;
-      if (nSigPr->v_vn_yCM_00to10_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_00to10_pm.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_00to10_pm.push_back(ithBinSysErr);
     }
@@ -559,18 +393,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_10to40_pm.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_10to40_pm.at(i).variance;
-      if (zvtx->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_10to40_pm.at(i).variance;
-      if (dca->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_10to40_pm.at(i).variance;
-      if (nhits->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_10to40_pm.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_10to40_pm.at(i).variance;
-      if (nhitsratio->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_10to40_pm.at(i).variance;
-      if (m2Pi->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_10to40_pm.at(i).variance;
-      if (nSigPi->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_10to40_pm.at(i).variance;
-      if (nSigPr->v_vn_yCM_10to40_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_10to40_pm.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_10to40_pm.push_back(ithBinSysErr);
     }
@@ -593,18 +415,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_40to60_pm.at(ithBin).variance;
 	}
       
-      
-      /*
-      if (rvtx->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_40to60_pm.at(i).variance;
-      if (zvtx->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_40to60_pm.at(i).variance;
-      if (dca->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_40to60_pm.at(i).variance;
-      if (nhits->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_40to60_pm.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_40to60_pm.at(i).variance;
-      if (nhitsratio->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_40to60_pm.at(i).variance;
-      if (m2Pi->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_40to60_pm.at(i).variance;
-      if (nSigPi->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_40to60_pm.at(i).variance;
-      if (nSigPr->v_vn_yCM_40to60_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_40to60_pm.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_40to60_pm.push_back(ithBinSysErr);
     }
@@ -628,17 +438,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_00to10_kp.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_00to10_kp.at(i).variance;
-      if (zvtx->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_00to10_kp.at(i).variance;
-      if (dca->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_00to10_kp.at(i).variance;
-      if (nhits->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_00to10_kp.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_00to10_kp.at(i).variance;
-      if (nhitsratio->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_00to10_kp.at(i).variance;
-      if (m2Pi->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_00to10_kp.at(i).variance;
-      if (nSigPi->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_00to10_kp.at(i).variance;
-      if (nSigPr->v_vn_yCM_00to10_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_00to10_kp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_00to10_kp.push_back(ithBinSysErr);
     }
@@ -661,18 +460,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_10to40_kp.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_10to40_kp.at(i).variance;
-      if (zvtx->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_10to40_kp.at(i).variance;
-      if (dca->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_10to40_kp.at(i).variance;
-      if (nhits->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_10to40_kp.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_10to40_kp.at(i).variance;
-      if (nhitsratio->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_10to40_kp.at(i).variance;
-      if (m2Pi->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_10to40_kp.at(i).variance;
-      if (nSigPi->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_10to40_kp.at(i).variance;
-      if (nSigPr->v_vn_yCM_10to40_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_10to40_kp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_10to40_kp.push_back(ithBinSysErr);
     }
@@ -694,18 +481,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_40to60_kp.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_40to60_kp.at(i).variance;
-      if (zvtx->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_40to60_kp.at(i).variance;
-      if (dca->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_40to60_kp.at(i).variance;
-      if (nhits->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_40to60_kp.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_40to60_kp.at(i).variance;
-      if (nhitsratio->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_40to60_kp.at(i).variance;
-      if (m2Pi->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_40to60_kp.at(i).variance;
-      if (nSigPi->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_40to60_kp.at(i).variance;
-      if (nSigPr->v_vn_yCM_40to60_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_40to60_kp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_40to60_kp.push_back(ithBinSysErr);
     }
@@ -728,18 +503,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_00to10_km.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_00to10_km.at(i).variance;
-      if (zvtx->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_00to10_km.at(i).variance;
-      if (dca->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_00to10_km.at(i).variance;
-      if (nhits->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_00to10_km.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_00to10_km.at(i).variance;
-      if (nhitsratio->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_00to10_km.at(i).variance;
-      if (m2Pi->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_00to10_km.at(i).variance;
-      if (nSigPi->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_00to10_km.at(i).variance;
-      if (nSigPr->v_vn_yCM_00to10_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_00to10_km.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_00to10_km.push_back(ithBinSysErr);
     }
@@ -761,18 +524,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_10to40_km.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_10to40_km.at(i).variance;
-      if (zvtx->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_10to40_km.at(i).variance;
-      if (dca->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_10to40_km.at(i).variance;
-      if (nhits->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_10to40_km.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_10to40_km.at(i).variance;
-      if (nhitsratio->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_10to40_km.at(i).variance;
-      if (m2Pi->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_10to40_km.at(i).variance;
-      if (nSigPi->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_10to40_km.at(i).variance;
-      if (nSigPr->v_vn_yCM_10to40_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_10to40_km.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_10to40_km.push_back(ithBinSysErr);
     }
@@ -794,17 +545,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_40to60_km.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_40to60_km.at(i).variance;
-      if (zvtx->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_40to60_km.at(i).variance;
-      if (dca->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_40to60_km.at(i).variance;
-      if (nhits->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_40to60_km.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_40to60_km.at(i).variance;
-      if (nhitsratio->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_40to60_km.at(i).variance;
-      if (m2Pi->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_40to60_km.at(i).variance;
-      if (nSigPi->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_40to60_km.at(i).variance;
-      if (nSigPr->v_vn_yCM_40to60_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_40to60_km.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_40to60_km.push_back(ithBinSysErr);
     }
@@ -827,17 +567,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_00to10_pr.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_00to10_pr.at(i).variance;
-      if (zvtx->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_00to10_pr.at(i).variance;
-      if (dca->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_00to10_pr.at(i).variance;
-      if (nhits->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_00to10_pr.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_00to10_pr.at(i).variance;
-      if (nhitsratio->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_00to10_pr.at(i).variance;
-      if (m2Pi->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_00to10_pr.at(i).variance;
-      if (nSigPi->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_00to10_pr.at(i).variance;
-      if (nSigPr->v_vn_yCM_00to10_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_00to10_pr.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_00to10_pr.push_back(ithBinSysErr);
     }
@@ -860,18 +589,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_10to40_pr.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_10to40_pr.at(i).variance;
-      if (zvtx->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_10to40_pr.at(i).variance;
-      if (dca->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_10to40_pr.at(i).variance;
-      if (nhits->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_10to40_pr.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_10to40_pr.at(i).variance;
-      if (nhitsratio->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_10to40_pr.at(i).variance;
-      if (m2Pi->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_10to40_pr.at(i).variance;
-      if (nSigPi->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_10to40_pr.at(i).variance;
-      if (nSigPr->v_vn_yCM_10to40_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_10to40_pr.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_10to40_pr.push_back(ithBinSysErr);
     }
@@ -894,18 +611,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_40to60_pr.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_40to60_pr.at(i).variance;
-      if (zvtx->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_40to60_pr.at(i).variance;
-      if (dca->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_40to60_pr.at(i).variance;
-      if (nhits->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_40to60_pr.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_40to60_pr.at(i).variance;
-      if (nhitsratio->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_40to60_pr.at(i).variance;
-      if (m2Pi->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_40to60_pr.at(i).variance;
-      if (nSigPi->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_40to60_pr.at(i).variance;
-      if (nSigPr->v_vn_yCM_40to60_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_40to60_pr.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_40to60_pr.push_back(ithBinSysErr);
     }
@@ -929,18 +634,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_00to10_pr_symm.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_00to10_pr_symm.at(i).variance;
-      if (zvtx->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_00to10_pr_symm.at(i).variance;
-      if (dca->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_00to10_pr_symm.at(i).variance;
-      if (nhits->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_00to10_pr_symm.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_00to10_pr_symm.at(i).variance;
-      if (nhitsratio->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_00to10_pr_symm.at(i).variance;
-      if (m2Pi->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_00to10_pr_symm.at(i).variance;
-      if (nSigPi->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_00to10_pr_symm.at(i).variance;
-      if (nSigPr->v_vn_yCM_00to10_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_00to10_pr_symm.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_00to10_pr_symm.push_back(ithBinSysErr);
     }
@@ -963,18 +656,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_10to40_pr_symm.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_10to40_pr_symm.at(i).variance;
-      if (zvtx->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_10to40_pr_symm.at(i).variance;
-      if (dca->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_10to40_pr_symm.at(i).variance;
-      if (nhits->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_10to40_pr_symm.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_10to40_pr_symm.at(i).variance;
-      if (nhitsratio->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_10to40_pr_symm.at(i).variance;
-      if (m2Pi->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_10to40_pr_symm.at(i).variance;
-      if (nSigPi->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_10to40_pr_symm.at(i).variance;
-      if (nSigPr->v_vn_yCM_10to40_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_10to40_pr_symm.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_10to40_pr_symm.push_back(ithBinSysErr);
     }
@@ -996,18 +677,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_yCM_40to60_pr_symm.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_yCM_40to60_pr_symm.at(i).variance;
-      if (zvtx->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_yCM_40to60_pr_symm.at(i).variance;
-      if (dca->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_yCM_40to60_pr_symm.at(i).variance;
-      if (nhits->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_yCM_40to60_pr_symm.at(i).variance;
-      if (nhitsdEdx->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_yCM_40to60_pr_symm.at(i).variance;
-      if (nhitsratio->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_yCM_40to60_pr_symm.at(i).variance;
-      if (m2Pi->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_yCM_40to60_pr_symm.at(i).variance;
-      if (nSigPi->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_yCM_40to60_pr_symm.at(i).variance;
-      if (nSigPr->v_vn_yCM_40to60_pr_symm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_yCM_40to60_pr_symm.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_yCM_40to60_pr_symm.push_back(ithBinSysErr);
     }
@@ -1031,17 +700,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_00to10_pp.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_00to10_pp.at(i).variance;
-      if (zvtx->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_00to10_pp.at(i).variance;
-      if (dca->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_00to10_pp.at(i).variance;
-      if (nhits->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_00to10_pp.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_00to10_pp.at(i).variance;
-      if (nhitsratio->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_00to10_pp.at(i).variance;
-      if (m2Pi->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_00to10_pp.at(i).variance;
-      if (nSigPi->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_00to10_pp.at(i).variance;
-      if (nSigPr->v_vn_pT_00to10_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_00to10_pp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_00to10_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -1063,18 +721,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_10to40_pp.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_10to40_pp.at(i).variance;
-      if (zvtx->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_10to40_pp.at(i).variance;
-      if (dca->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_10to40_pp.at(i).variance;
-      if (nhits->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_10to40_pp.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_10to40_pp.at(i).variance;
-      if (nhitsratio->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_10to40_pp.at(i).variance;
-      if (m2Pi->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_10to40_pp.at(i).variance;
-      if (nSigPi->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_10to40_pp.at(i).variance;
-      if (nSigPr->v_vn_pT_10to40_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_10to40_pp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_10to40_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -1096,18 +742,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_40to60_pp.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_40to60_pp.at(i).variance;
-      if (zvtx->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_40to60_pp.at(i).variance;
-      if (dca->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_40to60_pp.at(i).variance;
-      if (nhits->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_40to60_pp.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_40to60_pp.at(i).variance;
-      if (nhitsratio->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_40to60_pp.at(i).variance;
-      if (m2Pi->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_40to60_pp.at(i).variance;
-      if (nSigPi->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_40to60_pp.at(i).variance;
-      if (nSigPr->v_vn_pT_40to60_pp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_40to60_pp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_40to60_pp.push_back(ithBinSysErr);
     }// End h_vn_pp loop
@@ -1130,18 +764,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_00to10_pm.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_00to10_pm.at(i).variance;
-      if (zvtx->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_00to10_pm.at(i).variance;
-      if (dca->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_00to10_pm.at(i).variance;
-      if (nhits->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_00to10_pm.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_00to10_pm.at(i).variance;
-      if (nhitsratio->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_00to10_pm.at(i).variance;
-      if (m2Pi->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_00to10_pm.at(i).variance;
-      if (nSigPi->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_00to10_pm.at(i).variance;
-      if (nSigPr->v_vn_pT_00to10_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_00to10_pm.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_00to10_pm.push_back(ithBinSysErr);
     }
@@ -1163,18 +785,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_10to40_pm.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_10to40_pm.at(i).variance;
-      if (zvtx->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_10to40_pm.at(i).variance;
-      if (dca->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_10to40_pm.at(i).variance;
-      if (nhits->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_10to40_pm.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_10to40_pm.at(i).variance;
-      if (nhitsratio->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_10to40_pm.at(i).variance;
-      if (m2Pi->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_10to40_pm.at(i).variance;
-      if (nSigPi->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_10to40_pm.at(i).variance;
-      if (nSigPr->v_vn_pT_10to40_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_10to40_pm.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_10to40_pm.push_back(ithBinSysErr);
     }
@@ -1196,18 +806,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_40to60_pm.at(ithBin).variance;
 	}
       
-
-      /*
-      if (rvtx->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_40to60_pm.at(i).variance;
-      if (zvtx->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_40to60_pm.at(i).variance;
-      if (dca->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_40to60_pm.at(i).variance;
-      if (nhits->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_40to60_pm.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_40to60_pm.at(i).variance;
-      if (nhitsratio->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_40to60_pm.at(i).variance;
-      if (m2Pi->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_40to60_pm.at(i).variance;
-      if (nSigPi->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_40to60_pm.at(i).variance;
-      if (nSigPr->v_vn_pT_40to60_pm.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_40to60_pm.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_40to60_pm.push_back(ithBinSysErr);
     }
@@ -1230,18 +828,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_00to10_kp.at(ithBin).variance;
 	}
       
-      
-      /*
-      if (rvtx->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_00to10_kp.at(i).variance;
-      if (zvtx->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_00to10_kp.at(i).variance;
-      if (dca->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_00to10_kp.at(i).variance;
-      if (nhits->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_00to10_kp.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_00to10_kp.at(i).variance;
-      if (nhitsratio->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_00to10_kp.at(i).variance;
-      if (m2Pi->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_00to10_kp.at(i).variance;
-      if (nSigPi->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_00to10_kp.at(i).variance;
-      if (nSigPr->v_vn_pT_00to10_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_00to10_kp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_00to10_kp.push_back(ithBinSysErr);
     }
@@ -1264,17 +850,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_10to40_kp.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_10to40_kp.at(i).variance;
-      if (zvtx->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_10to40_kp.at(i).variance;
-      if (dca->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_10to40_kp.at(i).variance;
-      if (nhits->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_10to40_kp.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_10to40_kp.at(i).variance;
-      if (nhitsratio->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_10to40_kp.at(i).variance;
-      if (m2Pi->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_10to40_kp.at(i).variance;
-      if (nSigPi->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_10to40_kp.at(i).variance;
-      if (nSigPr->v_vn_pT_10to40_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_10to40_kp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_10to40_kp.push_back(ithBinSysErr);
     }
@@ -1297,17 +872,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_40to60_kp.at(ithBin).variance;
 	}
 
-      /*
-      if (rvtx->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_40to60_kp.at(i).variance;
-      if (zvtx->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_40to60_kp.at(i).variance;
-      if (dca->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_40to60_kp.at(i).variance;
-      if (nhits->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_40to60_kp.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_40to60_kp.at(i).variance;
-      if (nhitsratio->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_40to60_kp.at(i).variance;
-      if (m2Pi->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_40to60_kp.at(i).variance;
-      if (nSigPi->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_40to60_kp.at(i).variance;
-      if (nSigPr->v_vn_pT_40to60_kp.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_40to60_kp.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_40to60_kp.push_back(ithBinSysErr);
     }
@@ -1331,17 +895,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_00to10_km.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_00to10_km.at(i).variance;
-      if (zvtx->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_00to10_km.at(i).variance;
-      if (dca->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_00to10_km.at(i).variance;
-      if (nhits->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_00to10_km.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_00to10_km.at(i).variance;
-      if (nhitsratio->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_00to10_km.at(i).variance;
-      if (m2Pi->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_00to10_km.at(i).variance;
-      if (nSigPi->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_00to10_km.at(i).variance;
-      if (nSigPr->v_vn_pT_00to10_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_00to10_km.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_00to10_km.push_back(ithBinSysErr);
     }
@@ -1363,17 +916,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_10to40_km.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_10to40_km.at(i).variance;
-      if (zvtx->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_10to40_km.at(i).variance;
-      if (dca->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_10to40_km.at(i).variance;
-      if (nhits->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_10to40_km.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_10to40_km.at(i).variance;
-      if (nhitsratio->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_10to40_km.at(i).variance;
-      if (m2Pi->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_10to40_km.at(i).variance;
-      if (nSigPi->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_10to40_km.at(i).variance;
-      if (nSigPr->v_vn_pT_10to40_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_10to40_km.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_10to40_km.push_back(ithBinSysErr);
     }
@@ -1395,17 +937,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_40to60_km.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_40to60_km.at(i).variance;
-      if (zvtx->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_40to60_km.at(i).variance;
-      if (dca->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_40to60_km.at(i).variance;
-      if (nhits->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_40to60_km.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_40to60_km.at(i).variance;
-      if (nhitsratio->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_40to60_km.at(i).variance;
-      if (m2Pi->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_40to60_km.at(i).variance;
-      if (nSigPi->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_40to60_km.at(i).variance;
-      if (nSigPr->v_vn_pT_40to60_km.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_40to60_km.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_40to60_km.push_back(ithBinSysErr);
     }
@@ -1428,17 +959,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_00to10_pr.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_00to10_pr.at(i).variance;
-      if (zvtx->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_00to10_pr.at(i).variance;
-      if (dca->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_00to10_pr.at(i).variance;
-      if (nhits->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_00to10_pr.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_00to10_pr.at(i).variance;
-      if (nhitsratio->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_00to10_pr.at(i).variance;
-      if (m2Pi->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_00to10_pr.at(i).variance;
-      if (nSigPi->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_00to10_pr.at(i).variance;
-      if (nSigPr->v_vn_pT_00to10_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_00to10_pr.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_00to10_pr.push_back(ithBinSysErr);
     }
@@ -1460,17 +980,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_10to40_pr.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_10to40_pr.at(i).variance;
-      if (zvtx->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_10to40_pr.at(i).variance;
-      if (dca->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_10to40_pr.at(i).variance;
-      if (nhits->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_10to40_pr.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_10to40_pr.at(i).variance;
-      if (nhitsratio->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_10to40_pr.at(i).variance;
-      if (m2Pi->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_10to40_pr.at(i).variance;
-      if (nSigPi->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_10to40_pr.at(i).variance;
-      if (nSigPr->v_vn_pT_10to40_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_10to40_pr.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_10to40_pr.push_back(ithBinSysErr);
     }
@@ -1492,17 +1001,6 @@ void calculateSystematics(TString order_n_str)
 	    quadSum += composites.at(jthVariation)->v_vn_pT_40to60_pr.at(ithBin).variance;
 	}
       
-      /*
-      if (rvtx->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0)  quadSum += rvtx->v_vn_pT_40to60_pr.at(i).variance;
-      if (zvtx->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0)  quadSum += zvtx->v_vn_pT_40to60_pr.at(i).variance;
-      if (dca->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0)   quadSum += dca->v_vn_pT_40to60_pr.at(i).variance;
-      if (nhits->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhits->v_vn_pT_40to60_pr.at(i).variance;
-      if (nhitsdEdx->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0)  quadSum += nhitsdEdx->v_vn_pT_40to60_pr.at(i).variance;
-      if (nhitsratio->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0) quadSum += nhitsratio->v_vn_pT_40to60_pr.at(i).variance;
-      if (m2Pi->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0)   quadSum += m2Pi->v_vn_pT_40to60_pr.at(i).variance;
-      if (nSigPi->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPi->v_vn_pT_40to60_pr.at(i).variance;
-      if (nSigPr->v_vn_pT_40to60_pr.at(i).deltaByDeltaError > 1.0) quadSum += nSigPr->v_vn_pT_40to60_pr.at(i).variance;
-      */
       ithBinSysErr = TMath::Sqrt(quadSum);
       v_sys_pT_40to60_pr.push_back(ithBinSysErr);
     }
@@ -1511,44 +1009,6 @@ void calculateSystematics(TString order_n_str)
   //===
 
 
-
-  
-  /*
-  // Proton vs yCM scan through pT
-  std::vector<Double_t> v_sys_yCM_pr_1;
-  bins = Normal->h_vn_yCM_pr_1->GetNbinsX();
-  for (int i = 0; i < bins; i++)
-    {
-      ithBinSysErr = TMath::Sqrt(epd_high->v_vn_yCM_pr_1.at(i).variance);
-				 
-      v_sys_yCM_pr_1.push_back(ithBinSysErr);
-    }
-  ithBinSysErr = 0;
-  quadSum = 0.0;
-
-  std::vector<Double_t> v_sys_yCM_pr_2;
-  bins = Normal->h_vn_yCM_pr_2->GetNbinsX();
-  for (int i = 0; i < bins; i++)
-    {
-      ithBinSysErr = TMath::Sqrt(epd_high->v_vn_yCM_pr_2.at(i).variance);
-				 
-      v_sys_yCM_pr_2.push_back(ithBinSysErr);
-    }
-  ithBinSysErr = 0;
-  quadSum = 0.0;
-
-  std::vector<Double_t> v_sys_yCM_pr_3;
-  bins = Normal->h_vn_yCM_pr_3->GetNbinsX();
-  for (int i = 0; i < bins; i++)
-    {
-      ithBinSysErr = TMath::Sqrt(epd_high->v_vn_yCM_pr_3.at(i).variance);
-				 
-      v_sys_yCM_pr_3.push_back(ithBinSysErr);
-    }
-  ithBinSysErr = 0;
-  quadSum = 0.0;
-
-  */
   
 
   // PLOTTING
@@ -1588,44 +1048,6 @@ void calculateSystematics(TString order_n_str)
       kaLegend->AddEntry(Normal->h_vn_km,"K^{-}");
       kaLegend->SetFillColorAlpha(0,0);
       kaLegend->SetLineColorAlpha(0,0);
-
-      /*
-      TLegend *ppExtLegend = new TLegend(0.4, 0.62, 0.7, 0.82);
-      ppExtLegend->AddEntry(vn_pp,"#pi^{+}, 0 < y_{CM} < 0.5");
-      ppExtLegend->AddEntry(vn_pp_ext,"#pi^{+}, 0.5 < y_{CM} < 1.0");
-      ppExtLegend->SetFillColorAlpha(0,0);
-      ppExtLegend->SetLineColorAlpha(0,0);
-
-      TLegend *pmExtLegend = new TLegend(0.15, 0.67, 0.45, 0.9);
-      pmExtLegend->AddEntry(vn_pm,"#pi^{-}, 0 < y_{CM} < 0.5");
-      pmExtLegend->AddEntry(vn_pm_ext,"#pi^{-}, 0.5 < y_{CM} < 1.0");
-      pmExtLegend->SetFillColorAlpha(0,0);
-      pmExtLegend->SetLineColorAlpha(0,0);
-
-      TLegend *kpExtLegend = new TLegend(0.55, 0.7, 0.85, 0.9);
-      kpExtLegend->AddEntry(vn_kp,"K^{+}, 0 < y_{CM} < 0.5");
-      kpExtLegend->AddEntry(vn_kp_ext,"K^{+}, 0.5 < y_{CM} < 1.0");
-      kpExtLegend->SetFillColorAlpha(0,0);
-      kpExtLegend->SetLineColorAlpha(0,0);
-
-      TLegend *kmExtLegend = new TLegend(0.28, 0.68, 0.55, 0.85);
-      kmExtLegend->AddEntry(vn_km,"K^{-}, 0 < y_{CM} < 0.5");
-      kmExtLegend->AddEntry(vn_km_ext,"K^{-}, 0.5 < y_{CM} < 1.0");
-      kmExtLegend->SetFillColorAlpha(0,0);
-      kmExtLegend->SetLineColorAlpha(0,0);
-
-      TLegend *prExtLegend = new TLegend(0.25, 0.16, 0.55, 0.3);
-      prExtLegend->AddEntry(vn_pr_for,"Proton, -0.5 < y_{CM} < 0");
-      prExtLegend->AddEntry(vn_pr,"Proton, 0 < y_{CM} < 0.5");
-      prExtLegend->AddEntry(vn_pr_ext,"Proton, 0.5 < y_{CM} < 1.0");
-      prExtLegend->SetFillColorAlpha(0,0);
-      prExtLegend->SetLineColorAlpha(0,0);
-
-      TLegend *etaLegend = new TLegend(0.65, 0.25, 0.9, 0.45);
-      etaLegend->AddEntry(vn_EpdE, "EPD -5.6 < #eta < -3.3");
-      etaLegend->AddEntry(vn_EpdF, "EPD -3.3 < #eta < -2.4");
-      etaLegend->AddEntry(vn_TpcB, "TPC -1.0 < #eta < 0");
-      */
       
       TLegend *ppLegend = new TLegend(0.18, 0.72, 0.38, 0.87);
       ppLegend->AddEntry(Normal->h_vn_yCM_00to10_pp, "0 - 10%");
@@ -2500,29 +1922,6 @@ void calculateSystematics(TString order_n_str)
   delete m2Pi;
   delete m2Pi_low;
   delete m2Pi_high;
-  /*
-  //delete tpcEff;
-  delete nSigKa_low;
-  delete nSigKa_high;
-  delete m2Ka_low;
-  delete m2Ka_high;
-  delete yPidPi_low;
-  delete yPidPi_high;
-  delete yPidKa_low;
-  delete yPidKa_high;
-  delete yPidPr_low;
-  delete yPidPr_high;
-  delete ptPidPi_low;
-  delete ptPidPi_high;
-  delete ptPidKa_low;
-  delete ptPidKa_high;
-  delete ptPidPr_low;
-  delete ptPidPr_high;
-  delete yFlow_low;
-  delete yFlow_high;
-  delete ptFlow_low;
-  delete ptFlow_high;
-  */
   
   newFile->Close();
   delete newFile;

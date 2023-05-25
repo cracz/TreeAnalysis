@@ -2,11 +2,14 @@
 #define PLOTUTILS_H
 
 #include <iostream>
-#include "TH1D.h"
-#include "TMath.h"
+//#include <vector>
+//#include "TH1D.h"
+//#include "TMath.h"
+#include "TProfileHelper.h"
+
 
 namespace PlotUtils
-{
+{  
   TH1D* flipHisto(TH1D* histo)
   {
     TH1D *h_flipped = (TH1D*)histo->Clone((TString)histo->GetName() + "_flip");
@@ -22,6 +25,24 @@ namespace PlotUtils
 
     return h_flipped;
   };// End flipHisto()
+
+
+  void flipProfile(TProfile* profile, std::vector<std::vector<Double_t>> &profileAttributes)
+  {
+    const Int_t bins = profile->GetNbinsX();
+
+    profileAttributes.resize(3, std::vector<Double_t>(bins));   // Matrix where rows are bin content(0), error(1), entries(2)
+
+    Int_t j = 0;
+    for (int i = bins; i >= 1; i--)
+      {
+	profileAttributes[0][j] = profile->GetBinContent(i);
+	profileAttributes[1][j] = profile->GetBinError(i);
+	profileAttributes[2][j] = profile->GetBinEffectiveEntries(i);
+	
+	j++;
+      }
+  };// End flipProfile()
 
 
   // This function will remove any points with y = ey = 0
@@ -237,7 +258,244 @@ namespace PlotUtils
     g_sum->SetName("g_sum");
     return g_sum;
   }; //End addGraphs()
+
+
+  void scaleGraph(TGraphErrors* graph, Double_t factor)
+  {
+    Bool_t normalError = false;
+    Bool_t highError = false;
+    Bool_t lowError = false;
+    
+    Double_t* errorCheck = graph->GetEY();
+    normalError = true;
+    
+    if (!errorCheck)
+      {
+	normalError = false;
+	errorCheck = graph->GetEYhigh();
+	highError = true;
+      }
+    if (!errorCheck)
+      {
+	highError = false;
+	errorCheck = graph->GetEYlow();
+	lowError = true;
+      }
+    if (!errorCheck)
+      {
+	lowError = false;
+      }
+
+    if (!normalError && !highError && !lowError)
+      {
+	std::cout << "scaleGraph() can't find any uncertainties! Scaling aborted!" << std::endl;
+	return;
+      }
+
+    
+    for (int i = 0; i <= graph->GetN(); i++)
+      {
+	graph->GetY()[i] *= factor;
+
+	if (normalError)
+	  graph->GetEY()[i] *= TMath::Abs(factor);
+	else if (highError)
+	  graph->GetEYhigh()[i] *= TMath::Abs(factor);
+	else if (lowError)
+	  graph->GetEYlow()[i] *= TMath::Abs(factor);
+      }
+  };// End scaleGraph()
   
+
+
+  // Take a graph with errors that is symmetric across
+  // x = 0 and return the odd component of that graph.
+  TGraphErrors* getOddComponentGraph(TGraphErrors* graph)
+  {
+    TString newName = (TString)graph->GetName() + "_odd";
+
+    cleanGraph(graph);
+    
+    TGraphErrors* g_reflected = flipGraph(graph);
+    g_reflected->SetName("g_reflected");
+
+    TGraphErrors* g_reflectedAndNegative = (TGraphErrors*)g_reflected->Clone("g_reflectedAndNegative");
+    scaleGraph(g_reflectedAndNegative, -1.0);
+
+    TGraphErrors* g_oddComponent = addGraphs(graph, g_reflectedAndNegative, 1.0);
+    g_oddComponent->SetName(newName);
+    scaleGraph(g_oddComponent, 1.0/2.0);
+
+    return g_oddComponent;
+  };// End getOddComponentGraph()
+
+
+  
+
+  // Take a graph with errors that is symmetric across
+  // x = 0 and return the even component of that graph.  
+  TGraphErrors* getEvenComponentGraph(TGraphErrors* graph)
+  {
+    TString newName = (TString)graph->GetName() + "_even";
+
+    cleanGraph(graph);
+	
+    TGraphErrors* g_reflected = flipGraph(graph);
+    g_reflected->SetName("g_reflected");
+
+    TGraphErrors* g_reflectedAndNegative = (TGraphErrors*)g_reflected->Clone("g_reflectedAndNegative");
+    scaleGraph(g_reflectedAndNegative, -1.0);
+
+    TGraphErrors* g_evenComponent = addGraphs(graph, g_reflectedAndNegative, -1.0);
+    g_evenComponent->SetName(newName);
+    scaleGraph(g_evenComponent, 1.0/2.0);
+
+    return g_evenComponent;
+  };// End getEvenComponentGraph()
+
+
+
+  // Add the uncertainties of even plane resolution values to the current uncertainties of the given histogram
+  // USE THIS BEFORE FLIPPING OR TRIMMING THE ORIGINAL HISTOGRAM!!!
+  TH1D* applyResolutions(TH1D* histo, TH1D* resolutions)
+  {
+    TH1D *newHisto = (TH1D*)histo->Clone((TString)histo->GetName() + "_resCor");
+    int bins = histo->GetNbinsX();
+
+    for (int i = 1; i <= bins; i++)
+      {
+	if (resolutions->GetBinContent(i) == 0.0) continue;
+
+	Double_t originalValue = histo->GetBinContent(i);
+	Double_t originalError = histo->GetBinError(i);
+	Double_t originalErrorOverValueSquared = TMath::Power(originalError / originalValue, 2.0);
+
+	Double_t resolution = resolutions->GetBinContent(i);
+	Double_t resolutionError = resolutions->GetBinError(i);
+	Double_t additionalErrorOverValueSquared = TMath::Power(resolutionError / resolution, 2.0);
+	
+	Double_t newValue = originalValue / resolution;
+	Double_t newError = newValue * TMath::Sqrt(originalErrorOverValueSquared + additionalErrorOverValueSquared);
+
+	newHisto->SetBinContent(i, newValue);
+	newHisto->SetBinError(i, newError);
+      }
+
+    return newHisto;
+  };// End applyResolutions()
+
+
+
+  // Add the uncertainties of even plane resolution values to the current uncertainties of the given histogram
+  // USE THIS BEFORE FLIPPING OR TRIMMING THE ORIGINAL HISTOGRAM!!!
+  void applyResolutionsToErrors(TH1D* histo, TH1D* resolutions)
+  {
+    //TH1D *newHisto = (TH1D*)histo->Clone((TString)histo->GetName() + "_resCor");
+    int bins = histo->GetNbinsX();
+
+    for (int i = 1; i <= bins; i++)
+      {
+	if (resolutions->GetBinContent(i) == 0.0) continue;
+
+	Double_t originalValue = histo->GetBinContent(i);
+	Double_t originalError = histo->GetBinError(i);
+	//Double_t originalErrorOverValueSquared = TMath::Power(originalError / originalValue, 2.0);
+
+	Double_t resolution = resolutions->GetBinContent(i);
+	Double_t resolutionError = resolutions->GetBinError(i);
+	//Double_t additionalErrorOverValueSquared = TMath::Power(resolutionError / resolution, 2.0);
+
+	Double_t newError = originalValue * TMath::Sqrt( TMath::Power(originalError / originalValue, 2.0) +
+							 TMath::Power(resolutionError / resolution, 2.0) );
+
+	histo->SetBinError(i, newError);
+      }
+
+    //return newHisto;
+  };// End applyResolutionsToErrors()
+
+
+
+  
+  // Apply resolutions to 2D v_n plot with y vs centrality or p_T vs centrality (y-axis vs x-axis)
+  // USE THIS BEFORE PROJECTING INTO WIDER CENTRALITY BINS!!!
+  TH2D* applyResolutions2D(TH2D* histo, TH1D* resolutions)
+  {
+    TH2D *newHisto = (TH2D*)histo->Clone((TString)histo->GetName() + "_resCor");
+    int nBinsX = histo->GetNbinsX();
+    int nBinsY = histo->GetNbinsY();
+
+    for (int xBin = 1; xBin <= nBinsX; xBin++)
+      {
+	if (resolutions->GetBinContent(xBin) == 0.0) continue;
+
+	Double_t currentResolution = resolutions->GetBinContent(xBin);
+	Double_t currentResolutionError = resolutions->GetBinError(xBin);
+	
+	for (int yBin = 1; yBin <= nBinsY; yBin++)
+	  {
+	    if (histo->GetBinContent(xBin, yBin) == 0.0) continue;
+
+	    Double_t originalValue = histo->GetBinContent(xBin, yBin);
+	    Double_t originalError = histo->GetBinError(xBin, yBin);
+
+	    Double_t newValue = originalValue / currentResolution;
+	    Double_t newError = newValue * TMath::Sqrt( TMath::Power(originalError/originalValue, 2) +
+							TMath::Power(currentResolutionError/currentResolution, 2) );
+
+	    newHisto->SetBinContent(xBin, yBin, newValue);
+	    newHisto->SetBinError(xBin, yBin, newError);
+	  }
+      }
+
+    return newHisto;
+  };// End applyResolutions2D()
+
+
+
+  // Add the uncertainties of even plane resolution values to the current uncertainties of the given
+  //2D TProfile with y vs centrality or p_T vs centrality (y-axis vs x-axis)
+  // USE THIS BEFORE PROJECTING INTO WIDER CENTRALITY BINS!!!
+  void applyResolutionsToErrors2D(TProfile2D* p2, TH1D* resolutions)
+  {
+    //TH2D *newP2 = (TH2D*)p2->Clone((TString)p2->GetName() + "_resCor");
+    int nBinsX = p2->GetNbinsX();
+    int nBinsY = p2->GetNbinsY();
+
+    for (int xBin = 1; xBin <= nBinsX; xBin++)  // These are the centrality bins
+      {
+	if (resolutions->GetBinContent(xBin) == 0.0) continue;
+
+	Double_t currentResolution = resolutions->GetBinContent(xBin);
+	Double_t currentResolutionError = resolutions->GetBinError(xBin);
+	
+	for (int yBin = 1; yBin <= nBinsY; yBin++)   // These are the rapidity or pT bins that all get the same resolution correction
+	  {
+	    if (p2->GetBinContent(xBin, yBin) == 0.0 && p2->GetBinError(xBin, yBin) == 0.0) continue;
+
+	    Double_t originalValue = p2->GetBinContent(xBin, yBin);
+	    Double_t originalError = p2->GetBinError(xBin, yBin);
+
+	    //Double_t newValue = originalValue / currentResolution;
+	    Double_t newError = originalValue * TMath::Sqrt( TMath::Power(originalError/originalValue, 2) +
+							     TMath::Power(currentResolutionError/currentResolution, 2) );
+
+	    //newP2->SetBinContent(xBin, yBin, newValue);
+	    p2->SetBinError(xBin, yBin, newError);
+	  }
+      }
+
+    //return newP2;
+  };// End applyResolutionsToErrors2D()
+
+
+}
+
+#endif
+
+
+
+
   /*
   TGraphErrors* addGraphs(TGraphErrors* g1, TGraphErrors* g2, Double_t factor)
   {
@@ -394,166 +652,3 @@ namespace PlotUtils
     return g_sum;
   };// End addGraphs()
   */
-
-
-  void scaleGraph(TGraphErrors* graph, Double_t factor)
-  {
-    Bool_t normalError = false;
-    Bool_t highError = false;
-    Bool_t lowError = false;
-    
-    Double_t* errorCheck = graph->GetEY();
-    normalError = true;
-    
-    if (!errorCheck)
-      {
-	normalError = false;
-	errorCheck = graph->GetEYhigh();
-	highError = true;
-      }
-    if (!errorCheck)
-      {
-	highError = false;
-	errorCheck = graph->GetEYlow();
-	lowError = true;
-      }
-    if (!errorCheck)
-      {
-	lowError = false;
-      }
-
-    if (!normalError && !highError && !lowError)
-      {
-	std::cout << "scaleGraph() can't find any uncertainties! Scaling aborted!" << std::endl;
-	return;
-      }
-
-    
-    for (int i = 0; i <= graph->GetN(); i++)
-      {
-	graph->GetY()[i] *= factor;
-
-	if (normalError)
-	  graph->GetEY()[i] *= TMath::Abs(factor);
-	else if (highError)
-	  graph->GetEYhigh()[i] *= TMath::Abs(factor);
-	else if (lowError)
-	  graph->GetEYlow()[i] *= TMath::Abs(factor);
-      }
-  };// End scaleGraph()
-  
-
-
-  // Take a graph with errors that is symmetric across
-  // x = 0 and return the odd component of that graph.
-  TGraphErrors* getOddComponentGraph(TGraphErrors* graph)
-  {
-    TString newName = (TString)graph->GetName() + "_odd";
-
-    cleanGraph(graph);
-    
-    TGraphErrors* g_reflected = flipGraph(graph);
-    g_reflected->SetName("g_reflected");
-
-    TGraphErrors* g_reflectedAndNegative = (TGraphErrors*)g_reflected->Clone("g_reflectedAndNegative");
-    scaleGraph(g_reflectedAndNegative, -1.0);
-
-    TGraphErrors* g_oddComponent = addGraphs(graph, g_reflectedAndNegative, 1.0);
-    g_oddComponent->SetName(newName);
-    scaleGraph(g_oddComponent, 1.0/2.0);
-
-    return g_oddComponent;
-  };// End getOddComponentGraph()
-
-
-  
-
-  // Take a graph with errors that is symmetric across
-  // x = 0 and return the even component of that graph.  
-  TGraphErrors* getEvenComponentGraph(TGraphErrors* graph)
-  {
-    TString newName = (TString)graph->GetName() + "_even";
-
-    cleanGraph(graph);
-	
-    TGraphErrors* g_reflected = flipGraph(graph);
-    g_reflected->SetName("g_reflected");
-
-    TGraphErrors* g_reflectedAndNegative = (TGraphErrors*)g_reflected->Clone("g_reflectedAndNegative");
-    scaleGraph(g_reflectedAndNegative, -1.0);
-
-    TGraphErrors* g_evenComponent = addGraphs(graph, g_reflectedAndNegative, -1.0);
-    g_evenComponent->SetName(newName);
-    scaleGraph(g_evenComponent, 1.0/2.0);
-
-    return g_evenComponent;
-  };// End getEvenComponentGraph()
-
-
-
-  // Apply resolutions to standard v_n vs centrality plot (histo)
-  // USE THIS BEFORE FLIPPING OR TRIMMING THE ORIGINAL HISTOGRAM!!!
-  TH1D* applyResolutions(TH1D* histo, TH1D* resolutions)
-  {
-    TH1D *newHisto = (TH1D*)histo->Clone((TString)histo->GetName() + "_resCor");
-    int bins = histo->GetNbinsX();
-
-    for (int i = 1; i <= bins; i++)
-      {
-	if (resolutions->GetBinContent(i) == 0.0) continue;
-
-	Double_t originalValue = histo->GetBinContent(i);
-	Double_t originalError = histo->GetBinError(i);
-	Double_t currentResolution = resolutions->GetBinContent(i);
-	Double_t currentResolutionError = resolutions->GetBinError(i);
-
-	Double_t newValue = originalValue / currentResolution;
-	Double_t newError = newValue * TMath::Sqrt( TMath::Power(originalError/originalValue, 2) +
-						    TMath::Power(currentResolutionError/currentResolution, 2) );
-
-	newHisto->SetBinContent(i, newValue);
-	newHisto->SetBinError(i, newError);
-      }
-
-    return newHisto;
-  };// End applyResolutions()
-
-
-
-  
-  // Apply resolutions to 2D v_n plot with y vs centrality or p_T vs centrality (y-axis vs x-axis)
-  // USE THIS BEFORE PROJECTING INTO WIDER CENTRALITY BINS!!!
-  TH2D* applyResolutions2D(TH2D* histo, TH1D* resolutions)
-  {
-    TH2D *newHisto = (TH2D*)histo->Clone((TString)histo->GetName() + "_resCor");
-    int nBinsX = histo->GetNbinsX();
-    int nBinsY = histo->GetNbinsY();
-
-    for (int xBin = 1; xBin <= nBinsX; xBin++)
-      {
-	if (resolutions->GetBinContent(xBin) == 0.0) continue;
-
-	Double_t currentResolution = resolutions->GetBinContent(xBin);
-	Double_t currentResolutionError = resolutions->GetBinError(xBin);
-	
-	for (int yBin = 1; yBin <= nBinsY; yBin++)
-	  {
-	    if (histo->GetBinContent(xBin, yBin) == 0.0) continue;
-
-	    Double_t originalValue = histo->GetBinContent(xBin, yBin);
-	    Double_t originalError = histo->GetBinError(xBin, yBin);
-
-	    Double_t newValue = originalValue / currentResolution;
-	    Double_t newError = newValue * TMath::Sqrt( TMath::Power(originalError/originalValue, 2) +
-							TMath::Power(currentResolutionError/currentResolution, 2) );
-
-	    newHisto->SetBinContent(xBin, yBin, newValue);
-	    newHisto->SetBinError(xBin, yBin, newError);
-	  }
-      }
-
-    return newHisto;
-  };// End applyResolutions2D()
-}
-
-#endif

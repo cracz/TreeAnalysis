@@ -1,4 +1,4 @@
-void prelimPtPlots(TString jobID)
+void prelimPtPlots(TString jobID, Bool_t useSystematics = false)
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
@@ -37,10 +37,18 @@ void prelimPtPlots(TString jobID)
 
 
   // Retrieve systematic uncertainties
-  TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
-  TGraphErrors* sys_pT_00to10_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pT_00to10_pr_px");
-  TGraphErrors* sys_pT_10to40_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pT_10to40_pr_px");
-  TGraphErrors* sys_pT_40to60_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pT_40to60_pr_px");
+  TFile* systematicFile;
+  TGraphErrors* sys_pT_00to10_pr;
+  TGraphErrors* sys_pT_10to40_pr;
+  TGraphErrors* sys_pT_40to60_pr;
+
+  if (useSystematics)
+    {
+      systematicFile = TFile::Open("systematicErrors_thirdDraft.root", "READ");
+      sys_pT_00to10_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pT_00to10_pr_px");
+      sys_pT_10to40_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pT_10to40_pr_px");
+      sys_pT_40to60_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pT_40to60_pr_px");
+    }
   ////
 
 
@@ -61,12 +69,15 @@ void prelimPtPlots(TString jobID)
   h_vn_pT_10to40_pr->SetLineWidth(3);
   h_vn_pT_40to60_pr->SetLineWidth(3);
 
-  sys_pT_00to10_pr->SetMarkerColor(kRed-4);
-  //sys_pT_10to40_pr->SetMarkerColor(kBlue-4);
-  sys_pT_40to60_pr->SetMarkerColor(kBlue-4);
-  sys_pT_00to10_pr->SetLineColor(kRed-4);
-  //sys_pT_10to40_pr->SetLineColor(kBlue-4);
-  sys_pT_40to60_pr->SetLineColor(kBlue-4);
+  if (useSystematics)
+    {
+      sys_pT_00to10_pr->SetMarkerColor(kRed-4);
+      //sys_pT_10to40_pr->SetMarkerColor(kBlue-4);
+      sys_pT_40to60_pr->SetMarkerColor(kBlue-4);
+      sys_pT_00to10_pr->SetLineColor(kRed-4);
+      //sys_pT_10to40_pr->SetLineColor(kBlue-4);
+      sys_pT_40to60_pr->SetLineColor(kBlue-4);
+    }
   ////
 
   THStack *prPtStack   = new THStack("prPtStack", ";p_{T} (GeV/c);v_{3} {#Psi_{1}}");
@@ -118,9 +129,12 @@ void prelimPtPlots(TString jobID)
   prPtStack->SetMinimum(-0.12);
   prPtStack->Draw("NOSTACK EP");
   zeroLine_pt->Draw("SAME");
-  sys_pT_00to10_pr->Draw("[]");
-  sys_pT_40to60_pr->Draw("[]");
-  sys_pT_10to40_pr->Draw("[]");
+  if (useSystematics)
+    {
+      sys_pT_00to10_pr->Draw("[]");
+      sys_pT_40to60_pr->Draw("[]");
+      sys_pT_10to40_pr->Draw("[]");
+    }
   prPtStack->Draw("NOSTACK EP SAME");
   prLegend->Draw();
   prText->Draw();
@@ -128,7 +142,9 @@ void prelimPtPlots(TString jobID)
   canvas->SaveAs("v3_prPtStack.pdf");
   //canvas->SaveAs("v3_prPtStack.png");
   canvas->Clear();
+
+  if (useSystematics)
+    systematicFile->Close();
   
-  systematicFile->Close();
   file->Close();
 }

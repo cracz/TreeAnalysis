@@ -1,6 +1,6 @@
 #include "PlotUtils.h"
 
-void prelimRapidityPlots(TString jobID)
+void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false)
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
@@ -54,13 +54,24 @@ void prelimRapidityPlots(TString jobID)
   h_vn_yCM_40to60_pr_symm = p_vn_yCM_40to60_pr_symm->ProjectionX();
 
   // Retrieve systematic uncertainties
-  TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
-  TGraphErrors* sys_yCM_00to10_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_00to10_pr_px");
-  TGraphErrors* sys_yCM_10to40_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_10to40_pr_px");
-  TGraphErrors* sys_yCM_40to60_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_40to60_pr_px");
-  TGraphErrors* sys_yCM_00to10_pr_symm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_00to10_pr_symm_px");
-  TGraphErrors* sys_yCM_10to40_pr_symm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_10to40_pr_symm_px");
-  TGraphErrors* sys_yCM_40to60_pr_symm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_40to60_pr_symm_px");
+  TFile* systematicFile;
+  TGraphErrors* sys_yCM_00to10_pr;
+  TGraphErrors* sys_yCM_10to40_pr;
+  TGraphErrors* sys_yCM_40to60_pr;
+  TGraphErrors* sys_yCM_00to10_pr_symm;
+  TGraphErrors* sys_yCM_10to40_pr_symm;
+  TGraphErrors* sys_yCM_40to60_pr_symm;
+
+  if (useSystematics)
+    {
+      systematicFile = TFile::Open("systematicErrors_thirdDraft.root", "READ");
+      sys_yCM_00to10_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_00to10_pr_px");
+      sys_yCM_10to40_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_10to40_pr_px");
+      sys_yCM_40to60_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_40to60_pr_px");
+      sys_yCM_00to10_pr_symm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_00to10_pr_symm_px");
+      sys_yCM_10to40_pr_symm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_10to40_pr_symm_px");
+      sys_yCM_40to60_pr_symm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_40to60_pr_symm_px");
+    }
   ////
 
 
@@ -98,13 +109,16 @@ void prelimRapidityPlots(TString jobID)
 
 
   TH1D* h_10to40_symm = (TH1D*)h_vn_yCM_10to40_pr_symm->Clone();
-  //TH1D* h_40to60_symm = (TH1D*)h_vn_yCM_40to60_pr_symm->Clone();
+
   // Add systematics with statistics
-  for (int i = 6; i <= 15; i++)
+  if (useSystematics)
     {
-      Double_t currentError1 = h_10to40_symm->GetBinError(i);
-      h_10to40_symm->SetBinError(i, std::sqrt(std::pow(currentError1, 2) +
-					      std::pow(sys_yCM_10to40_pr_symm->GetErrorY(i-1), 2)));
+      for (int i = 6; i <= 15; i++)
+	{
+	  Double_t currentError1 = h_10to40_symm->GetBinError(i);
+	  h_10to40_symm->SetBinError(i, std::sqrt(std::pow(currentError1, 2) +
+						  std::pow(sys_yCM_10to40_pr_symm->GetErrorY(i-1), 2)));
+	}
     }
 
   h_10to40_symm->Fit(function1, "", "", 0.0, 0.5);
@@ -132,222 +146,7 @@ void prelimRapidityPlots(TString jobID)
 	    << "Estimated Uncertainty Value = " << TMath::Abs(slopeMeasured) * (slopeUncertPercent/100.0)
 	    << std::endl
 	    << std::endl;
-  /*
-  std::cout << "40 - 60%" << std::endl;
-  h_40to60_symm->Fit(function3, "", "", -0.5, 0.5);
-  std::cout << "Fitting y in [-0.5, 0.5]:" << std::endl
-	    << "   Slope = " << function3->GetParameter(0) << std::endl
-	    << "   Error = " << function3->GetParError(0) << std::endl
-	    << "   Chi^2/NDF = " << function3->GetChisquare()/function3->GetNDF() << std::endl
-	    << std::endl;
-  */
 
-
-  /*
-  for (int i = 6; i <= 10; i++)
-    {
-      Double_t fullError = h_10to40_symm->GetBinError(i);
-      Double_t lineValue = function2->Eval(h_10to40_symm->GetXaxis()->GetBinCenter(i));
-      Double_t distToLine = lineValue - h_10to40_symm->GetBinContent(i);
-
-      std::cout << "y_CM = " << h_10to40_symm->GetXaxis()->GetBinCenter(i) << std::endl;
-      std::cout << "Sigmas = " << distToLine / fullError << std::endl;
-    }  // Get distance from line in sigmas
-
-  for (int i = 11; i <= 15; i++)
-    {
-      Double_t fullError = h_10to40_symm->GetBinError(i);
-      Double_t lineValue = function1->Eval(h_10to40_symm->GetXaxis()->GetBinCenter(i));
-      Double_t distToLine = lineValue - h_10to40_symm->GetBinContent(i);
-
-      std::cout << "y_CM = " << h_10to40_symm->GetXaxis()->GetBinCenter(i) << std::endl;
-      std::cout << "Sigmas = " << distToLine / fullError << std::endl;
-    }  // Get distance from line in sigmas
-  */
-
-
-  /*
-  std::cout << std::endl;
-  for (int i = 6; i <= 15; i++)
-    {
-      Double_t fullError = h_40to60_symm->GetBinError(i);
-      Double_t lineValue = function3->Eval(h_40to60_symm->GetXaxis()->GetBinCenter(i));
-      Double_t distToLine = lineValue - h_40to60_symm->GetBinContent(i);
-
-      std::cout << "y_CM = " << h_40to60_symm->GetXaxis()->GetBinCenter(i) << std::endl;
-      std::cout << "Sigmas = " << distToLine / fullError << std::endl;
-    }  // Get distance from line in sigmas
-  */
-
-
-
-  
-
-  // FURTHER SYSTEMATIC VARIATION (QM22 poster discussion with FCV March 30, 2022)
-  /*
-  // Combine current systematics with statistical errors
-  TH1D* h_00to10_symm = (TH1D*)h_vn_yCM_00to10_pr_symm->Clone();
-  TH1D* h_10to40_symm = (TH1D*)h_vn_yCM_10to40_pr_symm->Clone();
-  TH1D* h_40to60_symm = (TH1D*)h_vn_yCM_40to60_pr_symm->Clone();
-
-  // Add systematics with statistics
-  for (int i = 6; i <= 15; i++)
-    {
-      Double_t currentError = h_10to40_symm->GetBinError(i);
-      h_10to40_symm->SetBinError(i, std::sqrt(std::pow(currentError, 2) +
-					      std::pow(sys_yCM_10to40_pr_symm->GetErrorY(i-1), 2)));
-
-      //std::cout << "sys/stat error = " << (sys_yCM_10to40_pr_symm->GetErrorY(i-1) / currentError)*100 << "%" << std::endl;
-    }
-  
-  
-  TF1* function = new TF1("function", "[0]*x + [1]*x*x*x", -1.0, 1.0);
-  function->SetLineColor(1);
-  
-  h_00to10_symm->Fit(function, "", "", -0.5, 0.5);
-  std::cout << "0-10% Centrality:" << std::endl
-	    << std::endl
-	    << "Fitting y in [-0.5, 0.5]:" << std::endl
-	    << "   Slope = " << function->GetParameter(0) << std::endl
-	    << "   Error = " << function->GetParError(0) << std::endl
-	    << "   Chi^2/NDF = " << function->GetChisquare()/function->GetNDF() << std::endl
-	    << std::endl;
-
-  h_00to10_symm->Fit(function, "", "", -0.5, 0.0);
-  std::cout << "Fitting y in [-0.5, 0.0]:" << std::endl
-	    << "   Slope = " << function->GetParameter(0) << std::endl
-	    << "   Error = " << function->GetParError(0) << std::endl
-	    << "   Chi^2/NDF = " << function->GetChisquare()/function->GetNDF() << std::endl
-	    << std::endl;
-
-  h_00to10_symm->Fit(function, "", "", 0.0, 0.5);
-  std::cout << "Fitting y in [0.0, 0.5]:" << std::endl
-	    << "   Slope = " << function->GetParameter(0) << std::endl
-	    << "   Error = " << function->GetParError(0) << std::endl
-	    << "   Chi^2/NDF = " << function->GetChisquare()/function->GetNDF() << std::endl
-	    << std::endl;
-  
-  
-  h_10to40_symm->Fit(function, "", "", -0.5, 0.5);
-
-  Double_t sysEstimate_10to40 = function->GetParError(0);
-  
-  std::cout << "10-40% Centrality:" << std::endl
-	    << std::endl
-	    << "Fitting y in [-0.5, 0.5]:" << std::endl
-	    << "   Slope = " << function->GetParameter(0) << std::endl
-	    << "   Error = " << function->GetParError(0) << std::endl
-	    << "   Chi^2/NDF = " << function->GetChisquare()/function->GetNDF() << std::endl
-	    << std::endl;
-  
-
-  //function->SetParLimits(0, -10.0, 0.0);
-  //function->SetParLimits(1, 0.0, 10.0);
-  
-  h_10to40_symm->Fit(function, "", "", -0.5, 0.0);
-
-  Double_t sysEstimateLow_10to40 = function->GetParError(0);
-  
-  std::cout << "Fitting y in [-0.5, 0.0]:" << std::endl
-	    << "   Slope = " << function->GetParameter(0) << std::endl
-	    << "   Error = " << function->GetParError(0) << std::endl
-	    << "   Chi^2/NDF = " << function->GetChisquare()/function->GetNDF() << std::endl
-	    << std::endl;
-  
-
-  //function->ReleaseParameter(0);
-  //function->ReleaseParameter(1);
-  h_10to40_symm->Fit(function, "", "", 0.0, 0.5);
-
-  Double_t sysEstimateHigh_10to40 = function->GetParError(0);
-  
-  std::cout << "Fitting y in [0.0, 0.5]:" << std::endl
-	    << "   Slope = " << function->GetParameter(0) << std::endl
-	    << "   Error = " << function->GetParError(0) << std::endl
-	    << "   Chi^2/NDF = " << function->GetChisquare()/function->GetNDF() << std::endl
-	    << std::endl;
-
-  
-  h_40to60_symm->Fit(function, "", "", -0.5, 0.5);
-  std::cout << "40-60% Centrality:" << std::endl
-	    << std::endl
-	    << "Fitting y in [-0.5, 0.5]:" << std::endl
-	    << "   Slope = " << function->GetParameter(0) << std::endl
-	    << "   Error = " << function->GetParError(0) << std::endl
-	    << "   Chi^2/NDF = " << function->GetChisquare()/function->GetNDF() << std::endl
-	    << std::endl;
-
-  h_40to60_symm->Fit(function, "", "", -0.5, 0.0);
-  std::cout << "Fitting y in [-0.5, 0.0]:" << std::endl
-	    << "   Slope = " << function->GetParameter(0) << std::endl
-	    << "   Error = " << function->GetParError(0) << std::endl
-	    << "   Chi^2/NDF = " << function->GetChisquare()/function->GetNDF() << std::endl
-	    << std::endl;
-
-  h_40to60_symm->Fit(function, "", "", 0.0, 0.5);
-  std::cout << "Fitting y in [0.0, 0.5]:" << std::endl
-	    << "   Slope = " << function->GetParameter(0) << std::endl
-	    << "   Error = " << function->GetParError(0) << std::endl
-	    << "   Chi^2/NDF = " << function->GetChisquare()/function->GetNDF() << std::endl
-	    << std::endl;
-  
-
-  // Increase systematics by fit estimates
-  for (int i = 5; i<= 14; i++)
-    {
-      Double_t currentError = sys_yCM_10to40_pr_symm->GetErrorY(i);
-      //sys_yCM_10to40_pr_symm->SetPointError(i, 0.0, std::sqrt(std::pow(currentError,2) + std::pow(sysEstimate_10to40,2)));
-      //sys_yCM_10to40_pr_symm->SetPointError(i, 0.0, currentError + sysEstimate_10to40);
-
-      //if (i < 10)
-      //sys_yCM_10to40_pr_symm->SetPointError(i, 0.0, std::sqrt(std::pow(currentError,2) + std::pow(sysEstimateLow_10to40,2)));
-      //else
-      if (i >= 10)
-	sys_yCM_10to40_pr_symm->SetPointError(i, 0.0, std::sqrt(std::pow(currentError,2) + std::pow(sysEstimateHigh_10to40,2)));
-    }
-  ////
-
-  // Add systematics with statistics again
-  for (int i = 6; i <= 15; i++)
-    {
-      Double_t currentError = h_10to40_symm->GetBinError(i);
-      h_10to40_symm->SetBinError(i, std::sqrt(std::pow(currentError, 2) +
-					      std::pow(sys_yCM_10to40_pr_symm->GetErrorY(i-1), 2)));
-    }
-  ////
-
-
-  // Fit again
-  h_10to40_symm->Fit(function, "", "", -0.5, 0.0);
-  std::cout << "Fitting y in [-0.5, 0.0]:" << std::endl
-	    << "   Slope = " << function->GetParameter(0) << std::endl
-	    << "   Error = " << function->GetParError(0) << std::endl
-	    << "   Chi^2/NDF = " << function->GetChisquare()/function->GetNDF() << std::endl
-	    << std::endl;
-
-
-  h_10to40_symm->Fit(function, "", "", 0.0, 0.5);
-  std::cout << "Fitting y in [0.0, 0.5]:" << std::endl
-	    << "   Slope = " << function->GetParameter(0) << std::endl
-	    << "   Error = " << function->GetParError(0) << std::endl
-	    << "   Chi^2/NDF = " << function->GetChisquare()/function->GetNDF() << std::endl
-	    << std::endl;
-
-	    for (int i = 11; i <= 15; i++)
-    {
-      Double_t fullError = h_10to40_symm->GetBinError(i);
-      Double_t lineValue = function->Eval(h_10to40_symm->GetXaxis()->GetBinCenter(i));
-      Double_t distToLine = lineValue - h_10to40_symm->GetBinContent(i);
-
-      std::cout << "y_CM = " << h_10to40_symm->GetXaxis()->GetBinCenter(i) << std::endl;
-      //std::cout << "v3 = " << lineValue << std::endl;
-      std::cout << "Sigmas = " << distToLine / fullError << std::endl;
-    }
-
-  
-  ////
-  */
-  //////
 
   // Make mirrored plots
   for (int i = 1; i <= 20; i++)
@@ -379,16 +178,19 @@ void prelimRapidityPlots(TString jobID)
 	}
     }
 
-  int j = 19;
-  for (int i = 0; i < 10; i++)
+  if (useSystematics)
     {
-      sys_yCM_00to10_pr->SetPointY(i, -sys_yCM_00to10_pr->GetPointY(j));
-      sys_yCM_00to10_pr->SetPointError(i,0.0, sys_yCM_00to10_pr->GetErrorY(j));
-      sys_yCM_10to40_pr->SetPointY(i, -sys_yCM_10to40_pr->GetPointY(j));
-      sys_yCM_10to40_pr->SetPointError(i,0.0, sys_yCM_10to40_pr->GetErrorY(j));
-      sys_yCM_40to60_pr->SetPointY(i, -sys_yCM_40to60_pr->GetPointY(j));
-      sys_yCM_40to60_pr->SetPointError(i,0.0, sys_yCM_40to60_pr->GetErrorY(j));
-      j--;
+      int j = 19;
+      for (int i = 0; i < 10; i++)
+	{
+	  sys_yCM_00to10_pr->SetPointY(i, -sys_yCM_00to10_pr->GetPointY(j));
+	  sys_yCM_00to10_pr->SetPointError(i,0.0, sys_yCM_00to10_pr->GetErrorY(j));
+	  sys_yCM_10to40_pr->SetPointY(i, -sys_yCM_10to40_pr->GetPointY(j));
+	  sys_yCM_10to40_pr->SetPointError(i,0.0, sys_yCM_10to40_pr->GetErrorY(j));
+	  sys_yCM_40to60_pr->SetPointY(i, -sys_yCM_40to60_pr->GetPointY(j));
+	  sys_yCM_40to60_pr->SetPointError(i,0.0, sys_yCM_40to60_pr->GetErrorY(j));
+	  j--;
+	}
     }
 
   
@@ -425,20 +227,23 @@ void prelimRapidityPlots(TString jobID)
   h_vn_yCM_10to40_pr_symm->SetLineWidth(3);
   h_vn_yCM_40to60_pr_symm->SetLineWidth(3);
 
-  sys_yCM_00to10_pr->SetMarkerColor(kRed-4);
-  //sys_yCM_10to40_pr->SetMarkerColor(kBlue-4);
-  sys_yCM_40to60_pr->SetMarkerColor(kBlue-4);
-  sys_yCM_00to10_pr->SetLineColor(kRed-4);
-  //sys_yCM_10to40_pr->SetLineColor(kBlue-4);
-  sys_yCM_40to60_pr->SetLineColor(kBlue-4);
+  if (useSystematics)
+    {
+      sys_yCM_00to10_pr->SetMarkerColor(kRed-4);
+      //sys_yCM_10to40_pr->SetMarkerColor(kBlue-4);
+      sys_yCM_40to60_pr->SetMarkerColor(kBlue-4);
+      sys_yCM_00to10_pr->SetLineColor(kRed-4);
+      //sys_yCM_10to40_pr->SetLineColor(kBlue-4);
+      sys_yCM_40to60_pr->SetLineColor(kBlue-4);
 
-  sys_yCM_00to10_pr_symm->SetMarkerColor(kRed-4);
-  //sys_yCM_10to40_pr_symm->SetMarkerColor(kBlue-4);
-  sys_yCM_40to60_pr_symm->SetMarkerColor(kBlue-4);
-  sys_yCM_00to10_pr_symm->SetLineColor(kRed-4);
-  //sys_yCM_10to40_pr_symm->SetLineColor(kBlue-4);
-  sys_yCM_40to60_pr_symm->SetLineColor(kBlue-4);
-
+      sys_yCM_00to10_pr_symm->SetMarkerColor(kRed-4);
+      //sys_yCM_10to40_pr_symm->SetMarkerColor(kBlue-4);
+      sys_yCM_40to60_pr_symm->SetMarkerColor(kBlue-4);
+      sys_yCM_00to10_pr_symm->SetLineColor(kRed-4);
+      //sys_yCM_10to40_pr_symm->SetLineColor(kBlue-4);
+      sys_yCM_40to60_pr_symm->SetLineColor(kBlue-4);
+    }
+  
   h_vn_yCM_00to10_pr_mirror->SetMarkerStyle(25);
   h_vn_yCM_10to40_pr_mirror->SetMarkerStyle(24);
   h_vn_yCM_40to60_pr_mirror->SetMarkerStyle(27);
@@ -563,9 +368,12 @@ void prelimRapidityPlots(TString jobID)
   prRapidityStack->SetMinimum(-0.06);
   prRapidityStack->Draw("NOSTACK EP");
   zeroLine_y_pr->Draw("SAME");
-  sys_yCM_40to60_pr->Draw("[]");
-  sys_yCM_00to10_pr->Draw("[]");
-  sys_yCM_10to40_pr->Draw("[]");
+  if (useSystematics)
+    {
+      sys_yCM_40to60_pr->Draw("[]");
+      sys_yCM_00to10_pr->Draw("[]");
+      sys_yCM_10to40_pr->Draw("[]");
+    }
   prRapidityStack->Draw("NOSTACK EP SAME");
   prLegend->Draw();
   prText_y->Draw();
@@ -589,9 +397,12 @@ void prelimRapidityPlots(TString jobID)
   prRapidityStack_symm->SetMinimum(-0.09);
   prRapidityStack_symm->Draw("NOSTACK EP");
   zeroLine_y_pr->Draw("SAME");
-  sys_yCM_00to10_pr_symm->Draw("[]");
-  sys_yCM_40to60_pr_symm->Draw("[]");
-  sys_yCM_10to40_pr_symm->Draw("[]");
+  if (useSystematics)
+    {
+      sys_yCM_00to10_pr_symm->Draw("[]");
+      sys_yCM_40to60_pr_symm->Draw("[]");
+      sys_yCM_10to40_pr_symm->Draw("[]");
+    }
   prRapidityStack_symm->Draw("NOSTACK EP SAME");
   prLegend_symm->Draw();
   prText_y_symm->Draw();
@@ -645,7 +456,8 @@ void prelimRapidityPlots(TString jobID)
   //canvas->SaveAs("v3_prOddStack.png");
   canvas->Clear();
   
-
-  systematicFile->Close();
+  if (useSystematics)
+    systematicFile->Close();
+  
   file->Close();
 }

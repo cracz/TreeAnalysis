@@ -1,6 +1,6 @@
 #include "PlotUtils.h"
 
-void prelimCentralityPlots(TString jobID)
+void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false)
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
@@ -56,30 +56,40 @@ void prelimCentralityPlots(TString jobID)
   h_vn_pr = PlotUtils::trimCentralityPlot(h_vn_pr);
 
   // Retrieve systematic uncertainties
-  TFile* systematicFile = TFile::Open("systematicErrors.root", "READ");
-  jobID = "Normal";
-  TGraphErrors* sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_"+jobID+"_flip");
-  TGraphErrors* sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_"+jobID+"_flip");
-  TGraphErrors* sys_kp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_kp_"+jobID+"_flip");
-  TGraphErrors* sys_km = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_km_"+jobID+"_flip");
-  TGraphErrors* sys_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_"+jobID+"_flip");
+  TFile* systematicFile;
+  TGraphErrors* sys_pp;
+  TGraphErrors* sys_pm;
+  TGraphErrors* sys_kp;
+  TGraphErrors* sys_km;
+  TGraphErrors* sys_pr;
+
+  if (useSystematics)
+    {
+      systematicFile = TFile::Open("systematicErrors_thirdDraft.root", "READ");
+      jobID = "Normal_averagedRes";
+      sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_"+jobID+"_flip");
+      sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_"+jobID+"_flip");
+      sys_kp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_kp_"+jobID+"_flip");
+      sys_km = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_km_"+jobID+"_flip");
+      sys_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pr_"+jobID+"_flip");
+
+      sys_pp->SetMarkerColor(1);
+      sys_pp->SetLineColor(1);
+
+      sys_pm->SetMarkerColor(4);
+      sys_pm->SetLineColor(4);
+
+      sys_kp->SetMarkerColor(2);
+      sys_kp->SetLineColor(2);
+
+      sys_km->SetMarkerColor(4);
+      sys_km->SetLineColor(4);
+
+      //sys_pr should be fine as it is
+    }
   ////
   
   // Set various aesthetics
-  sys_pp->SetMarkerColor(1);
-  sys_pp->SetLineColor(1);
-
-  sys_pm->SetMarkerColor(4);
-  sys_pm->SetLineColor(4);
-
-  sys_kp->SetMarkerColor(2);
-  sys_kp->SetLineColor(2);
-
-  sys_km->SetMarkerColor(4);
-  sys_km->SetLineColor(4);
-
-  //sys_pr should be fine as it is
-
   h_vn_pp->SetMarkerStyle(21);
   h_vn_pp->SetMarkerSize(2.5);
   h_vn_pp->SetMarkerColor(1);
@@ -117,9 +127,9 @@ void prelimCentralityPlots(TString jobID)
   ////
 
   THStack *allCentralityStack = new THStack("allCentralityStack", ";Centrality (%);v_{3} {#Psi_{1}}");
-  allCentralityStack->Add(h_vn_pr);
   allCentralityStack->Add(h_vn_pp);
   allCentralityStack->Add(h_vn_pm);
+  allCentralityStack->Add(h_vn_pr);
 
   THStack *kaCentralityStack = new THStack("kaCentralityStack", ";Centrality (%);v_{3} {#Psi_{1}}");
   kaCentralityStack->Add(h_vn_km);
@@ -182,9 +192,12 @@ void prelimCentralityPlots(TString jobID)
   allCentralityStack->Draw("NOSTACK EP");
   zeroLine->Draw("SAME");
   allCentralityStack->Draw("NOSTACK EP SAME");
-  sys_pp->Draw("[]");
-  sys_pm->Draw("[]");
-  sys_pr->Draw("[]");
+  if (useSystematics)
+    {  
+      sys_pp->Draw("[]");
+      sys_pm->Draw("[]");
+      sys_pr->Draw("[]");
+    }
   allLegend->Draw();
   allText->Draw();
   //prelimText->Draw();
@@ -205,8 +218,11 @@ void prelimCentralityPlots(TString jobID)
   kaCentralityStack->Draw("NOSTACK EP");
   zeroLine->Draw("SAME");
   kaCentralityStack->Draw("NOSTACK EP SAME");
-  sys_kp->Draw("[]");
-  sys_km->Draw("[]");
+  if (useSystematics)
+    {
+      sys_kp->Draw("[]");
+      sys_km->Draw("[]");
+    }
   kaLegend->Draw();
   kaText->Draw();
   //prelimText->Draw();
@@ -214,7 +230,8 @@ void prelimCentralityPlots(TString jobID)
   //canvas->SaveAs("v3_kaCentralityStack.png");
   canvas->Clear();
 
-  
-  systematicFile->Close();
+  if (useSystematics)
+    systematicFile->Close();
+
   file->Close();
 }
