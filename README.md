@@ -34,15 +34,13 @@ The `ConfigReader` is used to read text files that contain the values of cuts th
 2) In the `TreeAnalysis/` directory, run the command `cons` to produce the necessary \*.so files of everything in the StRoot directory. These are required by the `TreeMaker`.
 3) Run the following
 
-`mkdir libs/`
-
-`cp StRoot/StEpdUtil/libStEpdUtil.so libs/`
-
-`cp StRoot/StPicoEvent/libStPicoDst.so libs/`
-
-`cp .sl73_gcc485/obj/StRoot/StBichsel/StBichsel.so libs/libStBichsel.so`
-
-`mkdir CorrectionFiles/`
+```bash
+mkdir libs/
+cp StRoot/StEpdUtil/libStEpdUtil.so libs/
+cp StRoot/StPicoEvent/libStPicoDst.so libs/
+cp .sl73_gcc485/obj/StRoot/StBichsel/StBichsel.so libs/libStBichsel.so
+mkdir CorrectionFiles/
+```
 
 4) Finally, run the command `make` to execute the makefile and compile `TreeAnalyzer.cxx` into an executable.
 
@@ -55,7 +53,9 @@ Before making or analyzing trees, make sure the .xml files `treeMake.xml` and `t
 
 To start, run the command 
 
-`star-submit treeMake.xml`
+```bash
+star-submit treeMake.xml
+```
 
 The trees are made with the ROOT macro `MakeTrees.C`, which uses the `StRoot/TreeMaker/` class. If you need to modify what is saved within the produced trees, go to `StRoot/TreeMaker/`. Once the trees are created, you need to make a file list of all of those trees and supply that list to the `TreeAnalyzer` with `treeAnalyze.xml`. You can make use of the `getFileList.sh` script to quickly make a file list by going to the directory with all of the trees and running the command
 
@@ -71,7 +71,9 @@ An important part about analyzing the trees you make is that you can only analyz
 
 To start, run the command 
 
-`star-submit treeAnalyze.xml`
+```bash
+star-submit treeAnalyze.xml
+```
 
 The `TreeAnalyzer` is an executable, so you only invoke it by name and supply the following arguments:
 
@@ -85,11 +87,11 @@ If you need to rerun any jobs that failed, use the script `Scripts/findHoles.sh`
 
 The various histograms and other plots will all be within files called `*.picoDst.result.root`, and the information necessary for event plane recentering and Fourier shifting will be in files called `correctionInfo_OUTPUT_*.root`. `TreeAnalyzer` takes 3 iterations to produce isotropic event plane distributions, and a 4th iteration to get correct flow results. After each of the first 3 iterations, go to the directory you have set in `treeAnalyze.xml` that holds the results and run
 
-`hadd correctionInfo_OUTPUT_*.root correctionInfo_INPUT.root`
-
-`mv correctionInfo_INPUT.root [...]/TreeAnalysis/CorrectionFiles/`
-
-`rm *.root`
+```bash
+hadd correctionInfo_OUTPUT_*.root correctionInfo_INPUT.root
+mv correctionInfo_INPUT.root [...]/TreeAnalysis/CorrectionFiles/
+rm *.root
+```
 
 where `[...]` is the path to your checked out copy of `TreeAnalysis/`. This will set you up for the next iteration and remove the unneccessary output files from the iteration you just finished.
 
@@ -116,35 +118,33 @@ After iteration 3, if you want to recreate the results of the 3.0 GeV paper, use
 
 Go to the directory you have set in `treeAnalyze.xml` that holds the results and run
 
-`hadd Prefix.picoDst.result.combined.root *.picoDst.result.root`
-
-`mv Prefix.picoDst.result.combined.root [...]TreeAnalysis/Plotting/`
-
-`cd [...]TreeAnalysis/Plotting/`
-
-`root -l -b -q resolutions.cxx\(\"Prefix\",\"3\"\)`
-
-`mv resolutionInfo_INPUT.root ../Correctionfiles/`
+```bash
+hadd Prefix.picoDst.result.combined.root *.picoDst.result.root
+mv Prefix.picoDst.result.combined.root [...]TreeAnalysis/Plotting/
+cd [...]TreeAnalysis/Plotting/
+root -l -b -q resolutions.cxx\(\"Prefix\",\"3\"\)
+mv resolutionInfo_INPUT.root ../Correctionfiles/
+```
 
 where `Prefix` can be whatever you want.
 
 This will combine your results from all of the jobs, move them to the `Plotting/` directory and use them to create the event plane resolutions for the inner EPD subevent, and then move those resolutions to the proper directory so that you're ready to initiate the 4th and final iteration. If you want to reproduceOnce you do that, `hadd` the results together again with this command and you're ready to start plotting the results.
 
-`hadd Prefix.picoDst.result.combined.root *.picoDst.result.root`
+```bash
+hadd Prefix.picoDst.result.combined.root *.picoDst.result.root
+```
 
 ## Recreating figures from the paper
 
 Move your main results file (`Prefix.picoDst.result.combined.root`) and `resolutionsWithSystematics.root` to the `Plotting/` directory and run the following commands to recreate the plots shown in the 3.0 GeV paper (without systematic uncertainties).
 
-`root -l -b -q resolutionPlot.cxx`
-
-`root -l -b -q prelimCentralityPlots.cxx\(\"Prefix\"\)`
-
-`root -l -b -q prelimRapidityPlots.cxx\(\"Prefix\"\)`
-
-`root -l -b -q prelimPtPlots.cxx\(\"Prefix\"\)`
-
-`root -l -b -q acceptanceCombined.cxx\(\"Prefix\"\)`
+```bash
+root -l -b -q resolutionPlot.cxx
+root -l -b -q prelimCentralityPlots.cxx\(\"Prefix\"\)
+root -l -b -q prelimRapidityPlots.cxx\(\"Prefix\"\)
+root -l -b -q prelimPtPlots.cxx\(\"Prefix\"\)
+root -l -b -q acceptanceCombined.cxx\(\"Prefix\"\)
+```
 
 
 
