@@ -3,6 +3,8 @@ Package for making and analyzing TTrees for STAR anisotropic flow analyses.
 
 This is a **mostly** complete and standalone package to create TTrees from STAR picoDsts and also perform an anisotropic flow analysis on those trees. It will need to be run on RCF so it can access STAR libraries.
 
+This README file is optimized for viewing in GitHub and can be found here: https://github.com/cracz/TreeAnalysis/edit/main/README.md 
+
 ## Dependencies - Important!
 
 To complete this package, use CVS to checkout the following StRoot libraries. Place them within the `StRoot/` directory of this package.
@@ -20,34 +22,42 @@ To complete this package, use CVS to checkout the following StRoot libraries. Pl
 `StPicoEvent`
 
 
-This package also uses a class called `ConfigReader` located in the `StRoot/` directory. This class is actually its own repository so it has been attached to this repository as a **submodule**. Most things about the `TreeAnalysis` repo should be the same as other git repos, but a few things will be a little different when dealing with `ConfigReader`. For example, you can make changes to `ConfigReader` from within this repo and push the changes back to the main `ConfigReader` repo, but there's just some extra steps. Check out Git's info on submodules for more info.
+This package also uses a class called `ConfigReader` located in the `StRoot/` directory. This class is actually its own repository so it has been attached to this repository as a **submodule**. If this repo has been checked out from GitHub, you may need to issue the following command to also checkout the submodule:
 
-The `ConfigReader` is used to read text files that contain the values of cuts that are important and/or often changed and supply them to the analysis programs. Before running things, you'll need to create your own config file. You can find an example of one within the `StRoot/ConfigReader/` directory, so copy that one, modify the values how you need, and place it in the main `TreeAnalysis/` directory.
+`git submodule update --init --recursive`
+
+The `ConfigReader` is used to read text files that contain the values of cuts that are important and/or often changed and supply them to the analysis programs. The necessary config file for reproducing results at 3.0 GeV is included in this package and called `config_3p0GeV.txt`.
 
 ## Compiling
 
-1) Set your version of STAR libraries with the command `starver SL20d` (or whatever library version you need). This package was developed with `SL20d` so use that if there's problems with others.
+1) Run the command `starver SL20d`.
 2) In the `TreeAnalysis/` directory, run the command `cons` to produce the necessary \*.so files of everything in the StRoot directory. These are required by the `TreeMaker`.
-3) If it is not present, create a `libs/` directory and copy `StRoot/StEpdUtil/libStEpdUtil.so`, `StRoot/StPicoEvent/libStPicoDst.so`, and `.sl73_gcc485/obj/StRoot/StBichsel/StBichsel.so` into this `libs/` directory. Make sure you rename `StBichsel.so` to `libStBichsel.so`! This will be useful for the makefile for `TreeAnalyzer.cxx`.
-2) Finally, run the command `make` to execute the makefile to compile `TreeAnalyzer.cxx` into an executable.
+3) Run the following
+
+`mkdir libs/`
+
+`cp StRoot/StEpdUtil/libStEpdUtil.so libs/`
+
+`cp StRoot/StPicoEvent/libStPicoDst.so libs/`
+
+`cp .sl73_gcc485/obj/StRoot/StBichsel/StBichsel.so libs/libStBichsel.so`
+
+`mkdir CorrectionFiles/`
+
+4) Finally, run the command `make` to execute the makefile and compile `TreeAnalyzer.cxx` into an executable.
 
 If nothing went wrong, then everything is all set!
 
+
 ## Making Trees
 
-Before making or analyzing trees, make sure the .xml files `treeMake.xml` and `treeAnalyze.xml` will be sending their output files into your own directories where you want them to go!
+Before making or analyzing trees, make sure the .xml files `treeMake.xml` and `treeAnalyze.xml` will be sending their output files into your own directories where you want them to go! In `treeMake.xml`, change every instance of `/star/data01/pwg/cracz/Data_3p0GeV_FXT/` to the location that you want the trees made from picoDsts to go, and change `/star/data01/pwg/cracz/Data_3p0GeV_FXT/out/` to the location that you want the corresponding .err and .out files to go. In `treeAnalyze.xml`, change `/star/data01/pwg/cracz/flowResults/` to the location that you want results from analyzing the trees to go. And in both xml files, change every instance of `/star/u/cracz/TreeAnalysis/` to the `TreeAnalysis/` directory that you checked out.
 
-The trees are made with the ROOT macro `MakeTrees.C`, which uses the `StRoot/TreeMaker/` class. If you need to modify what is saved within the produced trees, go to `StRoot/TreeMaker/`. When submitting jobs to make trees, you need to send `MakeTrees.C`, your config file, and the whole `StRoot/` directory. An example .xml file is `treeMake.xml`, but the command section of the .xml file is shown here:
+To start, run the command 
 
-```xml
-<command>
-  starver SL20d
-  cons
-  root4star -q -b -l MakeTrees.C\(0,$INPUTFILECOUNT,\"$FILELIST\",\"$SCRATCH\",\"$JOBID\",\"config_3p0GeV.txt\",0\)
-</command>
-```
+`star-submit treeMake.xml`
 
-Once the trees are created, you need to make a file list of all of those trees and supply that list to the `TreeAnalyzer` with `treeAnalyze.xml`. If you add the `Scripts/` directory to your path, you can make use of the `getFileList.sh` script to quickly make a file list by going to the directory with all of the trees and running the command
+The trees are made with the ROOT macro `MakeTrees.C`, which uses the `StRoot/TreeMaker/` class. If you need to modify what is saved within the produced trees, go to `StRoot/TreeMaker/`. Once the trees are created, you need to make a file list of all of those trees and supply that list to the `TreeAnalyzer` with `treeAnalyze.xml`. You can make use of the `getFileList.sh` script to quickly make a file list by going to the directory with all of the trees and running the command
 
 ```bash
 getFileList.sh [jobIDofTheTrees]
@@ -59,35 +69,38 @@ If you need to rerun any jobs that failed to make a tree, use the script `findHo
 
 An important part about analyzing the trees you make is that you can only analyze one file per job rather than a whole list like you could with picoDsts.
 
-The `TreeAnalyzer` will be an executable, so you only invoke it by name and supply the following arguments:
+To start, run the command 
+
+`star-submit treeAnalyze.xml`
+
+The `TreeAnalyzer` is an executable, so you only invoke it by name and supply the following arguments:
 
 1) Input file name that has the tree.
 2) Job ID given by the scheduler.
 3) Name of the config file.
-4) Name of the file with correction info (for re-centering and Fourier shifting) (produced by TreeAnalyzer if not present).
-5) Name of the file with event plane resolutions (produced by you, see below).
+4) Name of the file with correction info (for re-centering and Fourier shifting of event planes) (produced by TreeAnalyzer if not present).
+5) Name of the file with event plane resolutions (produced by you after 3 iterations of TreeAnalyzer are done, see below).
 
-For your .xml file, send `TreeAnalyzer`, the correction and resolution files, the config file, and the `libs/` directory. An example .xml file is `treeAnalyze.xml`, but at least the command section should look like this: 
+If you need to rerun any jobs that failed, use the script `Scripts/findHoles.sh` by supplying the job ID as the first argument and the number of total jobs submitted as the second argument. This will produce the command necessary to resubmit the failed jobs at the directory where you originally submitted them.
 
-```xml
-<command>
-  starver SL20d
-  TreeAnalyzer $INPUTFILE0 $JOBID config_3p0GeV.txt correctionInfo_INPUT.root resolutionInfo_INPUT.root
-</command>
-```
+The various histograms and other plots will all be within files called `*.picoDst.result.root`, and the information necessary for event plane recentering and Fourier shifting will be in files called `correctionInfo_OUTPUT_*.root`. `TreeAnalyzer` takes 3 iterations to produce isotropic event plane distributions, and a 4th iteration to get correct flow results. After each of the first 3 iterations, go to the directory you have set in `treeAnalyze.xml` that holds the results and run
 
-If you need to rerun any jobs that failed, use the script `Scripts/findHoles.sh` by supplying the job ID as the first argument and the number of total jobs submitted as the second argument. This will produce the command necessary to resubmit the failed jobs when you return to the directory where you submitted the original jobs.
+`hadd correctionInfo_OUTPUT_*.root correctionInfo_INPUT.root`
 
-`TreeAnalyzer` uses the event plane method with re-centering and Fourier shifting, so it takes 3 iterations to produce flow results. Currently it also applies event plane resolutions particle-by-particle, so it actually takes 4 iterations. For re-centering and Fourier shifting, the program will save the necessary information to files called `correctionInfo_OUTPUT_*.root`. You'll need to `hadd` these into one file and supply them back to the program for the next iteration. I usually just call it `correctionInfo_INPUT.root`, but the new name could be whatever you want. 
+`mv correctionInfo_INPUT.root [...]/TreeAnalysis/CorrectionFiles/`
 
-The program will determine what iteration you're on based on the status of `correctionInfo_INPUT.root`, so you don't have to do anything between iterations aside from combining and supplying the correction info. You should always supply the names of the correction and resolution files to the program since it won't be a problem if they don't exist.
+`rm *.root`
+
+where `[...]` is the path to your checked out copy of `TreeAnalysis/`. This will set you up for the next iteration and remove the unneccessary output files from the iteration you just finished.
+
+The program will determine what iteration you're on based on the status of `correctionInfo_INPUT.root`, so you don't have to do anything between iterations aside from combining and moving the correction info.
 
 * Correction file doesn't exist = iteration 0 (Get re-centering info)
 * Correction file exists, but TProfiles are empty = iteration 1 (Apply re-centering, get shifting info)
-* Correction file exists and TProfiles are not empty = iteration 2 (Apply re-centering and shifting, get all correlations)
+* Correction file exists and TProfiles are not empty = iteration 2 (Apply re-centering and shifting, get all correlations for event plane resolution calculation)
 * Correction file exists, TProfiles not empty, and resolution file exists = flow can now be calculated
 
-For event plane resolutions, this info will be present in the following TProfiles of correlations between the various subevents, located in the main output ROOT files. These will be filled after the 3rd iteration and then they can be used by the analyzer to calculate the resolutions.
+After iteration 3, if you want to recreate the results of the 3.0 GeV paper, use the file `resolutionInfo_INPUT_3p0GeV_averagedRes.root` for your resolutions. The details of where this is from is in the analysis note. Move or copy it to the `CorrectionFiles/` directory, change it's name to `resolutionInfo_INPUT.root`, and run the 4th iteration. Otherwise if you want to recreate a different set of resolution values, the info for event plane resolution calculations will be present in the following TProfiles of correlations between the various subevents, located in the main output ROOT files.
 
 `p_TpcAB`
 
@@ -101,8 +114,37 @@ For event plane resolutions, this info will be present in the following TProfile
 
 `p_EpdAEpdB`
 
-Currently, the analyzer requires that the resolution file contains a `TH1D` of resolution vs centrality ID called `h_resolutions`. The x-axis should NOT be in percentages! It should be following the normal ID that can be seen in the section of `TreeAnalyzer.cxx` where the `centrality` variable is assigned. So essentially `h_resolutions` will have an x-axis from 0 to 16, with 16 bins, and will look like a backwards version of the resolutions vs centrality percentages.
+Go to the directory you have set in `treeAnalyze.xml` that holds the results and run
 
-In the `plotting/` directory, use `resolutions.cxx` to calculate the event plane resolution file that is supplied back to the analysis code for the final iteration. The `makePlots.sh` script is also there to help run this and all other macros in that directory. `resolutions.cxx` will create the file `resolutionInfo_INPUT.root` and this file should be supplied back to the analysis for the final iteration; as seen in the xml command above. 
+`hadd Prefix.picoDst.result.combined.root *.picoDst.result.root`
 
-If there are issues with running `resolutions.cxx` it may be because it was only run and developed on a local copy of ROOT 6 and not ROOT 5. Switching versions or using it on a machine with ROOT 6 and copying `resolutionInfo_INPUT.root` back to RCF should work.
+`mv Prefix.picoDst.result.combined.root [...]TreeAnalysis/Plotting/`
+
+`cd [...]TreeAnalysis/Plotting/`
+
+`root -l -b -q resolutions.cxx\(\"Prefix\",\"3\"\)`
+
+`mv resolutionInfo_INPUT.root ../Correctionfiles/`
+
+where `Prefix` can be whatever you want.
+
+This will combine your results from all of the jobs, move them to the `Plotting/` directory and use them to create the event plane resolutions for the inner EPD subevent, and then move those resolutions to the proper directory so that you're ready to initiate the 4th and final iteration. If you want to reproduceOnce you do that, `hadd` the results together again with this command and you're ready to start plotting the results.
+
+`hadd Prefix.picoDst.result.combined.root *.picoDst.result.root`
+
+## Recreating figures from the paper
+
+Move your main results file (`Prefix.picoDst.result.combined.root`) and `resolutionsWithSystematics.root` to the `Plotting/` directory and run the following commands to recreate the plots shown in the 3.0 GeV paper (without systematic uncertainties).
+
+`root -l -b -q resolutionPlot.cxx`
+
+`root -l -b -q prelimCentralityPlots.cxx\(\"Prefix\"\)`
+
+`root -l -b -q prelimRapidityPlots.cxx\(\"Prefix\"\)`
+
+`root -l -b -q prelimPtPlots.cxx\(\"Prefix\"\)`
+
+`root -l -b -q acceptanceCombined.cxx\(\"Prefix\"\)`
+
+
+
