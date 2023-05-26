@@ -3,7 +3,7 @@ Package for making and analyzing TTrees for STAR anisotropic flow analyses.
 
 This is a **mostly** complete and standalone package to create TTrees from STAR picoDsts and also perform an anisotropic flow analysis on those trees. It will need to be run on RCF so it can access STAR libraries.
 
-This README file is optimized for viewing in GitHub and can be found here: https://github.com/cracz/TreeAnalysis/edit/main/README.md 
+This README file is optimized for viewing in GitHub and can be found here: https://github.com/cracz/TreeAnalysis/
 
 ## Dependencies - Important!
 
