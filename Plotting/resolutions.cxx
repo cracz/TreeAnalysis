@@ -108,7 +108,7 @@ void resolutions(TString jobID, TString order_n_str)
       if(TMath::IsNaN(R_AvsB)) { R_AvsB = 0; dR_AvsB = 0; }
       if(TMath::IsNaN(R_BvsA)) { R_BvsA = 0; dR_BvsA = 0; }
       if(TMath::IsNaN(R_TpcB)) { R_TpcB = 0; dR_TpcB = 0; }
-      std::cout << R_AvsB << std::endl;
+
       h_resolEPDA->SetBinContent(i, R_AvsB);
       h_resolEPDA->SetBinError(i, dR_AvsB);
 

@@ -12,7 +12,7 @@ namespace PlotUtils
 {  
   TH1D* flipHisto(TH1D* histo)
   {
-    TH1D *h_flipped = (TH1D*)histo->Clone((TString)histo->GetName() + "_flip");
+    TH1D *h_flipped = (TH1D*)histo->Clone(TString(histo->GetName()) + TString("_flip"));
     Int_t bins = histo->GetNbinsX();
     
     Int_t j = 1;
