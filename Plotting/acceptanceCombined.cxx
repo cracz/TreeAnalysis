@@ -6,7 +6,6 @@ void acceptanceCombined(TString jobID)
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
-  //TString fileName = "Normal_nTracksCorrect_nHits15_pdtEfficiency.picoDst.result.combined.root";
 
   TFile *file = TFile::Open(fileName);
   if(!file) {cout << "Wrong file!" << endl; return;}
@@ -19,7 +18,7 @@ void acceptanceCombined(TString jobID)
   TH2D *h2_pT_vs_yCM_kp = (TH2D*)file->Get("h2_pT_vs_yCM_kp");
   TH2D *h2_pT_vs_yCM_km = (TH2D*)file->Get("h2_pT_vs_yCM_km");
   TH2D *h2_pT_vs_yCM_pr = (TH2D*)file->Get("h2_pT_vs_yCM_pr");
-  //TH2D *h2_pT_vs_yCM_pr_alt = (TH2D*)file->Get("h2_pT_vs_yCM_pr_alt");
+
   h2_pT_vs_yCM_pp->SetTitle("");
   h2_pT_vs_yCM_pm->SetTitle("");
   h2_pT_vs_yCM_kp->SetTitle("");
@@ -64,6 +63,9 @@ void acceptanceCombined(TString jobID)
   y_mid->SetLineColor(kRed);
   y_mid->SetLineWidth(2);
 
+  //3.0 GeV
+  TLine *y_target = new TLine(1.05, 0, 1.05, 2.5);
+
   //3.2 GeV
   //TLine *y_target = new TLine(1.14, 0, 1.14, 2.5);
 
@@ -71,7 +73,7 @@ void acceptanceCombined(TString jobID)
   //TLine *y_target = new TLine(1.25, 0, 1.25, 2.5);
 
   //3.9 GeV
-  TLine *y_target = new TLine(1.37, 0, 1.37, 2.5);
+  //TLine *y_target = new TLine(1.37, 0, 1.37, 2.5);
   y_target->SetLineStyle(9);
   y_target->SetLineColor(kRed);
   y_target->SetLineWidth(2);
@@ -341,7 +343,7 @@ void acceptanceCombined(TString jobID)
 	}
     }
   }
-  C->SaveAs("acceptanceCombined.png");
+  C->SaveAs("acceptanceCombined.pdf");
   C->cd();
 }
  
