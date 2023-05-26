@@ -1,6 +1,6 @@
 #include "PlotUtils.h"
 
-void resolutionsNEW(TString jobID, TString order_n_str)
+void resolutions(TString jobID, TString order_n_str)
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
