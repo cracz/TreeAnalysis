@@ -1,6 +1,6 @@
 #include "PlotUtils.h"
 
-void resolutions(TString jobID, TString order_n_str)
+void resolutionsNEW(TString jobID, TString order_n_str)
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
@@ -16,69 +16,26 @@ void resolutions(TString jobID, TString order_n_str)
   //canvas->SetLeftMargin(0.15);
   canvas->cd();
 
-  TH1D *h_centralities = (TH1D*)file->Get("h_centralities");
-  
-  TProfile *h_EpdAEpdB = (TProfile*)file->Get("p_EpdAEpdB");
+  TProfile *p_EpdAEpdB = (TProfile*)file->Get("p_EpdAEpdB");
+  TProfile *p_TpcBEpdA = (TProfile*)file->Get("p_TpcBEpdA");
+  TProfile *p_TpcBEpdB = (TProfile*)file->Get("p_TpcBEpdB");
 
-  TProfile *h_TpcBEpdA = (TProfile*)file->Get("p_TpcBEpdA");
-  TProfile *h_TpcBEpdB = (TProfile*)file->Get("p_TpcBEpdB");
-
+  TH1D *h_EpdAEpdB = p_EpdAEpdB->ProjectionX();
+  TH1D *h_TpcBEpdA = p_TpcBEpdA->ProjectionX();
+  TH1D *h_TpcBEpdB = p_TpcBEpdB->ProjectionX();
   
+  TH1D *h_EpdAEpdB_flip = PlotUtils::flipHisto(h_EpdAEpdB);
+  TH1D *h_TpcBEpdA_flip = PlotUtils::flipHisto(h_TpcBEpdA);
+  TH1D *h_TpcBEpdB_flip = PlotUtils::flipHisto(h_TpcBEpdB);
+
   Int_t centBins    = h_EpdAEpdB->GetNbinsX();
   Int_t firstCentID = h_EpdAEpdB->GetBinLowEdge(1);
   Int_t lastCentID  = h_EpdAEpdB->GetBinLowEdge(h_EpdAEpdB->GetNbinsX());
 
-  
-  TH1D *h_EpdAEpdB_flip = new TH1D("h_EpdAEpdB_flip",h_EpdAEpdB->GetTitle(),centBins,0,centBins);
-  h_EpdAEpdB_flip->GetXaxis()->SetTitle((TString)h_EpdAEpdB->GetXaxis()->GetTitle()+" (%)");
-  h_EpdAEpdB_flip->GetYaxis()->SetTitle(h_EpdAEpdB->GetYaxis()->GetTitle());
-
-  TH1D *h_TpcBEpdA_flip = new TH1D("h_TpcBEpdA_flip",h_TpcBEpdA->GetTitle(),centBins,0,centBins);
-  h_TpcBEpdA_flip->GetXaxis()->SetTitle((TString)h_TpcBEpdA->GetXaxis()->GetTitle()+" (%)");
-  h_TpcBEpdA_flip->GetYaxis()->SetTitle(h_TpcBEpdA->GetYaxis()->GetTitle());
-  TH1D *h_TpcBEpdB_flip = new TH1D("h_TpcBEpdB_flip",h_TpcBEpdB->GetTitle(),centBins,0,centBins);
-  h_TpcBEpdB_flip->GetXaxis()->SetTitle((TString)h_TpcBEpdB->GetXaxis()->GetTitle()+" (%)");
-  h_TpcBEpdB_flip->GetYaxis()->SetTitle(h_TpcBEpdB->GetYaxis()->GetTitle());
-
-  TH1D *h_centralities_flip = new TH1D("h_centralities_flip",h_centralities->GetTitle(),centBins,0,centBins);
-  h_centralities_flip->GetXaxis()->SetTitle((TString)h_centralities->GetXaxis()->GetTitle()+" (%)");
-  h_centralities_flip->GetYaxis()->SetTitle(h_centralities->GetYaxis()->GetTitle());
-
-
-
-  // Make the possible resolution plots
-  TH1D *h_resolAvsB = new TH1D("h_resolAvsB","EPD A vs EPD B and TPC B;Centrality (%);R_{"+order_n_str+"1}",centBins,0,centBins);
-  TH1D *h_resolBvsA = new TH1D("h_resolBvsA","EPD B vs EPD A and TPC B;Centrality (%);R_{"+order_n_str+"1}",centBins,0,centBins);
-  TH1D *h_resolTpcB = new TH1D("h_resolTpcB","TPC B vs EPD A and EPD B;Centrality (%);R_{"+order_n_str+"1}",centBins,0,centBins);
-  TH1D *h_resolAvsB_2sub = new TH1D("h_resolAvsB_2sub","EPD A vs EPD B (2 sub-event);Centrality (%);R_{"+order_n_str+"1}",centBins,0,centBins);
-
+  // Make plots of EPD A resolutions.
+  TH1D *h_resolEPDA = new TH1D("h_resolEPDA","EPD A vs EPD B and TPC B;Centrality (%);R_{"+order_n_str+"1}",centBins,0,centBins);
   TH1D *h_resolutions = new TH1D("h_resolutions","EPD A Resolutions;Centrality;R_{"+order_n_str+"1}",centBins,0,centBins);
-  TH2D *h2_resolutions = new TH2D("h2_resolutions","EPD A Resolutions;Centrality;y-y_{mid}",centBins,0,centBins, 20, -1, 1);
   
-  const char *centralityBins[16] = {"75-80", "70-75", "65-70", "60-65", "55-60", "50-55", "45-50", "40-45", "35-40", "30-35", "25-30", "20-25", "15-20", "10-15", "5-10", "0-5"};
-
-  std::vector<TString> newBinLabels;
-
-  // Get list of bin labels, but flipped
-  for (int i = lastCentID; i >= firstCentID; i--) { newBinLabels.push_back(centralityBins[i]); }
-
-  // Flip the bin contents into the new histograms
-  int j = 1;
-  for (int i = centBins; i >= 1; i--)
-    {
-      h_EpdAEpdB_flip->SetBinContent(j, h_EpdAEpdB->GetBinContent(i));
-      h_EpdAEpdB_flip->SetBinError(j, h_EpdAEpdB->GetBinError(i));
-
-      h_TpcBEpdA_flip->SetBinContent(j, h_TpcBEpdA->GetBinContent(i));
-      h_TpcBEpdA_flip->SetBinError(j, h_TpcBEpdA->GetBinError(i));
-      h_TpcBEpdB_flip->SetBinContent(j, h_TpcBEpdB->GetBinContent(i));
-      h_TpcBEpdB_flip->SetBinError(j, h_TpcBEpdB->GetBinError(i));
-
-      h_centralities_flip->SetBinContent(j, h_centralities->GetBinContent(i));
-      
-      j++;
-    }
-
   
   Double_t EpdAEpdB;
   Double_t TpcBEpdA;
@@ -94,9 +51,6 @@ void resolutions(TString jobID, TString order_n_str)
   Double_t dR_AvsB;
   Double_t dR_BvsA;
   Double_t dR_TpcB;
-
-  Double_t R_AvsB_2sub;
-  Double_t dR_AvsB_2sub;
 
   Double_t EpdAEpdB_save;
   Double_t TpcBEpdA_save;
@@ -137,11 +91,6 @@ void resolutions(TString jobID, TString order_n_str)
       R_AvsB = TMath::Sqrt( (EpdAEpdB * TpcBEpdA) / TpcBEpdB );
       R_BvsA = TMath::Sqrt( (EpdAEpdB * TpcBEpdB) / TpcBEpdA );
       R_TpcB = TMath::Sqrt( (TpcBEpdA * TpcBEpdB) / EpdAEpdB );
-      if (EpdAEpdB > 0)
-	{
-	  R_AvsB_2sub = TMath::Sqrt( EpdAEpdB );
-	  dR_AvsB_2sub = (R_AvsB_2sub / 2) * ( dEpdAEpdB / EpdAEpdB);
-	}
 
       dR_AvsB = R_AvsB * TMath::Sqrt((dEpdAEpdB/(2*EpdAEpdB))*(dEpdAEpdB/(2*EpdAEpdB)) +
 				     (dTpcBEpdA/(2*TpcBEpdA))*(dTpcBEpdA/(2*TpcBEpdA)) +
@@ -159,105 +108,29 @@ void resolutions(TString jobID, TString order_n_str)
       if(TMath::IsNaN(R_AvsB)) { R_AvsB = 0; dR_AvsB = 0; }
       if(TMath::IsNaN(R_BvsA)) { R_BvsA = 0; dR_BvsA = 0; }
       if(TMath::IsNaN(R_TpcB)) { R_TpcB = 0; dR_TpcB = 0; }
-      //if(TMath::IsNaN(R_AvsB_save)) { R_AvsB_save = 0; dR_AvsB_save = 0.1; }      
-
-      h_resolAvsB->SetBinContent(i, R_AvsB);
-      h_resolAvsB->SetBinError(i, dR_AvsB);
-
-      h_resolBvsA->SetBinContent(i, R_BvsA);
-      h_resolBvsA->SetBinError(i, dR_BvsA);
-
-      h_resolTpcB->SetBinContent(i, R_TpcB);
-      h_resolTpcB->SetBinError(i, dR_TpcB);
-
-      if (EpdAEpdB > 0)
-	{
-	  h_resolAvsB_2sub->SetBinContent(i, R_AvsB_2sub);
-	  h_resolAvsB_2sub->SetBinError(i, dR_AvsB_2sub);
-	}
+      std::cout << R_AvsB << std::endl;
+      h_resolEPDA->SetBinContent(i, R_AvsB);
+      h_resolEPDA->SetBinError(i, dR_AvsB);
 
       if(!TMath::IsNaN(R_AvsB_save))
 	{
 	  h_resolutions->SetBinContent(i, R_AvsB_save);
 	  h_resolutions->SetBinError(i, dR_AvsB_save);
-
-	  for (int j = 11; j <= 20; j++)
-	    {
-	      h2_resolutions->SetBinContent(i, j, R_AvsB_save);
-	      h2_resolutions->SetBinError(i, j, dR_AvsB_save);
-	    }
 	}
     }
 
   h_resolutions->Write();
-  h2_resolutions->Write();
   
-  // Put the bin labels on the new histograms
-  for (int i = 1; i <= centBins; i++)
-    {
-      h_resolAvsB->GetXaxis()->SetBinLabel(i, newBinLabels.at(i-1));
-      h_resolBvsA->GetXaxis()->SetBinLabel(i, newBinLabels.at(i-1));
-      h_resolTpcB->GetXaxis()->SetBinLabel(i, newBinLabels.at(i-1));
-      h_resolAvsB_2sub->GetXaxis()->SetBinLabel(i, newBinLabels.at(i-1));
-      h_centralities_flip->GetXaxis()->SetBinLabel(i, newBinLabels.at(i-1));
-    }
-  // END RESOLUTIONS
-
   
   gStyle->SetOptStat(0);
 
-  THStack *stack = new THStack("stack", ";Centrality (%);R_{"+order_n_str+"1}");
-
-  h_resolAvsB->SetMarkerStyle(20);
-  h_resolBvsA->SetMarkerStyle(20);
-  h_resolTpcB->SetMarkerStyle(20);
-  h_resolAvsB_2sub->SetMarkerStyle(20);
-
-  h_resolAvsB->SetMarkerSize(1.5);
-  h_resolBvsA->SetMarkerSize(1.5);
-  h_resolTpcB->SetMarkerSize(1.5);
-  h_resolAvsB_2sub->SetMarkerSize(1.5);
-
-  h_resolAvsB->SetMarkerColor(kBlue-7);
-  h_resolBvsA->SetMarkerColor(kRed-7);
-  h_resolTpcB->SetMarkerColor(kGreen-3);
-
-  h_resolAvsB->SetLineColor(kBlue-7);
-  h_resolBvsA->SetLineColor(kRed-7);
-  h_resolTpcB->SetLineColor(kGreen-3);
-
-  stack->Add(h_resolAvsB);
-  stack->Add(h_resolBvsA);
-  stack->Add(h_resolTpcB);
-
-  TLegend *legend = new TLegend(0.7, 0.75, 0.9, 0.9);
-  legend->AddEntry(h_resolAvsB,"EPD A");
-  legend->AddEntry(h_resolBvsA,"EPD B");
-  legend->AddEntry(h_resolTpcB,"TPC B");
-  /*
-  canvas->SetTicks();
-  stack->Draw("NOSTACK E1P");
-  legend->Draw();
-  canvas->SaveAs(jobID + "_resolutions.png");
-  canvas->Clear();
-
-  h_resolAvsB_2sub->SetMaximum(0.7);
-  h_resolAvsB_2sub->SetTitle("");
-  h_resolAvsB_2sub->Draw("E1P");
-  //legend2->Draw();
-  canvas->SaveAs(jobID + "_resolution2SubOnly.png");
-  canvas->Clear();
-
-  canvas->SetTicks(0);
-  canvas->SetLogy();
-  h_centralities_flip->Draw();
-  canvas->SaveAs(jobID + "_h_centralities_flip.png");
-  canvas->Clear();
-  */
-
+  h_resolEPDA->SetMarkerStyle(20);
+  h_resolEPDA->SetMarkerSize(1.5);
+  h_resolEPDA->SetMarkerColor(kBlue-7);
+  h_resolEPDA->SetLineColor(kBlue-7);
   
   TLegend *legend2 = new TLegend(0.65, 0.82, 0.96, 0.96);
-  legend2->AddEntry(h_resolAvsB,"Inner EPD #psi_{1}");
+  legend2->AddEntry(h_resolEPDA,"Inner EPD #psi_{1}");
   legend2->SetTextSize(0.05);
 
   TPaveText *text_extra = new TPaveText(2, 0.25, 28, 0.3);
@@ -280,20 +153,20 @@ void resolutions(TString jobID, TString order_n_str)
   canvas->SetRightMargin(0.04);
   canvas->SetLeftMargin(0.13);
 
-  h_resolAvsB = PlotUtils::trimCentralityPlot(h_resolAvsB);
-  h_resolAvsB->GetXaxis()->SetLabelSize(0.05);
-  h_resolAvsB->GetYaxis()->SetLabelSize(0.045);
-  h_resolAvsB->GetXaxis()->SetTitleOffset(1.1);
-  h_resolAvsB->GetYaxis()->SetTitleOffset(0.9);
-  h_resolAvsB->GetXaxis()->SetTitleSize(0.045);
-  h_resolAvsB->GetYaxis()->SetTitleSize(0.065);
-  h_resolAvsB->SetMaximum(0.25);
-  //h_resolAvsB->SetMaximum(1.0);
-  h_resolAvsB->SetMinimum(0.0);
-  h_resolAvsB->SetTitle("");
-  h_resolAvsB->SetMarkerColor(1);
-  h_resolAvsB->SetLineColor(1);
-  h_resolAvsB->Draw("E1P");
+  h_resolEPDA = PlotUtils::trimCentralityPlot(h_resolEPDA);
+  h_resolEPDA->GetXaxis()->SetLabelSize(0.05);
+  h_resolEPDA->GetYaxis()->SetLabelSize(0.045);
+  h_resolEPDA->GetXaxis()->SetTitleOffset(1.1);
+  h_resolEPDA->GetYaxis()->SetTitleOffset(0.9);
+  h_resolEPDA->GetXaxis()->SetTitleSize(0.045);
+  h_resolEPDA->GetYaxis()->SetTitleSize(0.065);
+  h_resolEPDA->SetMaximum(0.25);
+  //h_resolEPDA->SetMaximum(1.0);
+  h_resolEPDA->SetMinimum(0.0);
+  h_resolEPDA->SetTitle("");
+  h_resolEPDA->SetMarkerColor(1);
+  h_resolEPDA->SetLineColor(1);
+  h_resolEPDA->Draw("E1P");
   //legend2->Draw();
   //text_extra->Draw();
   //prelimText->Draw();
