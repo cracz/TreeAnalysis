@@ -1,6 +1,6 @@
-SRCS = StRoot/ConfigReader/ConfigReader.cxx TreeAnalyzer.cxx
+SRCS = StRoot/ConfigReader/ConfigReader.cxx TreeAnalyzer.cxx SetupAttributes.cxx
 OBJS = $(SRCS:.cxx=.o)
-DEPS = FlowUtils.h NSigmaCorrectionUtils.h
+DEPS = FlowUtils.h SetupAttributes.h NSigmaCorrectionUtils.h
 TARGET = TreeAnalyzer
 TARGET2 = nSigmaInfo
 
@@ -41,6 +41,10 @@ StRoot/ConfigReader/ConfigReader.o: StRoot/ConfigReader/ConfigReader.h StRoot/Co
 
 nSigmaInfo.o: nSigmaInfo.cxx StRoot/ConfigReader/ConfigReader.cxx
 	$(COMPILE) -o $@ -c nSigmaInfo.cxx $(SOLIBS) $(ROOTCFLAGS) $(ROOTLIBS) $(INCFLAGS) $(LIBFLAGS)
+
+SetupAttributes.o: SetupAttributes.cxx
+	$(COMPILE) -o $@ -c SetupAttributes.cxx $(SOLIBS) $(ROOTCFLAGS) $(ROOTLIBS)# $(INCFLAGS) $(LIBFLAGS)
+
 
 .PHONY: clean
 

@@ -29,11 +29,11 @@
 #include <sys/resource.h>
 
 // ROOT headers
-#include "TROOT.h"
-#include "TObject.h"
-#include "TChain.h"
-#include "TSystem.h"
-#include "TKey.h"
+//#include "TROOT.h"
+//#include "TObject.h"
+//#include "TChain.h"
+//#include "TSystem.h"
+//#include "TKey.h"
 #include "TStopwatch.h"
 
 // EPD Util headers
@@ -46,6 +46,7 @@
 #include "StRoot/ConfigReader/ConfigReader.h"
 
 // My Util Header
+#include "SetupAttributes.h"
 #include "FlowUtils.h"
 #include "NSigmaCorrectionUtils.h"
 
@@ -201,8 +202,12 @@ int main(int argc, char *argv[])
   //=== END TTREE SETUP
 
 
+  SetupAttributes setup;
+
   // INPUT FILE FOR CORRECTION INFORMATION
   TFile *correctionInputFile = TFile::Open(correctionFileName, "READ");
+  RUN_ITERATION = setup.getRunIteration(correctionInputFile);
+  /*
   if (!correctionInputFile)
     {
       RUN_ITERATION = 0;
@@ -239,9 +244,13 @@ int main(int argc, char *argv[])
 	    }
 	}
     }
+  */
   ////
 
   // INPUT FILE FOR EVENT PLANE RESOLUTION INFORMATION
+  TFile *resolutionInputFile;
+  Bool_t resolutionsFound = (RUN_ITERATION == 2) ? setup.setResolutionFile(resolutionInputFile, resolutionFileName) : false;
+  /*
   Bool_t resolutionsFound = false;
   TFile *resolutionInputFile;
   if (RUN_ITERATION == 2) 
@@ -254,6 +263,7 @@ int main(int argc, char *argv[])
 	  std::cout << "Resolution file found!" << std::endl; 
 	}
     }
+  */
   ////
 
   // INPUT FILE FOR TPC EFFICIENCY CORRECTIONS -- CURRENTLY ONLY 3 GEV FXT !!!
