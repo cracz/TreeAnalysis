@@ -1,9 +1,34 @@
-#include <iostream>
 #include "SetupAttributes.h"
 
-Int_t SetupAttributes::getRunIteration(TFile* correctionFile)
+
+Int_t SetupAttributes::getRunIteration()
 {
-  Int_t runIteration = 0;
+  return runIteration;
+}
+
+Bool_t SetupAttributes::resolutionsWereFound()
+{
+  return resolutionsFound;
+}
+
+Bool_t SetupAttributes::tpcEfficienciesWereFound()
+{
+  return tpcEfficienciesFound;
+}
+
+Bool_t SetupAttributes::tofEfficienciesWereFound()
+{
+  return tofEfficienciesFound;
+}
+
+Bool_t SetupAttributes::v1WeightsWereFound()
+{
+  return v1WeightsFound;
+}
+
+void SetupAttributes::setCorrectionFileAndRunIteration(TString fileName)
+{
+  correctionFile = TFile::Open(fileName, "READ");
 
   if (!correctionFile)
     {
@@ -40,23 +65,104 @@ Int_t SetupAttributes::getRunIteration(TFile* correctionFile)
 	    }
 	}
     }
-
-  return runIteration;
-}// End getRunIteration()
+}// End setCorrectionFileAndRunIteration()
 
 
-Bool_t SetupAttributes::setResolutionFile(TFile*& filePointerAddress, TString fileName)
+void SetupAttributes::setResolutionFile(TString fileName)
 {
-  Bool_t resolutionsFound = false;
-  filePointerAddress = TFile::Open(fileName, "READ"); 
-  if (!filePointerAddress) 
+  resolutionFile = TFile::Open(fileName, "READ"); 
+  if (!resolutionFile) 
     std::cout << "No resolution file was found!" << std::endl; 
   else 
     { 
       resolutionsFound = true;
       std::cout << "Resolution file found!" << std::endl; 
     }
-  return resolutionsFound;
 }// End setResolutionFile()
 
 
+void SetupAttributes::setTPCEfficiencyFile(TString fileName)
+{
+  pikpEfficiencyFile = TFile::Open(fileName, "READ");
+      
+  if (!pikpEfficiencyFile) 
+    { 
+      std::cout << "One or both efficiency files missing! All efficiencies will default to 1!" << std::endl; 
+    }
+  else 
+    { 
+      tpcEfficienciesFound = true;
+      std::cout << "TPC efficiency files were found!" << std::endl; 
+
+      h2_tracking_pp = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_pp");
+      h2_tracking_pm = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_pm");
+      h2_tracking_kp = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_kp");
+      h2_tracking_km = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_km");	  
+      h2_tracking_pr = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_pr");
+
+      if (!h2_tracking_pp ||
+	  !h2_tracking_pm ||
+	  !h2_tracking_kp ||
+	  !h2_tracking_km ||
+	  !h2_tracking_pr)
+	{ 
+	  std::cout << "FAILED TO RETRIEVE ALL EFFICIENCY HISTOGRAMS!" << std::endl
+		    << "ALL EFFICIENCIES WILL DEFAULT TO 1!" << std::endl;
+
+	  tpcEfficienciesFound = false;
+	}
+    }
+}// End setTPCEfficiencyFile()
+
+
+void SetupAttributes::setTOFEfficiencyFile(TString fileName)
+{
+  tofEfficiencyFile = TFile::Open(fileName, "READ");
+      
+  if (!tofEfficiencyFile) 
+    { 
+      std::cout << "TOF efficiency file missing! All TOF efficiencies will default to 1!" << std::endl; 
+    }
+  else 
+    { 
+      tofEfficienciesFound = true;
+
+      std::cout << "TOF efficiency file was found!" << std::endl; 
+
+      h2_ratio_tof = (TH2D*)tofEfficiencyFile->Get("h2_ratio_tof");
+
+      if (!h2_ratio_tof)
+	{ 
+	  std::cout << "FAILED TO RETRIEVE TOF EFFICIENCY HISTOGRAM!" << std::endl
+		    << "ALL EFFICIENCIES WILL DEFAULT TO 1!" << std::endl;
+
+	  tofEfficienciesFound = false;
+	}
+    }
+}// End setTOFEfficiencyFile()
+
+
+void SetupAttributes::setv1WeightsFile(TString fileName)
+{
+  v1WeightsInputFile = TFile::Open(fileName, "READ"); 
+  
+  if (!v1WeightsInputFile) 
+    { 
+      std::cout << "No v1 weight file was found! No v1 weights will be applied!" << std::endl; 
+    }
+  else 
+    { 
+      v1WeightsFound = true;
+      std::cout << "v1 weight file found! Weights will be applied." << std::endl; 
+
+      p2_TPCv1Weights = (TProfile2D*)v1WeightsInputFile->Get("p2_v1_eta_cent_TPC");
+      p2_EPDv1Weights = (TProfile2D*)v1WeightsInputFile->Get("p2_v1_ring_cent_EPD");
+
+      if (!p2_TPCv1Weights || !p2_EPDv1Weights)
+	{
+	  std::cout << "Failed to retrieve v1 weights from file!" << std::endl
+		    << "v1 weights will not be applied!" << std::endl;
+	  v1WeightsFound = false;
+	}
+    }
+}// End setv1WeightsFile()
