@@ -25,15 +25,11 @@
 
 // C++ headers
 #include <iostream>
+#include <string>
 #include <vector>
 #include <sys/resource.h>
 
 // ROOT headers
-#include "TROOT.h"
-#include "TObject.h"
-#include "TChain.h"
-#include "TSystem.h"
-#include "TKey.h"
 #include "TStopwatch.h"
 
 // EPD Util headers
@@ -46,6 +42,7 @@
 #include "StRoot/ConfigReader/ConfigReader.h"
 
 // My Util Header
+#include "SetupAttributes.h" // <-- Much of the ROOT headers are in here
 #include "FlowUtils.h"
 #include "NSigmaCorrectionUtils.h"
 
@@ -81,7 +78,7 @@ const Double_t D_M0_AL = 3.727379;   // Alpha
 
 const Double_t PI = TMath::Pi();
 
-Int_t RUN_ITERATION = 0;
+//Int_t RUN_ITERATION = 0;
 // 0 = No correction info yet; save raw (Xn,Yn) distributions
 // 1 = Correction file found, but only <Xn> and <Yn> for re-centering.
 //     Also save <sin> <cos> at this step for shifting in the next step.
@@ -201,107 +198,22 @@ int main(int argc, char *argv[])
   //=== END TTREE SETUP
 
 
-  // INPUT FILE FOR CORRECTION INFORMATION
-  TFile *correctionInputFile = TFile::Open(correctionFileName, "READ");
-  if (!correctionInputFile)
-    {
-      RUN_ITERATION = 0;
-      std::cout << "No correction file found." << std::endl
-		<< "Re-centering and shifting will not be performed." << std::endl;
-    }
-  else
-    {
-      TKey *key;
-      TIter next(correctionInputFile->GetListOfKeys());
-      TProfile *profile;
+  SetupAttributes setup;
 
-      while( (key = (TKey*)next()) )
-	{
-	  TClass *cl = gROOT->GetClass(key->GetClassName());
-	  
-	  if (cl->InheritsFrom("TProfile"))
-	    {
-	      profile = (TProfile*)key->ReadObj();
-	      if (profile->GetEntries() == 0)
-		{
-		  std::cout << "TProfiles are empty!" << std::endl
-			    << "Re-centering will be performed and TProfiles will be filled." << std::endl;
-		  RUN_ITERATION = 1;
-		  break;
-		}
-	      else if (profile->GetEntries() != 0)
-		{
-		  std::cout << "Non-empty TProfiles found!" << std::endl
-			    << "Re-centering and event plane shifting will be performed." << std::endl;
-		  RUN_ITERATION = 2;
-		  break;
-		}
-	    }
-	}
-    }
+  // INPUT FILE FOR CORRECTION INFORMATION
+  setup.setCorrectionFileAndRunIteration(correctionFileName);
   ////
 
   // INPUT FILE FOR EVENT PLANE RESOLUTION INFORMATION
-  Bool_t resolutionsFound = false;
-  TFile *resolutionInputFile;
-  if (RUN_ITERATION == 2) 
-    { 
-      resolutionInputFile = TFile::Open(resolutionFileName, "READ"); 
-      if (!resolutionInputFile) { std::cout << "No resolution file was found!" << std::endl; }
-      else 
-	{ 
-	  resolutionsFound = true;
-	  std::cout << "Resolution file found!" << std::endl; 
-	}
-    }
+  setup.setResolutionFile(resolutionFileName);
   ////
 
   // INPUT FILE FOR TPC EFFICIENCY CORRECTIONS -- CURRENTLY ONLY 3 GEV FXT !!!
-  //TString pdtEfficiencyFileName = "pdt_efficiency.root";
   TString pikpEfficiencyFileName = "pikp_efficiency.root";
-  //TFile *pdtEfficiencyFile;
-  TFile *pikpEfficiencyFile;
-  Bool_t tpcEfficienciesFound = false;
-  TH2D *h2_tracking_pp;
-  TH2D *h2_tracking_pm;
-  TH2D *h2_tracking_kp;
-  TH2D *h2_tracking_km;
-  TH2D *h2_tracking_pr;
-  //TH2D *h2_tracking_de;
-  //TH2D *h2_tracking_tr;
-  if (RUN_ITERATION == 2 && configs.sqrt_s_NN == 3.0)
-    {
-      //pdtEfficiencyFile  = TFile::Open(pdtEfficiencyFileName, "READ");
-      pikpEfficiencyFile = TFile::Open(pikpEfficiencyFileName, "READ");
-      
-      if (/*!pdtEfficiencyFile ||*/ !pikpEfficiencyFile) 
-	{ std::cout << "One or both efficiency files missing! All efficiencies will default to 1!" << std::endl; }
-      else 
-	{ 
-	  tpcEfficienciesFound = true;
-	  std::cout << "TPC efficiency files were found!" << std::endl; 
-
-	  h2_tracking_pp = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_pp");
-	  h2_tracking_pm = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_pm");
-	  h2_tracking_kp = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_kp");
-	  h2_tracking_km = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_km");	  
-	  h2_tracking_pr = (TH2D*)pikpEfficiencyFile->Get("h2_ratio_pr");
-
-	  if (!h2_tracking_pp ||
-	      !h2_tracking_pm ||
-	      !h2_tracking_kp ||
-	      !h2_tracking_km ||
-	      !h2_tracking_pr)
-	    { 
-	      std::cout << "FAILED TO RETRIEVE ALL EFFICIENCY HISTOGRAMS!" << std::endl
-			<< "ALL EFFICIENCIES WILL DEFAULT TO 1!" << std::endl;
-
-	      tpcEfficienciesFound = false;
-	    }
-	}
-    }
-  else if (RUN_ITERATION == 2 && configs.sqrt_s_NN != 3.0)
-    { std::cout << "This energy has no TPC efficiency corrections!" << std::endl; }
+  if (setup.getRunIteration() == 2 && configs.sqrt_s_NN == 3.0)
+    setup.setTPCEfficiencyFile(pikpEfficiencyFileName);
+  else if (setup.getRunIteration() == 2 && configs.sqrt_s_NN != 3.0)
+    std::cout << "This energy has no TPC efficiency corrections!" << std::endl;
   ////
 
 
@@ -316,68 +228,21 @@ int main(int argc, char *argv[])
   else if (configs.sqrt_s_NN == 4.5)
     tofEfficiencyFileName = "tof_efficiency_4p5GeV.root";
 
-  
-  TFile *tofEfficiencyFile;
-  TH2D *h2_ratio_tof;
-  Bool_t tofEfficienciesFound = false;
-
-  if (RUN_ITERATION == 2)
-    {
-      tofEfficiencyFile = TFile::Open(tofEfficiencyFileName, "READ");
-      
-      if (!tofEfficiencyFile) 
-	{ std::cout << "TOF efficiency file missing! All TOF efficiencies will default to 1!" << std::endl; }
-      else 
-	{ 
-	  tofEfficienciesFound = true;
-	  std::cout << "TOF efficiency file was found!" << std::endl; 
-
-	  h2_ratio_tof = (TH2D*)tofEfficiencyFile->Get("h2_ratio_tof");
-
-	  if (!h2_ratio_tof)
-	    { 
-	      std::cout << "FAILED TO RETRIEVE TOF EFFICIENCY HISTOGRAM!" << std::endl
-			<< "ALL EFFICIENCIES WILL DEFAULT TO 1!" << std::endl;
-
-	      tofEfficienciesFound = false;
-	    }
-	}
-    }
+  if (setup.getRunIteration() == 2)
+    setup.setTOFEfficiencyFile(tofEfficiencyFileName);
   else
-    { std::cout << "This energy has no TOF efficiency corrections!" << std::endl; }
+    std::cout << "This energy has no TOF efficiency corrections!" << std::endl;
   ////
 
-
   // INPUT FILE FOR v1 WEIGHTING
-  Bool_t v1WeightsFound = false;
-  TFile *v1WeightsInputFile;
-  TProfile2D* p2_TPCv1Weights;
-  TProfile2D* p2_EPDv1Weights;
-
-  v1WeightsInputFile = TFile::Open(v1WeightsFileName, "READ"); 
-  if (!v1WeightsInputFile) { std::cout << "No v1 weight file was found! No v1 weights will be applied!" << std::endl; }
-  else 
-    { 
-      v1WeightsFound = true;
-      std::cout << "v1 weight file found! Weights will be applied." << std::endl; 
-
-      p2_TPCv1Weights = (TProfile2D*)v1WeightsInputFile->Get("p2_v1_eta_cent_TPC");
-      p2_EPDv1Weights = (TProfile2D*)v1WeightsInputFile->Get("p2_v1_ring_cent_EPD");
-
-      if (!p2_TPCv1Weights || !p2_EPDv1Weights)
-	{
-	  std::cout << "Failed to retrieve v1 weights from file!" << std::endl
-		    << "v1 weights will not be applied!" << std::endl;
-	  v1WeightsFound = false;
-	}
-    }
+  setup.setv1WeightsFile(v1WeightsFileName);
   ////
 
 
   // OUTPUT FILE FOR EVENT PLANE CORRECTION INFORMATION
   TString correctionOutputName = "correctionInfo_OUTPUT_"+jobID+".root";
   TFile *correctionOutputFile;
-  if (RUN_ITERATION == 0 || RUN_ITERATION == 1) { correctionOutputFile = new TFile(correctionOutputName, "RECREATE"); }
+  if (setup.getRunIteration() == 0 || setup.getRunIteration() == 1) { correctionOutputFile = new TFile(correctionOutputName, "RECREATE"); }
   ////
 
   // MAIN OUTPUT FILE
@@ -847,7 +712,7 @@ int main(int argc, char *argv[])
   tempHighBound1 = (configs.fixed_target) ? -2.0 : 6.0;
   TProfile2D *p2_pp_vs_eta = new TProfile2D("p2_pp_vs_eta","<TnMIP> for Supersectors vs #eta;#eta;Supersector", tempBins1, tempLowBound1, tempHighBound1, 12, 0.5, 12.5);
 
-  TH2D *h2_ring_vs_eta = new TH2D("h2_ring_vs_eta","EPD East Ring vs #eta;#eta;Ring", 500, -6.0, -1.0, 16, 0.5, 16.5);
+  TH2D *h2_ring_vs_eta = new TH2D("h2_ring_vs_eta","EPD East Ring vs #eta;#eta;Ring", 1000, -6.0, -2.0, 16, 0.5, 16.5);
 
   TH2D *h2_trans_vtx = new TH2D("h2_trans_vtx","Primary Vertex after V_{z} Cut;x (cm);y (cm)", 500, -5, 5, 500, -5, 5);
   TH2D *h2_trans_vtx_cut = new TH2D("h2_trans_vtx_cut","Final Primary Vertices;x (cm);y (cm)", 500, -5, 5, 500, -5, 5);
@@ -1209,12 +1074,12 @@ int main(int argc, char *argv[])
 	      eventInfo.nTracksTpc++;
 
 	      // Default v1 weight value = 1.0
-	      Double_t TPCtrackv1Weight = (v1WeightsFound) ? FlowUtils::getTPCv1Weight((Double_t)i_centrality, d_eta, p2_TPCv1Weights) : 1.0; 
+	      Double_t TPCtrackv1Weight = (setup.v1WeightsWereFound()) ? FlowUtils::getTPCv1Weight((Double_t)i_centrality, d_eta, setup.p2_TPCv1Weights) : 1.0; 
 
 	      particleInfo.phi = d_phi;
 	      particleInfo.eta = d_eta;
 	      particleInfo.pT  = d_pT;
-	      particleInfo.weight = (v1WeightsFound) ? TPCtrackv1Weight : d_pT;
+	      particleInfo.weight = (setup.v1WeightsWereFound()) ? TPCtrackv1Weight : d_pT;
 
 	      h2_phi_vs_eta_TPC->Fill(d_eta, d_phi);
 
@@ -1654,7 +1519,7 @@ int main(int argc, char *argv[])
 	  tileWeight = tileTnMip;
 
 	  // Default v1 weight value = 1.0
-	  Double_t EPDhitv1Weight = (v1WeightsFound) ? FlowUtils::getEPDv1Weight((Double_t)i_centrality, (Double_t)tileRow, p2_EPDv1Weights) : 1.0; 
+	  Double_t EPDhitv1Weight = (setup.v1WeightsWereFound()) ? FlowUtils::getEPDv1Weight((Double_t)i_centrality, (Double_t)tileRow, setup.p2_EPDv1Weights) : 1.0; 
 	  tileWeight *= EPDhitv1Weight;
 
 	  epdParticleInfo.EPDring = tileRow;
@@ -1758,9 +1623,9 @@ int main(int argc, char *argv[])
       //          Re-centering (Xn, Yn) Distributions
       //=========================================================
 
-      if (RUN_ITERATION == 1 || RUN_ITERATION == 2)
+      if (setup.getRunIteration() == 1 || setup.getRunIteration() == 2)
 	{
-	  FlowUtils::recenterQ(eventInfo, correctionInputFile, ORDER_M);
+	  FlowUtils::recenterQ(eventInfo, setup.correctionFile, ORDER_M);
 
 	  if (eventInfo.badEvent) continue;
 
@@ -1812,9 +1677,9 @@ int main(int argc, char *argv[])
       //          Event Plane Angle Shifting and Flow
       //=========================================================
 
-      if (RUN_ITERATION == 2)
+      if (setup.getRunIteration() == 2)
 	{
-	  FlowUtils::shiftPsi(eventInfo, correctionInputFile, ORDER_M, configs.shift_terms);
+	  FlowUtils::shiftPsi(eventInfo, setup.correctionFile, ORDER_M, configs.shift_terms);
 
 	  h_psiTpc_FLAT->Fill(eventInfo.psiTpc);
 	  h_psiTpcA_FLAT->Fill(eventInfo.psiTpcA);
@@ -1915,7 +1780,7 @@ int main(int argc, char *argv[])
 	  // JUST v1 FOR WEIGHTING
 	  //Weights are only accumulated when they have not already been applied.
 	  //This ensures we don't get v1 weights that already use v1 weights.
-	  if (!v1WeightsFound)
+	  if (!setup.v1WeightsWereFound())
 	    {
 	      //TPC v1 weights
 	      for (UInt_t j = 0; j < eventInfo.tpcParticles.size(); j++)
@@ -2012,9 +1877,9 @@ int main(int argc, char *argv[])
 
 
 	  // RESOLUTION CORRECTED FLOW VALUES HERE
-	  if (resolutionsFound)
+	  if (setup.resolutionsWereFound())
 	    {
-	      TH1D *resolutionHistogram = (TH1D*)resolutionInputFile->Get("h_resolutions");
+	      TH1D *resolutionHistogram = (TH1D*)setup.resolutionFile->Get("h_resolutions");
 	      Double_t resolution = resolutionHistogram->GetBinContent(centID+1);	      
 	      if (resolution == 0.0) continue;  // Skip centralities without resolutions.
 
@@ -2039,15 +1904,13 @@ int main(int argc, char *argv[])
 
 		  // Set TPC tracking efficiencies here
 		  h_simulationCheck_total->Fill(1);
-		  if (tpcEfficienciesFound)
+		  if (setup.tpcEfficienciesWereFound())
 		    {
-		      if      (eventInfo.tpcParticles.at(j).ppTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_pp);
-		      else if (eventInfo.tpcParticles.at(j).pmTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_pm);
-		      else if (eventInfo.tpcParticles.at(j).kpTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_kp);
-		      else if (eventInfo.tpcParticles.at(j).kmTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_km);
-		      else if (eventInfo.tpcParticles.at(j).prTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_pr);
-		      //else if (eventInfo.tpcParticles.at(j).deTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_de);
-		      //else if (eventInfo.tpcParticles.at(j).trTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, h2_tracking_tr);
+		      if      (eventInfo.tpcParticles.at(j).ppTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, setup.h2_tracking_pp);
+		      else if (eventInfo.tpcParticles.at(j).pmTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, setup.h2_tracking_pm);
+		      else if (eventInfo.tpcParticles.at(j).kpTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, setup.h2_tracking_kp);
+		      else if (eventInfo.tpcParticles.at(j).kmTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, setup.h2_tracking_km);
+		      else if (eventInfo.tpcParticles.at(j).prTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, setup.h2_tracking_pr);
 		    }
 		  if (tpcEfficiency == -1) // Checks here for tracks with no recorded efficiency values.
 		    { 
@@ -2076,27 +1939,14 @@ int main(int argc, char *argv[])
 			  h_simulationCheck_pr->Fill(1);
 			  h2_pT_vs_yCM_pr_noEff->Fill(jthRapidity - Y_MID, jthpT);
 			}
-		      /*
-		      else if (eventInfo.tpcParticles.at(j).deTag) 
-			{
-			  h_simulationCheck_de->Fill(1); 
-			  h2_pT_vs_yCM_de_noEff->Fill(jthRapidity - Y_MID, jthpT);
-			}
-		      else if (eventInfo.tpcParticles.at(j).trTag) 
-			{
-			  h_simulationCheck_tr->Fill(1); 
-			  h2_pT_vs_yCM_tr_noEff->Fill(jthRapidity - Y_MID, jthpT);
-			}
-		      */
+
 		      continue; 
 		    }
 		  ////
 
 		  // Set TOF efficiencies here
 		  // Do not use these efficiencies unless the TOF was used for PID
-		  tofEfficiency = (tofEfficienciesFound) ? FlowUtils::getTofEff(jthEta, jthpT, h2_ratio_tof) : 1.0;
-		  //if (tofEfficiency == -1.0) 
-		  //tofEfficiency = 1.0;
+		  tofEfficiency = (setup.tofEfficienciesWereFound()) ? FlowUtils::getTofEff(jthEta, jthpT, setup.h2_ratio_tof) : 1.0;
 		  ////
 
 
@@ -2335,11 +2185,11 @@ int main(int argc, char *argv[])
 
 		    }
 		}// End tpc particles loop
-	    }// End if(resolutionsFound)
+	    }// End if(setup.resolutionsWereFound())
 	  //=========================================================
 	  //            End Flow Calculations
 	  //=========================================================
-	}// End if(RUN_ITERATION == 2)
+	}// End if(setup.getRunIteration() == 2)
     }//END EVENT LOOP
   eventInfo.reset();
 
@@ -2388,7 +2238,7 @@ int main(int argc, char *argv[])
   //
 
   // Save re-centering and Fourier shifting information
-  if (RUN_ITERATION == 0 || RUN_ITERATION == 1)
+  if (setup.getRunIteration() == 0 || setup.getRunIteration() == 1)
     {
       correctionOutputFile->cd();
 
@@ -2425,10 +2275,10 @@ int main(int argc, char *argv[])
   // Close files
   gROOT->GetListOfFiles()->Remove(outputFile);
   outputFile->Close();
-  if (RUN_ITERATION == 1 || RUN_ITERATION == 2)
+  if (setup.getRunIteration() == 1 || setup.getRunIteration() == 2)
     {
-      gROOT->GetListOfFiles()->Remove(correctionInputFile);
-      correctionInputFile->Close();
+      gROOT->GetListOfFiles()->Remove(setup.correctionFile);
+      setup.correctionFile->Close();
     }
   //
 
