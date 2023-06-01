@@ -1,10 +1,30 @@
+#include "PlotUtils.h"
+
 void resolutionPlot()
 {
-  TFile* file = TFile::Open("resolutionsWithSystematics.root","READ");
+  TFile* file = TFile::Open("eventPlaneSystematics.root","READ");
 
-  TH1D* h_resolutions = (TH1D*)file->Get("h_resolutionsWithSystematics");
+  TH1D* h_resolutionsWithStats = (TH1D*)file->Get("h_resolutionsWithStats");
+  TH1D* h_resolutionswithSysts = (TH1D*)file->Get("h_resolutionsWithSysts");
+  h_resolutionswithSysts = PlotUtils::trimCentralityPlot(h_resolutionswithSysts);
+  
+  h_resolutionsWithStats->SetTitle("");
+  h_resolutionsWithStats->GetYaxis()->SetTitle("R_{31}");
+  h_resolutionsWithStats->GetYaxis()->SetTitleSize(0.055);
+  h_resolutionsWithStats->GetYaxis()->SetTitleOffset(1.15);
+  h_resolutionsWithStats->GetYaxis()->SetLabelSize(0.045);
+  h_resolutionsWithStats->GetYaxis()->SetRangeUser(0.0, 0.25);
+  h_resolutionsWithStats->GetXaxis()->SetTitle("Centrality (%)");
+  h_resolutionsWithStats->GetXaxis()->SetRangeUser(0.0, 60.0);
+  h_resolutionsWithStats->GetXaxis()->SetTitleSize(0.045);
+  h_resolutionsWithStats->GetXaxis()->SetTitleOffset(1.1);
+  h_resolutionsWithStats->GetXaxis()->SetLabelSize(0.05);
+  h_resolutionsWithStats->SetLineWidth(2);
+  h_resolutionsWithStats->SetLineColor(kBlack);
+  h_resolutionsWithStats->SetMarkerSize(2);
+  h_resolutionsWithStats->SetMarkerColor(kBlue);
 
-  TGraphErrors* finalGraph = new TGraphErrors(h_resolutions);
+  TGraphErrors* finalGraph = new TGraphErrors(h_resolutionswithSysts);
   finalGraph->SetTitle("");
   finalGraph->GetYaxis()->SetTitle("R_{31}");
   finalGraph->GetYaxis()->SetTitleSize(0.055);
@@ -33,12 +53,14 @@ void resolutionPlot()
   canvas->SetRightMargin(0.04);
   canvas->SetLeftMargin(0.13);
   canvas->cd();
-  
+
   gStyle->SetOptStat(0);
   gStyle->SetEndErrorSize(6);
+  gStyle->SetErrorX(0);
 
-  finalGraph->Draw();
-  finalGraph->Draw("AP[]");
+  h_resolutionsWithStats->Draw("EP");
+  canvas->Update();
+  finalGraph->Draw("[]");
   canvas->SaveAs("resolutionPlot.pdf");
 
   delete finalGraph;

@@ -253,7 +253,7 @@ void acceptanceCombined(TString jobID)
       h->GetYaxis()->SetTitleOffset(1.9);
  
       h->GetYaxis()->CenterTitle();
-      //h->GetYaxis()->SetNdivisions(505);
+      //h->GetYaxis()->SetNdivisions(504);
  
       // TICKS Y Axis
       //h->GetYaxis()->SetTickLength(xFactor*0.04/yFactor);
@@ -300,6 +300,11 @@ void acceptanceCombined(TString jobID)
 	  right_pm->Draw("SAME");
 	  top_pm->Draw("SAME");
 	  bottom_pm->Draw("SAME");
+
+	  //Cover overlapping y-axis numbers
+	  TPaveText *pt = new TPaveText(-1.5,2.4,-1.25,2.6);
+	  pt->SetFillColor(kWhite);
+	  pt->Draw("SAME");  
 	}
       else if (i == 0 && j == 1)
 	{
@@ -308,6 +313,11 @@ void acceptanceCombined(TString jobID)
 	  right_pp->Draw("SAME");
 	  top_pp->Draw("SAME");
 	  bottom_pp->Draw("SAME");
+	  
+	  //Cover overlapping y-axis numbers
+	  TPaveText *pt = new TPaveText(-1.5,-0.1,-1.25,0.1);
+	  pt->SetFillColor(kWhite);
+	  pt->Draw("SAME");  
 	}
       else if (i == 1 && j == 0)
 	{
@@ -343,6 +353,7 @@ void acceptanceCombined(TString jobID)
 	}
     }
   }
+
   C->SaveAs("acceptanceCombined.pdf");
   C->cd();
 }
