@@ -136,7 +136,7 @@ hadd Prefix.picoDst.result.combined.root *.picoDst.result.root
 
 ## Recreating figures from the paper
 
-Move your main results file (`Prefix.picoDst.result.combined.root`) and `resolutionsWithSystematics.root` to the `Plotting/` directory and run the following commands to recreate the plots shown in the 3.0 GeV paper (without systematic uncertainties).
+Move your main results file (`Prefix.picoDst.result.combined.root`) and `eventPlaneSystematics.root` to the `Plotting/` directory and run the following commands to recreate the plots shown in the 3.0 GeV paper (without systematic uncertainties).
 
 ```bash
 root -l -b -q resolutionPlot.cxx
