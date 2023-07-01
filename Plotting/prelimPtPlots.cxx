@@ -1,4 +1,4 @@
-void prelimPtPlots(TString jobID, Bool_t useSystematics = false)
+void prelimPtPlots(TString jobID, Bool_t useSystematics = false, Double_t sqrt_s_NN = 3.0)
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
@@ -80,17 +80,19 @@ void prelimPtPlots(TString jobID, Bool_t useSystematics = false)
     }
   ////
 
-  THStack *prPtStack   = new THStack("prPtStack", ";p_{T} (GeV/c);v_{3} {#Psi_{1}}");
+  THStack *prPtStack   = new THStack("prPtStack", ";p_{T} (GeV/c);v_{1} {#Psi_{1}}");
   prPtStack->Add(h_vn_pT_00to10_pr);
   prPtStack->Add(h_vn_pT_10to40_pr);
-  prPtStack->Add(h_vn_pT_40to60_pr);
+  if (sqrt_s_NN < 3.5)
+    prPtStack->Add(h_vn_pT_40to60_pr);
 
 
   // Make text boxes, legends, and line at zero
   TLegend *prLegend = new TLegend(0.19, 0.15, 0.39, 0.3);
   prLegend->AddEntry(h_vn_pT_00to10_pr, "0 - 10%");
   prLegend->AddEntry(h_vn_pT_10to40_pr, "10 - 40%");
-  prLegend->AddEntry(h_vn_pT_40to60_pr, "40 - 60%");
+  if (sqrt_s_NN < 3.5)
+    prLegend->AddEntry(h_vn_pT_40to60_pr, "40 - 60%");
   prLegend->SetBorderSize(0);
   prLegend->SetFillColorAlpha(0,0);
   prLegend->SetTextSize(0.04);
@@ -98,7 +100,16 @@ void prelimPtPlots(TString jobID, Bool_t useSystematics = false)
   //TPaveText *prText = new TPaveText(0.28, 0.03, 1.28, 0.055, "NB");
   TPaveText *prText = new TPaveText(0.0, 0.008, 1.8, 0.035, "NB");
   prText->SetTextAlign(12);
-  prText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
+  if (sqrt_s_NN == 3.0)
+    prText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
+  else if (sqrt_s_NN == 3.2 || sqrt_s_NN == 3.22)
+    prText->AddText("Au+Au #sqrt{s_{NN}} = 3.2 GeV FXT (year 2019)");
+  else if (sqrt_s_NN == 3.5)
+    prText->AddText("Au+Au #sqrt{s_{NN}} = 3.5 GeV FXT (year 2020)");
+  else if (sqrt_s_NN == 3.9)
+    prText->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT (years 2019, 2020)");
+  else if (sqrt_s_NN == 4.5)
+    prText->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT (year 2020)");
   prText->AddText("Proton");
   prText->AddText("0 < y_{CM} < 0.5");
   prText->SetFillColorAlpha(0,0);
@@ -137,7 +148,7 @@ void prelimPtPlots(TString jobID, Bool_t useSystematics = false)
     }
   prPtStack->Draw("NOSTACK EP SAME");
   prLegend->Draw();
-  prText->Draw();
+  //prText->Draw();
   //prelimText->Draw();
   canvas->SaveAs("v3_prPtStack.pdf");
   //canvas->SaveAs("v3_prPtStack.png");

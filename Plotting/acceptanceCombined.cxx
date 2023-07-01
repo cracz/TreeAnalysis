@@ -55,7 +55,10 @@ void acceptanceCombined(TString jobID)
 
   TPaveText *text_extra = new TPaveText(-1.0, 1.5, 1.0, 2.0);
   text_extra->SetFillColorAlpha(0,0);
-  text_extra->AddText("#sqrt{s_{NN}} = 3.0 GeV FXT Au+Au");
+  //text_extra->AddText("#sqrt{s_{NN}} = 3.0 GeV FXT Au+Au");
+  //text_extra->AddText("#sqrt{s_{NN}} = 3.2 GeV FXT Au+Au");
+  //text_extra->AddText("#sqrt{s_{NN}} = 3.5 GeV FXT Au+Au");
+  text_extra->AddText("#sqrt{s_{NN}} = 3.9 GeV FXT Au+Au");
   text_extra->AddText("Collisions at RHIC");
 
 
@@ -64,7 +67,7 @@ void acceptanceCombined(TString jobID)
   y_mid->SetLineWidth(2);
 
   //3.0 GeV
-  TLine *y_target = new TLine(1.05, 0, 1.05, 2.5);
+  //TLine *y_target = new TLine(1.05, 0, 1.05, 2.5);
 
   //3.2 GeV
   //TLine *y_target = new TLine(1.14, 0, 1.14, 2.5);
@@ -73,7 +76,7 @@ void acceptanceCombined(TString jobID)
   //TLine *y_target = new TLine(1.25, 0, 1.25, 2.5);
 
   //3.9 GeV
-  //TLine *y_target = new TLine(1.37, 0, 1.37, 2.5);
+  TLine *y_target = new TLine(1.37, 0, 1.37, 2.5);
   y_target->SetLineStyle(9);
   y_target->SetLineColor(kRed);
   y_target->SetLineWidth(2);
@@ -181,11 +184,18 @@ void acceptanceCombined(TString jobID)
   const Int_t Ny = 2;
  
   // Margins
+
   Float_t lMargin = 0.08;
   Float_t rMargin = 0.08;
   Float_t bMargin = 0.11;
   Float_t tMargin = 0.05;
- 
+
+  /*
+  Float_t lMargin = 0.12;
+  Float_t rMargin = 0.05;
+  Float_t bMargin = 0.15;
+  Float_t tMargin = 0.05;
+  */
   // Canvas setup
   CanvasPartition(C,Nx,Ny,lMargin,rMargin,bMargin,tMargin);
    
@@ -251,6 +261,8 @@ void acceptanceCombined(TString jobID)
       h->GetYaxis()->SetTitleFont(43);
       h->GetYaxis()->SetTitleSize(29);
       h->GetYaxis()->SetTitleOffset(1.9);
+      h->GetYaxis()->ChangeLabel(1,-1,0.); // remove the first label
+      h->GetYaxis()->ChangeLabel(-1,-1,0.); // remove the last label
  
       h->GetYaxis()->CenterTitle();
       //h->GetYaxis()->SetNdivisions(504);
@@ -302,9 +314,11 @@ void acceptanceCombined(TString jobID)
 	  bottom_pm->Draw("SAME");
 
 	  //Cover overlapping y-axis numbers
+	  /*
 	  TPaveText *pt = new TPaveText(-1.5,2.4,-1.25,2.6);
 	  pt->SetFillColor(kWhite);
-	  pt->Draw("SAME");  
+	  pt->Draw("SAME");
+	  */
 	}
       else if (i == 0 && j == 1)
 	{
@@ -315,9 +329,11 @@ void acceptanceCombined(TString jobID)
 	  bottom_pp->Draw("SAME");
 	  
 	  //Cover overlapping y-axis numbers
+	  /*
 	  TPaveText *pt = new TPaveText(-1.5,-0.1,-1.25,0.1);
 	  pt->SetFillColor(kWhite);
-	  pt->Draw("SAME");  
+	  pt->Draw("SAME");
+	  */
 	}
       else if (i == 1 && j == 0)
 	{
@@ -354,7 +370,7 @@ void acceptanceCombined(TString jobID)
     }
   }
 
-  C->SaveAs("acceptanceCombined.pdf");
+  C->SaveAs("acceptanceCombined.png");
   C->cd();
 }
  

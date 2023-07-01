@@ -1,6 +1,6 @@
 #include "PlotUtils.h"
 
-void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false)
+void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_t sqrt_s_NN = 3.0)
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
@@ -126,12 +126,33 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false)
   h_vn_pr->GetYaxis()->SetTitleOffset(1.7);
   ////
 
-  THStack *allCentralityStack = new THStack("allCentralityStack", ";Centrality (%);v_{3} {#Psi_{1}}");
+  // Remove points that have unreliable resolutions
+  if (sqrt_s_NN == 3.5 || sqrt_s_NN == 3.9)
+    {
+      for (Int_t i = 9; i <= 12; i++)
+	{
+	  h_vn_pp->SetBinContent(i, 0.0);
+	  h_vn_pp->SetBinError(i, 0.0);
+	  h_vn_pm->SetBinContent(i, 0.0);
+	  h_vn_pm->SetBinError(i, 0.0);
+	  h_vn_pr->SetBinContent(i, 0.0);
+	  h_vn_pr->SetBinError(i, 0.0);
+	}
+      for (Int_t i = 5; i <= 6; i++)
+	{
+	  h_vn_kp->SetBinContent(i, 0.0);
+	  h_vn_kp->SetBinError(i, 0.0);
+	  h_vn_km->SetBinContent(i, 0.0);
+	  h_vn_km->SetBinError(i, 0.0);
+	}
+    }
+
+  THStack *allCentralityStack = new THStack("allCentralityStack", ";Centrality (%);v_{1} {#Psi_{1}}");
   allCentralityStack->Add(h_vn_pp);
   allCentralityStack->Add(h_vn_pm);
   allCentralityStack->Add(h_vn_pr);
 
-  THStack *kaCentralityStack = new THStack("kaCentralityStack", ";Centrality (%);v_{3} {#Psi_{1}}");
+  THStack *kaCentralityStack = new THStack("kaCentralityStack", ";Centrality (%);v_{1} {#Psi_{1}}");
   kaCentralityStack->Add(h_vn_km);
   kaCentralityStack->Add(h_vn_kp);
   
@@ -142,8 +163,18 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false)
   prelimText->SetFillColorAlpha(0,0);
   prelimText->SetTextSize(0.04);
 
+   
   TPaveText *allText = new TPaveText(15, 0.01, 45, 0.018, "NB");
-  allText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
+  if (sqrt_s_NN == 3.0)
+    allText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
+  else if (sqrt_s_NN == 3.2 || sqrt_s_NN == 3.22)
+    allText->AddText("Au+Au #sqrt{s_{NN}} = 3.2 GeV FXT (year 2019)");
+  else if (sqrt_s_NN == 3.5)
+    allText->AddText("Au+Au #sqrt{s_{NN}} = 3.5 GeV FXT (year 2020)");
+  else if (sqrt_s_NN == 3.9)
+    allText->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT (years 2019, 2020)");
+  else if (sqrt_s_NN == 4.5)
+    allText->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT (year 2020)");
   allText->AddText("0 < y_{CM} < 0.5");
   //allText->AddText("0.4 #leq p_{T} #leq 2.0 GeV");
   allText->SetFillColorAlpha(0,0);
@@ -151,7 +182,16 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false)
   allText->SetTextSize(0.04);
 
   TPaveText *kaText = new TPaveText(15, 0.05, 48, 0.09, "NB");
-  kaText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+  if (sqrt_s_NN == 3.0)
+    kaText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
+  else if (sqrt_s_NN == 3.2 || sqrt_s_NN == 3.22)
+    kaText->AddText("Au+Au #sqrt{s_{NN}} = 3.2 GeV FXT");
+  else if (sqrt_s_NN == 3.5)
+    kaText->AddText("Au+Au #sqrt{s_{NN}} = 3.5 GeV FXT");
+  else if (sqrt_s_NN == 3.9)
+    kaText->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT");
+  else if (sqrt_s_NN == 4.5)
+    kaText->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT");
   kaText->AddText("0 < y_{CM} < 0.5");
   kaText->AddText("0.4 < p_{T} < 1.6 GeV");
   kaText->SetFillColorAlpha(0,0);
@@ -199,7 +239,7 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false)
       sys_pr->Draw("[]");
     }
   allLegend->Draw();
-  allText->Draw();
+  //allText->Draw();
   //prelimText->Draw();
   canvas->SaveAs("v3_allCentralityStack.pdf");
   //canvas->SaveAs("v3_allCentralityStack.png");

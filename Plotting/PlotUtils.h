@@ -9,14 +9,30 @@
 
 
 namespace PlotUtils
-{  
+{
+  void fillVectorsOfValues(TH1D* histogram, std::vector<Double_t> &xValues, std::vector<Double_t> &yValues)
+  {
+    for (Int_t ithBin = 1; ithBin < histogram->GetNbinsX(); ithBin++)
+      {
+	xValues.push_back( histogram->GetBinCenter(ithBin) );
+	yValues.push_back( histogram->GetBinContent(ithBin) );
+      }
+  };// End fillVectorsOfValues()
+
+  void fillVectorOfErrors(TH1D* histogram, std::vector<Double_t> &yErrors)
+  {
+    for (Int_t ithBin = 1; ithBin < histogram->GetNbinsX(); ithBin++)
+	yErrors.push_back( histogram->GetBinError(ithBin) );
+  };// End fillVectorOfErrors()
+
+  
   TH1D* flipHisto(TH1D* histo)
   {
     TH1D *h_flipped = (TH1D*)histo->Clone(TString(histo->GetName()) + TString("_flip"));
     Int_t bins = histo->GetNbinsX();
     
     Int_t j = 1;
-    for (int i = bins; i >= 1; i--)
+    for (Int_t i = bins; i >= 1; i--)
       {
 	h_flipped->SetBinContent(j, histo->GetBinContent(i));
 	h_flipped->SetBinError(j, histo->GetBinError(i));
@@ -122,11 +138,11 @@ namespace PlotUtils
   {
     TH1D *h_trimmed = (TH1D*)histo->Clone();
     Int_t oldBins = histo->GetNbinsX();
-    Int_t newBins = (oldBins == 16) ? 12 : 6; // Usually 12, 6 for rebinned kaons.
+    Int_t newBins = (oldBins == 16) ? 12 : 6; // Usually 12; 6 for rebinned kaons.
     h_trimmed->SetBins(newBins, 0, 60);
     h_trimmed->GetXaxis()->SetTitle("Centrality (%)");
 
-    for (int i = 1; i < newBins; i++)
+    for (int i = 1; i <= newBins; i++)
       {
 	h_trimmed->SetBinContent(i, histo->GetBinContent(i));
 	h_trimmed->SetBinError(i, histo->GetBinError(i));
@@ -136,7 +152,37 @@ namespace PlotUtils
   };// End trimCentralityPlot()
 
 
+  // Cut off everything above 40% centrality
+  TH1D* trimCentralityPlotStrict(TH1D *histo)
+  {
+    TH1D *h_trimmed = (TH1D*)histo->Clone();
+    Int_t oldBins = histo->GetNbinsX();
+    //Int_t newBins = (oldBins == 16) ? 8 : 4; // Usually 8; 4 for rebinned kaons.
+    Int_t newBins = (oldBins == 16) ? 12 : 6; // Usually 12; 6 for rebinned kaons.
+    //h_trimmed->SetBins(newBins, 0, 40);
+    h_trimmed->SetBins(newBins, 0, 60);
+    h_trimmed->GetXaxis()->SetTitle("Centrality (%)");
 
+    int cutoff = (newBins == 12) ? 8 : 4;
+    
+    for (int i = 1; i <= newBins; i++)
+      {
+	if (i > cutoff)
+	  {
+	    h_trimmed->SetBinContent(i, 0.0);
+	    h_trimmed->SetBinError(i, 0.0);
+	  }
+	else
+	  {
+	    h_trimmed->SetBinContent(i, histo->GetBinContent(i));
+	    h_trimmed->SetBinError(i, histo->GetBinError(i));
+	  }
+      }
+
+    return h_trimmed;
+  };// End trimCentralityPlotStrict()
+
+  
   
   // Cut off everything below y_cm = 0
   TH1D* trimRapidityPlot(TH1D* histo)

@@ -160,8 +160,8 @@ void resolutions(TString jobID, TString order_n_str)
   h_resolEPDA->GetYaxis()->SetTitleOffset(0.9);
   h_resolEPDA->GetXaxis()->SetTitleSize(0.045);
   h_resolEPDA->GetYaxis()->SetTitleSize(0.065);
-  h_resolEPDA->SetMaximum(0.25);
-  //h_resolEPDA->SetMaximum(1.0);
+  //h_resolEPDA->SetMaximum(0.25);
+  h_resolEPDA->SetMaximum(1.0);
   h_resolEPDA->SetMinimum(0.0);
   h_resolEPDA->SetTitle("");
   h_resolEPDA->SetMarkerColor(1);
