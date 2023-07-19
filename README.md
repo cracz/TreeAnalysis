@@ -32,7 +32,22 @@ The `ConfigReader` is used to read text files that contain the values of cuts th
 
 1) Run the command `starver SL20d`.
 2) In the `TreeAnalysis/` directory, run the command `cons` to produce the necessary \*.so files of everything in the StRoot directory. These are required by the `TreeMaker`.
-3) Run the following
+3) Go to the directory `StRoot/StEpdUtil/`, use a text editor to open the file `StEpdFastSim/StEpdFastSim.cxx`, and switch to the commented out line that includes StPicoEpdHit.h. You want it to look like this:
+
+```c++
+#include "../../StPicoEvent/StPicoEpdHit.h"  <---- on your laptop, need explicit path.
+//#include "StRoot/StPicoEvent/StPicoEpdHit.h"
+```
+4) Run these commands to create the shared libraries `libStEpdUtil.so` and `libStPicoDst.so` and get back to the `TreeAnalysis/` directory:
+
+```c++
+make
+cd ../StPicoEvent/
+make
+cd ../../
+```
+
+5) Run the following
 
 ```bash
 mkdir libs/
