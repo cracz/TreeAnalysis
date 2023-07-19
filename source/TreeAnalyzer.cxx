@@ -33,18 +33,18 @@
 #include "TStopwatch.h"
 
 // EPD Util headers
-#include "StRoot/StEpdUtil/StEpdGeom.h"
+#include "../StRoot/StEpdUtil/StEpdGeom.h"
 
 // Bichsel header
-#include "StRoot/StBichsel/Bichsel.h"
+#include "../StRoot/StBichsel/Bichsel.h"
 
 // Configuration file reader
-#include "StRoot/ConfigReader/ConfigReader.h"
+#include "../StRoot/ConfigReader/ConfigReader.h"
 
 // My Util Header
-#include "SetupAttributes.h" // <-- Much of the ROOT headers are in here
-#include "FlowUtils.h"
-#include "NSigmaCorrectionUtils.h"
+#include "../include/SetupAttributes.h" // <-- Much of the ROOT headers are in here
+#include "../include/FlowUtils.h"
+#include "../include/NSigmaCorrectionUtils.h"
 
 // Bichsel Function
 Double_t bichselZ(Double_t *x,Double_t *par) 

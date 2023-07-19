@@ -1,5 +1,4 @@
 .sl73_gcc485/
-Configs/
 CorrectionFiles/
 StRoot/CVS/
 StRoot/IClasses/.consign
@@ -21,7 +20,6 @@ misc/
 nSigmaInfo
 nSigmaInfo.cxx
 nSigmaInfo.o
-pikp_efficiency.root
 temp_gccflags.c
 tof_efficiency.root
 tof_efficiency_3p22GeV.root

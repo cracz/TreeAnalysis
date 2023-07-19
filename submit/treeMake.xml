@@ -9,14 +9,14 @@
   
   <SandBox installer="ZIP">
     <Package>
-      <File>file:/star/u/cracz/work/flow/TreeAnalysis/MakeTrees.C</File>
-      <File>file:/star/u/cracz/work/flow/TreeAnalysis/config_3p0GeV.txt</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/source/MakeTrees.C</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/Configs/3p0GeVconfigs/config_3p0GeV.txt</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/StRoot</File>
     </Package>
   </SandBox>
 
   <!-- Get input files from get_file_lis.pl -->
-  <input URL="filelist:/star/u/cracz/work/flow/input/fxt_3p0GeV_SL20d_nTracksErrorFixed_afterDuplication_file.list" nFiles="all"/>
+  <input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p0GeV_SL20d_nTracksErrorFixed_afterDuplication_file.list" nFiles="all"/>
   
   <!-- Run log & error messages -->
   <stdout URL="file:/star/data01/pwg/cracz/Data_3p0GeV_FXT/out/$JOBID.out" />
