@@ -15,7 +15,6 @@ TreeAnalyzer.o
 config_3p22GeV.txt
 config_3p5GeV.txt
 config_3p5GeV.txt~
-libs/libStBichsel.so.bkup
 misc/
 nSigmaInfo
 nSigmaInfo.cxx
