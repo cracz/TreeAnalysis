@@ -31,8 +31,8 @@ The `ConfigReader` is used to read text files that contain the values of cuts th
 ## Compiling
 
 1) Run the command `starver SL20d`.
-2) In the `TreeAnalysis/` directory, run the command `cons` to produce the necessary \*.so files of everything in the StRoot directory. These are required by the `TreeMaker`.
-3) Go to the directory `StRoot/StEpdUtil/`, use a text editor to open the file `StEpdFastSim/StEpdFastSim.cxx`, and switch to the commented out line that includes StPicoEpdHit.h. You want it to look like this:
+2) In the `TreeAnalysis/` directory, run the command `cons` to perform necessary compilation of everything in the StRoot directory.
+3) Go to the directory `StRoot/StEpdUtil/`, use a text editor to open the file `StEpdFastSim/StEpdFastSim.cxx`, and switch to the commented out line that includes StPicoEpdHit.h. You want to change it to look like this:
 
 ```c++
 #include "../../StPicoEvent/StPicoEpdHit.h"  <---- on your laptop, need explicit path.
@@ -50,23 +50,22 @@ cd ../../
 5) Run the following
 
 ```bash
-mkdir libs/
-cp StRoot/StEpdUtil/libStEpdUtil.so libs/
-cp StRoot/StPicoEvent/libStPicoDst.so libs/
-cp .sl73_gcc485/obj/StRoot/StBichsel/StBichsel.so libs/libStBichsel.so
+cp StRoot/StEpdUtil/libStEpdUtil.so source/libs/
+cp StRoot/StPicoEvent/libStPicoDst.so source/libs/
+cp .sl73_gcc485/obj/StRoot/StBichsel/StBichsel.so source/libs/libStBichsel.so
 mkdir CorrectionFiles/
 ```
 
-4) Finally, run the command `make` to execute the makefile and compile `TreeAnalyzer.cxx` into an executable.
+4) Finally, go to the directory `source/` and run the command `make` to execute the makefile and compile `TreeAnalyzer.cxx` into an executable.
 
 If nothing went wrong, then everything is all set!
 
 
 ## Making Trees
 
-Before making or analyzing trees, make sure the .xml files `treeMake.xml` and `treeAnalyze.xml` will be sending their output files into your own directories where you want them to go! In `treeMake.xml`, change every instance of `/star/data01/pwg/cracz/Data_3p0GeV_FXT/` to the location that you want the trees made from picoDsts to go, and change `/star/data01/pwg/cracz/Data_3p0GeV_FXT/out/` to the location that you want the corresponding .err and .out files to go. In `treeAnalyze.xml`, change `/star/data01/pwg/cracz/flowResults/` to the location that you want results from analyzing the trees to go. And in both xml files, change every instance of `/star/u/cracz/TreeAnalysis/` to the `TreeAnalysis/` directory that you checked out.
+Before making or analyzing trees, navigate to the directory `submit/` and make sure the .xml files `treeMake.xml` and `treeAnalyze.xml` will be sending their output files into your own directories where you want them to go! In `treeMake.xml`, change every instance of `/star/data01/pwg/cracz/Data_3p0GeV_FXT/` to the location that you want the trees made from picoDsts to go, and change `/star/data01/pwg/cracz/Data_3p0GeV_FXT/out/` to the location that you want the corresponding .err and .out files to go. In `treeAnalyze.xml`, change `/star/data01/pwg/cracz/flowResults/` to the location that you want results from analyzing the trees to go. And in both xml files, change every instance of `/star/u/cracz/TreeAnalysis/` to the `TreeAnalysis/` directory that you checked out.
 
-To start, run the command 
+To start, go to the `submit/` directory and run the command 
 
 ```bash
 star-submit treeMake.xml
@@ -84,7 +83,7 @@ If you need to rerun any jobs that failed to make a tree, use the script `findHo
 
 An important part about analyzing the trees you make is that you can only analyze one file per job rather than a whole list like you could with picoDsts.
 
-To start, run the command 
+To start, go to the `submit/` directory and run the command 
 
 ```bash
 star-submit treeAnalyze.xml
@@ -100,15 +99,15 @@ The `TreeAnalyzer` is an executable, so you only invoke it by name and supply th
 
 If you need to rerun any jobs that failed, use the script `Scripts/findHoles.sh` by supplying the job ID as the first argument and the number of total jobs submitted as the second argument. This will produce the command necessary to resubmit the failed jobs at the directory where you originally submitted them.
 
-The various histograms and other plots will all be within files called `*.picoDst.result.root`, and the information necessary for event plane recentering and Fourier shifting will be in files called `correctionInfo_OUTPUT_*.root`. `TreeAnalyzer` takes 3 iterations to produce isotropic event plane distributions, and a 4th iteration to get correct flow results. After each of the first 3 iterations, go to the directory you have set in `treeAnalyze.xml` that holds the results and run
+The various histograms and other plots will all be within files called `*.picoDst.result.root`, and the information necessary for event plane recentering and Fourier shifting will be in files called `correctionInfo_OUTPUT_*.root`. `TreeAnalyzer` takes 3 iterations to produce flat event plane distributions, and a 4th iteration to get correct flow results. After each of the first 3 iterations, go to the directory you have set in `treeAnalyze.xml` that holds the results and run
 
 ```bash
 hadd correctionInfo_OUTPUT_*.root correctionInfo_INPUT.root
-mv correctionInfo_INPUT.root [...]/TreeAnalysis/CorrectionFiles/
+mv correctionInfo_INPUT.root [...]/TreeAnalysis/CorrectionFiles/3p#GeV/
 rm *.root
 ```
 
-where `[...]` is the path to your checked out copy of `TreeAnalysis/`. This will set you up for the next iteration and remove the unneccessary output files from the iteration you just finished.
+where `[...]` is the path to your checked out copy of `TreeAnalysis/`, and `#` depends on what energy you're analyzing. This will set you up for the next iteration and remove the unneccessary output files from the iteration you just finished.
 
 The program will determine what iteration you're on based on the status of `correctionInfo_INPUT.root`, so you don't have to do anything between iterations aside from combining and moving the correction info.
 
@@ -134,31 +133,31 @@ After iteration 3, if you want to recreate the results of the 3.0 GeV paper, use
 Go to the directory you have set in `treeAnalyze.xml` that holds the results and run
 
 ```bash
-hadd Prefix.picoDst.result.combined.root *.picoDst.result.root
-mv Prefix.picoDst.result.combined.root [...]TreeAnalysis/Plotting/
+hadd Results.picoDst.result.combined.root *.picoDst.result.root
+mv Results.picoDst.result.combined.root [...]TreeAnalysis/Plotting/
 cd [...]TreeAnalysis/Plotting/
-root -l -b -q resolutions.cxx\(\"Prefix\",\"3\"\)
+root -l -b -q resolutions.cxx\(\"Results\",\"3\"\)
 mv resolutionInfo_INPUT.root ../Correctionfiles/
 ```
 
-where `Prefix` can be whatever you want.
+This will combine your results from all of the jobs, move them to the `Plotting/` directory and use them to create the event plane resolutions for the inner EPD subevent, and then move those resolutions to the proper directory so that you're ready to initiate the 4th and final iteration. 
 
-This will combine your results from all of the jobs, move them to the `Plotting/` directory and use them to create the event plane resolutions for the inner EPD subevent, and then move those resolutions to the proper directory so that you're ready to initiate the 4th and final iteration. If you want to reproduceOnce you do that, `hadd` the results together again with this command and you're ready to start plotting the results.
+Once you run the fourth iteration, go back to the results directory and `hadd` the results together again with this command and you're ready to start plotting the results.
 
 ```bash
-hadd Prefix.picoDst.result.combined.root *.picoDst.result.root
+hadd Results.picoDst.result.combined.root *.picoDst.result.root
 ```
 
 ## Recreating figures from the paper
 
-Move your main results file (`Prefix.picoDst.result.combined.root`) and `eventPlaneSystematics.root` to the `Plotting/` directory and run the following commands to recreate the plots shown in the 3.0 GeV paper (without systematic uncertainties).
+Move your main results file (`Results.picoDst.result.combined.root`) and `eventPlaneSystematics.root` to the `Plotting/` directory and run the following commands to recreate the plots shown in the 3.0 GeV paper (without systematic uncertainties).
 
 ```bash
 root -l -b -q resolutionPlot.cxx
-root -l -b -q prelimCentralityPlots.cxx\(\"Prefix\"\)
-root -l -b -q prelimRapidityPlots.cxx\(\"Prefix\"\)
-root -l -b -q prelimPtPlots.cxx\(\"Prefix\"\)
-root -l -b -q acceptanceCombined.cxx\(\"Prefix\"\)
+root -l -b -q prelimCentralityPlots.cxx\(\"Results\"\)
+root -l -b -q prelimRapidityPlots.cxx\(\"Results\"\)
+root -l -b -q prelimPtPlots.cxx\(\"Results\"\)
+root -l -b -q acceptanceCombined.cxx\(\"Results\"\)
 ```
 
 
