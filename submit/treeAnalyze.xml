@@ -14,9 +14,9 @@
   <SandBox installer="ZIP">
     <Package>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/source/TreeAnalyzer</File>
-      <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/3p0GeV/correctionInfo_INPUT.root</File>
-      <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/3p0GeV/resolutionInfo_INPUT_3p0GeV_averagedRes.root</File>
-      <File>file:/star/u/cracz/work/flow/TreeAnalysis/Configs/3p0Configs/config_3p0GeV.txt</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/fxt_3p0GeV/correctionInfo_INPUT.root</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/fxt_3p0GeV/resolutionInfo_INPUT_3p0GeV_averagedRes.root</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/Configs/fxt_3p0GeV/config_3p0GeV.txt</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/Efficiencies/fxt_3p0GeV/tof_efficiency.root</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/Efficiencies/fxt_3p0GeV/pikp_efficiency.root</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/source/libs/</File>

@@ -16,3 +16,6 @@ nSigmaInfo.o
 temp_gccflags.c
 submit/sched*
 input/
+StRoot/St_base/
+source/SetupAttributes.o
+source/nSigmaInfo

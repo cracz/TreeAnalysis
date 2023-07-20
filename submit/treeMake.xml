@@ -10,7 +10,7 @@
   <SandBox installer="ZIP">
     <Package>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/source/MakeTrees.C</File>
-      <File>file:/star/u/cracz/work/flow/TreeAnalysis/Configs/3p0GeVconfigs/config_3p0GeV.txt</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/Configs/fxt_3p0GeV/config_3p0GeV.txt</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/StRoot</File>
     </Package>
   </SandBox>
