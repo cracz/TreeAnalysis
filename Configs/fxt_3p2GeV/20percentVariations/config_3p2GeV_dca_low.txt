@@ -32,12 +32,12 @@ epd_threshold=0.3
 nHits=15
 nHits_dEdx=5
 nHits_ratio=0.52
-dca=3.0
+dca=2.4
 tpc_A_low_eta=-2.0
 tpc_A_high_eta=-1.2
 tpc_B_low_eta=-1.1
 tpc_B_high_eta=0.0
-r_vtx=2.0
+r_vtx=1.5
 z_vtx_low=198.0
 z_vtx_high=200.1
 min_tracks=5
@@ -67,7 +67,6 @@ epdA_inner_row=1
 epdA_outer_row=7
 epdB_inner_row=8
 epdB_outer_row=13
-
 
 
 # Acceptance cuts

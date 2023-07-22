@@ -37,7 +37,7 @@ tpc_A_low_eta=-2.0
 tpc_A_high_eta=-1.2
 tpc_B_low_eta=-1.1
 tpc_B_high_eta=0.0
-r_vtx=2.0
+r_vtx=1.5
 z_vtx_low=198.0
 z_vtx_high=200.1
 min_tracks=5
@@ -53,8 +53,8 @@ z_tr_low=-0.2
 z_tr_high=0.2
 m2_pi_low=-0.1
 m2_pi_high=0.1
-m2_ka_low=0.15
-m2_ka_high=0.34
+m2_ka_low=0.169
+m2_ka_high=0.321
 m2_de_low=3.1518
 m2_de_high=3.8842
 m2_tr_low=7.0142
@@ -67,7 +67,6 @@ epdA_inner_row=1
 epdA_outer_row=7
 epdB_inner_row=8
 epdB_outer_row=13
-
 
 
 # Acceptance cuts

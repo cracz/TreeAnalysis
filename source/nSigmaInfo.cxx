@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
   //=== INITIALIZE TTREE
   Int_t N_track = 0;  // Max number of tracks in an event. Depends on energy and centrality definition!
   if      (configs.sqrt_s_NN == 3.0)  { N_track = 195;  }
-  else if (configs.sqrt_s_NN == 3.22) { N_track = 287;  }
+  else if (configs.sqrt_s_NN == 3.2)  { N_track = 287;  }
   else if (configs.sqrt_s_NN == 3.5)  { N_track = 325;  }
   else if (configs.sqrt_s_NN == 3.9)  { N_track = 344;  }
   else if (configs.sqrt_s_NN == 4.5)  { N_track = 367;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!

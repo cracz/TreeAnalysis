@@ -3,7 +3,7 @@
 
 namespace NSigmaCorrectionUtils
 {
-  struct NewNSigmaProton3p22GeV
+  struct NewNSigmaProton3p2GeV
   {
     const static  int numRapidityWindows = 17;
     const static int numRapidityWindowsToUsePointwiseCorrection = 3;
@@ -201,7 +201,7 @@ namespace NSigmaCorrectionUtils
 
       return nSigmaProton;
     } // End getNewNSigmaProton()
-  }; // End struct NewNSigmaProton3p22GeV
+  }; // End struct NewNSigmaProton3p2GeV
 
 
 

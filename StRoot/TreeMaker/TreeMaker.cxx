@@ -186,9 +186,9 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 119 && primTracks <= 141 ) centrality = 14;
 			  else if( primTracks >= 142 && primTracks <= 195 ) centrality = 15;  // 0% - 5% (Central)
 			}
-		      // 3.22 GeV FXT  --  From Eric Loyd 2022
+		      // 3.2 GeV FXT  --  From Eric Loyd 2022
 		      // https://drupal.star.bnl.gov/STAR/pwg/common/BES-II-Centrality-Calibration
-		      else if (configs.sqrt_s_NN == 3.22) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
+		      else if (configs.sqrt_s_NN == 3.2) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
 			  if     ( primTracks >=   5 && primTracks <=   6 ) centrality =  0;  // 75% - 80% (Peripheral)
 			  else if( primTracks >=   7 && primTracks <=  10 ) centrality =  1;
@@ -418,7 +418,7 @@ Bool_t TreeMaker::IsGoodRun(Int_t runNumber, Double_t sqrt_s_NN)
   const Int_t badRuns_3p22GeV = 10;
   Int_t badRunList_3p22GeV[badRuns_3p22GeV] = {20180005, 20180006, 20180019, 20180025, 20181016, 20182034, 20183001, 20183013, 20183014, 20183019};
 
-  // FXT above 3.22 GeV:
+  // FXT above 3.2 GeV:
   // https://drupal.star.bnl.gov/STAR/pwg/common/bes-ii-run-qa/FXT-datasets
   const Int_t badRuns_3p5GeV = 8;
   Int_t badRunList_3p5GeV[badRuns_3p5GeV] = {20355020, 20355021, 21044023, 21045024, 21045025, 21044027, 21044035, 21045004};
@@ -436,7 +436,7 @@ Bool_t TreeMaker::IsGoodRun(Int_t runNumber, Double_t sqrt_s_NN)
   // Run is good if NOT found in the bad run list.
   if (sqrt_s_NN == 3.0)
     b_good_run = !foundInArray(runNumber, badRunList_3p0GeV, badRuns_3p0GeV);
-  else if (sqrt_s_NN == 3.22)
+  else if (sqrt_s_NN == 3.2)
     b_good_run = !foundInArray(runNumber, badRunList_3p22GeV, badRuns_3p22GeV);
   else if (sqrt_s_NN == 3.5)
     b_good_run = !foundInArray(runNumber, badRunList_3p5GeV, badRuns_3p5GeV);

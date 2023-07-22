@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
   //=== INITIALIZE TTREE
   Int_t N_track = 0;  // Max number of tracks in an event. Depends on energy and centrality definition!
   if      (configs.sqrt_s_NN == 3.0)  { N_track = 195;  }
-  else if (configs.sqrt_s_NN == 3.22) { N_track = 287;  }
+  else if (configs.sqrt_s_NN == 3.2)  { N_track = 287;  }
   else if (configs.sqrt_s_NN == 3.5)  { N_track = 325;  }
   else if (configs.sqrt_s_NN == 3.9)  { N_track = 344;  }
   else if (configs.sqrt_s_NN == 4.5)  { N_track = 367;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
@@ -261,8 +261,8 @@ int main(int argc, char *argv[])
 
   // INPUT FILE FOR TOF EFFICIENCY CORRECTIONS
   TString tofEfficiencyFileName = "tof_efficiency.root";
-  if (configs.sqrt_s_NN == 3.22)
-    tofEfficiencyFileName = "tof_efficiency_3p22GeV.root";
+  if (configs.sqrt_s_NN == 3.2)
+    tofEfficiencyFileName = "tof_efficiency_3p2GeV.root";
   else if (configs.sqrt_s_NN == 3.5)
     tofEfficiencyFileName = "tof_efficiency_3p5GeV.root";
   else if (configs.sqrt_s_NN == 3.9)
@@ -505,7 +505,7 @@ int main(int argc, char *argv[])
       tempLowBound2  = 0.0;
       tempHighBound2 = 2.5;
     }
-  else if (configs.sqrt_s_NN == 3.22)
+  else if (configs.sqrt_s_NN == 3.2)
     {
       tempBins1 = 300;
       tempLowBound1 = -1.2;
@@ -872,7 +872,7 @@ int main(int argc, char *argv[])
   TH2D *h2_phi_vs_eta_EPD = new TH2D("h2_phi_vs_eta_EPD", "EPD;#eta;#phi", tempBins1, tempLowBound1, tempHighBound1, 300, -4, 4);
 
 
-  if (configs.sqrt_s_NN == 3.0 || configs.sqrt_s_NN == 3.22 || configs.sqrt_s_NN == 3.5 || configs.sqrt_s_NN == 3.9 || configs.sqrt_s_NN == 4.5)
+  if (configs.sqrt_s_NN == 3.0 || configs.sqrt_s_NN == 3.2 || configs.sqrt_s_NN == 3.5 || configs.sqrt_s_NN == 3.9 || configs.sqrt_s_NN == 4.5)
     {
       tempBins1 = 300;
       tempLowBound1 = -1.2;
@@ -1023,11 +1023,11 @@ int main(int argc, char *argv[])
   
   FlowUtils::Event eventInfo;        // These hold info for each event
   FlowUtils::Particle particleInfo;  // These hold info for each track/hit
-  NSigmaCorrectionUtils::NewNSigmaProton3p22GeV nSigmaCorrection3p22GeV; // These are to get corrected proton nSigma values for
+  NSigmaCorrectionUtils::NewNSigmaProton3p2GeV nSigmaCorrection3p2GeV; // These are to get corrected proton nSigma values for
   NSigmaCorrectionUtils::NewNSigmaProton3p5GeV  nSigmaCorrection3p5GeV;  // FXT energies where the TPC calibration is bad.
   NSigmaCorrectionUtils::NewNSigmaProton3p9GeV  nSigmaCorrection3p9GeV;
   NSigmaCorrectionUtils::NewNSigmaProton4p5GeV  nSigmaCorrection4p5GeV;
-  if (configs.sqrt_s_NN == 3.22) nSigmaCorrection3p22GeV.initialize();
+  if (configs.sqrt_s_NN == 3.2) nSigmaCorrection3p2GeV.initialize();
   else if (configs.sqrt_s_NN == 3.5) nSigmaCorrection3p5GeV.initialize();
   else if (configs.sqrt_s_NN == 3.9) nSigmaCorrection3p9GeV.initialize();
   else if (configs.sqrt_s_NN == 4.5) nSigmaCorrection4p5GeV.initialize();
@@ -1175,9 +1175,9 @@ int main(int argc, char *argv[])
 	  ////
 	  // Make a correction to TPC nSigma Proton for collisions > 3.0 GeV
 	  ////
-	  if (configs.sqrt_s_NN == 3.22)
+	  if (configs.sqrt_s_NN == 3.2)
 	    { 
-	      d_nSigmaPr = nSigmaCorrection3p22GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      d_nSigmaPr = nSigmaCorrection3p2GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
 	      h2_nSigp_vs_mom_all->Fill(d_mom, d_nSigmaPr);
 	    }
 	  else if (configs.sqrt_s_NN == 3.5)
@@ -1299,7 +1299,7 @@ int main(int argc, char *argv[])
 	      // Basic d and t PID
 	      else if (!pion && !kaon && 
 		       (configs.sqrt_s_NN == 7.2 || 
-			configs.sqrt_s_NN == 3.22 || 
+			configs.sqrt_s_NN == 3.2 || 
 			configs.sqrt_s_NN == 3.5 || 
 			configs.sqrt_s_NN == 3.9 || 
 			configs.sqrt_s_NN == 4.5))
@@ -1714,7 +1714,7 @@ int main(int argc, char *argv[])
       if (eventInfo.nHitsEpdA   < configs.min_tracks) continue;
       //if (eventInfo.nHitsEpdB   < configs.min_tracks) continue;
       if (configs.fixed_target && configs.sqrt_s_NN == 3.0 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
-      else if (configs.fixed_target && configs.sqrt_s_NN == 3.22 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
+      else if (configs.fixed_target && configs.sqrt_s_NN == 3.2 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
       else if (configs.fixed_target && configs.sqrt_s_NN == 3.5  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
       else if (configs.fixed_target && configs.sqrt_s_NN == 3.9  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
       else if (configs.fixed_target && configs.sqrt_s_NN == 4.5  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
@@ -1906,7 +1906,7 @@ int main(int argc, char *argv[])
 	  Int_t jthRing;
 	  /*
 	  if (configs.sqrt_s_NN == 3.0 && centID < 4) continue;  // ONLY LOOKING AT CENTRALITY 60% AND LOWER FOR 3.0 GeV
-	  else if (configs.sqrt_s_NN == 3.22 && centID < 4) continue;
+	  else if (configs.sqrt_s_NN == 3.2 && centID < 4) continue;
 	  else if (configs.sqrt_s_NN == 3.5  && centID < 4) continue;
 	  */
 	  if (centID < 4) continue;
