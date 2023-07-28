@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Job parameters -->
+<job maxFilesPerProcess="1" filesPerHour="1" fileListSyntax="paths">
+
+  <!-- Task list -->
+  <command>
+    starver SL20d
+    TreeAnalyzer $INPUTFILE0 $JOBID config_3p0GeV_m2Ka_high.txt correctionInfo_INPUT_m2Ka_high.root resolutionInfo_INPUT_m2Ka_high.root
+  </command>
+
+
+  <!-- Necessary files -->
+  <SandBox installer="ZIP">
+    <Package>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/TreeAnalyzer</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/correctionInfo_INPUT_m2Ka_high.root</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/resolutionInfo_INPUT_m2Ka_high.root</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/config_3p0GeV_m2Ka_high.txt</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/tof_efficiency.root</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/pikp_efficiency.root</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/libs/</File>
+    </Package>
+  </SandBox>
+
+
+  <!-- Get input files from get_file_lis.pl -->
+  <input URL="filelist:/star/u/cracz/work/flow/input/tree_fxt_3p0GeV_SL20d_nTracksErrorFixed_afterDuplication_file.list" nFiles="all"/>
+  
+  <!-- Run log & error messages -->
+  <stdout URL="file:/star/data01/pwg/cracz/flowResults/out/$JOBID.out" />
+  <stderr URL="file:/star/data01/pwg/cracz/flowResults/out/$JOBID.err" />
+  <output fromScratch="*.root" toURL="file:/star/data01/pwg/cracz/flowResults/"/>
+  
+</job>

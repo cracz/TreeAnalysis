@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Job parameters -->
+<job maxFilesPerProcess="1" filesPerHour="1" fileListSyntax="paths">
+
+  <!-- Task list -->
+  <command>
+    starver SL20d
+    TreeAnalyzer $INPUTFILE0 $JOBID config_3p9GeV_m2Ka_high.txt correctionInfo_INPUT_3p9GeV.root resolutionInfo_INPUT_3p9GeV_EPDA1to5_max10_averagedRes.root
+  </command>
+
+
+  <!-- Necessary files -->
+  <SandBox installer="ZIP">
+    <Package>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/source/TreeAnalyzer</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/fxt_3p9GeV/correctionInfo_INPUT_3p9GeV.root</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/fxt_3p9GeV/resolutionInfo_INPUT_3p9GeV_EPDA1to5_max10_averagedRes.root</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/Configs/fxt_3p9GeV/20percentVariations/config_3p9GeV_m2Ka_high.txt</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/Efficiencies/fxt_3p9GeV/tof_efficiency_3p9GeV.root</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/source/libs/</File>
+    </Package>
+  </SandBox>
+
+
+  <!-- Get input files from get_file_lis.pl -->
+  <input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/tree_fxt_3p9GeV_2019and2020_file.list" nFiles="all"/>
+  
+  <!-- Run log & error messages -->
+  <stdout URL="file:/star/data01/pwg/cracz/flowResults_3p9GeV/out/$JOBID.out" />
+  <stderr URL="file:/star/data01/pwg/cracz/flowResults_3p9GeV/out/$JOBID.err" />
+  <output fromScratch="*.root" toURL="file:/star/data01/pwg/cracz/flowResults_3p9GeV/"/>
+  
+</job>
