@@ -186,6 +186,7 @@ int main(int argc, char *argv[])
   Float_t f_yvtx;
   Float_t f_zvtx;
   UShort_t i_centrality;
+  //UShort_t i_refmult;
   UShort_t i_trackNumber;
   Short_t charge[N_track];
   Float_t Px[N_track];
@@ -218,6 +219,7 @@ int main(int argc, char *argv[])
   tree->SetBranchAddress("Vy",&f_yvtx);
   tree->SetBranchAddress("Vz",&f_zvtx);
   tree->SetBranchAddress("centrality",&i_centrality);
+  //tree->SetBranchAddress("refmult",&i_refmult);
   tree->SetBranchAddress("tracknumber",&i_trackNumber);
   tree->SetBranchAddress("Charge",&charge);
   tree->SetBranchAddress("Px",&Px);
@@ -388,6 +390,8 @@ int main(int argc, char *argv[])
   TH1D *h_trackmult = (TH1D*)inputFile->Get("h_trackmult");
   TH1D *h_refmult   = (TH1D*)inputFile->Get("h_refmult");
   TH1D *h_tofmult   = (TH1D*)inputFile->Get("h_tofmult");
+
+  //TH1D *h_refmult_afterMinHits = new TH1D("h_refmult_afterMinHits","Reference multiplicity",1001,-0.5,1000.5);
 
   TH1D *h_pT = new TH1D("h_pT","p_{T};p_{T};Tracks",1000,0.0,10.0);
   TH1D *h_eta = new TH1D("h_eta","#eta;#eta;Tracks",600,-6.0,6.0);
@@ -1720,6 +1724,7 @@ int main(int argc, char *argv[])
       else if (configs.fixed_target && configs.sqrt_s_NN == 4.5  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
 
       h_centralities_final->Fill(i_centrality);
+      //h_refmult_afterMinHits->Fill(i_refmult);
 
       FlowUtils::checkZeroQ(eventInfo);  // Remove events with no flow
       if (eventInfo.badEvent) continue;

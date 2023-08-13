@@ -69,6 +69,7 @@ private:
   TTree*              FxtTree;
   Int_t               tree_runId;
   Int_t               tree_eventId;
+  //Int_t               tree_refmult;
   Float_t             tree_bField;
   Float_t             tree_Vx;
   Float_t             tree_Vy;

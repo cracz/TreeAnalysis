@@ -40,6 +40,7 @@ Int_t TreeMaker::Init()
   FxtTree->Branch("Vy",&tree_Vy,"Vy/F");
   FxtTree->Branch("Vz",&tree_Vz,"Vz/F");
   FxtTree->Branch("centrality",&tree_centrality,"centrality/s");
+  //FxtTree->Branch("refmult",&tree_refmult,"refmult/s");
   FxtTree->Branch("tracknumber",&tree_tracknumber,"tracknumber/s");
   FxtTree->Branch("nSigmaPi",tree_nSigmaPi,"nSigmaPi[tracknumber]/F");
   FxtTree->Branch("nSigmaKa",tree_nSigmaKa,"nSigmaKa[tracknumber]/F");
@@ -154,7 +155,7 @@ Int_t TreeMaker::Make()
 			  if(!track->isPrimary()) continue; // Only Primary Tracks
 			  primTracks++;
 			} // 1st Primary tracks loop ends
-
+		      
 		      h_refmult->Fill(event->refMultHalfEast());
 		      h_trackmult->Fill(primTracks);
 		      h_tofmult->Fill(event->nBTOFMatch());
@@ -324,6 +325,7 @@ Int_t TreeMaker::Make()
 			  tree_eventId = event->eventId();
 			  tree_bField  = event->bField();
 			  tree_centrality = centrality;
+			  //tree_refmult = event->refMultHalfEast();
 			  Int_t realTrackIndex = 0;
 
 
