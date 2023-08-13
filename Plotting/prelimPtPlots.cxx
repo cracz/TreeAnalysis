@@ -80,7 +80,7 @@ void prelimPtPlots(TString jobID, Bool_t useSystematics = false, Double_t sqrt_s
     }
   ////
 
-  THStack *prPtStack   = new THStack("prPtStack", ";p_{T} (GeV/c);v_{1} {#Psi_{1}}");
+  THStack *prPtStack   = new THStack("prPtStack", ";p_{T} (GeV/c);v_{3} {#Psi_{1}}");
   prPtStack->Add(h_vn_pT_00to10_pr);
   prPtStack->Add(h_vn_pT_10to40_pr);
   if (sqrt_s_NN < 3.5)
@@ -96,32 +96,35 @@ void prelimPtPlots(TString jobID, Bool_t useSystematics = false, Double_t sqrt_s
   prLegend->SetBorderSize(0);
   prLegend->SetFillColorAlpha(0,0);
   prLegend->SetTextSize(0.04);
+  prLegend->SetTextFont(22);
 
   //TPaveText *prText = new TPaveText(0.28, 0.03, 1.28, 0.055, "NB");
-  TPaveText *prText = new TPaveText(0.0, 0.008, 1.8, 0.035, "NB");
+  TPaveText *prText = new TPaveText(0.0, 0.003, 1.8, 0.035, "NB");
   prText->SetTextAlign(12);
   if (sqrt_s_NN == 3.0)
-    prText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
+    prText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");// (year 2018)");
   else if (sqrt_s_NN == 3.2 || sqrt_s_NN == 3.22)
-    prText->AddText("Au+Au #sqrt{s_{NN}} = 3.2 GeV FXT (year 2019)");
+    prText->AddText("Au+Au #sqrt{s_{NN}} = 3.2 GeV FXT");// (year 2019)");
   else if (sqrt_s_NN == 3.5)
-    prText->AddText("Au+Au #sqrt{s_{NN}} = 3.5 GeV FXT (year 2020)");
+    prText->AddText("Au+Au #sqrt{s_{NN}} = 3.5 GeV FXT");// (year 2020)");
   else if (sqrt_s_NN == 3.9)
-    prText->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT (years 2019, 2020)");
+    prText->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT");// (years 2019, 2020)");
   else if (sqrt_s_NN == 4.5)
-    prText->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT (year 2020)");
+    prText->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT");// (year 2020)");
   prText->AddText("Proton");
   prText->AddText("0 < y_{CM} < 0.5");
   prText->SetFillColorAlpha(0,0);
   prText->SetLineColorAlpha(0,0);
   prText->SetTextSize(0.04);
+  prText->SetTextFont(22);
 
   //TPaveText* prelimText = new TPaveText(0.3, 0.02, 1.28, 0.03, "NB");
-  TPaveText* prelimText = new TPaveText(0.7, -0.08, 1.4, -0.07, "NB");
-  prelimText->AddText("STAR Preliminary");
-  prelimText->SetTextColor(kRed);
+  TPaveText* prelimText = new TPaveText(0.1, -0.06, 0.5, -0.04, "NB");
+  prelimText->AddText("STAR");
+  //prelimText->SetTextColor(kRed);
   prelimText->SetFillColorAlpha(0,0);
   prelimText->SetTextSize(0.04);
+  prelimText->SetTextFont(22);
 
   TLine *zeroLine_pt = new TLine(0, 0, 2, 0);
   zeroLine_pt->SetLineStyle(9);
@@ -148,10 +151,10 @@ void prelimPtPlots(TString jobID, Bool_t useSystematics = false, Double_t sqrt_s
     }
   prPtStack->Draw("NOSTACK EP SAME");
   prLegend->Draw();
-  //prText->Draw();
-  //prelimText->Draw();
+  prText->Draw();
+  prelimText->Draw();
   canvas->SaveAs("v3_prPtStack.pdf");
-  //canvas->SaveAs("v3_prPtStack.png");
+  canvas->SaveAs("v3_prPtStack.png");
   canvas->Clear();
 
   if (useSystematics)

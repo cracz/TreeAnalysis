@@ -28,7 +28,8 @@ void oddFlowCentrality(TString jobID)
 
   TProfile2D *p2_vn_yCM_cent_pr_symmetry = (TProfile2D*)file->Get("p2_vn_yCM_cent_pr_symmetry");  
   
-  TH1D *h_oddVsCent = new TH1D("h_oddVsCent", ";Centrality (%);v_{3} {#Psi_{1}}", 16, 0, 16);
+  TH1D *h_oddVsCent = new TH1D("h_oddVsCent", ";Centrality (%);v_{3}^{odd} {#Psi_{1}}", 16, 0, 16);
+  TH1D *h_evenVsCent = new TH1D("h_evenVsCent", ";Centrality (%);v_{3}^{even} {#Psi_{1}}", 16, 0, 16);
 
   TProfile* p1;
   TString name;
@@ -38,12 +39,19 @@ void oddFlowCentrality(TString jobID)
       name.Form("p1_%d", centBin);
       p1 = p2_vn_yCM_cent_pr_symmetry->ProfileY(name, centBin, centBin);
 
-      TProfileHelper ph;
-      ph.initialize(p1);
-      ph.removeEvenComponent();
+      TProfileHelper ph_odd;
+      ph_odd.initialize(p1);
+      ph_odd.removeEvenComponent();
+
+      TProfileHelper ph_even;
+      ph_even.initialize(p1);
+      ph_even.removeOddComponent();
       
-      h_oddVsCent->SetBinContent(centBin, ph.oddAverage);
-      h_oddVsCent->SetBinError(centBin, ph.oddAverageUncertainty);
+      h_oddVsCent->SetBinContent(centBin, ph_odd.oddAverage);
+      h_oddVsCent->SetBinError(centBin, ph_odd.oddAverageUncertainty);
+
+      h_evenVsCent->SetBinContent(centBin, ph_even.evenAverage);
+      h_evenVsCent->SetBinError(centBin, ph_even.evenAverageUncertainty);
     }
 
 
@@ -56,20 +64,19 @@ void oddFlowCentrality(TString jobID)
   h_oddVsCent->SetLineWidth(3);
   h_oddVsCent->GetYaxis()->SetTitleOffset(1.7);
 
+  h_evenVsCent = PlotUtils::flipHisto(h_evenVsCent);
+  h_evenVsCent = PlotUtils::trimCentralityPlot(h_evenVsCent);
+  h_evenVsCent->SetMarkerStyle(20);
+  h_evenVsCent->SetMarkerSize(2.5);
+  h_evenVsCent->SetMarkerColor(kRed-4);
+  h_evenVsCent->SetLineColor(kRed-4);
+  h_evenVsCent->SetLineWidth(3);
+  h_evenVsCent->GetYaxis()->SetTitleOffset(1.7);
+  
+
   TLine *zeroLine = new TLine(0, 0, 60, 0);
   zeroLine->SetLineStyle(9);
   zeroLine->SetLineWidth(3);
-  /*
-  TProfile* p_vn_pr = (TProfile*)file->Get("p_vn_pr");
-  TH1D* h_vn_pr = p_vn_pr->ProjectionX();
-  h_vn_pr = PlotUtils::flipHisto(h_vn_pr);
-  h_vn_pr = PlotUtils::trimCentralityPlot(h_vn_pr);
-  h_vn_pr->SetMarkerStyle(20);
-  h_vn_pr->SetMarkerSize(2.5);
-  h_vn_pr->SetMarkerColor(kBlue);
-  h_vn_pr->SetLineColor(kBlue);
-  h_vn_pr->SetLineWidth(3);
-  */
   
   h_oddVsCent->GetXaxis()->SetLabelSize(0.045);
   h_oddVsCent->GetYaxis()->SetLabelSize(0.045);
@@ -83,8 +90,22 @@ void oddFlowCentrality(TString jobID)
   h_oddVsCent->Draw();
   zeroLine->Draw("SAME");
   h_oddVsCent->Draw("EP SAME");
-  //h_vn_pr->Draw("EP SAME");
   canvas->SaveAs("v3_oddVsCentrality.pdf");
+  canvas->Clear();
+
+  h_evenVsCent->GetXaxis()->SetLabelSize(0.045);
+  h_evenVsCent->GetYaxis()->SetLabelSize(0.045);
+  h_evenVsCent->GetXaxis()->SetTitleOffset(1.0);
+  h_evenVsCent->GetYaxis()->SetTitleOffset(1.4);
+  h_evenVsCent->GetXaxis()->SetTitleSize(0.045);
+  h_evenVsCent->GetYaxis()->SetTitleSize(0.05);
+  h_evenVsCent->GetXaxis()->SetNdivisions(210);
+  h_evenVsCent->SetMaximum(0.01);
+  h_evenVsCent->SetMinimum(-0.02);
+  h_evenVsCent->Draw();
+  zeroLine->Draw("SAME");
+  h_evenVsCent->Draw("EP SAME");
+  canvas->SaveAs("v3_evenVsCentrality.pdf");
   canvas->Clear();
 
   file->Close();

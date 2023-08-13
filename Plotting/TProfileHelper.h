@@ -44,6 +44,25 @@ struct TProfileHelper
       }
   }
 
+  void initialize(std::vector<Double_t> initialContents,
+		  std::vector<Double_t> initialUncertainties,
+		  std::vector<Double_t> initialEntries,
+		  Double_t initialLowBound,
+		  Double_t initialHighBound)
+  {
+    std::vector<Double_t>().swap(contents);
+    std::vector<Double_t>().swap(uncertainties);
+    std::vector<Double_t>().swap(entries);
+    
+    contents = initialContents;
+    uncertainties = initialUncertainties;
+    entries = initialEntries;
+
+    nBins = contents.size();
+    lowBound = initialLowBound;
+    highBound = initialHighBound;
+  }
+
   void reverse()
   {
     std::reverse(contents.begin(), contents.end());
@@ -72,6 +91,14 @@ struct TProfileHelper
       }
       
     return histoVersion;
+  }
+
+  TGraphErrors* getGraph(TString name)
+  {
+    TH1D* histo = getHistogram(name);
+    TGraphErrors* graphVersion = new TGraphErrors(histo);
+    delete histo;
+    return graphVersion;
   }
 
   void copy(TProfileHelper profileToCopy)

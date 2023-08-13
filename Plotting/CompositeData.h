@@ -4,6 +4,7 @@
 #include <vector>
 #include "TH1D.h"
 #include "Variation.h"
+#include "DataPoint.h"
 
 class CompositeData
 {
@@ -11,57 +12,6 @@ class CompositeData
   CompositeData(TString prefix, Variation* normalData, Variation* var1Data);
   CompositeData(TString prefix, Variation* normalData, Variation* var1Data, Variation* var2Data);
   ~CompositeData();
-
-  struct DataPoint
-  {
-    Double_t normalValue;
-    Double_t normalError;
-    Double_t var1Value;
-    Double_t var1Error;
-    Double_t var2Value;
-    Double_t var2Error;
-    Double_t maxValue;
-    Double_t maxError;
-    Double_t minValue;
-    Double_t minError;
-    Double_t delta;
-    Double_t deltaError;
-    Double_t deltaByDeltaError;
-    Double_t stdDev;
-    Double_t variance;
-
-    void getMax()
-    {
-      maxValue = normalValue;
-      maxError = normalError;
-      if (var1Value > maxValue)
-	{
-	  maxValue = var1Value;
-	  maxError = var1Error;
-	}
-      if (var2Value > maxValue)
-	{
-	  maxValue = var2Value;
-	  maxError = var2Error;
-	}
-    }
-
-    void getMin()
-    {
-      minValue = normalValue;
-      minError = normalError;
-      if (var1Value < minValue)
-	{
-	  minValue = var1Value;
-	  minError = var1Error;
-	}
-      if (var2Value < minValue)
-	{
-	  minValue = var2Value;
-	  minError = var2Error;
-	}
-    }
-  }; // End struct DataPoint
 
   std::vector<DataPoint> v_vn_pp;
   std::vector<DataPoint> v_vn_pm;

@@ -10,24 +10,24 @@ double maxValue(double d1, double d2, double d3)
 
 void prepareResolutionsWithSystematics()
 {
-  /*
+
   // 3.0 GeV
   TFile* resVarFile1 = TFile::Open("v3_EPDref9to16_resolutionInfo.root", "READ");
   TFile* resVarFile2 = TFile::Open("v3_EPDref10to16_resolutionInfo.root", "READ");
   TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_scaledByRes.root", "READ");
-  */
+
   /*
   // 3.0 GeV v1
   TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p0GeV_v1_EPDB9to16.root", "READ");
   TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p0GeV_v1_EPDB10to16.root", "READ");
   TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p0GeV_v1_EPDB13to16.root", "READ");
   */
-
+  /*
   // 3.0 GeV v2
   TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p0GeV_v2_EPDB9to16.root", "READ");
   TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p0GeV_v2_EPDB10to16.root", "READ");
   TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p0GeV_v2_EPDB13to16.root", "READ");
-
+  */
   /*
   // 3.2 GeV
   TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p22GeV_EPDA1to6_EPDB7to13_TPCB1p1to0.root", "READ");
@@ -66,28 +66,46 @@ void prepareResolutionsWithSystematics()
 
   // Make a copy of h_avgRes to use with plotting
   TH1D* h_resolutionsWithStats = (TH1D*)h_avgRes->Clone("h_resolutionsWithStats");
-  h_resolutionsWithStats = PlotUtils::flipHisto(h_resolutionsWithStats);
-  h_resolutionsWithStats = PlotUtils::trimCentralityPlot(h_resolutionsWithStats);      // Out to 60%
-  //h_resolutionsWithStats = PlotUtils::trimCentralityPlotStrict(h_resolutionsWithStats);  // Out to 40%
   h_resolutionsWithStats->SetName("h_resolutionsWithStats");
   ////
 
   // Make a copy of h_avgRes that has systematic uncertainties instead of statistical uncertainties for plotting
   TH1D* h_resolutionsWithSysts = (TH1D*)h_avgRes->Clone("h_resolutionsWithSysts");
-
+  h_resolutionsWithSysts->SetName("h_resolutionsWithSysts");
+  
   for (int ithBin = 1; ithBin < h_resolutionsWithSysts->GetNbinsX(); ithBin++)
     {
       double diff1 = TMath::Abs(h_resolutionsWithSysts->GetBinContent(ithBin) - h_resVar1->GetBinContent(ithBin));
       double diff2 = TMath::Abs(h_resolutionsWithSysts->GetBinContent(ithBin) - h_resVar2->GetBinContent(ithBin));
       double diff3 = TMath::Abs(h_resolutionsWithSysts->GetBinContent(ithBin) - h_resVar3->GetBinContent(ithBin));
       double maxDiff = maxValue(diff1, diff2, diff3);
-
       h_resolutionsWithSysts->SetBinError(ithBin, maxDiff);
     }
+  ////
+
+
+  // Make a copy of h_avgRes that has statistical and systematic uncertainties combined in quadrature.
+  TH1D* h_resolutionsCombinedError = (TH1D*)h_avgRes->Clone("h_resolutionsCombinedError");
+  h_resolutionsCombinedError->SetName("h_resolutionsCombinedError");
+  
+  for (int ithBin = 1; ithBin < h_resolutionsCombinedError->GetNbinsX(); ithBin++)
+    {
+      Double_t statError = h_resolutionsWithStats->GetBinError(ithBin);
+      Double_t systError = h_resolutionsWithSysts->GetBinError(ithBin);
+      Double_t newError = TMath::Sqrt( TMath::Power(statError, 2.0) + TMath::Power(systError, 2.0) );
+      h_resolutionsCombinedError->SetBinError(ithBin, newError);
+    }
+  ////
+
+
+  // Flip and trim axis on some plots
+  h_resolutionsWithStats = PlotUtils::flipHisto(h_resolutionsWithStats);
+  h_resolutionsWithStats = PlotUtils::trimCentralityPlot(h_resolutionsWithStats);      // Out to 60%
+  //h_resolutionsWithStats = PlotUtils::trimCentralityPlotStrict(h_resolutionsWithStats);  // Out to 40%
+
   h_resolutionsWithSysts = PlotUtils::flipHisto(h_resolutionsWithSysts);
-  h_resolutionsWithSysts = PlotUtils::trimCentralityPlot(h_resolutionsWithSysts);       // Out to 60%
+  h_resolutionsWithSysts = PlotUtils::trimCentralityPlot(h_resolutionsWithSysts);     // Out to 60%
   //h_resolutionsWithSysts = PlotUtils::trimCentralityPlotStrict(h_resolutionsWithSysts); // Out to 40%
-  h_resolutionsWithSysts->SetName("h_resolutionsWithSysts");
   ////
 
   TFile* newFile = TFile::Open("eventPlaneSystematics.root", "RECREATE");
@@ -95,6 +113,7 @@ void prepareResolutionsWithSystematics()
   h_avgRes->Write();
   h_resolutionsWithStats->Write();
   h_resolutionsWithSysts->Write();
+  h_resolutionsCombinedError->Write();
   h_resVar1->Write();
   h_resVar2->Write();
   h_resVar3->Write();

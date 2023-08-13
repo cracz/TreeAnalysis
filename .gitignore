@@ -28,3 +28,5 @@ tof_efficiency_3p22GeV.root
 v1_weights.root
 v1_weights.root.nMipWeighted
 v1_weights.root.notWeighted
+Plotting/*.png
+Plotting/*.pdf

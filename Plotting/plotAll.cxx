@@ -104,16 +104,16 @@ void plotAll(TString jobID)
 	    {
 	      hist->SetFillColorAlpha(4,0.6);
 	      hist->GetXaxis()->SetLabelSize(0.05);
-	      hist->SetMinimum(13e7);
-	      hist->SetMaximum(19e7);
+	      //hist->SetMinimum(13e7);
+	      //hist->SetMaximum(19e7);
 	    }
 	  else if (name.Contains("trackCheck"))
 	    {
 	      hist->SetFillColorAlpha(4,0.6);
 	      hist->GetXaxis()->SetLabelSize(0.07);
 	      canvas->SetBottomMargin(0.15);
-	      hist->SetMinimum(5e9);
-	      hist->SetMaximum(15e9);
+	      //hist->SetMinimum(5e9);
+	      //hist->SetMaximum(15e9);
 	    }
 	  else if (name.Contains("dndm")) 
 	    { 
