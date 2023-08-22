@@ -252,12 +252,19 @@ int main(int argc, char *argv[])
   setup.setResolutionFile(resolutionFileName);
   ////
 
-  // INPUT FILE FOR TPC EFFICIENCY CORRECTIONS -- CURRENTLY ONLY 3 GEV FXT !!!
-  TString pikpEfficiencyFileName = "pikp_efficiency.root";
+  // INPUT FILE FOR TPC EFFICIENCY CORRECTIONS
+  TString pikpEfficiencyFileName;
+  TString protonEfficiencyFileName;
   if (setup.getRunIteration() == 2 && configs.sqrt_s_NN == 3.0)
-    setup.setTPCEfficiencyFile(pikpEfficiencyFileName);
+    {
+      pikpEfficiencyFileName = "pikp_efficiency.root";
+      setup.setTPCEfficiencyFile(pikpEfficiencyFileName);
+    }
   else if (setup.getRunIteration() == 2 && configs.sqrt_s_NN != 3.0)
-    std::cout << "This energy has no TPC efficiency corrections!" << std::endl;
+    {
+      protonEfficiencyFileName = "eff_tpc_pr_3p2GeV.root";
+      setup.setProtonEfficiencyFile(protonEfficiencyFileName);
+    }
   ////
 
 
@@ -859,6 +866,7 @@ int main(int argc, char *argv[])
 
   TH2D *h2_nSigp_vs_pT_pr_00to10 = new TH2D("h2_nSigp_vs_pT_pr_00to10", "Identified Protons;|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
   TH2D *h2_nSigp_vs_mom_pr  = new TH2D("h2_nSigp_vs_mom_pr", "Identified Protons;|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
+  TH2D *h2_nSigp_vs_mom_pr_poss  = new TH2D("h2_nSigp_vs_mom_pr_poss", "Identified Protons;|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
   TH2D *h2_nSigp_vs_mom_all = new TH2D("h2_nSigp_vs_mom_all", ";|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
   TH2D *h2_nSigp_vs_mom_original = new TH2D("h2_nSigp_vs_mom_original", ";|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
   TH2D *h2_zd_vs_mom = new TH2D("h2_zd_vs_mom", ";|p| (GeV/c);z_{d}", 40, 0.0, 4.0, 140, -0.7, 0.7);
@@ -1366,6 +1374,11 @@ int main(int argc, char *argv[])
 		{
 		  h2_zd_vs_mom->Fill(d_mom, d_zDeuteron);
 		  h2_zt_vs_mom->Fill(d_mom, d_zTriton);
+		}
+
+	      if (!pion && !kaon && !deuteron && !triton)
+		{
+		  h2_nSigp_vs_mom_pr_poss->Fill(d_mom, d_nSigmaPr); 
 		}
 
 
@@ -2043,7 +2056,7 @@ int main(int argc, char *argv[])
 
 		  // Set TPC tracking efficiencies here
 		  h_simulationCheck_total->Fill(1);
-		  if (setup.tpcEfficienciesWereFound())
+		  if (setup.tpcEfficienciesWereFound() && configs.sqrt_s_NN == 3.0)
 		    {
 		      if      (eventInfo.tpcParticles.at(j).ppTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, setup.h2_tracking_pp);
 		      else if (eventInfo.tpcParticles.at(j).pmTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, setup.h2_tracking_pm);
@@ -2051,6 +2064,11 @@ int main(int argc, char *argv[])
 		      else if (eventInfo.tpcParticles.at(j).kmTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, setup.h2_tracking_km);
 		      else if (eventInfo.tpcParticles.at(j).prTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, setup.h2_tracking_pr);
 		    }
+		  else if (setup.tpcEfficienciesWereFound() && configs.sqrt_s_NN != 3.0)
+		    {
+		      if      (eventInfo.tpcParticles.at(j).prTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, setup.h2_tracking_pr);
+		    }
+
 		  if (tpcEfficiency == -1) // Checks here for tracks with no recorded efficiency values.
 		    { 
 		      if (eventInfo.tpcParticles.at(j).ppTag)

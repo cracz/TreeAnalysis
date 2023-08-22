@@ -28,6 +28,7 @@ class SetupAttributes
   TFile* correctionFile;
   TFile* resolutionFile;
   TFile* pikpEfficiencyFile;
+  TFile* protonEfficiencyFile;
   TFile* tofEfficiencyFile;
   TFile* v1WeightsInputFile;
   TH2D* h2_tracking_pp;
@@ -46,6 +47,7 @@ class SetupAttributes
   void setCorrectionFileAndRunIteration(TString fileName);
   void setResolutionFile(TString fileName);
   void setTPCEfficiencyFile(TString fileName);
+  void setProtonEfficiencyFile(TString fileName);
   void setTOFEfficiencyFile(TString fileName);
   void setv1WeightsFile(TString fileName);
 };// End namespace Setup

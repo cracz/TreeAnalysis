@@ -18,6 +18,7 @@
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/fxt_3p5GeV/resolutionInfo_INPUT_3p5GeV_EPDA1to6_max11_averagedRes.root</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/Configs/fxt_3p5GeV/20percentVariations/config_3p5GeV_m2Ka_high.txt</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/Efficiencies/fxt_3p5GeV/tof_efficiency_3p5GeV.root</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/Efficiencies/fxt_3p2GeV/eff_tpc_pr_3p2GeV.root</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/source/libs/</File>
     </Package>
   </SandBox>

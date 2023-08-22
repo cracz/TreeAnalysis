@@ -115,6 +115,36 @@ void SetupAttributes::setTPCEfficiencyFile(TString fileName)
 }// End setTPCEfficiencyFile()
 
 
+void SetupAttributes::setProtonEfficiencyFile(TString fileName)
+{
+  protonEfficiencyFile = TFile::Open(fileName, "READ");
+      
+  if (!protonEfficiencyFile) 
+    { 
+      std::cout << "Proton efficiency file missing! All efficiencies will default to 1!" << std::endl; 
+    }
+  else 
+    { 
+      tpcEfficienciesFound = true;
+      std::cout << "TPC efficiency files were found!" << std::endl; 
+
+      h2_tracking_pp = 0;
+      h2_tracking_pm = 0;
+      h2_tracking_kp = 0;
+      h2_tracking_km = 0;
+      h2_tracking_pr = (TH2D*)protonEfficiencyFile->Get("h2_ratio_pr");
+
+      if (!h2_tracking_pr)
+	{ 
+	  std::cout << "FAILED TO RETRIEVE PROTON EFFICIENCY HISTOGRAM!" << std::endl
+		    << "ALL EFFICIENCIES WILL DEFAULT TO 1!" << std::endl;
+
+	  tpcEfficienciesFound = false;
+	}
+    }
+}// End setProtonEfficiencyFile()
+
+
 void SetupAttributes::setTOFEfficiencyFile(TString fileName)
 {
   tofEfficiencyFile = TFile::Open(fileName, "READ");
