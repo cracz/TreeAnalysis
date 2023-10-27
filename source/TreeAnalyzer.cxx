@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
   else if (configs.sqrt_s_NN == 3.2)  { N_track = 287;  }
   else if (configs.sqrt_s_NN == 3.5)  { N_track = 325;  }
   else if (configs.sqrt_s_NN == 3.9)  { N_track = 344;  }
-  else if (configs.sqrt_s_NN == 4.5)  { N_track = 367;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
+  else if (configs.sqrt_s_NN == 4.5)  { N_track = 344;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
   else if (configs.sqrt_s_NN == 7.2)  { N_track = 240;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
   else
     {
@@ -745,9 +745,9 @@ int main(int argc, char *argv[])
   ////
 
   // vn ycm-symmetric; ycm vs pT
-  TProfile2D *p2_vn_yCM_vs_pT_pr_symm_00to10 = new TProfile2D("p2_vn_yCM_vs_pT_pr_symm_00to10", "", 20, -1.0, 1.0, 10, 0.0, 2.0);
-  TProfile2D *p2_vn_yCM_vs_pT_pr_symm_10to40 = new TProfile2D("p2_vn_yCM_vs_pT_pr_symm_10to40", "", 20, -1.0, 1.0, 10, 0.0, 2.0);
-  TProfile2D *p2_vn_yCM_vs_pT_pr_symm_40to60 = new TProfile2D("p2_vn_yCM_vs_pT_pr_symm_40to60", "", 20, -1.0, 1.0, 10, 0.0, 2.0);
+  TProfile2D *p2_vn_yCM_vs_pT_pr_symm_00to10 = new TProfile2D("p2_vn_yCM_vs_pT_pr_symm_00to10", "", 24, 0.0, 2.4, 20, -1.0, 1.0);
+  TProfile2D *p2_vn_yCM_vs_pT_pr_symm_10to40 = new TProfile2D("p2_vn_yCM_vs_pT_pr_symm_10to40", "", 24, 0.0, 2.4, 20, -1.0, 1.0);
+  TProfile2D *p2_vn_yCM_vs_pT_pr_symm_40to60 = new TProfile2D("p2_vn_yCM_vs_pT_pr_symm_40to60", "", 24, 0.0, 2.4, 20, -1.0, 1.0);
   p2_vn_yCM_vs_pT_pr_symm_00to10->SetDefaultSumw2();
   p2_vn_yCM_vs_pT_pr_symm_10to40->SetDefaultSumw2();
   p2_vn_yCM_vs_pT_pr_symm_40to60->SetDefaultSumw2();
@@ -1035,14 +1035,19 @@ int main(int argc, char *argv[])
   
   FlowUtils::Event eventInfo;        // These hold info for each event
   FlowUtils::Particle particleInfo;  // These hold info for each track/hit
-  NSigmaCorrectionUtils::NewNSigmaProton3p2GeV nSigmaCorrection3p2GeV; // These are to get corrected proton nSigma values for
-  NSigmaCorrectionUtils::NewNSigmaProton3p5GeV  nSigmaCorrection3p5GeV;  // FXT energies where the TPC calibration is bad.
-  NSigmaCorrectionUtils::NewNSigmaProton3p9GeV  nSigmaCorrection3p9GeV;
-  NSigmaCorrectionUtils::NewNSigmaProton4p5GeV  nSigmaCorrection4p5GeV;
-  if (configs.sqrt_s_NN == 3.2) nSigmaCorrection3p2GeV.initialize();
+  //NSigmaCorrectionUtils::NewNSigmaProton3p2GeV nSigmaCorrection3p2GeV; // These are to get corrected proton nSigma values for
+  //NSigmaCorrectionUtils::NewNSigmaProton3p5GeV nSigmaCorrection3p5GeV;  // FXT energies where the TPC calibration is bad.
+  //NSigmaCorrectionUtils::NewNSigmaProton3p9GeV nSigmaCorrection3p9GeV;
+  //NSigmaCorrectionUtils::NewNSigmaProton4p5GeV nSigmaCorrection4p5GeV;
+  NSigmaCorrectionUtils::NewNSigmaProton3p2GeV_SL23d nSigmaCorrection3p2GeV;
+  NSigmaCorrectionUtils::NewNSigmaProton3p5GeV_SL23d nSigmaCorrection3p5GeV;
+  NSigmaCorrectionUtils::NewNSigmaProton3p9GeV_SL23d nSigmaCorrection3p9GeV;
+  NSigmaCorrectionUtils::NewNSigmaProton4p5GeV_SL23d nSigmaCorrection4p5GeV;
+  /*if (configs.sqrt_s_NN == 3.2) nSigmaCorrection3p2GeV.initialize();
   else if (configs.sqrt_s_NN == 3.5) nSigmaCorrection3p5GeV.initialize();
   else if (configs.sqrt_s_NN == 3.9) nSigmaCorrection3p9GeV.initialize();
   else if (configs.sqrt_s_NN == 4.5) nSigmaCorrection4p5GeV.initialize();
+  */
   StEpdGeom *epdGeom = new StEpdGeom();  // This is to translate EPD tile IDs into phi and eta
 
   // EVENT LOOP
@@ -1052,12 +1057,12 @@ int main(int argc, char *argv[])
     {
       eventInfo.reset();
 
-      // TEMPORARY
+      // FOR SL21d/P21id productions
       // These runs have bad EPD behavior but are not in the official bad run list.
       //The bad tiles will be marked bad once the data is reproduced and the runs 
       //may be usable again afterward.
-      if (configs.sqrt_s_NN == 3.5 && i_runID == 21044031) continue;
-      if (configs.sqrt_s_NN == 3.9 && (i_runID == 21035025 || i_runID == 21035031 || i_runID == 21036007)) continue; 
+      //if (configs.sqrt_s_NN == 3.5 && i_runID == 21044031) continue;
+      //if (configs.sqrt_s_NN == 3.9 && (i_runID == 21035025 || i_runID == 21035031 || i_runID == 21036007)) continue; 
       ////
 
       tree->GetEntry(ievent);
@@ -1104,7 +1109,7 @@ int main(int argc, char *argv[])
       Double_t d_tofBeta;
       Double_t d_dEdx;
       Double_t d_dEdxError;
-      Double_t d_rapidity_assumingProton;
+      //Double_t d_rapidity_assumingProton;
       Int_t i_nHits;
       Int_t i_nHitsFit;
       Int_t i_nHitsPoss;
@@ -1145,7 +1150,7 @@ int main(int argc, char *argv[])
 	  d_tofBeta = tofBeta[iTrk];
 	  d_dEdx = dEdx[iTrk];
 	  d_dEdxError = dEdxError[iTrk];
-	  d_rapidity_assumingProton = FlowUtils::rapidity(d_px, d_py, d_pz, D_M0_PR);
+	  //d_rapidity_assumingProton = FlowUtils::rapidity(d_px, d_py, d_pz, D_M0_PR);
 	  i_nHits = nHits[iTrk];
 	  i_nHitsFit = nHitsFit[iTrk];
 	  i_nHitsPoss = nHitsPoss[iTrk];
@@ -1189,22 +1194,26 @@ int main(int argc, char *argv[])
 	  ////
 	  if (configs.sqrt_s_NN == 3.2)
 	    { 
-	      d_nSigmaPr = nSigmaCorrection3p2GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      //d_nSigmaPr = nSigmaCorrection3p2GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      d_nSigmaPr = nSigmaCorrection3p2GeV.calculateNsigma(TMath::Log(d_dEdx), d_mom, i_nHitsDedx);
 	      h2_nSigp_vs_mom_all->Fill(d_mom, d_nSigmaPr);
 	    }
 	  else if (configs.sqrt_s_NN == 3.5)
 	    { 
-	      d_nSigmaPr = nSigmaCorrection3p5GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      //d_nSigmaPr = nSigmaCorrection3p5GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      d_nSigmaPr = nSigmaCorrection3p5GeV.calculateNsigma(TMath::Log(d_dEdx), d_mom, i_nHitsDedx);
 	      h2_nSigp_vs_mom_all->Fill(d_mom, d_nSigmaPr);
 	    }
 	  else if (configs.sqrt_s_NN == 3.9)
 	    { 
-	      d_nSigmaPr = nSigmaCorrection3p9GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      //d_nSigmaPr = nSigmaCorrection3p9GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      d_nSigmaPr = nSigmaCorrection3p9GeV.calculateNsigma(TMath::Log(d_dEdx), d_mom, i_nHitsDedx);
 	      h2_nSigp_vs_mom_all->Fill(d_mom, d_nSigmaPr);
 	    }
 	  else if (configs.sqrt_s_NN == 4.5)
 	    { 
-	      d_nSigmaPr = nSigmaCorrection4p5GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      //d_nSigmaPr = nSigmaCorrection4p5GeV.getNewNSigmaProton(d_rapidity_assumingProton, d_mom, d_dEdx); 
+	      d_nSigmaPr = nSigmaCorrection4p5GeV.calculateNsigma(TMath::Log(d_dEdx), d_mom, i_nHitsDedx);
 	      h2_nSigp_vs_mom_all->Fill(d_mom, d_nSigmaPr);
 	    }
 	  ////

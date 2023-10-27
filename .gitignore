@@ -19,3 +19,5 @@ input/
 StRoot/St_base/
 source/SetupAttributes.o
 source/nSigmaInfo
+dict_systematics.npy
+saveSystematics.py*

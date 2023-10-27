@@ -2,8 +2,7 @@
 <job maxFilesPerProcess="20" filesPerHour="1" fileListSyntax="xrootd" simulateSubmission="false">
   
   <command>
-    starver SL20d
-    cons
+    starver SL23d
     root4star -q -b -l MakeTrees.C\(0,$INPUTFILECOUNT,\"$FILELIST\",\"$SCRATCH\",\"$JOBID\",\"config_3p2GeV.txt\",0\)
   </command>
   
@@ -11,12 +10,17 @@
     <Package>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/source/MakeTrees.C</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/Configs/fxt_3p2GeV/config_3p2GeV.txt</File>
-      <File>file:/star/u/cracz/work/flow/TreeAnalysis/StRoot</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/.sl73_gcc485/obj/StRoot/TreeMaker/TreeMaker.so</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/.sl73_gcc485/obj/StRoot/ConfigReader/ConfigReader.so</File>
     </Package>
   </SandBox>
 
   <!-- Get input files from get_file_lis.pl -->
-  <input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL21d_file.list" nFiles="all"/>
+  <input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL23d_afterRecalibration_file.list" nFiles="all"/>
+  <!--input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL23d_afterRecalibration_file1.list" nFiles="all"/-->
+  <!--input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL23d_afterRecalibration_file2.list" nFiles="all"/-->
+  <!--input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL23d_afterRecalibration_file3.list" nFiles="all"/-->
+  <!--input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL23d_afterRecalibration_file4.list" nFiles="all"/-->
   
   <!-- Run log & error messages -->
   <stdout URL="file:/star/data01/pwg/cracz/Data_3p2GeV_FXT/out/$JOBID.out" />

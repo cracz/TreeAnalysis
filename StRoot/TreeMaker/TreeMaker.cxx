@@ -271,26 +271,25 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 198 && primTracks <= 235 ) centrality = 14;
 			  else if( primTracks >= 236 && primTracks <= 344 ) centrality = 15;  // 0% - 5% (Central)
 			}
-		      // 4.5 GeV  --  From Eric Loyd 2023
-		      // https://drupal.star.bnl.gov/STAR/pwg/common/BES-II-Centrality-Calibration
+		      // 4.5 GeV FXT ***THIS IS A COPY OF 3.9 GeV 2020***
 		      else if (configs.sqrt_s_NN == 4.5) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
-			  if     ( primTracks >=   7 && primTracks <=   9 ) centrality =  0;  // 75% - 80% (Peripheral)
-			  else if( primTracks >=  10 && primTracks <=  13 ) centrality =  1;
-			  else if( primTracks >=  14 && primTracks <=  19 ) centrality =  2;
-			  else if( primTracks >=  20 && primTracks <=  25 ) centrality =  3;
-			  else if( primTracks >=  26 && primTracks <=  34 ) centrality =  4;
-			  else if( primTracks >=  35 && primTracks <=  44 ) centrality =  5;
-			  else if( primTracks >=  45 && primTracks <=  56 ) centrality =  6;
-			  else if( primTracks >=  57 && primTracks <=  70 ) centrality =  7;
-			  else if( primTracks >=  71 && primTracks <=  87 ) centrality =  8;
-			  else if( primTracks >=  88 && primTracks <= 106 ) centrality =  9;
-			  else if( primTracks >= 107 && primTracks <= 129 ) centrality = 10;
-			  else if( primTracks >= 130 && primTracks <= 153 ) centrality = 11;
-			  else if( primTracks >= 154 && primTracks <= 182 ) centrality = 12;
-			  else if( primTracks >= 183 && primTracks <= 215 ) centrality = 13;
-			  else if( primTracks >= 216 && primTracks <= 256 ) centrality = 14;
-			  else if( primTracks >= 257 && primTracks <= 367 ) centrality = 15;  // 0% - 5% (Central)
+			  if     ( primTracks >=   6 && primTracks <=   8 ) centrality =  0;  // 75% - 80% (Peripheral)
+			  else if( primTracks >=   9 && primTracks <=  12 ) centrality =  1;
+			  else if( primTracks >=  13 && primTracks <=  16 ) centrality =  2;
+			  else if( primTracks >=  17 && primTracks <=  22 ) centrality =  3;
+			  else if( primTracks >=  23 && primTracks <=  30 ) centrality =  4;
+			  else if( primTracks >=  31 && primTracks <=  39 ) centrality =  5;
+			  else if( primTracks >=  40 && primTracks <=  50 ) centrality =  6;
+			  else if( primTracks >=  51 && primTracks <=  63 ) centrality =  7;
+			  else if( primTracks >=  64 && primTracks <=  79 ) centrality =  8;
+			  else if( primTracks >=  80 && primTracks <=  96 ) centrality =  9;
+			  else if( primTracks >=  97 && primTracks <= 117 ) centrality = 10;
+			  else if( primTracks >= 118 && primTracks <= 140 ) centrality = 11;
+			  else if( primTracks >= 141 && primTracks <= 166 ) centrality = 12;
+			  else if( primTracks >= 167 && primTracks <= 197 ) centrality = 13;
+			  else if( primTracks >= 198 && primTracks <= 235 ) centrality = 14;
+			  else if( primTracks >= 236 && primTracks <= 344 ) centrality = 15;  // 0% - 5% (Central)
 			}
 
 		      // 7.2 GeV FXT

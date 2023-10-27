@@ -15,7 +15,7 @@ Int_t MakeTrees(Int_t nEvents, Int_t nFiles, TString InputFileList, TString Outp
   gSystem->Load("StPicoEvent");
   gSystem->Load("StPicoDstMaker");
   gSystem->Load("StEpdUtil");
-  gSystem->Load("StPileupUtil");
+  //gSystem->Load("StPileupUtil");  // Not present in SL23d, maybe completely unnecessary anyway.
   gSystem->Load("TreeMaker.so");
   gSystem->Load("ConfigReader.so");
   std::cout << "Loaded" << std::endl;
