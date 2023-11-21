@@ -4,6 +4,7 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
+  //TString fileName = jobID + ".root";
 
   TFile *file = TFile::Open(fileName);
   if(!file) {cout << "Wrong file!" << endl; return;}
@@ -247,13 +248,13 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   h_vn_yCM_10to40_pr->SetMarkerStyle(20);
   h_vn_yCM_40to60_pr->SetMarkerStyle(33);
   h_vn_yCM_00to10_pr->SetMarkerColor(kRed-4);
-  //h_vn_yCM_10to40_pr->SetMarkerColor(kBlue-4);
+  h_vn_yCM_10to40_pr->SetMarkerColor(kBlack);
   h_vn_yCM_40to60_pr->SetMarkerColor(kBlue-4);
   h_vn_yCM_00to10_pr->SetMarkerSize(2);
   h_vn_yCM_10to40_pr->SetMarkerSize(2);
   h_vn_yCM_40to60_pr->SetMarkerSize(3);
   h_vn_yCM_00to10_pr->SetLineColor(kRed-4);
-  //h_vn_yCM_10to40_pr->SetLineColor(kBlue-4);
+  h_vn_yCM_10to40_pr->SetLineColor(kBlack);
   h_vn_yCM_40to60_pr->SetLineColor(kBlue-4);
   h_vn_yCM_00to10_pr->SetLineWidth(3);
   h_vn_yCM_10to40_pr->SetLineWidth(3);
@@ -263,13 +264,13 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   h_vn_yCM_10to40_pr_symm->SetMarkerStyle(20);
   h_vn_yCM_40to60_pr_symm->SetMarkerStyle(33);
   h_vn_yCM_00to10_pr_symm->SetMarkerColor(kRed-4);
-  //h_vn_yCM_10to40_pr_symm->SetMarkerColor(kBlue-4);
+  h_vn_yCM_10to40_pr_symm->SetMarkerColor(kBlack);
   h_vn_yCM_40to60_pr_symm->SetMarkerColor(kBlue-4);
   h_vn_yCM_00to10_pr_symm->SetMarkerSize(2);
   h_vn_yCM_10to40_pr_symm->SetMarkerSize(2);
   h_vn_yCM_40to60_pr_symm->SetMarkerSize(3);
   h_vn_yCM_00to10_pr_symm->SetLineColor(kRed-4);
-  //h_vn_yCM_10to40_pr_symm->SetLineColor(kBlue-4);
+  h_vn_yCM_10to40_pr_symm->SetLineColor(kBlack);
   h_vn_yCM_40to60_pr_symm->SetLineColor(kBlue-4);
   h_vn_yCM_00to10_pr_symm->SetLineWidth(3);
   h_vn_yCM_10to40_pr_symm->SetLineWidth(3);
@@ -296,13 +297,13 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   h_vn_yCM_10to40_pr_mirror->SetMarkerStyle(24);
   h_vn_yCM_40to60_pr_mirror->SetMarkerStyle(27);
   h_vn_yCM_00to10_pr_mirror->SetMarkerColor(kRed-4);
-  //h_vn_yCM_10to40_pr_mirror->SetMarkerColor(kBlue-4);
+  h_vn_yCM_10to40_pr_mirror->SetMarkerColor(kBlack);
   h_vn_yCM_40to60_pr_mirror->SetMarkerColor(kBlue-4);
   h_vn_yCM_00to10_pr_mirror->SetMarkerSize(2);
   h_vn_yCM_10to40_pr_mirror->SetMarkerSize(2);
   h_vn_yCM_40to60_pr_mirror->SetMarkerSize(3);
   h_vn_yCM_00to10_pr_mirror->SetLineColor(kRed-4);
-  //h_vn_yCM_10to40_pr_mirror->SetLineColor(kBlue-4);
+  h_vn_yCM_10to40_pr_mirror->SetLineColor(kBlack);
   h_vn_yCM_40to60_pr_mirror->SetLineColor(kBlue-4);
   h_vn_yCM_00to10_pr_mirror->SetLineWidth(3);
   h_vn_yCM_10to40_pr_mirror->SetLineWidth(3);
@@ -379,7 +380,7 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   h_odd_40to60->SetLineWidth(3);
   ////
 
-  THStack *prRapidityStack   = new THStack("prRapidityStack", ";y-y_{mid};v_{3} {#Psi_{1}}");
+  THStack *prRapidityStack   = new THStack("prRapidityStack", ";y-y_{mid};v_{1}{#Psi_{1}}");
   prRapidityStack->Add(h_vn_yCM_00to10_pr);
   if (sqrt_s_NN < 3.5)
     prRapidityStack->Add(h_vn_yCM_40to60_pr);
@@ -389,19 +390,19 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
     prRapidityStack->Add(h_vn_yCM_40to60_pr_mirror);
   prRapidityStack->Add(h_vn_yCM_10to40_pr_mirror);
 
-  THStack *prRapidityStack_symm = new THStack("prRapidityStack_symm", ";y-y_{mid};v_{3} {#Psi_{1}}");
+  THStack *prRapidityStack_symm = new THStack("prRapidityStack_symm", ";y-y_{mid};v_{1}{#Psi_{1}}");
   prRapidityStack_symm->Add(h_vn_yCM_00to10_pr_symm);
   if (sqrt_s_NN < 3.5)
     prRapidityStack_symm->Add(h_vn_yCM_40to60_pr_symm);
   prRapidityStack_symm->Add(h_vn_yCM_10to40_pr_symm);
 
-  THStack *prEvenStack = new THStack("prEvenStack", ";y-y_{mid};v_{3}^{even} {#Psi_{1}}");
+  THStack *prEvenStack = new THStack("prEvenStack", ";y-y_{mid};v_{1}^{even}{#Psi_{1}}");
   if (sqrt_s_NN < 3.5)
     prEvenStack->Add(h_even_40to60);
   prEvenStack->Add(h_even_00to10);
   prEvenStack->Add(h_even_10to40);
   
-  THStack *prOddStack = new THStack("prOddStack", ";y-y_{mid};v_{3}^{odd} {#Psi_{1}}");
+  THStack *prOddStack = new THStack("prOddStack", ";y-y_{mid};v_{1}^{odd}{#Psi_{1}}");
   if (sqrt_s_NN < 3.5)
     prOddStack->Add(h_odd_40to60);
   prOddStack->Add(h_odd_00to10);
@@ -448,8 +449,8 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   prText_y->SetTextSize(.04);
   prText_y->SetTextFont(22);
  
-  //TPaveText *prText_y_symm = new TPaveText(-0.6, 0.037, 0.6, 0.075, "NB");
-  TPaveText *prText_y_symm = new TPaveText(-0.8, 0.02, 1.0, 0.065, "NB");
+  //TPaveText *prText_y_symm = new TPaveText(-0.8, 0.02, 1.0, 0.065, "NB");
+  TPaveText *prText_y_symm = new TPaveText(-0.8, 0.25, 1.0, 0.46, "NB");
   prText_y_symm->SetTextAlign(32);
   if (sqrt_s_NN == 3.0)
     prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");// (year 2018)");
@@ -546,6 +547,8 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   prRapidityStack_symm->Draw();
   prRapidityStack_symm->SetMaximum(0.07);
   prRapidityStack_symm->SetMinimum(-0.09);
+  //prRapidityStack_symm->SetMaximum(0.5);
+  //prRapidityStack_symm->SetMinimum(-0.5);
   prRapidityStack_symm->Draw("NOSTACK EP");
   zeroLine_y_pr->Draw("SAME");
   //h_00to10_symm->Draw("SAME");
@@ -580,6 +583,8 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   prEvenStack->Draw();
   prEvenStack->SetMaximum(0.02);
   prEvenStack->SetMinimum(-0.03);
+  //prEvenStack->SetMaximum(0.1);
+  //prEvenStack->SetMinimum(-0.1);
   prEvenStack->Draw("NOSTACK EP");
   zeroLine_y_pr->Draw("SAME");
   prEvenStack->Draw("NOSTACK EP SAME");
@@ -601,6 +606,8 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   prOddStack->Draw();
   prOddStack->SetMaximum(0.08);
   prOddStack->SetMinimum(-0.08);
+  //prOddStack->SetMaximum(0.5);
+  //prOddStack->SetMinimum(-0.5);
   prOddStack->Draw("NOSTACK EP");
   zeroLine_y_pr->Draw("SAME");
   prOddStack->Draw("NOSTACK EP SAME");

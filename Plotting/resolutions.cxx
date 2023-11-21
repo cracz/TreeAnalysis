@@ -4,6 +4,7 @@ void resolutions(TString jobID, TString order_n_str)
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
+  //TString fileName = jobID + ".root";
 
   TFile *file = TFile::Open(fileName);
   if(!file) {cout << "Wrong file!" << endl; return;}
@@ -78,7 +79,18 @@ void resolutions(TString jobID, TString order_n_str)
       dR_AvsB_save = R_AvsB_save * TMath::Sqrt((dEpdAEpdB_save/(2*EpdAEpdB_save))*(dEpdAEpdB_save/(2*EpdAEpdB_save)) +
 					       (dTpcBEpdA_save/(2*TpcBEpdA_save))*(dTpcBEpdA_save/(2*TpcBEpdA_save)) +
 					       (dTpcBEpdB_save/(2*TpcBEpdB_save))*(dTpcBEpdB_save/(2*TpcBEpdB_save)));
-	    
+      /*
+      if (i == 5)
+	{
+	  std::cout << "( (EpdAEpdB_save * TpcBEpdA_save) / TpcBEpdB_save )^2 = "
+		    << "(" << EpdAEpdB_save << " * " << TpcBEpdA_save << ") / " << TpcBEpdB_save
+		    << std::endl << std::endl;
+
+	  std::cout << "dEpdAEpdB_save = " << dEpdAEpdB_save << std::endl;
+	  std::cout << "dTpcBEpdA_save = " << dTpcBEpdA_save << std::endl;
+	  std::cout << "dTpcBEpdB_save = " << dTpcBEpdB_save << std::endl;
+	}
+      */
       
       EpdAEpdB = h_EpdAEpdB_flip->GetBinContent(i);      
       TpcBEpdA = h_TpcBEpdA_flip->GetBinContent(i);
@@ -160,8 +172,8 @@ void resolutions(TString jobID, TString order_n_str)
   h_resolEPDA->GetYaxis()->SetTitleOffset(0.9);
   h_resolEPDA->GetXaxis()->SetTitleSize(0.045);
   h_resolEPDA->GetYaxis()->SetTitleSize(0.065);
-  //h_resolEPDA->SetMaximum(0.25);
-  h_resolEPDA->SetMaximum(1.0);
+  h_resolEPDA->SetMaximum(0.25);
+  //h_resolEPDA->SetMaximum(1.0);
   h_resolEPDA->SetMinimum(0.0);
   h_resolEPDA->SetTitle("");
   h_resolEPDA->SetMarkerColor(1);

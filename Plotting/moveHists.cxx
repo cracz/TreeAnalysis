@@ -3,7 +3,7 @@
 #include "TProfile.h"
 #include "TProfile2D.h"
 
-void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
+void moveHists(TString fileName = "Normal_averagedRes.picoDst.result.combined.root")
 {
   TFile *file = TFile::Open(fileName);
 
@@ -317,6 +317,8 @@ void moveHists(TString fileName = "Normal.picoDst.result.combined.root")
   h_vn_pT_40to60_tr->Write();
   */
 
+  std::cout << std::endl << "Plots saved to v3_results.root" << std::endl;
+  
   file->Close();
   newFile->Close();
 }

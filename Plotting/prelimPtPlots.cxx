@@ -57,13 +57,13 @@ void prelimPtPlots(TString jobID, Bool_t useSystematics = false, Double_t sqrt_s
   h_vn_pT_10to40_pr->SetMarkerStyle(20);
   h_vn_pT_40to60_pr->SetMarkerStyle(33);
   h_vn_pT_00to10_pr->SetMarkerColor(kRed-4);
-  //h_vn_pT_10to40_pr->SetMarkerColor(kBlue-4);
+  h_vn_pT_10to40_pr->SetMarkerColor(kBlack);
   h_vn_pT_40to60_pr->SetMarkerColor(kBlue-4);
   h_vn_pT_00to10_pr->SetMarkerSize(2);
   h_vn_pT_10to40_pr->SetMarkerSize(2);
   h_vn_pT_40to60_pr->SetMarkerSize(3);
   h_vn_pT_00to10_pr->SetLineColor(kRed-4);
-  //h_vn_pT_10to40_pr->SetLineColor(kBlue-4);
+  h_vn_pT_10to40_pr->SetLineColor(kBlack);
   h_vn_pT_40to60_pr->SetLineColor(kBlue-4);
   h_vn_pT_00to10_pr->SetLineWidth(3);
   h_vn_pT_10to40_pr->SetLineWidth(3);

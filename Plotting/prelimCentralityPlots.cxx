@@ -65,8 +65,8 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
 
   if (useSystematics)
     {
-      systematicFile = TFile::Open("systematicErrors_thirdDraft.root", "READ");
-      jobID = "Normal_averagedRes";
+      systematicFile = TFile::Open("systematicErrors_3p0GeV.root", "READ");
+      jobID = "Normal";
       sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_"+jobID+"_flip");
       sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_"+jobID+"_flip");
       sys_kp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_kp_"+jobID+"_flip");
@@ -154,7 +154,7 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
 
   THStack *kaCentralityStack = new THStack("kaCentralityStack", ";Centrality (%);v_{3} {#Psi_{1}}");
   kaCentralityStack->Add(h_vn_km);
-  kaCentralityStack->Add(h_vn_kp);
+  //kaCentralityStack->Add(h_vn_kp);
   
   // Make text boxes, legends, and line at zero
   TPaveText* prelimText = new TPaveText(15, 0.01, 45, 0.014, "NB");
@@ -182,7 +182,7 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
   allText->SetTextSize(0.04);
   allText->SetTextFont(22);
 
-  TPaveText *kaText = new TPaveText(15, 0.038, 48, 0.09, "NB");
+  TPaveText *kaText = new TPaveText(15, 0.038, 48, 0.095, "NB");
   if (sqrt_s_NN == 3.0)
     kaText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
   else if (sqrt_s_NN == 3.2 || sqrt_s_NN == 3.22)
@@ -249,7 +249,20 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
   canvas->SaveAs("v3_allCentralityStack.pdf");
   canvas->SaveAs("v3_allCentralityStack.png");
   canvas->Clear();
-
+  TGraphErrors* g_kp;
+  if (useSystematics)
+    {
+      g_kp = new TGraphErrors(h_vn_kp);
+      for (int i = 0; i < g_kp->GetN(); i++)
+	{
+	  g_kp->SetPointError(i, 0.0, g_kp->GetErrorY(i));
+	  sys_kp->SetPointError(i, 0.0, sys_kp->GetErrorY(i));
+	  sys_km->SetPointError(i, 0.0, sys_km->GetErrorY(i));
+	}
+      PlotUtils::shiftGraphX(g_kp, -1.5);
+      PlotUtils::shiftGraphX(sys_kp, -1.5);
+    }
+  
   kaCentralityStack->Draw();
   kaCentralityStack->GetXaxis()->SetLabelSize(0.045);
   kaCentralityStack->GetYaxis()->SetLabelSize(0.045);
@@ -260,11 +273,12 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
   kaCentralityStack->GetXaxis()->SetNdivisions(210);
   kaCentralityStack->SetMaximum(0.1);
   kaCentralityStack->SetMinimum(-0.1);
-  kaCentralityStack->Draw("NOSTACK EP");
+  kaCentralityStack->Draw("NOSTACK EP X0");
   zeroLine->Draw("SAME");
-  kaCentralityStack->Draw("NOSTACK EP SAME");
+  kaCentralityStack->Draw("NOSTACK EP X0 SAME");
   if (useSystematics)
     {
+      g_kp->Draw("PZ");
       sys_kp->Draw("[]");
       sys_km->Draw("[]");
     }

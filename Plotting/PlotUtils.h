@@ -10,6 +10,16 @@
 
 namespace PlotUtils
 {
+  void shiftGraphX(TGraphErrors* theGraph, double shiftAmount)
+  {
+    for (int point = 0; point < theGraph->GetN(); point++)
+      {
+	double newX = theGraph->GetPointX(point) + shiftAmount;
+	theGraph->SetPointX(point, newX);
+      }
+  };// End shiftGraphX()
+
+  
   void fillVectorsOfValues(TH1D* histogram, std::vector<Double_t> &xValues, std::vector<Double_t> &yValues)
   {
     for (Int_t ithBin = 1; ithBin < histogram->GetNbinsX(); ithBin++)

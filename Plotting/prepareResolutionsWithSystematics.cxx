@@ -10,12 +10,12 @@ double maxValue(double d1, double d2, double d3)
 
 void prepareResolutionsWithSystematics()
 {
-
+  /*
   // 3.0 GeV
   TFile* resVarFile1 = TFile::Open("v3_EPDref9to16_resolutionInfo.root", "READ");
   TFile* resVarFile2 = TFile::Open("v3_EPDref10to16_resolutionInfo.root", "READ");
   TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_scaledByRes.root", "READ");
-
+  */
   /*
   // 3.0 GeV v1
   TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p0GeV_v1_EPDB9to16.root", "READ");
@@ -30,22 +30,29 @@ void prepareResolutionsWithSystematics()
   */
   /*
   // 3.2 GeV
-  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p22GeV_EPDA1to6_EPDB7to13_TPCB1p1to0.root", "READ");
-  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p22GeV_EPDA1to6_EPDB8to13_TPCB1p1to0.root", "READ");
-  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p22GeV_EPDA1to6_EPDB9to13_TPCB1p1to0.root", "READ");
+  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p2GeV_SL23d_EPDA1to7_EPDB8to13.root", "READ");
+  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p2GeV_SL23d_EPDA1to7_EPDB9to13.root", "READ");
+  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p2GeV_SL23d_EPDA1to7_EPDB10to13.root", "READ");
   */
   /*
-  // 3.5 GeV
-  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p5GeV_EPDA1to6_EPDref7to11_TPCB1p2to0.root", "READ");
-  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p5GeV_EPDA1to6_EPDref8to11_TPCB1p2to0.root", "READ");
-  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p5GeV_EPDA1to6_EPDref9to11_TPCB1p2to0.root", "READ");
+  // 3.5 GeV 
+  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p5GeV_EPDA1to7_EPDB8to13_SL23d.root", "READ");
+  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p5GeV_EPDA1to7_EPDB9to13_SL23d.root", "READ");
+  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p5GeV_EPDA1to7_EPDB10to13_SL23d.root", "READ");
   */
   /*
   // 3.9 GeV
-  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDref6to10_TPCB1p32to0.root", "READ");
-  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDref7to10_TPCB1p32to0.root", "READ");
-  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDref8to10_TPCB1p32to0.root", "READ");
+  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p9GeV_SL23d_EPDA1to5_EPDB6to10.root", "READ");
+  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p9GeV_SL23d_EPDA1to5_EPDB7to10.root", "READ");
+  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p9GeV_SL23d_EPDA1to5_EPDB8to10.root", "READ");
   */
+
+  // 4.5 GeV
+  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_4p5GeV_SL23d_EPDA1to5_EPDB6to10.root", "READ");
+  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_4p5GeV_SL23d_EPDA1to5_EPDB7to10.root", "READ");
+  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_4p5GeV_SL23d_EPDA1to5_EPDB8to10.root", "READ");
+
+  
   if (!resVarFile1) std::cout << "No resVarFile1" << std::endl;
   if (!resVarFile2) std::cout << "No resVarFile2" << std::endl;
   if (!resVarFile3) std::cout << "No resVarFile3" << std::endl;
@@ -100,12 +107,12 @@ void prepareResolutionsWithSystematics()
 
   // Flip and trim axis on some plots
   h_resolutionsWithStats = PlotUtils::flipHisto(h_resolutionsWithStats);
-  h_resolutionsWithStats = PlotUtils::trimCentralityPlot(h_resolutionsWithStats);      // Out to 60%
-  //h_resolutionsWithStats = PlotUtils::trimCentralityPlotStrict(h_resolutionsWithStats);  // Out to 40%
+  //h_resolutionsWithStats = PlotUtils::trimCentralityPlot(h_resolutionsWithStats);      // Out to 60%
+  h_resolutionsWithStats = PlotUtils::trimCentralityPlotStrict(h_resolutionsWithStats);  // Out to 40%
 
   h_resolutionsWithSysts = PlotUtils::flipHisto(h_resolutionsWithSysts);
-  h_resolutionsWithSysts = PlotUtils::trimCentralityPlot(h_resolutionsWithSysts);     // Out to 60%
-  //h_resolutionsWithSysts = PlotUtils::trimCentralityPlotStrict(h_resolutionsWithSysts); // Out to 40%
+  //h_resolutionsWithSysts = PlotUtils::trimCentralityPlot(h_resolutionsWithSysts);     // Out to 60%
+  h_resolutionsWithSysts = PlotUtils::trimCentralityPlotStrict(h_resolutionsWithSysts); // Out to 40%
   ////
 
   TFile* newFile = TFile::Open("eventPlaneSystematics.root", "RECREATE");
