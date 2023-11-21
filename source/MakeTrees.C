@@ -16,8 +16,8 @@ Int_t MakeTrees(Int_t nEvents, Int_t nFiles, TString InputFileList, TString Outp
   gSystem->Load("StPicoDstMaker");
   gSystem->Load("StEpdUtil");
   //gSystem->Load("StPileupUtil");  // Not present in SL23d, maybe completely unnecessary anyway.
-  gSystem->Load("TreeMaker.so");
-  gSystem->Load("ConfigReader.so");
+  gSystem->Load("../.sl73_gcc485/obj/StRoot/TreeMaker/TreeMaker.so");
+  gSystem->Load("../.sl73_gcc485/obj/StRoot/ConfigReader/ConfigReader.so");
   std::cout << "Loaded" << std::endl;
   // List of member links in the chain
   StChain* chain = new StChain;

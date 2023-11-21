@@ -483,13 +483,14 @@ int main(int argc, char *argv[])
   TH1D *h_dEdx_pr = new TH1D("h_dEdx_pr", "dEdx for Identified Protons;dE/dx (keV/cm);N_{pr}", 500, 0.0, 10.0);
   TH1D *h_dEdxError_pr = new TH1D("h_dEdxError_pr", "dEdx Uncertainties for Identified Protons;#delta_{dEdx} (keV/cm);Identified protons", 100, 0, 0.5);
   
-  TH2D *h2_dEdx_vs_qp_pp = new TH2D("h2_dEdx_vs_qp_pp", "#pi^{+} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 400, -2, 2, 500, 0, 10);
-  TH2D *h2_dEdx_vs_qp_pm = new TH2D("h2_dEdx_vs_qp_pm", "#pi^{-} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 400, -2, 2, 500, 0, 10);
-  TH2D *h2_dEdx_vs_qp_kp = new TH2D("h2_dEdx_vs_qp_kp", "K^{+} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 400, -2, 2, 500, 0, 10);
-  TH2D *h2_dEdx_vs_qp_km = new TH2D("h2_dEdx_vs_qp_km", "K^{-} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 400, -2, 2, 500, 0, 10);
-  TH2D *h2_dEdx_vs_qp_pr = new TH2D("h2_dEdx_vs_qp_pr", "Proton dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 400, -2, 2, 500, 0, 10);
-  TH2D *h2_dEdx_vs_qp_de = new TH2D("h2_dEdx_vs_qp_de", "Deuteron dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 400, -2, 2, 500, 0, 10);
-  TH2D *h2_dEdx_vs_qp_tr = new TH2D("h2_dEdx_vs_qp_tr", "Triton dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 400, -2, 2, 500, 0, 10);
+  TH2D *h2_dEdx_vs_qp_pp = new TH2D("h2_dEdx_vs_qp_pp", "#pi^{+} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 800, -4, 4, 500, 0, 10);
+  TH2D *h2_dEdx_vs_qp_pm = new TH2D("h2_dEdx_vs_qp_pm", "#pi^{-} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 800, -4, 4, 500, 0, 10);
+  TH2D *h2_dEdx_vs_qp_kp = new TH2D("h2_dEdx_vs_qp_kp", "K^{+} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 800, -4, 4, 500, 0, 10);
+  TH2D *h2_dEdx_vs_qp_km = new TH2D("h2_dEdx_vs_qp_km", "K^{-} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 800, -4, 4, 500, 0, 10);
+  TH2D *h2_dEdx_vs_qp_pr = new TH2D("h2_dEdx_vs_qp_pr", "Proton dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 800, -4, 4, 500, 0, 10);
+  TH2D *h2_dEdx_vs_qp_de = new TH2D("h2_dEdx_vs_qp_de", "Deuteron dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 800, -4, 4, 500, 0, 10);
+  TH2D *h2_dEdx_vs_qp_tr = new TH2D("h2_dEdx_vs_qp_tr", "Triton dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 800, -4, 4, 500, 0, 10);
+  TH2D *h2_dEdx_vs_qp_prInitial = new TH2D("h2_dEdx_vs_qp_prInitial", "Proton dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 800, -4, 4, 500, 0, 10);
   
   TH2D *h2_beta_vs_qp_pp = new TH2D("h2_beta_vs_qp_pp","#pi^{+} 1/#beta vs Momentum;q*|p| (GeV);1/#beta", 300, -3, 3, 300, 0.5, 3.5);
   TH2D *h2_beta_vs_qp_pm = new TH2D("h2_beta_vs_qp_pm","#pi^{-} 1/#beta vs Momentum;q*|p| (GeV);1/#beta", 300, -3, 3, 300, 0.5, 3.5);
@@ -604,6 +605,13 @@ int main(int argc, char *argv[])
   TProfile *p_meanpT_vs_yCM_de = new TProfile("p_meanpT_vs_yCM_de","Deuteron <p_{T}>;y-y_{mid};<p_{T}>", 20, -1.0, 1.0);
   TProfile *p_meanpT_vs_yCM_tr = new TProfile("p_meanpT_vs_yCM_tr","Triton <p_{T}>;y-y_{mid};<p_{T}>", 20, -1.0, 1.0);
 
+  TH1D* h_35to40_pr = new TH1D("h_35to40_pr", ";(1/#epsilon)*cos(3(#phi-#Psi_{1}))/R_{31};Protons", 350, -7.0, 7.0);
+  TH1D* h_35to40_pr_noEff = new TH1D("h_35to40_pr_noEff", ";cos(3(#phi-#Psi_{1}))/R_{31};Protons", 350, -7.0, 7.0);
+  TH1D* h_35to40_pr_noEff_noRes = new TH1D("h_35to40_pr_noEff_noRes", ";cos(3(#phi-#Psi_{1}));Protons", 350, -7.0, 7.0);
+  h_35to40_pr->SetDefaultSumw2();
+  h_35to40_pr_noEff->SetDefaultSumw2();
+  h_35to40_pr_noEff_noRes->SetDefaultSumw2();
+
   // vn vs centrality
   TProfile *p_vn_pp = new TProfile("p_vn_pp", "#pi^{+} v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
 				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
@@ -704,6 +712,8 @@ int main(int argc, char *argv[])
 				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
   TProfile *p_vn_tr_obs = new TProfile("p_vn_tr_obs", "Triton v_{"+ORDER_N_STR+"}^{obs};Centrality;v_{"+ORDER_N_STR+"}^{obs}{#psi_{"+ORDER_M_STR+"}}", 
 				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
+  TProfile2D *p2_vn_yCM_cent_epd = 
+    new TProfile2D("p2_vn_yCM_cent_epd", "All charged EPD hits v_{"+ORDER_N_STR+"};Centrality;#eta", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -6, 0);
   p_vn_pp_obs->SetDefaultSumw2();
   p_vn_pm_obs->SetDefaultSumw2();
   p_vn_kp_obs->SetDefaultSumw2();
@@ -712,6 +722,7 @@ int main(int argc, char *argv[])
   p_vn_pr_alt_obs->SetDefaultSumw2();
   p_vn_de_obs->SetDefaultSumw2();
   p_vn_tr_obs->SetDefaultSumw2();
+  p2_vn_yCM_cent_epd->SetDefaultSumw2();
   ////
 
   // proton vn with same acceptance as HADES PRL 125, 262301 (2020)
@@ -1062,7 +1073,7 @@ int main(int argc, char *argv[])
       //The bad tiles will be marked bad once the data is reproduced and the runs 
       //may be usable again afterward.
       //if (configs.sqrt_s_NN == 3.5 && i_runID == 21044031) continue;
-      //if (configs.sqrt_s_NN == 3.9 && (i_runID == 21035025 || i_runID == 21035031 || i_runID == 21036007)) continue; 
+      if (configs.sqrt_s_NN == 3.9 && (i_runID == 21035025 || i_runID == 21035031 || i_runID == 21036007)) continue; 
       ////
 
       tree->GetEntry(ievent);
@@ -1282,6 +1293,7 @@ int main(int argc, char *argv[])
 	      Bool_t pion   = false;
 	      Bool_t kaon   = false;
 	      Bool_t proton = (d_nSigmaPr > configs.nSig_pr_low) && (d_nSigmaPr < configs.nSig_pr_high) && (s_charge == 1);
+	      if (proton) { h2_dEdx_vs_qp_prInitial->Fill(s_charge*d_mom, d_dEdx); }
 	      Bool_t deuteron = false;
 	      Bool_t triton   = false;
 
@@ -2034,6 +2046,20 @@ int main(int argc, char *argv[])
 		       jthRapidity - Y_MID > configs.yCM_norm_tr_low && jthRapidity - Y_MID < configs.yCM_norm_tr_high)
 		{ p_vn_tr_obs->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))); }
 	    }
+
+	  // Observed flow in the EPD
+	  for (UInt_t j = 0; j < eventInfo.epdParticles.size(); j++)
+	    {
+	      jthEta = eventInfo.epdParticles.at(j).eta;
+	      jthPhi = eventInfo.epdParticles.at(j).phi;
+	      jthTnMIP = eventInfo.epdParticles.at(j).EPDTnMIP;
+	      if (jthEta == FlowUtils::D_BAD_VALUE ||
+		  jthPhi == FlowUtils::D_BAD_VALUE ||
+		  jthTnMIP == FlowUtils::D_BAD_VALUE)
+		continue;
+
+	      p2_vn_yCM_cent_epd->Fill(centID, jthEta, TMath::Cos(ORDER_N * (jthPhi - psi_tpcB)));
+	    }
 	  // End "observed" flow accumulation
 
 
@@ -2075,7 +2101,7 @@ int main(int argc, char *argv[])
 		    }
 		  else if (setup.tpcEfficienciesWereFound() && configs.sqrt_s_NN != 3.0)
 		    {
-		      if      (eventInfo.tpcParticles.at(j).prTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, setup.h2_tracking_pr);
+		      if (eventInfo.tpcParticles.at(j).prTag) tpcEfficiency = FlowUtils::getTpcEff(jthRapidity - Y_MID, jthpT, setup.h2_tracking_pr);
 		    }
 
 		  if (tpcEfficiency == -1) // Checks here for tracks with no recorded efficiency values.
@@ -2234,6 +2260,12 @@ int main(int argc, char *argv[])
 			  jthpT > configs.pt_norm_pr_low && jthpT < configs.pt_norm_pr_high)
 			{ 
 			  p_vn_pr->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency); 
+			  if (centID == 8) 
+			    {
+			      h_35to40_pr->Fill(TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
+			      h_35to40_pr_noEff->Fill(TMath::Cos(ORDER_N * (jthPhi - psi))/resolution);
+			      h_35to40_pr_noEff_noRes->Fill(TMath::Cos(ORDER_N * (jthPhi - psi)));
+			    }
 			  p2_vn_pT_cent_pr->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
 			  p2_vn_KT_cent_pr->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
 
