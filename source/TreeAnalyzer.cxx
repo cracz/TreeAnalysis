@@ -349,6 +349,7 @@ int main(int argc, char *argv[])
   double tempHighBound2 = 0;
 
   TH1D *h_eventCheck = (TH1D*)inputFile->Get("h_eventCheck");
+  h_eventCheck->GetXaxis()->SetBinLabel(6,"Min Hits Cut");
   h_eventCheck->SetStats(0);
 
   TH1D *h_trackCheck = new TH1D("h_trackCheck","Track number after each cut;;Tracks", 3, 0, 3);
@@ -397,6 +398,7 @@ int main(int argc, char *argv[])
   TH1D *h_trackmult = (TH1D*)inputFile->Get("h_trackmult");
   TH1D *h_refmult   = (TH1D*)inputFile->Get("h_refmult");
   TH1D *h_tofmult   = (TH1D*)inputFile->Get("h_tofmult");
+  TH1D *h_trackmult_analysis = new TH1D("h_trackmult_analysis","Analysis track multiplicity",200,0.0,200.0);
 
   //TH1D *h_refmult_afterMinHits = new TH1D("h_refmult_afterMinHits","Reference multiplicity",1001,-0.5,1000.5);
 
@@ -1063,9 +1065,15 @@ int main(int argc, char *argv[])
 
   // EVENT LOOP
   Int_t events2read = tree->GetEntries();
+  //Int_t events2read = 100;
+
   std::cout << "Setup complete, beginning analysis on " << events2read << " events..." << std::endl;
   for (Long64_t ievent = 0; ievent < events2read; ievent++)
     {
+      //std::cout << std::endl << "Event: " << ievent << std::endl;
+
+      h_trackmult_analysis->Fill(i_trackNumber);
+
       eventInfo.reset();
 
       // FOR SL21d/P21id productions
@@ -1100,7 +1108,7 @@ int main(int argc, char *argv[])
 
       eventInfo.centID = i_centrality;
       if (i_centrality == -99) continue;  // Remove undefined events
-      h_eventCheck->Fill(5); // Count # of events after centrality cut
+      //h_eventCheck->Fill(5); // Count # of events after centrality cut
       h_centralities->Fill(i_centrality);
 
       Double_t d_px;
@@ -1138,8 +1146,25 @@ int main(int argc, char *argv[])
 
       // TRACK LOOP OVER PRIMARY TRACKS
       Int_t nTracks = (Int_t)i_trackNumber;
+
+      //    std::cout << i_trackNumber << std::endl;
+      /*
+      std::cout << " trackNumber = " << nTracks << std::endl;
+      std::cout << " Px track array length = " << sizeof(Px)/sizeof(Px[0]) << std::endl;
+      std::cout << " Px[190] = " << Px[190] << std::endl;
+      std::cout << " charge[190] = " << charge[190] << std::endl;
+      std::cout << " DCA[190] = " << DCA[190] << std::endl;
+      std::cout << " tofBeta[190] = " << tofBeta[190] << std::endl;
+      std::cout << " nHits[190] = " << nHits[190] << std::endl;
+      */
       for(Int_t iTrk = 0; iTrk < nTracks; iTrk++)
 	{
+	  /*
+	  if (charge[iTrk] == 0) 
+	    {
+	      std::cout << "   Track: " << iTrk << " charge = 0" << std::endl;
+	    }
+	  */
 	  particleInfo.reset();
 
 	  eventInfo.primTracks++;
@@ -1757,6 +1782,8 @@ int main(int argc, char *argv[])
       else if (configs.fixed_target && configs.sqrt_s_NN == 3.9  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
       else if (configs.fixed_target && configs.sqrt_s_NN == 4.5  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
 
+      h_eventCheck->Fill(5); // Count # of events after minimum hits cut
+      
       h_centralities_final->Fill(i_centrality);
       //h_refmult_afterMinHits->Fill(i_refmult);
 
