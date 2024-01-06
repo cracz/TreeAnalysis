@@ -34,21 +34,14 @@ nHits=15
 nHits_dEdx=5
 nHits_ratio=0.52
 dca=3.0
-
-#tpc_A_low_eta=-2.0
-#tpc_A_high_eta=-1.57
-#tpc_B_low_eta=-1.47
-#tpc_B_high_eta=0.0
-
-tpc_A_low_eta=-0.7
-tpc_A_high_eta=-0.5
-tpc_B_low_eta=-0.4
+tpc_A_low_eta=-2.0
+tpc_A_high_eta=-1.57
+tpc_B_low_eta=-1.47
 tpc_B_high_eta=0.0
-
 r_vtx=2.0
 z_vtx_low=198.0
 z_vtx_high=200.25
-min_tracks=5
+min_tracks=2
 nSig_pi_low=-3.0
 nSig_pi_high=3.0
 nSig_ka_low=-3.0
@@ -72,9 +65,9 @@ m2_tr_high=8.7578
 # innermost/ourtermost rows in EPD subevents (inclusive)
 # EPD A IS THE MAIN SUBEVENT FOR FLOW CALCULATIONS
 epdA_inner_row=1
-epdA_outer_row=5
-epdB_inner_row=6
-epdB_outer_row=10
+epdA_outer_row=3
+epdB_inner_row=5
+epdB_outer_row=9
 
 
 

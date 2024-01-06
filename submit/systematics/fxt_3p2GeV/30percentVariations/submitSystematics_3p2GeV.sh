@@ -22,11 +22,23 @@ nohup star-submit treeAnalyze_3p2GeV_nSigKa_high.xml >& submitOut_3p2GeV_nSigKa_
 nohup star-submit treeAnalyze_3p2GeV_nSigPr_low.xml >& submitOut_3p2GeV_nSigPr_low.txt &
 nohup star-submit treeAnalyze_3p2GeV_nSigPr_high.xml >& submitOut_3p2GeV_nSigPr_high.txt &
 
+nohup star-submit treeAnalyze_3p2GeV_zDe_low.xml >& submitOut_3p2GeV_zDe_low.txt &
+nohup star-submit treeAnalyze_3p2GeV_zDe_high.xml >& submitOut_3p2GeV_zDe_high.txt &
+
+nohup star-submit treeAnalyze_3p2GeV_zTr_low.xml >& submitOut_3p2GeV_zTr_low.txt &
+nohup star-submit treeAnalyze_3p2GeV_zTr_high.xml >& submitOut_3p2GeV_zTr_high.txt &
+
 nohup star-submit treeAnalyze_3p2GeV_m2Pi_low.xml >& submitOut_3p2GeV_m2Pi_low.txt &
 nohup star-submit treeAnalyze_3p2GeV_m2Pi_high.xml >& submitOut_3p2GeV_m2Pi_high.txt &
 
 nohup star-submit treeAnalyze_3p2GeV_m2Ka_low.xml >& submitOut_3p2GeV_m2Ka_low.txt &
 nohup star-submit treeAnalyze_3p2GeV_m2Ka_high.xml >& submitOut_3p2GeV_m2Ka_high.txt &
+
+nohup star-submit treeAnalyze_3p2GeV_m2De_low.xml >& submitOut_3p2GeV_m2De_low.txt &
+nohup star-submit treeAnalyze_3p2GeV_m2De_high.xml >& submitOut_3p2GeV_m2De_high.txt &
+
+nohup star-submit treeAnalyze_3p2GeV_m2Tr_low.xml >& submitOut_3p2GeV_m2Tr_low.txt &
+nohup star-submit treeAnalyze_3p2GeV_m2Tr_high.xml >& submitOut_3p2GeV_m2Tr_high.txt &
 
 nohup star-submit treeAnalyze_3p2GeV_epd_low.xml >& submitOut_3p2GeV_epd_low.txt &
 nohup star-submit treeAnalyze_3p2GeV_epd_high.xml >& submitOut_3p2GeV_epd_high.txt &

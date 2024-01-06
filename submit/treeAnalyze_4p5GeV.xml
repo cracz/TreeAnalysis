@@ -6,7 +6,7 @@
   <!-- Task list -->
   <command>
     starver SL21d
-    TreeAnalyzer $INPUTFILE0 $JOBID config_4p5GeV.txt correctionInfo_INPUT_4p5GeV.root resolutionInfo_INPUT_4p5GeV.root
+    TreeAnalyzer $INPUTFILE0 $JOBID config_4p5GeV.txt correctionInfo_INPUT_4p5GeV.root resolutionInfo_INPUT_4p5GeV_EPDA1to3_EPDB_5to9.root
   </command>
 
 
@@ -15,7 +15,7 @@
     <Package>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/source/TreeAnalyzer</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/fxt_4p5GeV/correctionInfo_INPUT_4p5GeV.root</File>
-      <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/fxt_4p5GeV/resolutionInfo_INPUT_4p5GeV.root</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/fxt_4p5GeV/resolutionInfo_INPUT_4p5GeV_EPDA1to3_EPDB_5to9.root</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/Configs/fxt_4p5GeV/config_4p5GeV.txt</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/Efficiencies/fxt_4p5GeV/tof_efficiency_4p5GeV.root</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/Efficiencies/fxt_3p2GeV/eff_tpc_pr_3p2GeV.root</File>

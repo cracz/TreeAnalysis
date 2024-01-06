@@ -20,6 +20,20 @@ TreeMaker::TreeMaker(StPicoDstMaker* Maker, std::string configFileName, TString 
   cutTest = inputParameter;
   Y_MID   = configs.y_mid;
   JobIdName.Append(".root"); // Name output file by assigned Job ID
+
+  pileupBoundHigh_3p2GeV = new TF1("pileupBoundHigh_3p2GeV", "[0] + [1]*x + [2]*x*x + [3]*x*x*x + [4]*x*x*x*x", 0, 100);
+  pileupBoundHigh_3p2GeV->SetParameter(0, 19.48);
+  pileupBoundHigh_3p2GeV->SetParameter(1, 5.428);
+  pileupBoundHigh_3p2GeV->SetParameter(2, -0.007);
+  pileupBoundHigh_3p2GeV->SetParameter(3, -2.428e-4);
+  pileupBoundHigh_3p2GeV->SetParameter(4, 1.197e-7);
+
+  pileupBoundLow_3p2GeV = new TF1("pileupBoundLow_3p2GeV", "[0] + [1]*x + [2]*x*x + [3]*x*x*x + [4]*x*x*x*x", 0, 100);
+  pileupBoundLow_3p2GeV->SetParameter(0, -13.59);
+  pileupBoundLow_3p2GeV->SetParameter(1, 1.515);
+  pileupBoundLow_3p2GeV->SetParameter(2, 0.02816);
+  pileupBoundLow_3p2GeV->SetParameter(3, -1.195e-4);
+  pileupBoundLow_3p2GeV->SetParameter(4, -9.639e-7);
 }
 
 // Destructor
@@ -115,6 +129,8 @@ Int_t TreeMaker::Make()
 
   StPicoEvent* event = mPicoDstMaker->picoDst()->event(); // Get Event pointer
 
+  Int_t nBTOFMatch = (Int_t)event->nBTOFMatch();
+
   TVector3 pVtx = event->primaryVertex();
   Double_t d_xvtx = pVtx.x();
   Double_t d_yvtx = pVtx.y();
@@ -126,7 +142,6 @@ Int_t TreeMaker::Make()
     
   if(event) // Ensure event pointer is not NULL
     { 
-
       if( IsGoodRun(event->runId(), configs.sqrt_s_NN) )  // Select only good runs
 	{ 
 	  h_eventCheck->Fill(1); // Count # of good run events
@@ -191,6 +206,46 @@ Int_t TreeMaker::Make()
 		      // https://drupal.star.bnl.gov/STAR/pwg/common/BES-II-Centrality-Calibration
 		      else if (configs.sqrt_s_NN == 3.2) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
+			  /*
+			  Bool_t pileupEvent = false;
+			  Double_t upperBound;
+			  Double_t lowerBound;
+
+			  if (nBTOFMatch >= 86)
+			    {
+			      upperBound = 287;
+			      lowerBound = pileupBoundLow_3p2GeV->Eval(nBTOFMatch);
+			    }
+			  else if (nBTOFMatch < 86)
+			    {
+			      upperBound = pileupBoundHigh_3p2GeV->Eval(nBTOFMatch);
+			      lowerBound = pileupBoundLow_3p2GeV->Eval(nBTOFMatch);
+			    }
+
+			  if (primTracks < lowerBound || primTracks > upperBound)
+			    pileupEvent = true;
+
+			  if (!pileupEvent)
+			    {
+			      if     ( primTracks >=   5 && primTracks <=   6 ) centrality =  0;  // 75% - 80% (Peripheral)
+			      else if( primTracks >=   7 && primTracks <=  10 ) centrality =  1;
+			      else if( primTracks >=  11 && primTracks <=  14 ) centrality =  2;
+			      else if( primTracks >=  15 && primTracks <=  19 ) centrality =  3;
+			      else if( primTracks >=  20 && primTracks <=  25 ) centrality =  4;
+			      else if( primTracks >=  26 && primTracks <=  32 ) centrality =  5;
+			      else if( primTracks >=  33 && primTracks <=  42 ) centrality =  6;
+			      else if( primTracks >=  43 && primTracks <=  52 ) centrality =  7;
+			      else if( primTracks >=  53 && primTracks <=  65 ) centrality =  8;
+			      else if( primTracks >=  66 && primTracks <=  80 ) centrality =  9;
+			      else if( primTracks >=  81 && primTracks <=  97 ) centrality = 10;
+			      else if( primTracks >=  98 && primTracks <= 117 ) centrality = 11;
+			      else if( primTracks >= 118 && primTracks <= 140 ) centrality = 12;
+			      else if( primTracks >= 141 && primTracks <= 165 ) centrality = 13;
+			      else if( primTracks >= 166 && primTracks <= 196 ) centrality = 14;
+			      else if( primTracks >= 197 && primTracks <= 287 ) centrality = 15;  // 0% - 5% (Central)
+			    }
+			  */
+
 			  if     ( primTracks >=   5 && primTracks <=   6 ) centrality =  0;  // 75% - 80% (Peripheral)
 			  else if( primTracks >=   7 && primTracks <=  10 ) centrality =  1;
 			  else if( primTracks >=  11 && primTracks <=  14 ) centrality =  2;
@@ -271,25 +326,26 @@ Int_t TreeMaker::Make()
 			  else if( primTracks >= 198 && primTracks <= 235 ) centrality = 14;
 			  else if( primTracks >= 236 && primTracks <= 344 ) centrality = 15;  // 0% - 5% (Central)
 			}
-		      // 4.5 GeV FXT ***THIS IS A COPY OF 3.9 GeV 2020***
+		      // 4.5 GeV FXT 
+		      // https://drupal.star.bnl.gov/STAR/blog/eloyd/Run-20-45GeVFXT-Centrality-Definition
 		      else if (configs.sqrt_s_NN == 4.5) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
-			  if     ( primTracks >=   6 && primTracks <=   8 ) centrality =  0;  // 75% - 80% (Peripheral)
-			  else if( primTracks >=   9 && primTracks <=  12 ) centrality =  1;
-			  else if( primTracks >=  13 && primTracks <=  16 ) centrality =  2;
-			  else if( primTracks >=  17 && primTracks <=  22 ) centrality =  3;
-			  else if( primTracks >=  23 && primTracks <=  30 ) centrality =  4;
-			  else if( primTracks >=  31 && primTracks <=  39 ) centrality =  5;
-			  else if( primTracks >=  40 && primTracks <=  50 ) centrality =  6;
-			  else if( primTracks >=  51 && primTracks <=  63 ) centrality =  7;
-			  else if( primTracks >=  64 && primTracks <=  79 ) centrality =  8;
-			  else if( primTracks >=  80 && primTracks <=  96 ) centrality =  9;
-			  else if( primTracks >=  97 && primTracks <= 117 ) centrality = 10;
-			  else if( primTracks >= 118 && primTracks <= 140 ) centrality = 11;
-			  else if( primTracks >= 141 && primTracks <= 166 ) centrality = 12;
-			  else if( primTracks >= 167 && primTracks <= 197 ) centrality = 13;
-			  else if( primTracks >= 198 && primTracks <= 235 ) centrality = 14;
-			  else if( primTracks >= 236 && primTracks <= 344 ) centrality = 15;  // 0% - 5% (Central)
+			  if     ( primTracks >=   7 && primTracks <=   9 ) centrality =  0;  // 75% - 80% (Peripheral)
+			  else if( primTracks >=  10 && primTracks <=  13 ) centrality =  1;
+			  else if( primTracks >=  14 && primTracks <=  19 ) centrality =  2;
+			  else if( primTracks >=  20 && primTracks <=  26 ) centrality =  3;
+			  else if( primTracks >=  27 && primTracks <=  34 ) centrality =  4;
+			  else if( primTracks >=  35 && primTracks <=  44 ) centrality =  5;
+			  else if( primTracks >=  45 && primTracks <=  56 ) centrality =  6;
+			  else if( primTracks >=  57 && primTracks <=  71 ) centrality =  7;
+			  else if( primTracks >=  72 && primTracks <=  87 ) centrality =  8;
+			  else if( primTracks >=  88 && primTracks <= 107 ) centrality =  9;
+			  else if( primTracks >= 108 && primTracks <= 129 ) centrality = 10;
+			  else if( primTracks >= 130 && primTracks <= 153 ) centrality = 11;
+			  else if( primTracks >= 154 && primTracks <= 181 ) centrality = 12;
+			  else if( primTracks >= 182 && primTracks <= 215 ) centrality = 13;
+			  else if( primTracks >= 216 && primTracks <= 256 ) centrality = 14;
+			  else if( primTracks >= 257 && primTracks <= 367 ) centrality = 15;  // 0% - 5% (Central)
 			}
 
 		      // 7.2 GeV FXT

@@ -16,11 +16,8 @@
   </SandBox>
 
   <!-- Get input files from get_file_lis.pl -->
-  <input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL23d_afterRecalibration_file.list" nFiles="all"/>
-  <!--input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL23d_afterRecalibration_file1.list" nFiles="all"/-->
-  <!--input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL23d_afterRecalibration_file2.list" nFiles="all"/-->
-  <!--input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL23d_afterRecalibration_file3.list" nFiles="all"/-->
-  <!--input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL23d_afterRecalibration_file4.list" nFiles="all"/-->
+  <input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL23d_afterRecalibration_TEST.list" nFiles="all"/>
+  <!--input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p2GeV_SL23d_afterRecalibration_file.list" nFiles="all"/-->
   
   <!-- Run log & error messages -->
   <stdout URL="file:/star/data01/pwg/cracz/Data_3p2GeV_FXT/out/$JOBID.out" />

@@ -14,6 +14,7 @@
 #include "TMath.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TF1.h"
 
 // Load STARLibrary header files
 #include "StMaker.h"
@@ -108,6 +109,9 @@ private:
   TH2D*                h2_refmult_vs_trackmult;
   TH2D*                h2_tofmult_vs_trackmult;
   TH2D*                h2_tofmult_vs_refmult;
+
+  TF1* pileupBoundHigh_3p2GeV;
+  TF1* pileupBoundLow_3p2GeV;
 
 
 public:

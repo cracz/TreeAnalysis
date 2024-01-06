@@ -64,8 +64,8 @@ m2_tr_high=8.7578
 # innermost/ourtermost rows in EPD subevents (inclusive)
 # EPD A IS THE MAIN SUBEVENT FOR FLOW CALCULATIONS
 epdA_inner_row=1
-epdA_outer_row=7
-epdB_inner_row=8
+epdA_outer_row=6
+epdB_inner_row=7
 epdB_outer_row=13
 
 
