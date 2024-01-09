@@ -26,7 +26,7 @@
 
   <!-- Get input files from get_file_lis.pl -->
   <!--input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/tree_fxt_3p2GeV_SL21d_file.list" nFiles="all"/-->
-  <input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/tree_fxt_3p2GeV_SL23d_afterRecalibration_file.list" nFiles="1"/>
+  <input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/tree_fxt_3p2GeV_SL23d_afterRecalibration_file.list" nFiles="all"/>
   
   <!-- Run log & error messages -->
   <stdout URL="file:/star/data01/pwg/cracz/flowResults_3p2GeV/out/$JOBID.out" />

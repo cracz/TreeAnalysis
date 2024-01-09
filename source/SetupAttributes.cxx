@@ -28,15 +28,15 @@ Bool_t SetupAttributes::v1WeightsWereFound()
 
 void SetupAttributes::setCorrectionFileAndRunIteration(TString fileName)
 {
-  correctionFile = TFile::Open(fileName, "READ");
-
-  if (!correctionFile)
+  if (!ifstream(fileName).good())
     {
       std::cout << "No correction file found." << std::endl
 		<< "Re-centering and shifting will not be performed." << std::endl;
     }
   else
     {
+      correctionFile = TFile::Open(fileName.Data(), "READ");
+      
       TKey *key;
       TIter next(correctionFile->GetListOfKeys());
       TProfile *profile;
@@ -67,30 +67,15 @@ void SetupAttributes::setCorrectionFileAndRunIteration(TString fileName)
     }
 }// End setCorrectionFileAndRunIteration()
 
-
-void SetupAttributes::setResolutionFile(TString fileName)
-{
-  resolutionFile = TFile::Open(fileName, "READ"); 
-  if (!resolutionFile) 
-    std::cout << "No resolution file was found!" << std::endl; 
-  else 
-    { 
-      resolutionsFound = true;
-      std::cout << "Resolution file found!" << std::endl; 
-    }
-}// End setResolutionFile()
-
-
 void SetupAttributes::setTPCEfficiencyFile(TString fileName)
 {
-  pikpEfficiencyFile = TFile::Open(fileName, "READ");
-      
-  if (!pikpEfficiencyFile) 
+  if (!ifstream(fileName).good()) 
     { 
       std::cout << "One or both efficiency files missing! All efficiencies will default to 1!" << std::endl; 
     }
   else 
     { 
+      pikpEfficiencyFile = TFile::Open(fileName.Data(), "READ");
       tpcEfficienciesFound = true;
       std::cout << "TPC efficiency files were found!" << std::endl; 
 
@@ -117,14 +102,13 @@ void SetupAttributes::setTPCEfficiencyFile(TString fileName)
 
 void SetupAttributes::setProtonEfficiencyFile(TString fileName)
 {
-  protonEfficiencyFile = TFile::Open(fileName, "READ");
-      
-  if (!protonEfficiencyFile) 
+  if (!ifstream(fileName).good()) 
     { 
       std::cout << "Proton efficiency file missing! All efficiencies will default to 1!" << std::endl; 
     }
   else 
     { 
+      protonEfficiencyFile = TFile::Open(fileName.Data(), "READ");
       tpcEfficienciesFound = true;
       std::cout << "TPC efficiency files were found!" << std::endl; 
 
@@ -147,16 +131,14 @@ void SetupAttributes::setProtonEfficiencyFile(TString fileName)
 
 void SetupAttributes::setTOFEfficiencyFile(TString fileName)
 {
-  tofEfficiencyFile = TFile::Open(fileName, "READ");
-      
-  if (!tofEfficiencyFile) 
+  if (!ifstream(fileName).good()) 
     { 
       std::cout << "TOF efficiency file missing! All TOF efficiencies will default to 1!" << std::endl; 
     }
   else 
     { 
+      tofEfficiencyFile = TFile::Open(fileName.Data(), "READ");
       tofEfficienciesFound = true;
-
       std::cout << "TOF efficiency file was found!" << std::endl; 
 
       h2_ratio_tof = (TH2D*)tofEfficiencyFile->Get("h2_ratio_tof");
@@ -174,14 +156,13 @@ void SetupAttributes::setTOFEfficiencyFile(TString fileName)
 
 void SetupAttributes::setv1WeightsFile(TString fileName)
 {
-  v1WeightsInputFile = TFile::Open(fileName, "READ"); 
-  
-  if (!v1WeightsInputFile) 
+  if (!ifstream(fileName).good()) 
     { 
       std::cout << "No v1 weight file was found! No v1 weights will be applied!" << std::endl; 
     }
   else 
     { 
+      v1WeightsInputFile = TFile::Open(fileName.Data(), "READ"); 
       v1WeightsFound = true;
       std::cout << "v1 weight file found! Weights will be applied." << std::endl; 
 
@@ -196,3 +177,16 @@ void SetupAttributes::setv1WeightsFile(TString fileName)
 	}
     }
 }// End setv1WeightsFile()
+
+
+void SetupAttributes::setResolutionFile(TString fileName)
+{
+  if (!ifstream(fileName).good()) 
+    std::cout << "No resolution file was found!" << std::endl; 
+  else 
+    { 
+      resolutionFile = TFile::Open(fileName.Data(), "READ"); 
+      resolutionsFound = true;
+      std::cout << "Resolution file found!" << std::endl; 
+    }
+}// End setResolutionFile()

@@ -30,7 +30,7 @@
 #include <sys/resource.h>
 
 // ROOT headers
-#include "TStopwatch.h"
+
 
 // EPD Util headers
 #include "../StRoot/StEpdUtil/StEpdGeom.h"
@@ -54,55 +54,6 @@ Double_t bichselZ(Double_t *x,Double_t *par)
   return TMath::Exp(Bichsel::Instance()->GetMostProbableZ(TMath::Log10(poverm),par[1]));
 }
 
-/*
-Double_t
-StTpcDedxPidAlgorithm::numberOfSigma(const StParticleDefinition* particle) const
-{
-    if (!mTraits) return DBL_MAX;
-
-    if (mTraits->numberOfPoints()==0) return DBL_MAX;
-    // sigmaPidFunction already checks this, but when number of dE/dx points is = 0,
-    // mTraits->mean() is probably undefined too (have to check this)
-    // so might as well exit here.
-
-    // returns the number of sigma a tracks dedx is away from
-    // the expected mean for a track for a particle of this mass
-    Double_t dedx_expected;
-    Double_t dedx_resolution;
-    Double_t momentum;
-    Double_t z = -999;
-    if (mTraits->mean() > 0) {
-      const StGlobalTrack *gTrack = 
-	static_cast<const StGlobalTrack*>( mTrack->node()->track(global));
-      if (gTrack && mTraits->length() > 0 ) {
-	Double_t pq  = abs(gTrack->geometry()->momentum())*TMath::Abs(particle->charge());
-	Double_t bg = pq/particle->mass();
-	if (! m_Bichsel) m_Bichsel = Bichsel::Instance();
-	if (mDedxMethod == kTruncatedMeanId) {
-	  Double_t log2dX = mTraits->log2dX();
-	  if (log2dX <= 0) log2dX = 1;
-	  dedx_expected = 1.e-6*m_Bichsel->GetI70M(TMath::Log10(bg),log2dX);
-	  dedx_resolution = mTraits->errorOnMean();
-	  if (dedx_resolution > 0)
-	    z = TMath::Log(mTraits->mean()/dedx_expected)/dedx_resolution;
-	} else if (mDedxMethod == kLikelihoodFitId) {
-	  dedx_expected = 1.e-6*TMath::Exp(m_Bichsel->GetMostProbableZ(TMath::Log10(bg)));
-	  dedx_resolution = mTraits->errorOnMean();
-	  if (dedx_resolution > 0)
-	    z = TMath::Log(mTraits->mean()/dedx_expected)/dedx_resolution;
-	} else if (mDedxMethod == kOtherMethodId) {
-	  dedx_expected = StdEdxModel::instance()->dNdx(bg);
-	  dedx_resolution = mTraits->errorOnMean();
-	  if (dedx_resolution > 0)
-	    z = TMath::Log(mTraits->mean()/dedx_expected)/dedx_resolution;
-	}
-      }
-    }
-    return z;
-}
-
-
- */
 
 //=========================================================
 //          SOME CONTROLS
@@ -131,9 +82,6 @@ const Double_t PI = TMath::Pi();
 
 int main(int argc, char *argv[])
 {
-  TStopwatch* stopWatch = new TStopwatch();
-  stopWatch->Start();
-
   std::cout << "Initializing..." << std::endl;
 
   TString inFile = argv[1];
@@ -202,7 +150,7 @@ int main(int argc, char *argv[])
   Int_t nHitsPoss[N_track];
   Int_t nHitsDedx[N_track];
   Float_t dEdx[N_track];
-  Float_t dEdxError[N_track];
+  //Float_t dEdxError[N_track];
   UShort_t i_nEPDhits;
   Short_t EPDids[744];
   Float_t EPDnMip[744];
@@ -231,7 +179,7 @@ int main(int argc, char *argv[])
   tree->SetBranchAddress("nSigmaPr",&nSigmaPr);
   tree->SetBranchAddress("tofBeta",&tofBeta);
   tree->SetBranchAddress("dEdx",&dEdx);
-  tree->SetBranchAddress("dEdxError",&dEdxError);
+  //tree->SetBranchAddress("dEdxError",&dEdxError);
   tree->SetBranchAddress("nHits",&nHits);
   tree->SetBranchAddress("nHitsFit",&nHitsFit);
   tree->SetBranchAddress("nHitsPoss",&nHitsPoss);
@@ -293,18 +241,18 @@ int main(int argc, char *argv[])
   // OUTPUT FILE FOR EVENT PLANE CORRECTION INFORMATION
   TString correctionOutputName = "correctionInfo_OUTPUT_"+jobID+".root";
   TFile *correctionOutputFile;
-  if (setup.getRunIteration() == 0 || setup.getRunIteration() == 1) { correctionOutputFile = new TFile(correctionOutputName, "RECREATE"); }
+  if (setup.getRunIteration() == 0 || setup.getRunIteration() == 1) { correctionOutputFile = new TFile(correctionOutputName.Data(), "RECREATE"); }
   ////
 
   // MAIN OUTPUT FILE
   TString outFile = jobID+".picoDst.result.root";
-  TFile *outputFile = new TFile(outFile,"RECREATE");
+  TFile *outputFile = new TFile(outFile.Data(),"RECREATE");
   outputFile->cd();
   ////
   //=========================================================
   //          END file setup
   //=========================================================
-
+  //return 0;
   
   //=========================================================
   //          Bichsel Function Setup
@@ -374,9 +322,6 @@ int main(int argc, char *argv[])
   TH1D *h_nhitsPoss   = new TH1D("h_nhitsPoss", "nHitsFit;Number of hits possible;Tracks", 50, 0, 50);
   TH1D *h_nhits_ratio = new TH1D("h_nhits_ratio","nhitsFit/nhitsPoss;nhitsFit/nhitsPoss;Tracks",200,0.0,2.0);    
   TH1D *h_DCA         = new TH1D("h_DCA","DCA (cm);DCA (cm);Tracks",100,0.0,10.0);
-  TH1D *h_DCA_pr_alt  = new TH1D("h_DCA_pr_alt","Alt Proton DCA (cm);DCA (cm);Tracks",100,0.0,10.0);
-  TH1D *h_DCA_de      = new TH1D("h_DCA_de","Deuteron DCA (cm);DCA (cm);Tracks",100,0.0,10.0);
-  TH1D *h_DCA_tr      = new TH1D("h_DCA_tr","Triton DCA (cm);DCA (cm);Tracks",100,0.0,10.0);
 
   TH1D *h_primTracks = new TH1D("h_primTracks","Raw Number of Primary Tracks;Tracks;Events", 200, 0, 200);
 
@@ -394,14 +339,11 @@ int main(int argc, char *argv[])
   TH1D *h_tileWeights = new TH1D("h_tileWeights", "EPD Tile Weights;nMIP Weights;Hits", 100, -1, 4);
   TH1D *h_centralities = new TH1D("h_centralities", "Centralities;Centrality ID;Events", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
   TH1D *h_centralities_final = new TH1D("h_centralities_final", "Final Good Centralities;Centrality ID;Events", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-
+  /*
   TH1D *h_trackmult = (TH1D*)inputFile->Get("h_trackmult");
   TH1D *h_refmult   = (TH1D*)inputFile->Get("h_refmult");
   TH1D *h_tofmult   = (TH1D*)inputFile->Get("h_tofmult");
-  TH1D *h_trackmult_analysis = new TH1D("h_trackmult_analysis","Analysis track multiplicity",200,0.0,200.0);
-
-  //TH1D *h_refmult_afterMinHits = new TH1D("h_refmult_afterMinHits","Reference multiplicity",1001,-0.5,1000.5);
-
+  */
   TH1D *h_pT = new TH1D("h_pT","p_{T};p_{T};Tracks",1000,0.0,10.0);
   TH1D *h_eta = new TH1D("h_eta","#eta;#eta;Tracks",600,-6.0,6.0);
   TH1D *h_phi = new TH1D("h_phi","#phi (Radian);#phi;Tracks",1000,-1.5*PI,1.5*PI);
@@ -432,10 +374,6 @@ int main(int argc, char *argv[])
   TH2D *h2_pT_vs_cent_pr = new TH2D("h2_pT_vs_cent_pr", "Proton;Centrality;p_{T} (GeV/c)", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 1000, 0.0, 5.0);
   TH2D *h2_pT_vs_cent_de = new TH2D("h2_pT_vs_cent_de", "Deuteron;Centrality;p_{T} (GeV/c)", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 1000, 0.0, 5.0);
   TH2D *h2_pT_vs_cent_tr = new TH2D("h2_pT_vs_cent_tr", "Triton;Centrality;p_{T} (GeV/c)", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 1000, 0.0, 5.0);
-
-  TH2D *h2_dndDeltaPhi_vs_cent_pr_alt = new TH2D("h2_dndDeltaPhi_pr_alt", "Alt Proton;Centrality;dN/d(#Delta#phi)", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 100, -1.0*PI, PI);
-  TH2D *h2_dndDeltaPhi_vs_cent_de     = new TH2D("h2_dndDeltaPhi_de", "Deuteron;Centrality;dN/d(#Delta#phi)", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 100, -1.0*PI, PI);
-  TH2D *h2_dndDeltaPhi_vs_cent_tr     = new TH2D("h2_dndDeltaPhi_tr", "Triton;Centrality;dN/d(#Delta#phi)", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 100, -1.0*PI, PI);
 
   TH1D *h_eta_pp = new TH1D("h_eta_pp","#pi^{+} #eta;#eta;Tracks",500,-5.0,5.0);
   TH1D *h_eta_pm = new TH1D("h_eta_pm","#pi^{-} #eta;#eta;Tracks",500,-5.0,5.0);
@@ -477,13 +415,8 @@ int main(int argc, char *argv[])
   TH1D *h_mult_de = new TH1D("h_mult_de","Deuteron track multiplicity;Deuteron Mult;Events",1001,-0.5,1000.5);
   TH1D *h_mult_tr = new TH1D("h_mult_tr","Triton track multiplicity;Triton Mult;Events",1001,-0.5,1000.5);
   
-  TH1D *h_nSig_pr_original   = new TH1D("h_nSig_pr_original", "Identified Protons;n#sigma_{p};N_{pr}", 500, -5.0, 5.0);
-  TH1D *h_nSig_pr_recreated  = new TH1D("h_nSig_pr_recreated", "Identified Protons;n#sigma_{p};N_{pr}", 500, -5.0, 5.0);
-  TH1D *h_nSig_pr_new = new TH1D("h_nSig_pr_new", "Identified Protons;n#sigma_{p};N_{pr}", 500, -5.0, 5.0);
-  TH1D *h_nSig_pr_new_p8percent = new TH1D("h_nSig_pr_new_p8percent", "Identified Protons;n#sigma_{p};N_{pr}", 500, -5.0, 5.0);
-  TH1D *h_nSig_pr_new_m8percent = new TH1D("h_nSig_pr_new_m8percent", "Identified Protons;n#sigma_{p};N_{pr}", 500, -5.0, 5.0);
   TH1D *h_dEdx_pr = new TH1D("h_dEdx_pr", "dEdx for Identified Protons;dE/dx (keV/cm);N_{pr}", 500, 0.0, 10.0);
-  TH1D *h_dEdxError_pr = new TH1D("h_dEdxError_pr", "dEdx Uncertainties for Identified Protons;#delta_{dEdx} (keV/cm);Identified protons", 100, 0, 0.5);
+  //TH1D *h_dEdxError_pr = new TH1D("h_dEdxError_pr", "dEdx Uncertainties for Identified Protons;#delta_{dEdx} (keV/cm);Identified protons", 100, 0, 0.5);
   
   TH2D *h2_dEdx_vs_qp_pp = new TH2D("h2_dEdx_vs_qp_pp", "#pi^{+} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 800, -4, 4, 500, 0, 10);
   TH2D *h2_dEdx_vs_qp_pm = new TH2D("h2_dEdx_vs_qp_pm", "#pi^{-} dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 800, -4, 4, 500, 0, 10);
@@ -498,17 +431,11 @@ int main(int argc, char *argv[])
   TH2D *h2_beta_vs_qp_pm = new TH2D("h2_beta_vs_qp_pm","#pi^{-} 1/#beta vs Momentum;q*|p| (GeV);1/#beta", 300, -3, 3, 300, 0.5, 3.5);
   TH2D *h2_beta_vs_qp_kp = new TH2D("h2_beta_vs_qp_kp","K^{+} 1/#beta vs Momentum;q*|p| (GeV);1/#beta", 300, -3, 3, 300, 0.5, 3.5);
   TH2D *h2_beta_vs_qp_km = new TH2D("h2_beta_vs_qp_km","K^{-} 1/#beta vs Momentum;q*|p| (GeV);1/#beta", 300, -3, 3, 300, 0.5, 3.5);
-  //TH2D *h2_beta_vs_qp_pr = new TH2D("h2_beta_vs_qp_pr","Proton 1/#beta vs Momentum;q*|p| (GeV);1/#beta", 300, -3, 3, 300, 0.5, 3.5);
-  //TH2D *h2_beta_vs_qp_de = new TH2D("h2_beta_vs_qp_de","Deuteron 1/#beta vs Momentum;q*|p| (GeV);1/#beta", 300, -3, 3, 300, 0.5, 3.5);
-  //TH2D *h2_beta_vs_qp_tr = new TH2D("h2_beta_vs_qp_tr","Triton 1/#beta vs Momentum;q*|p| (GeV);1/#beta", 300, -3, 3, 300, 0.5, 3.5);
  
   TH2D *h2_m2_vs_qp_pp = new TH2D("h2_m2_vs_qp_pp", "#pi^{+} m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)", 400, -4, 4, 400, -0.1, 1.5);
   TH2D *h2_m2_vs_qp_pm = new TH2D("h2_m2_vs_qp_pm", "#pi^{-} m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)", 400, -4, 4, 400, -0.1, 1.5);
   TH2D *h2_m2_vs_qp_kp = new TH2D("h2_m2_vs_qp_kp", "K^{+} m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)",   400, -4, 4, 400, -0.1, 1.5);
   TH2D *h2_m2_vs_qp_km = new TH2D("h2_m2_vs_qp_km", "K^{-} m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)",   400, -4, 4, 400, -0.1, 1.5);
-  //TH2D *h2_m2_vs_qp_pr = new TH2D("h2_m2_vs_qp_pr", "Proton m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)",  400, -4, 4, 400, -0.1, 1.5);
-  //TH2D *h2_m2_vs_qp_de = new TH2D("h2_m2_vs_qp_de", "Deuteron m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)",  400, -4, 4, 400, -0.1, 1.5);
-  //TH2D *h2_m2_vs_qp_tr = new TH2D("h2_m2_vs_qp_tr", "Triton m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)",  400, -4, 4, 400, -0.1, 1.5);
 
   if (configs.sqrt_s_NN == 3.0)
     {
@@ -597,22 +524,6 @@ int main(int argc, char *argv[])
   TH1D *h_psiEpd_RAW  = new TH1D("h_psiEpd_RAW", "Raw Event Plane Angles (m = "+ORDER_M_STR+", EPD);#psi_{"+ORDER_M_STR+"};Events", 400, -PSI_BOUNDS, PSI_BOUNDS);
   TH1D *h_psiEpdA_RAW = new TH1D("h_psiEpdA_RAW", "Raw Event Plane Angles (m = "+ORDER_M_STR+", EPD A);#psi_{"+ORDER_M_STR+"};Events", 400, -PSI_BOUNDS, PSI_BOUNDS);
   TH1D *h_psiEpdB_RAW = new TH1D("h_psiEpdB_RAW", "Raw Event Plane Angles (m = "+ORDER_M_STR+", EPD B);#psi_{"+ORDER_M_STR+"};Events", 400, -PSI_BOUNDS, PSI_BOUNDS);
-
-  TProfile *p_meanpT_vs_yCM_pp = new TProfile("p_meanpT_vs_yCM_pp","#pi^{+} <p_{T}>;y-y_{mid};<p_{T}>", 20, -1.0, 1.0);
-  TProfile *p_meanpT_vs_yCM_pm = new TProfile("p_meanpT_vs_yCM_pm","#pi^{-} <p_{T}>;y-y_{mid};<p_{T}>", 20, -1.0, 1.0);
-  TProfile *p_meanpT_vs_yCM_kp = new TProfile("p_meanpT_vs_yCM_kp","K^{+} <p_{T}>;y-y_{mid};<p_{T}>", 20, -1.0, 1.0);
-  TProfile *p_meanpT_vs_yCM_km = new TProfile("p_meanpT_vs_yCM_km","K^{-} <p_{T}>;y-y_{mid};<p_{T}>", 20, -1.0, 1.0);
-  TProfile *p_meanpT_vs_yCM_pr = new TProfile("p_meanpT_vs_yCM_pr","Proton <p_{T}>;y-y_{mid};<p_{T}>", 20, -1.0, 1.0);
-  TProfile *p_meanpT_vs_yCM_pr_alt = new TProfile("p_meanpT_vs_yCM_pr_alt","Proton <p_{T}>;y-y_{mid};<p_{T}>", 20, -1.0, 1.0);
-  TProfile *p_meanpT_vs_yCM_de = new TProfile("p_meanpT_vs_yCM_de","Deuteron <p_{T}>;y-y_{mid};<p_{T}>", 20, -1.0, 1.0);
-  TProfile *p_meanpT_vs_yCM_tr = new TProfile("p_meanpT_vs_yCM_tr","Triton <p_{T}>;y-y_{mid};<p_{T}>", 20, -1.0, 1.0);
-
-  TH1D* h_35to40_pr = new TH1D("h_35to40_pr", ";(1/#epsilon)*cos(3(#phi-#Psi_{1}))/R_{31};Protons", 350, -7.0, 7.0);
-  TH1D* h_35to40_pr_noEff = new TH1D("h_35to40_pr_noEff", ";cos(3(#phi-#Psi_{1}))/R_{31};Protons", 350, -7.0, 7.0);
-  TH1D* h_35to40_pr_noEff_noRes = new TH1D("h_35to40_pr_noEff_noRes", ";cos(3(#phi-#Psi_{1}));Protons", 350, -7.0, 7.0);
-  h_35to40_pr->SetDefaultSumw2();
-  h_35to40_pr_noEff->SetDefaultSumw2();
-  h_35to40_pr_noEff_noRes->SetDefaultSumw2();
 
   // vn vs centrality
   TProfile *p_vn_pp = new TProfile("p_vn_pp", "#pi^{+} v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
@@ -732,8 +643,6 @@ int main(int argc, char *argv[])
   p_vn_yCM_HADES->SetDefaultSumw2();
   ////
 
-  //TProfile *p_vn_yCM_00to10_pr = new TProfile("p_vn_yCM_00to10_pr", ";y-y_{mid};v_{"+ORDER_N_STR+"}", 20, -1, 1);
-
   // vn ycm vs centrality
   TProfile2D *p2_vn_yCM_cent_pp = new TProfile2D("p2_vn_yCM_cent_pp", "#pi^{+} v_{"+ORDER_N_STR+"};Centrality;y-y_{mid}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -1, 1);
   TProfile2D *p2_vn_yCM_cent_pm = new TProfile2D("p2_vn_yCM_cent_pm", "#pi^{-} v_{"+ORDER_N_STR+"};Centrality;y-y_{mid}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -1, 1);
@@ -802,12 +711,6 @@ int main(int argc, char *argv[])
   p2_vn_pT_cent_pr_midy->SetDefaultSumw2();
   ////
 
-  // yCM stratified by pT
-  //TProfile2D *p2_vn_pT_vs_yCM_pp = new TProfile2D("p2_vn_pT_vs_yCM_pp", "#pi^{+} v_{3};y-y_{mid};p_{T} (GeV/c)", 20, -1.0, 1.0, 10, 0.0, 2.0);
-  //TProfile2D *p2_vn_pT_vs_yCM_pm = new TProfile2D("p2_vn_pT_vs_yCM_pm", "#pi^{-} v_{3};y-y_{mid};p_{T} (GeV/c)", 20, -1.0, 1.0, 10, 0.0, 2.0);
-  //TProfile2D *p2_vn_pT_vs_yCM_pr = new TProfile2D("p2_vn_pT_vs_yCM_pr", "Proton v_{3};y-y_{mid};p_{T} (GeV/c)",  20, -1.0, 1.0, 10, 0.0, 2.5);
-  ////
-
   // vn KT vs centrality
   TProfile2D *p2_vn_KT_cent_pp = new TProfile2D("p2_vn_KT_cent_pp", "#pi^{+} v_{"+ORDER_N_STR+"};Centrality;m_{T}-m_{0}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 10, 0, 2);
   TProfile2D *p2_vn_KT_cent_pm = new TProfile2D("p2_vn_KT_cent_pm", "#pi^{-} v_{"+ORDER_N_STR+"};Centrality;m_{T}-m_{0}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 10, 0, 2);
@@ -864,9 +767,9 @@ int main(int argc, char *argv[])
   TH2D *h2_trans_vtx = new TH2D("h2_trans_vtx","Primary Vertex after V_{z} Cut;x (cm);y (cm)", 500, -5, 5, 500, -5, 5);
   TH2D *h2_trans_vtx_cut = new TH2D("h2_trans_vtx_cut","Final Primary Vertices;x (cm);y (cm)", 500, -5, 5, 500, -5, 5);
 
-  TH2D *h2_refmult_vs_trackmult = (TH2D*)inputFile->Get("h2_refmult_vs_trackmult");
-  TH2D *h2_tofmult_vs_trackmult = (TH2D*)inputFile->Get("h2_tofmult_vs_trackmult");
-  TH2D *h2_tofmult_vs_refmult   = (TH2D*)inputFile->Get("h2_tofmult_vs_refmult");
+  //TH2D *h2_refmult_vs_trackmult = (TH2D*)inputFile->Get("h2_refmult_vs_trackmult");
+  //TH2D *h2_tofmult_vs_trackmult = (TH2D*)inputFile->Get("h2_tofmult_vs_trackmult");
+  //TH2D *h2_tofmult_vs_refmult   = (TH2D*)inputFile->Get("h2_tofmult_vs_refmult");
 
   TH2D *h2_hits_vs_cent_EpdA = new TH2D("h2_nHits_vs_cent_EpdA", "EPD A;Centrality;Hits", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS, 100, 0, 100);
   TH2D *h2_hits_vs_cent_EpdB = new TH2D("h2_nHits_vs_cent_EpdB", "EPD B;Centrality;Hits", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS, 100, 0, 100);
@@ -1065,15 +968,9 @@ int main(int argc, char *argv[])
 
   // EVENT LOOP
   Int_t events2read = tree->GetEntries();
-  //Int_t events2read = 100;
-
   std::cout << "Setup complete, beginning analysis on " << events2read << " events..." << std::endl;
   for (Long64_t ievent = 0; ievent < events2read; ievent++)
     {
-      //std::cout << std::endl << "Event: " << ievent << std::endl;
-
-      h_trackmult_analysis->Fill(i_trackNumber);
-
       eventInfo.reset();
 
       // FOR SL21d/P21id productions
@@ -1108,7 +1005,6 @@ int main(int argc, char *argv[])
 
       eventInfo.centID = i_centrality;
       if (i_centrality == -99) continue;  // Remove undefined events
-      //h_eventCheck->Fill(5); // Count # of events after centrality cut
       h_centralities->Fill(i_centrality);
 
       Double_t d_px;
@@ -1122,12 +1018,10 @@ int main(int argc, char *argv[])
       Double_t d_nSigmaPi;
       Double_t d_nSigmaKa;
       Double_t d_nSigmaPr;
-      Double_t d_nSigmaPr_original;
-      Double_t d_nSigmaPr_p8percent;
-      Double_t d_nSigmaPr_m8percent;
+      //Double_t d_nSigmaPr_original;
       Double_t d_tofBeta;
       Double_t d_dEdx;
-      Double_t d_dEdxError;
+      //Double_t d_dEdxError;
       //Double_t d_rapidity_assumingProton;
       Int_t i_nHits;
       Int_t i_nHitsFit;
@@ -1147,24 +1041,8 @@ int main(int argc, char *argv[])
       // TRACK LOOP OVER PRIMARY TRACKS
       Int_t nTracks = (Int_t)i_trackNumber;
 
-      //    std::cout << i_trackNumber << std::endl;
-      /*
-      std::cout << " trackNumber = " << nTracks << std::endl;
-      std::cout << " Px track array length = " << sizeof(Px)/sizeof(Px[0]) << std::endl;
-      std::cout << " Px[190] = " << Px[190] << std::endl;
-      std::cout << " charge[190] = " << charge[190] << std::endl;
-      std::cout << " DCA[190] = " << DCA[190] << std::endl;
-      std::cout << " tofBeta[190] = " << tofBeta[190] << std::endl;
-      std::cout << " nHits[190] = " << nHits[190] << std::endl;
-      */
       for(Int_t iTrk = 0; iTrk < nTracks; iTrk++)
 	{
-	  /*
-	  if (charge[iTrk] == 0) 
-	    {
-	      std::cout << "   Track: " << iTrk << " charge = 0" << std::endl;
-	    }
-	  */
 	  particleInfo.reset();
 
 	  eventInfo.primTracks++;
@@ -1182,10 +1060,10 @@ int main(int argc, char *argv[])
 	  d_nSigmaPi = nSigmaPi[iTrk];
 	  d_nSigmaKa = nSigmaKa[iTrk];
 	  d_nSigmaPr = nSigmaPr[iTrk];
-	  d_nSigmaPr_original = nSigmaPr[iTrk];
+	  //d_nSigmaPr_original = nSigmaPr[iTrk];
 	  d_tofBeta = tofBeta[iTrk];
 	  d_dEdx = dEdx[iTrk];
-	  d_dEdxError = dEdxError[iTrk];
+	  //d_dEdxError = dEdxError[iTrk];
 	  //d_rapidity_assumingProton = FlowUtils::rapidity(d_px, d_py, d_pz, D_M0_PR);
 	  i_nHits = nHits[iTrk];
 	  i_nHitsFit = nHitsFit[iTrk];
@@ -1308,7 +1186,6 @@ int main(int argc, char *argv[])
 	      //          End TOF Beta Cuts
 	      //=========================================================
 	      
-	      Double_t d_nSigmaPr_recreated = (s_charge == 1) ? TMath::Log(d_dEdx / bichselZ_pr->Eval(d_mom)) / d_dEdxError : -999.0;
 	      Double_t d_zDeuteron = (s_charge == 1) ? TMath::Log(d_dEdx / bichselZ_de->Eval(d_mom)) : -999.0;
 	      Double_t d_zTriton   = (s_charge == 1) ? TMath::Log(d_dEdx / bichselZ_tr->Eval(d_mom)) : -999.0;
 
@@ -1454,14 +1331,6 @@ int main(int argc, char *argv[])
 		      h2_dEdx_vs_qp_pp->Fill(s_charge*d_mom, d_dEdx);
 		      h2_beta_vs_qp_pp->Fill(s_charge*d_mom, 1.0/d_tofBeta);
 		      h2_m2_vs_qp_pp->Fill(s_charge*d_mom, d_m2);
-			  
-		      if (d_rapidity - Y_MID > configs.yCM_norm_pi_low && d_rapidity - Y_MID < configs.yCM_norm_pi_high && 
-			  d_pT >= configs.pt_norm_pi_low && d_pT <= configs.pt_norm_pi_high)
-			{
-			  //h2_y_vs_eta->Fill(d_eta, d_rapidity);
-			  //h2_y_vs_eta_pp->Fill(d_eta, d_rapidity);
-			  p_meanpT_vs_yCM_pp->Fill(d_rapidity - Y_MID, particleInfo.pT);
-			}
 		    }
 		  else if(s_charge < 0)
 		    {
@@ -1477,14 +1346,6 @@ int main(int argc, char *argv[])
 		      h2_dEdx_vs_qp_pm->Fill(s_charge*d_mom, d_dEdx);
 		      h2_beta_vs_qp_pm->Fill(s_charge*d_mom, 1.0/d_tofBeta);
 		      h2_m2_vs_qp_pm->Fill(s_charge*d_mom, d_m2);
-
-		      if (d_rapidity - Y_MID > configs.yCM_norm_pi_low && d_rapidity - Y_MID < configs.yCM_norm_pi_high && 
-			  d_pT >= configs.pt_norm_pi_low && d_pT <= configs.pt_norm_pi_high)
-			{
-			  //h2_y_vs_eta->Fill(d_eta, d_rapidity);
-			  //h2_y_vs_eta_pm->Fill(d_eta, d_rapidity);
-			  p_meanpT_vs_yCM_pm->Fill(d_rapidity - Y_MID, particleInfo.pT);
-			}
 		    }
 		}
 	      else if(kaon) // PID Kaons
@@ -1509,15 +1370,6 @@ int main(int argc, char *argv[])
 		      h2_dEdx_vs_qp_kp->Fill(s_charge*d_mom, d_dEdx);
 		      h2_beta_vs_qp_kp->Fill(s_charge*d_mom, 1.0/d_tofBeta);
 		      h2_m2_vs_qp_kp->Fill(s_charge*d_mom, d_m2);
-
-		      if (d_rapidity - Y_MID > configs.yCM_norm_ka_low && d_rapidity - Y_MID < configs.yCM_norm_ka_high && 
-			  d_pT >= configs.pt_norm_ka_low && d_pT <= configs.pt_norm_ka_high)
-			{
-			  //h2_y_vs_eta->Fill(d_eta, d_rapidity);
-			  //h2_y_vs_eta_kp->Fill(d_eta, d_rapidity);
-			  p_meanpT_vs_yCM_kp->Fill(d_rapidity - Y_MID, particleInfo.pT);
-			}
-
 		    }
 		  else if(s_charge < 0)
 		    {
@@ -1533,14 +1385,6 @@ int main(int argc, char *argv[])
 		      h2_dEdx_vs_qp_km->Fill(s_charge*d_mom, d_dEdx);
 		      h2_beta_vs_qp_km->Fill(s_charge*d_mom, 1.0/d_tofBeta);
 		      h2_m2_vs_qp_km->Fill(s_charge*d_mom, d_m2);
-
-		      if (d_rapidity - Y_MID > configs.yCM_norm_ka_low && d_rapidity - Y_MID < configs.yCM_norm_ka_high && 
-			  d_pT >= configs.pt_norm_ka_low && d_pT <= configs.pt_norm_ka_high)
-			{
-			  //h2_y_vs_eta->Fill(d_eta, d_rapidity);
-			  //h2_y_vs_eta_km->Fill(d_eta, d_rapidity);
-			  p_meanpT_vs_yCM_km->Fill(d_rapidity - Y_MID, particleInfo.pT);
-			}
 		    }
 		}
 	      else if(proton) // PID Proton
@@ -1554,9 +1398,6 @@ int main(int argc, char *argv[])
 		  particleInfo.rapidity = d_rapidity;
 		  particleInfo.KT = d_mT - D_M0_PR;
 
-		  d_nSigmaPr_p8percent = d_nSigmaPr + ( TMath::Log(1.0+0.08) / d_dEdxError );
-		  d_nSigmaPr_m8percent = d_nSigmaPr + ( TMath::Log(1.0-0.08) / d_dEdxError );
-
 		  h_eta_pr->Fill(d_eta);
 		  h_phi_pr->Fill(d_phi);
 		  h_pT_pr->Fill(d_pT);
@@ -1566,36 +1407,24 @@ int main(int argc, char *argv[])
 		  h2_pT_vs_yCM_pr->Fill(d_rapidity - Y_MID, d_pT);
 		  h2_KToverA_vs_yCM_pr->Fill(d_rapidity - Y_MID, (d_mT - D_M0_PR)/1.0);
 		  h2_dEdx_vs_qp_pr->Fill(s_charge*d_mom, d_dEdx);
-		  h_nSig_pr_original->Fill(d_nSigmaPr_original);
-		  h_nSig_pr_recreated->Fill(d_nSigmaPr_recreated);
-		  h_nSig_pr_new->Fill(d_nSigmaPr);
-		  h_nSig_pr_new_p8percent->Fill(d_nSigmaPr_p8percent);
-		  h_nSig_pr_new_m8percent->Fill(d_nSigmaPr_m8percent);
 		  h_dEdx_pr->Fill(d_dEdx);
-		  h_dEdxError_pr->Fill(d_dEdxError);
+		  //h_dEdxError_pr->Fill(d_dEdxError);
 		  h2_nSigp_vs_mom_pr->Fill(d_mom, d_nSigmaPr);
-		  //h2_beta_vs_qp_pr->Fill(s_charge*d_mom, 1.0/d_tofBeta);
-		  //h2_m2_vs_qp_pr->Fill(s_charge*d_mom, d_m2);
 		  if (eventInfo.centID == 14 || eventInfo.centID == 15) h2_nSigp_vs_pT_pr_00to10->Fill(d_pT, d_nSigmaPr);
 
 		  // Normal acceptance region
 		  if (d_rapidity - Y_MID > configs.yCM_norm_pr_low && d_rapidity - Y_MID < configs.yCM_norm_pr_high && 
 		      d_pT >= configs.pt_norm_pr_low && d_pT <= configs.pt_norm_pr_high)
 		    {
-		      p_meanpT_vs_yCM_pr->Fill(d_rapidity - Y_MID, d_pT);
 		      h2_dEdx_vs_qp_id_pr->Fill(d_mom, d_dEdx);
-		      //h2_y_vs_eta->Fill(d_eta, d_rapidity);
-		      //h2_y_vs_eta_pr->Fill(d_eta, d_rapidity);
 		    }
 		  // Alternate acceptance region
 		  if (d_rapidity - Y_MID > configs.yCM_alt_pr_low && d_rapidity - Y_MID < configs.yCM_alt_pr_high && 
 		      (d_mT-D_M0_PR)/massNumber >= configs.KT_pdt_low && (d_mT-D_M0_PR)/massNumber <= configs.KT_pdt_high)
 		    {
 		      h2_dEdx_vs_qp_id_pr_alt->Fill(d_mom, d_dEdx);
-		      p_meanpT_vs_yCM_pr_alt->Fill(d_rapidity - Y_MID, d_pT);
 		      h2_pT_vs_cent_pr->Fill(i_centrality, d_pT);
 		      h2_pT_vs_yCM_pr_alt->Fill(d_rapidity - Y_MID, d_pT);
-		      h_DCA_pr_alt->Fill(d_DCA);
 		    }
 		}		    
 	      else if(deuteron) // PID Deuteron
@@ -1617,21 +1446,14 @@ int main(int argc, char *argv[])
 		  h_dndm_de->Fill(d_mT - D_M0_DE);
 		  h2_pT_vs_yCM_de->Fill(d_rapidity - Y_MID, d_pT);
 		  h2_dEdx_vs_qp_de->Fill(s_charge*d_mom, d_dEdx);
-		  //h2_beta_vs_qp_de->Fill(s_charge*d_mom, 1.0/d_tofBeta);
-		  //h2_m2_vs_qp_de->Fill(s_charge*d_mom, d_m2);
 		  h2_pToverA_vs_yCM_de->Fill(d_rapidity - Y_MID, d_pT/2.0);
 		  h2_KToverA_vs_yCM_de->Fill(d_rapidity - Y_MID, (d_mT - D_M0_DE)/2.0);
-		  //h2_dEdx_vs_qp_half_postZdCut->Fill(s_charge * d_mom, d_dEdx);
 
 		  if (d_rapidity - Y_MID > configs.yCM_norm_de_low && d_rapidity - Y_MID < configs.yCM_norm_de_high && 
 		      (d_mT-D_M0_DE)/massNumber >= configs.KT_pdt_low && (d_mT-D_M0_DE)/massNumber <= configs.KT_pdt_high)
 		    {
-		      //h2_y_vs_eta->Fill(d_eta, d_rapidity);
-		      //h2_y_vs_eta_de->Fill(d_eta, d_rapidity);
-		      p_meanpT_vs_yCM_de->Fill(d_rapidity - Y_MID, d_pT);
 		      h2_dEdx_vs_qp_id_de->Fill(d_mom, d_dEdx);
 		      h2_pT_vs_cent_de->Fill(i_centrality, d_pT);
-		      h_DCA_de->Fill(d_DCA);
 		    }
 		}		    
 	      else if(triton) // PID Triton
@@ -1653,21 +1475,14 @@ int main(int argc, char *argv[])
 		  h_dndm_tr->Fill(d_mT - D_M0_TR);
 		  h2_pT_vs_yCM_tr->Fill(d_rapidity - Y_MID, d_pT);
 		  h2_dEdx_vs_qp_tr->Fill(s_charge*d_mom, d_dEdx);
-		  //h2_beta_vs_qp_tr->Fill(s_charge*d_mom, 1.0/d_tofBeta);
-		  //h2_m2_vs_qp_tr->Fill(s_charge*d_mom, d_m2);
 		  h2_pToverA_vs_yCM_tr->Fill(d_rapidity - Y_MID, d_pT/3.0);
 		  h2_KToverA_vs_yCM_tr->Fill(d_rapidity - Y_MID, (d_mT - D_M0_TR)/3.0);
-		  //h2_dEdx_vs_qp_half_postZtCut->Fill(s_charge * d_mom, d_dEdx);
 
 		  if (d_rapidity - Y_MID > configs.yCM_norm_tr_low && d_rapidity - Y_MID < configs.yCM_norm_tr_high && 
 		      (d_mT-D_M0_TR)/massNumber >= configs.KT_pdt_low && (d_mT-D_M0_TR)/massNumber <= configs.KT_pdt_high)
 		    {
-		      //h2_y_vs_eta->Fill(d_eta, d_rapidity);
-		      //h2_y_vs_eta_tr->Fill(d_eta, d_rapidity);
-		      p_meanpT_vs_yCM_tr->Fill(d_rapidity - Y_MID, d_pT);
 		      h2_dEdx_vs_qp_id_tr->Fill(d_mom, d_dEdx);
 		      h2_pT_vs_cent_tr->Fill(i_centrality, d_pT);
-		      h_DCA_tr->Fill(d_DCA);
 		    }
 		}		    
 
@@ -1785,7 +1600,6 @@ int main(int argc, char *argv[])
       h_eventCheck->Fill(5); // Count # of events after minimum hits cut
       
       h_centralities_final->Fill(i_centrality);
-      //h_refmult_afterMinHits->Fill(i_refmult);
 
       FlowUtils::checkZeroQ(eventInfo);  // Remove events with no flow
       if (eventInfo.badEvent) continue;
@@ -2188,12 +2002,6 @@ int main(int argc, char *argv[])
 			  p2_vn_yCM_cent_pp->Fill(centID, jthRapidity - Y_MID, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/(tpcEfficiency * tofEfficiency));
 			  p_vn_pp_ext->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/(tpcEfficiency * tofEfficiency));
 			}
-		      /*
-		      // rapidity stratified by pT
-		      if (jthRapidity - Y_MID > -1.0 && jthRapidity - Y_MID < 1.0 && 
-			  jthpT > configs.pt_norm_pi_low && jthpT < configs.pt_norm_pi_high)
-			{ p2_vn_pT_vs_yCM_pp->Fill(jthRapidity - Y_MID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/(tpcEfficiency * tofEfficiency)); }
-		      */
 		    }
 		  
 		  // PI-
@@ -2215,12 +2023,6 @@ int main(int argc, char *argv[])
 			  p2_vn_yCM_cent_pm->Fill(centID, jthRapidity - Y_MID, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/(tpcEfficiency * tofEfficiency));
 			  p_vn_pm_ext->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/(tpcEfficiency * tofEfficiency));
 			}
-		      /*
-		      // rapidity stratified by pT
-		      if (jthRapidity - Y_MID > -1.0 && jthRapidity - Y_MID < 1.0 && 
-			  jthpT > configs.pt_norm_pi_low && jthpT < configs.pt_norm_pi_high)
-			{ p2_vn_pT_vs_yCM_pm->Fill(jthRapidity - Y_MID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/(tpcEfficiency * tofEfficiency)); }
-		      */
 		    }
 
 		  // K+
@@ -2268,18 +2070,11 @@ int main(int argc, char *argv[])
 		  // PROTON
 		  else if (eventInfo.tpcParticles.at(j).prTag)
 		    {
-		      /*
-		      if (jthRapidity - Y_MID > -1.0 && jthRapidity - Y_MID < 1.0 && 
-			  jthpT > 0.4 && jthpT < 2.5)
-			{ p2_vn_pT_vs_yCM_pr->Fill(jthRapidity - Y_MID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency); }
-		      */
 		      // RAPIDITY DEPENDENT PLOT
 		      if (jthRapidity - Y_MID > configs.yCM_yDep_pr_low && jthRapidity - Y_MID < configs.yCM_yDep_pr_high && 
 			  jthpT > configs.pt_yDep_pr_low && jthpT < configs.pt_yDep_pr_high)
 			{ 
 			  p2_vn_yCM_cent_pr->Fill(centID, jthRapidity - Y_MID, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency); 
-			  //if (centID == 14 || centID == 15)
-			    //p_vn_yCM_00to10_pr->Fill(jthRapidity - Y_MID, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency); 
 			}
 
 		      // NORMAL ACCEPTANCE 0 < y_cm < 0.5
@@ -2287,12 +2082,6 @@ int main(int argc, char *argv[])
 			  jthpT > configs.pt_norm_pr_low && jthpT < configs.pt_norm_pr_high)
 			{ 
 			  p_vn_pr->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency); 
-			  if (centID == 8) 
-			    {
-			      h_35to40_pr->Fill(TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
-			      h_35to40_pr_noEff->Fill(TMath::Cos(ORDER_N * (jthPhi - psi))/resolution);
-			      h_35to40_pr_noEff_noRes->Fill(TMath::Cos(ORDER_N * (jthPhi - psi)));
-			    }
 			  p2_vn_pT_cent_pr->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
 			  p2_vn_KT_cent_pr->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
 
@@ -2314,7 +2103,6 @@ int main(int argc, char *argv[])
 			  p2_vn_yCM_cent_pr_alt->Fill(centID, jthRapidity - Y_MID, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
 			  p2_vn_pT_cent_pr_alt->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
 			  p2_vn_KT_cent_pr_alt->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
-			  h2_dndDeltaPhi_vs_cent_pr_alt->Fill(centID, jthPhi - psi);
 			}
 		      if (jthKT/1.0 >= configs.KT_pdt_low && jthKT/1.0 <= configs.KT_pdt_high &&
 			  jthRapidity - Y_MID > 0.0 && jthRapidity - Y_MID < 0.6)
@@ -2368,7 +2156,6 @@ int main(int argc, char *argv[])
 			  p_vn_de->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency); 
 			  p2_vn_pT_cent_de->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
 			  p2_vn_KT_cent_de->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
-			  h2_dndDeltaPhi_vs_cent_de->Fill(centID, jthPhi - psi);
 			}
 
 		      if (jthKT/2.0 >= configs.KT_pdt_low && jthKT/2.0 <= configs.KT_pdt_high &&
@@ -2401,7 +2188,6 @@ int main(int argc, char *argv[])
 			  p_vn_tr->Fill(centID, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency); 
 			  p2_vn_pT_cent_tr->Fill(centID, jthpT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
 			  p2_vn_KT_cent_tr->Fill(centID, jthKT, TMath::Cos(ORDER_N * (jthPhi - psi))/resolution, 1.0/tpcEfficiency);
-			  h2_dndDeltaPhi_vs_cent_tr->Fill(centID, jthPhi - psi);
 			}
 
 		      if (jthKT/3.0 >= configs.KT_pdt_low && jthKT/3.0 <= configs.KT_pdt_high &&
@@ -2453,12 +2239,12 @@ int main(int argc, char *argv[])
   // Manually write the few plots that were pulled from the trees
   h_eventCheck->Write();
   h_zvtx->Write();
-  h_trackmult->Write();
-  h_refmult->Write();
-  h_tofmult->Write();
-  h2_refmult_vs_trackmult->Write();
-  h2_tofmult_vs_trackmult->Write();
-  h2_tofmult_vs_refmult->Write();
+  //h_trackmult->Write();
+  //h_refmult->Write();
+  //h_tofmult->Write();
+  //h2_refmult_vs_trackmult->Write();
+  //h2_tofmult_vs_trackmult->Write();
+  //h2_tofmult_vs_refmult->Write();
   ////
 
   // Check ending memory usage to help spot memory leaks

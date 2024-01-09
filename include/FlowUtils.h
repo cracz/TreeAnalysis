@@ -322,10 +322,7 @@ namespace FlowUtils
   ////////
   void checkZeroQ(Event &event)
   {
-    //if (event.XnTpc == 0 && event.YnTpc == 0) { event.badEvent = true; }
-    if (event.XnTpcA == 0 && event.YnTpcA == 0) { event.badEvent = true; }
     if (event.XnTpcB == 0 && event.YnTpcB == 0) { event.badEvent = true; }
-    //else if (event.XnEpd  == 0 && event.YnEpd  == 0) { event.badEvent = true; }
     if (event.XnEpdA == 0 && event.YnEpdA == 0) { event.badEvent = true; }
     if (event.XnEpdB == 0 && event.YnEpdB == 0) { event.badEvent = true; }
   }

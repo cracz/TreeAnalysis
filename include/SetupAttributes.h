@@ -2,6 +2,7 @@
 #define SETUPATTRIBUTES_H
 
 #include <iostream>
+#include <fstream>
 #include "TROOT.h"
 #include "TObject.h"
 #include "TChain.h"
@@ -25,12 +26,12 @@ class SetupAttributes
   Bool_t v1WeightsFound = false;
 
  public:
-  TFile* correctionFile;
-  TFile* resolutionFile;
-  TFile* pikpEfficiencyFile;
-  TFile* protonEfficiencyFile;
-  TFile* tofEfficiencyFile;
-  TFile* v1WeightsInputFile;
+  TFile* correctionFile = nullptr;
+  TFile* resolutionFile = nullptr;
+  TFile* pikpEfficiencyFile = nullptr;
+  TFile* protonEfficiencyFile = nullptr;
+  TFile* tofEfficiencyFile = nullptr;
+  TFile* v1WeightsInputFile = nullptr;
   TH2D* h2_tracking_pp;
   TH2D* h2_tracking_pm;
   TH2D* h2_tracking_kp;
@@ -45,11 +46,11 @@ class SetupAttributes
   Bool_t tofEfficienciesWereFound();
   Bool_t v1WeightsWereFound();
   void setCorrectionFileAndRunIteration(TString fileName);
-  void setResolutionFile(TString fileName);
   void setTPCEfficiencyFile(TString fileName);
   void setProtonEfficiencyFile(TString fileName);
   void setTOFEfficiencyFile(TString fileName);
   void setv1WeightsFile(TString fileName);
+  void setResolutionFile(TString fileName);
 };// End namespace Setup
 
 

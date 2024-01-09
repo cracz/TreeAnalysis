@@ -104,6 +104,12 @@ namespace NSigmaCorrectionUtils
       //if(momentum<0.12 || momentum > 10.0) nSigmaProton = 999;
       return nSigmaProton;
     }
+
+    ~NewNSigmaProton3p2GeV_SL23d()
+    {
+      delete mean_graph;
+      delete sig1_graph;
+    }
   };// End NewNSigmaProton3p2GeV_SL23d
 
 
@@ -134,6 +140,12 @@ namespace NSigmaCorrectionUtils
       //if(nHitsDedx<20) nSigmaProton = 999;
       //if(momentum<0.12 || momentum > 10.0) nSigmaProton = 999;
       return nSigmaProton;
+    }
+
+    ~NewNSigmaProton3p5GeV_SL23d()
+    {
+      delete mean_graph;
+      delete sig1_graph;
     }
   };// End NewNSigmaProton3p5GeV_SL23d
 
@@ -167,6 +179,12 @@ namespace NSigmaCorrectionUtils
       //if(momentum<0.12 || momentum > 10.0) nSigmaProton = 999;
       return nSigmaProton;
     }
+
+    ~NewNSigmaProton3p9GeV_SL23d()
+    {
+      delete mean_graph;
+      delete sig1_graph;
+    }
   };// End NewNSigmaProton3p9GeV_SL23d
 
 
@@ -199,6 +217,12 @@ namespace NSigmaCorrectionUtils
       //if(nHitsDedx<20) nSigmaProton = 999;
       //if(momentum<0.12 || momentum > 10.0) nSigmaProton = 999;
       return nSigmaProton;
+    }
+
+    ~NewNSigmaProton4p5GeV_SL23d()
+    {
+      delete mean_graph;
+      delete sig1_graph;
     }
   };// End NewNSigmaProton4p5GeV_SL23d
 
