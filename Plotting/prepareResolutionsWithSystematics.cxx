@@ -10,12 +10,12 @@ double maxValue(double d1, double d2, double d3)
 
 void prepareResolutionsWithSystematics()
 {
-
+  /*
   // 3.0 GeV
   TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p0GeV_EPDB9to16.root", "READ");
   TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p0GeV_EPDB10to16.root", "READ");
   TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p0GeV_9to16scaled.root", "READ");
-
+  */
   /*
   // 3.0 GeV v1
   TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p0GeV_v1_EPDB9to16.root", "READ");
@@ -34,18 +34,18 @@ void prepareResolutionsWithSystematics()
   TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p2GeV_EPDA1to6_EPDB8to13_withEff_SL23d.root", "READ");
   TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p2GeV_EPDA1to6_EPDB9to13_withEff_SL23d.root", "READ");
   */
-  /*
+  /*  
   // 3.5 GeV 
   TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p5GeV_EPDA1to6_EPDB7to11_withEff_SL23d.root", "READ");
   TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p5GeV_EPDA1to6_EPDB8to11_withEff_SL23d.root", "READ");
   TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p5GeV_EPDA1to6_EPDB9to11_withEff_SL23d.root", "READ");
   */
-  /*
+
   // 3.9 GeV
   TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDB6to10_withEff_SL23d.root", "READ");
   TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDB7to10_withEff_SL23d.root", "READ");
   TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDB8to10_withEff_SL23d.root", "READ");
-  */
+
   /*
   // 4.5 GeV
   TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_4p5GeV_SL23d_EPDA1to5_EPDB6to10.root", "READ");

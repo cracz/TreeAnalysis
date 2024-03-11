@@ -499,6 +499,9 @@ int main(int argc, char *argv[])
   TH2D *h2_pT_vs_yCM_pr_alt = new TH2D("h2_pT_vs_yCM_pr_alt", "Proton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
   TH2D *h2_pT_vs_yCM_de = new TH2D("h2_pT_vs_yCM_de", "Deuteron;y-y_{mid};p_{T} (GeV/c)",tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
   TH2D *h2_pT_vs_yCM_tr = new TH2D("h2_pT_vs_yCM_tr", "Triton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
+  TH2D *h2_pT_vs_yCM_pr_contamination = new TH2D("h2_pT_vs_yCM_pr_contamination", "Proton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
+  TH2D *h2_pT_vs_yCM_pr_etaGt1p5 = new TH2D("h2_pT_vs_yCM_pr_etaGt1p5", "Proton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
+  //TH2D *h2_pT_vs_pTot_pr = new TH2D("h2_pT_vs_pTot_pr", "Proton;|p| (GeV/c);p_{T} (GeV/c)",  500, 0.0, 10.0, 500, 0.0, 5.0);
 
   TH2D *h2_pT_vs_eta     = new TH2D("h2_pT_vs_eta", "All Good Tracks;#eta;p_{T} (GeV/c)", 480, -2.2, 0.2, 490, 0.0, 7.0);
   TH2D *h2_pT_vs_eta_TOF = new TH2D("h2_pT_vs_eta_TOF", "TOF Hits;#eta;p_{T} (GeV/c)", 480, -2.2, 0.2, 490, 0.0, 7.0);
@@ -546,16 +549,16 @@ int main(int argc, char *argv[])
 				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
   TProfile *p_vn_tr = new TProfile("p_vn_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
 				   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  p_vn_pp->SetDefaultSumw2();
-  p_vn_pm->SetDefaultSumw2();
-  p_vn_kp->SetDefaultSumw2();
-  p_vn_km->SetDefaultSumw2();
-  p_vn_pr->SetDefaultSumw2();
-  p_vn_pr_alt->SetDefaultSumw2();
-  p_vn_pr_pTlt1->SetDefaultSumw2();
-  p_vn_pr_pTgt1->SetDefaultSumw2();
-  p_vn_de->SetDefaultSumw2();
-  p_vn_tr->SetDefaultSumw2();
+  p_vn_pp->Sumw2();
+  p_vn_pm->Sumw2();
+  p_vn_kp->Sumw2();
+  p_vn_km->Sumw2();
+  p_vn_pr->Sumw2();
+  p_vn_pr_alt->Sumw2();
+  p_vn_pr_pTlt1->Sumw2();
+  p_vn_pr_pTgt1->Sumw2();
+  p_vn_de->Sumw2();
+  p_vn_tr->Sumw2();
 
   TProfile *p_vn_pr_alt_y0to0p6 = new TProfile("p_vn_pr_alt_y0to0p6", 
 					       "Proton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
@@ -566,9 +569,9 @@ int main(int argc, char *argv[])
   TProfile *p_vn_tr_y0to0p6 = new TProfile("p_vn_tr_y0to0p6", 
 					   "Triton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
 					   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  p_vn_pr_alt_y0to0p6->SetDefaultSumw2();
-  p_vn_de_y0to0p6->SetDefaultSumw2();
-  p_vn_tr_y0to0p6->SetDefaultSumw2();
+  p_vn_pr_alt_y0to0p6->Sumw2();
+  p_vn_de_y0to0p6->Sumw2();
+  p_vn_tr_y0to0p6->Sumw2();
 
   TProfile *p_vn_pr_alt_y0p6to1p0 = new TProfile("p_vn_pr_alt_y0p6to1p0", 
 						 "Proton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
@@ -579,9 +582,9 @@ int main(int argc, char *argv[])
   TProfile *p_vn_tr_y0p6to1p0 = new TProfile("p_vn_tr_y0p6to1p0", 
 					     "Triton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
 					     CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  p_vn_pr_alt_y0p6to1p0->SetDefaultSumw2();
-  p_vn_de_y0p6to1p0->SetDefaultSumw2();
-  p_vn_tr_y0p6to1p0->SetDefaultSumw2();
+  p_vn_pr_alt_y0p6to1p0->Sumw2();
+  p_vn_de_y0p6to1p0->Sumw2();
+  p_vn_tr_y0p6to1p0->Sumw2();
   ////
 
   // vn profiles at "extended" rapidity range 0.5 < y_CM < 1.0
@@ -595,17 +598,17 @@ int main(int argc, char *argv[])
 				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
   TProfile *p_vn_pr_ext = new TProfile("p_vn_pr_ext", "Proton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
 				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  p_vn_pp_ext->SetDefaultSumw2();
-  p_vn_pm_ext->SetDefaultSumw2();
-  p_vn_kp_ext->SetDefaultSumw2();
-  p_vn_km_ext->SetDefaultSumw2();
-  p_vn_pr_ext->SetDefaultSumw2();
+  p_vn_pp_ext->Sumw2();
+  p_vn_pm_ext->Sumw2();
+  p_vn_kp_ext->Sumw2();
+  p_vn_km_ext->Sumw2();
+  p_vn_pr_ext->Sumw2();
   ////
 
   // vn profiles at the "forward" raidity range y_CM < 0
   TProfile *p_vn_pr_for = new TProfile("p_vn_pr_for", "Proton v_{"+ORDER_N_STR+"};Centrality;v_{"+ORDER_N_STR+"}{#psi_{"+ORDER_M_STR+"}}/R_{"+ORDER_N_STR+ORDER_M_STR+"}", 
 				       CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  p_vn_pr_for->SetDefaultSumw2();
+  p_vn_pr_for->Sumw2();
   ////
 
   // "Observed" flow values (uncorrected by event plane resolution)
@@ -627,20 +630,20 @@ int main(int argc, char *argv[])
 				    CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
   TProfile2D *p2_vn_yCM_cent_epd = 
     new TProfile2D("p2_vn_yCM_cent_epd", "All charged EPD hits v_{"+ORDER_N_STR+"};Centrality;#eta", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -6, 0);
-  p_vn_pp_obs->SetDefaultSumw2();
-  p_vn_pm_obs->SetDefaultSumw2();
-  p_vn_kp_obs->SetDefaultSumw2();
-  p_vn_km_obs->SetDefaultSumw2();
-  p_vn_pr_obs->SetDefaultSumw2();
-  p_vn_pr_alt_obs->SetDefaultSumw2();
-  p_vn_de_obs->SetDefaultSumw2();
-  p_vn_tr_obs->SetDefaultSumw2();
-  p2_vn_yCM_cent_epd->SetDefaultSumw2();
+  p_vn_pp_obs->Sumw2();
+  p_vn_pm_obs->Sumw2();
+  p_vn_kp_obs->Sumw2();
+  p_vn_km_obs->Sumw2();
+  p_vn_pr_obs->Sumw2();
+  p_vn_pr_alt_obs->Sumw2();
+  p_vn_de_obs->Sumw2();
+  p_vn_tr_obs->Sumw2();
+  p2_vn_yCM_cent_epd->Sumw2();
   ////
 
   // proton vn with same acceptance as HADES PRL 125, 262301 (2020)
   TProfile *p_vn_yCM_HADES = new TProfile("p_vn_yCM_HADES", "Proton v_{"+ORDER_N_STR+"};y-y_{mid};v_{"+ORDER_N_STR+"}", 20, -1, 1);
-  p_vn_yCM_HADES->SetDefaultSumw2();
+  p_vn_yCM_HADES->Sumw2();
   ////
 
   // vn ycm vs centrality
@@ -655,24 +658,24 @@ int main(int argc, char *argv[])
     new TProfile2D("p2_vn_yCM_cent_pr_symmetry", "Proton v_{"+ORDER_N_STR+"};Centrality;y-y_{mid}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -1, 1);
   TProfile2D *p2_vn_yCM_cent_de = new TProfile2D("p2_vn_yCM_cent_de", "Deuteron v_{"+ORDER_N_STR+"};Centrality;y-y_{mid}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -1, 1);
   TProfile2D *p2_vn_yCM_cent_tr = new TProfile2D("p2_vn_yCM_cent_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;y-y_{mid}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 20, -1, 1);
-  p2_vn_yCM_cent_pp->SetDefaultSumw2();
-  p2_vn_yCM_cent_pm->SetDefaultSumw2();
-  p2_vn_yCM_cent_kp->SetDefaultSumw2();
-  p2_vn_yCM_cent_km->SetDefaultSumw2();
-  p2_vn_yCM_cent_pr->SetDefaultSumw2();
-  p2_vn_yCM_cent_pr_alt->SetDefaultSumw2();
-  p2_vn_yCM_cent_pr_symmetry->SetDefaultSumw2();
-  p2_vn_yCM_cent_de->SetDefaultSumw2();
-  p2_vn_yCM_cent_tr->SetDefaultSumw2();
+  p2_vn_yCM_cent_pp->Sumw2();
+  p2_vn_yCM_cent_pm->Sumw2();
+  p2_vn_yCM_cent_kp->Sumw2();
+  p2_vn_yCM_cent_km->Sumw2();
+  p2_vn_yCM_cent_pr->Sumw2();
+  p2_vn_yCM_cent_pr_alt->Sumw2();
+  p2_vn_yCM_cent_pr_symmetry->Sumw2();
+  p2_vn_yCM_cent_de->Sumw2();
+  p2_vn_yCM_cent_tr->Sumw2();
   ////
 
   // vn ycm-symmetric; ycm vs pT
   TProfile2D *p2_vn_yCM_vs_pT_pr_symm_00to10 = new TProfile2D("p2_vn_yCM_vs_pT_pr_symm_00to10", "", 24, 0.0, 2.4, 20, -1.0, 1.0);
   TProfile2D *p2_vn_yCM_vs_pT_pr_symm_10to40 = new TProfile2D("p2_vn_yCM_vs_pT_pr_symm_10to40", "", 24, 0.0, 2.4, 20, -1.0, 1.0);
   TProfile2D *p2_vn_yCM_vs_pT_pr_symm_40to60 = new TProfile2D("p2_vn_yCM_vs_pT_pr_symm_40to60", "", 24, 0.0, 2.4, 20, -1.0, 1.0);
-  p2_vn_yCM_vs_pT_pr_symm_00to10->SetDefaultSumw2();
-  p2_vn_yCM_vs_pT_pr_symm_10to40->SetDefaultSumw2();
-  p2_vn_yCM_vs_pT_pr_symm_40to60->SetDefaultSumw2();
+  p2_vn_yCM_vs_pT_pr_symm_00to10->Sumw2();
+  p2_vn_yCM_vs_pT_pr_symm_10to40->Sumw2();
+  p2_vn_yCM_vs_pT_pr_symm_40to60->Sumw2();
   ////
   
   // vn y/y_beam vs centrality
@@ -682,9 +685,9 @@ int main(int argc, char *argv[])
     new TProfile2D("p2_vn_yOverYbeam_cent_de", "Deuteron v_{"+ORDER_N_STR+"};Centrality;y_{CM}/|y_{beam}|", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 25, 0.0, 0.5);
   TProfile2D *p2_vn_yOverYbeam_cent_tr = 
     new TProfile2D("p2_vn_yOverYbeam_cent_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;y_{CM}/|y_{beam}|", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 25, 0.0, 0.5);
-  p2_vn_yOverYbeam_cent_pr_alt->SetDefaultSumw2();
-  p2_vn_yOverYbeam_cent_de->SetDefaultSumw2();
-  p2_vn_yOverYbeam_cent_tr->SetDefaultSumw2();
+  p2_vn_yOverYbeam_cent_pr_alt->Sumw2();
+  p2_vn_yOverYbeam_cent_de->Sumw2();
+  p2_vn_yOverYbeam_cent_tr->Sumw2();
   ////
 
   // vn pT vs centrality  
@@ -696,19 +699,19 @@ int main(int argc, char *argv[])
   TProfile2D *p2_vn_pT_cent_pr_alt = new TProfile2D("p2_vn_pT_cent_pr_alt", "Proton v_{"+ORDER_N_STR+"};Centrality;p_{T}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 15, 0, 2.5);
   TProfile2D *p2_vn_pT_cent_de = new TProfile2D("p2_vn_pT_cent_de", "Deuteron v_{"+ORDER_N_STR+"};Centrality;p_{T}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 15, 0, 2.5);
   TProfile2D *p2_vn_pT_cent_tr = new TProfile2D("p2_vn_pT_cent_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;p_{T}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 15, 0, 2.5);
-  p2_vn_pT_cent_pp->SetDefaultSumw2();
-  p2_vn_pT_cent_pm->SetDefaultSumw2();
-  p2_vn_pT_cent_kp->SetDefaultSumw2();
-  p2_vn_pT_cent_km->SetDefaultSumw2();
-  p2_vn_pT_cent_pr->SetDefaultSumw2();
-  p2_vn_pT_cent_pr_alt->SetDefaultSumw2();
-  p2_vn_pT_cent_de->SetDefaultSumw2();
-  p2_vn_pT_cent_tr->SetDefaultSumw2();
+  p2_vn_pT_cent_pp->Sumw2();
+  p2_vn_pT_cent_pm->Sumw2();
+  p2_vn_pT_cent_kp->Sumw2();
+  p2_vn_pT_cent_km->Sumw2();
+  p2_vn_pT_cent_pr->Sumw2();
+  p2_vn_pT_cent_pr_alt->Sumw2();
+  p2_vn_pT_cent_de->Sumw2();
+  p2_vn_pT_cent_tr->Sumw2();
   ////
 
   // Protons at midrapidity
   TProfile2D *p2_vn_pT_cent_pr_midy = new TProfile2D("p2_vn_pT_cent_pr_midy", "Proton v_{"+ORDER_N_STR+"};Centrality;p_{T}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 10, 0, 2);
-  p2_vn_pT_cent_pr_midy->SetDefaultSumw2();
+  p2_vn_pT_cent_pr_midy->Sumw2();
   ////
 
   // vn KT vs centrality
@@ -720,14 +723,14 @@ int main(int argc, char *argv[])
   TProfile2D *p2_vn_KT_cent_pr_alt = new TProfile2D("p2_vn_KT_cent_pr_alt", "Proton v_{"+ORDER_N_STR+"};Centrality;m_{T}-m_{0}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 10, 0, 2);
   TProfile2D *p2_vn_KT_cent_de = new TProfile2D("p2_vn_KT_cent_de", "Deuteron v_{"+ORDER_N_STR+"};Centrality;m_{T}-m_{0}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 10, 0, 2);
   TProfile2D *p2_vn_KT_cent_tr = new TProfile2D("p2_vn_KT_cent_tr", "Triton v_{"+ORDER_N_STR+"};Centrality;m_{T}-m_{0}", CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 10, 0, 2);
-  p2_vn_KT_cent_pp->SetDefaultSumw2();
-  p2_vn_KT_cent_pm->SetDefaultSumw2();
-  p2_vn_KT_cent_kp->SetDefaultSumw2();
-  p2_vn_KT_cent_km->SetDefaultSumw2();
-  p2_vn_KT_cent_pr->SetDefaultSumw2();
-  p2_vn_KT_cent_pr_alt->SetDefaultSumw2();
-  p2_vn_KT_cent_de->SetDefaultSumw2();
-  p2_vn_KT_cent_tr->SetDefaultSumw2();
+  p2_vn_KT_cent_pp->Sumw2();
+  p2_vn_KT_cent_pm->Sumw2();
+  p2_vn_KT_cent_kp->Sumw2();
+  p2_vn_KT_cent_km->Sumw2();
+  p2_vn_KT_cent_pr->Sumw2();
+  p2_vn_KT_cent_pr_alt->Sumw2();
+  p2_vn_KT_cent_de->Sumw2();
+  p2_vn_KT_cent_tr->Sumw2();
   ////
 
   // v1 for each EPD ring
@@ -735,8 +738,8 @@ int main(int argc, char *argv[])
 						   CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 16, 0.5, 16.5);
   TProfile2D *p2_v1_eta_cent_TPC = new TProfile2D("p2_v1_eta_cent_TPC", "v_{1} by Eta and Centrality;Centrality;TPC #eta", 
 						  CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS, 40, -2.0, 0.0);
-  p2_v1_ring_cent_EPD->SetDefaultSumw2();
-  p2_v1_eta_cent_TPC->SetDefaultSumw2();
+  p2_v1_ring_cent_EPD->Sumw2();
+  p2_v1_eta_cent_TPC->Sumw2();
   ////
 
   // Profiles for event plane subevent correlations
@@ -780,13 +783,22 @@ int main(int argc, char *argv[])
   TH2D *h2_dEdx_vs_qp_id_de = new TH2D("h2_dEdx_vs_qp_id_de", ";|p| (GeV/c);dE/dx (keV/cm)", 25, 0.0, 2.5, 500, 0.0, 20.0);
   TH2D *h2_dEdx_vs_qp_id_tr = new TH2D("h2_dEdx_vs_qp_id_tr", ";|p| (GeV/c);dE/dx (keV/cm)", 25, 0.0, 2.5, 500, 0.0, 20.0);
 
-  TH2D *h2_nSigp_vs_pT_pr_00to10 = new TH2D("h2_nSigp_vs_pT_pr_00to10", "Identified Protons;|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
-  TH2D *h2_nSigp_vs_mom_pr  = new TH2D("h2_nSigp_vs_mom_pr", "Identified Protons;|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
-  TH2D *h2_nSigp_vs_mom_pr_poss  = new TH2D("h2_nSigp_vs_mom_pr_poss", "Identified Protons;|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
-  TH2D *h2_nSigp_vs_mom_all = new TH2D("h2_nSigp_vs_mom_all", ";|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
-  TH2D *h2_nSigp_vs_mom_original = new TH2D("h2_nSigp_vs_mom_original", ";|p| (GeV/c);n#sigma_{p}", 40, 0.0, 4.0, 600, -3.0, 3.0);
-  TH2D *h2_zd_vs_mom = new TH2D("h2_zd_vs_mom", ";|p| (GeV/c);z_{d}", 40, 0.0, 4.0, 140, -0.7, 0.7);
-  TH2D *h2_zt_vs_mom = new TH2D("h2_zt_vs_mom", ";|p| (GeV/c);z_{t}", 40, 0.0, 4.0, 140, -0.7, 0.7);
+  TH2D *h2_nSigp_vs_mom_pr  = new TH2D("h2_nSigp_vs_mom_pr", "Identified Protons;|p| (GeV/c);n#sigma_{p}", 50, 0.0, 5.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigp_vs_mom_pr_poss  = new TH2D("h2_nSigp_vs_mom_pr_poss", "Possible Protons;|p| (GeV/c);n#sigma_{p}", 50, 0.0, 5.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigp_vs_mom_pr_poss_symm  = new TH2D("h2_nSigp_vs_mom_pr_poss_symm", "Possible Protons;|p| (GeV/c);n#sigma_{p}", 50, 0.0, 5.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigp_vs_mom_apr_poss  = new TH2D("h2_nSigp_vs_mom_apr_poss", "Possible Anti-protons;|p| (GeV/c);n#sigma_{p}", 50, 0.0, 5.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigp_vs_mom_all = new TH2D("h2_nSigp_vs_mom_all", ";|p| (GeV/c);n#sigma_{p}", 50, 0.0, 5.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigp_vs_mom_original = new TH2D("h2_nSigp_vs_mom_original", ";|p| (GeV/c);n#sigma_{p}", 50, 0.0, 5.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigPi_vs_mom_original = new TH2D("h2_nSigPi_vs_mom_original", ";|p| (GeV/c);n#sigma_{#pi}", 50, 0.0, 5.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigKa_vs_mom_original = new TH2D("h2_nSigKa_vs_mom_original", ";|p| (GeV/c);n#sigma_{K}", 50, 0.0, 5.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigPi_vs_mom_QAcut_m2cut = new TH2D("h2_nSigPi_vs_mom_QAcut_m2cut", ";|p| (GeV/c);n#sigma_{#pi}", 50, 0.0, 5.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigKa_vs_mom_QAcut_m2cut = new TH2D("h2_nSigKa_vs_mom_QAcut_m2cut", ";|p| (GeV/c);n#sigma_{K}", 50, 0.0, 5.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigPi_vs_mom_contamination = new TH2D("h2_nSigPi_vs_mom_contamination", ";|p| (GeV/c);n#sigma_{#pi}", 50, 0.0, 5.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigKa_vs_mom_contamination = new TH2D("h2_nSigKa_vs_mom_contamination", ";|p| (GeV/c);n#sigma_{K}", 50, 0.0, 5.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigPi_vs_nSigPr_etaGt1p5 = new TH2D("h2_nSigPi_vs_nSigPr_etaGt1p5", ";n#sigma_{p};n#sigma_{#pi}", 500, -10.0, 10.0, 500, -10.0, 10.0);
+  TH2D *h2_nSigKa_vs_nSigPr_etaGt1p5 = new TH2D("h2_nSigKa_vs_nSigPr_etaGt1p5", ";n#sigma_{p};n#sigma_{K}", 500, -10.0, 10.0, 500, -10.0, 10.0);
+  TH2D *h2_zd_vs_mom = new TH2D("h2_zd_vs_mom", ";|p| (GeV/c);z_{d}", 50, 0.0, 5.0, 140, -0.7, 0.7);
+  TH2D *h2_zt_vs_mom = new TH2D("h2_zt_vs_mom", ";|p| (GeV/c);z_{t}", 50, 0.0, 5.0, 140, -0.7, 0.7);
   
 
   tempBins1      = (configs.fixed_target) ?  300 :  600;
@@ -1070,8 +1082,10 @@ int main(int argc, char *argv[])
 	  i_nHitsPoss = nHitsPoss[iTrk];
 	  i_nHitsDedx = nHitsDedx[iTrk];
 
-	  // Check the original nSigmaPr values.
+	  // Check the original nSigma values.
 	  h2_nSigp_vs_mom_original->Fill(d_mom, d_nSigmaPr);
+	  h2_nSigPi_vs_mom_original->Fill(d_mom, d_nSigmaPi);
+	  h2_nSigKa_vs_mom_original->Fill(d_mom, d_nSigmaKa);
 	  ////
 	  
 	  h_nhits->Fill(i_nHits);
@@ -1101,7 +1115,6 @@ int main(int argc, char *argv[])
 	  h2_pT_vs_eta->Fill(d_eta, d_pT);
 	  h2_dEdx_vs_qp->Fill(s_charge * d_mom, d_dEdx);
 	  if (s_charge == 1) h2_dEdx_vs_qp_half->Fill(s_charge * d_mom, d_dEdx);
-
 
 	  ////
 	  // Make a correction to TPC nSigma Proton for collisions > 3.0 GeV
@@ -1185,7 +1198,15 @@ int main(int argc, char *argv[])
 	      //=========================================================
 	      //          End TOF Beta Cuts
 	      //=========================================================
-	      
+
+	      // Check nSigmaPi and nSigmaK for tracks that pass QA and m^2 cuts	      
+	      if ((d_m2 > configs.m2_pi_low) && (d_m2 < configs.m2_pi_high))
+		h2_nSigPi_vs_mom_QAcut_m2cut->Fill(d_mom, d_nSigmaPi);
+
+	      if ((d_m2 > configs.m2_ka_low) && (d_m2 < configs.m2_ka_high))
+		h2_nSigKa_vs_mom_QAcut_m2cut->Fill(d_mom, d_nSigmaKa);
+	      ////
+
 	      Double_t d_zDeuteron = (s_charge == 1) ? TMath::Log(d_dEdx / bichselZ_de->Eval(d_mom)) : -999.0;
 	      Double_t d_zTriton   = (s_charge == 1) ? TMath::Log(d_dEdx / bichselZ_tr->Eval(d_mom)) : -999.0;
 
@@ -1287,6 +1308,21 @@ int main(int argc, char *argv[])
 
 	      if (pion && proton)   { proton = false; }
 	      if (kaon && proton)   { proton = false; }
+
+	      /*
+	      // SUPPLEMENTARY CUTS TO REDUCE CONTAMINATION OUTSIDE OF TOF REACH
+	      if (proton)
+		{
+		  // CUT TEST 1
+		  if (d_eta < -1.5 && (TMath::Abs(d_nSigmaPi) < 1.0 || TMath::Abs(d_nSigmaKa) < 1.0))
+		    proton = false;
+
+		  // CUT TEST 2
+		  //if (TMath::Abs(d_nSigmaPi) < 1.0 || TMath::Abs(d_nSigmaKa) < 1.0)
+		  //proton = false;
+		}
+	      //////
+	      */
 	      //=========================================================
 	      //          END PID Cuts
 	      //=========================================================
@@ -1299,12 +1335,54 @@ int main(int argc, char *argv[])
 		  h2_zt_vs_mom->Fill(d_mom, d_zTriton);
 		}
 
-	      if (!pion && !kaon && !deuteron && !triton)
+	      if (!pion && !kaon && !deuteron && !triton && s_charge == 1)
 		{
 		  h2_nSigp_vs_mom_pr_poss->Fill(d_mom, d_nSigmaPr); 
+
+		  if (d_pT > configs.pt_ySym_pr_low && d_pT < configs.pt_ySym_pr_high)
+		    h2_nSigp_vs_mom_pr_poss_symm->Fill(d_mom, d_nSigmaPr); 
 		}
+	      if (!pion && !kaon && !deuteron && !triton && s_charge == -1)
+		{
+		  h2_nSigp_vs_mom_apr_poss->Fill(d_mom, d_nSigmaPr); 
+		}
+	      /*
+	      // Find possible proton sample including background -- CUT TEST 1
+	      if (d_eta < -1.5)
+		{
+		  if (!pion && !kaon && !deuteron && !triton && s_charge == 1 && 
+		      (TMath::Abs(d_nSigmaPi) > 1.0 || TMath::Abs(d_nSigmaKa) > 1.0))
+		    {
+		      h2_nSigp_vs_mom_pr_poss->Fill(d_mom, d_nSigmaPr); 
 
+		      if (d_pT > configs.pt_ySym_pr_low && d_pT < configs.pt_ySym_pr_high)
+			h2_nSigp_vs_mom_pr_poss_symm->Fill(d_mom, d_nSigmaPr); 
+		    }
+		}
+	      else if (d_eta > -1.5)
+		{
+		  if (!pion && !kaon && !deuteron && !triton && s_charge == 1)
+		    {
+		      h2_nSigp_vs_mom_pr_poss->Fill(d_mom, d_nSigmaPr); 
 
+		      if (d_pT > configs.pt_ySym_pr_low && d_pT < configs.pt_ySym_pr_high)
+			h2_nSigp_vs_mom_pr_poss_symm->Fill(d_mom, d_nSigmaPr); 
+		    }
+		}
+	      ////
+	      */
+	      /*	      
+	      // Find possible proton sample including background -- CUT TEST 2
+	      if (!pion && !kaon && !deuteron && !triton && s_charge == 1 && 
+		  (TMath::Abs(d_nSigmaPi) > 1.0 || TMath::Abs(d_nSigmaKa) > 1.0))
+		{
+		  h2_nSigp_vs_mom_pr_poss->Fill(d_mom, d_nSigmaPr); 
+
+		  if (d_pT > configs.pt_ySym_pr_low && d_pT < configs.pt_ySym_pr_high)
+		    h2_nSigp_vs_mom_pr_poss_symm->Fill(d_mom, d_nSigmaPr); 
+		}
+	      ////
+	      */
 	      Double_t d_rapidity = 999.0;
 	      Double_t d_mT = -999.0;
 	      Double_t massNumber;
@@ -1405,12 +1483,18 @@ int main(int argc, char *argv[])
 		  h_dndy_pr->Fill(d_rapidity);
 		  h_dndm_pr->Fill(d_mT - D_M0_PR);
 		  h2_pT_vs_yCM_pr->Fill(d_rapidity - Y_MID, d_pT);
+		  if (d_eta < -1.5) 
+		    {
+		      h2_pT_vs_yCM_pr_etaGt1p5->Fill(d_rapidity - Y_MID, d_pT);
+		      h2_nSigPi_vs_nSigPr_etaGt1p5->Fill(d_nSigmaPr, d_nSigmaPi);
+		      h2_nSigKa_vs_nSigPr_etaGt1p5->Fill(d_nSigmaPr, d_nSigmaKa);
+		    }
+		  h2_nSigp_vs_mom_pr->Fill(d_mom, d_nSigmaPr); 
+		  //h2_pT_vs_pTot_pr->Fill(d_mom, d_pT);
 		  h2_KToverA_vs_yCM_pr->Fill(d_rapidity - Y_MID, (d_mT - D_M0_PR)/1.0);
 		  h2_dEdx_vs_qp_pr->Fill(s_charge*d_mom, d_dEdx);
 		  h_dEdx_pr->Fill(d_dEdx);
 		  //h_dEdxError_pr->Fill(d_dEdxError);
-		  h2_nSigp_vs_mom_pr->Fill(d_mom, d_nSigmaPr);
-		  if (eventInfo.centID == 14 || eventInfo.centID == 15) h2_nSigp_vs_pT_pr_00to10->Fill(d_pT, d_nSigmaPr);
 
 		  // Normal acceptance region
 		  if (d_rapidity - Y_MID > configs.yCM_norm_pr_low && d_rapidity - Y_MID < configs.yCM_norm_pr_high && 
@@ -1425,6 +1509,17 @@ int main(int argc, char *argv[])
 		      h2_dEdx_vs_qp_id_pr_alt->Fill(d_mom, d_dEdx);
 		      h2_pT_vs_cent_pr->Fill(i_centrality, d_pT);
 		      h2_pT_vs_yCM_pr_alt->Fill(d_rapidity - Y_MID, d_pT);
+		    }
+
+		  if ((d_nSigmaPr > -1.0) && (d_nSigmaPr < 1.0) && (d_mom > 1.3) && (d_mom < 1.8))
+		    {
+		      h2_pT_vs_yCM_pr_contamination->Fill(d_rapidity - Y_MID, d_pT);
+		    }
+
+		  if ((d_nSigmaPr > -1.0) && (d_nSigmaPr < 1.0) && (d_mom > 1.3) && (d_mom < 1.8) && (d_rapidity-Y_MID < -0.56))
+		    {
+		      h2_nSigPi_vs_mom_contamination->Fill(d_mom, d_nSigmaPi);
+		      h2_nSigKa_vs_mom_contamination->Fill(d_mom, d_nSigmaKa);
 		    }
 		}		    
 	      else if(deuteron) // PID Deuteron
