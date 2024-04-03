@@ -2,7 +2,7 @@
 <job maxFilesPerProcess="20" filesPerHour="0.5" fileListSyntax="xrootd" simulateSubmission="false">
   
   <command>
-    starver SL23d
+    starver SL23e
     root4star -q -b -l MakeTrees.C\(0,$INPUTFILECOUNT,\"$FILELIST\",\"$SCRATCH\",\"$JOBID\",\"config_3p9GeV.txt\",0\)
   </command>
   
@@ -17,6 +17,7 @@
 
   <!-- Get input files from get_file_lis.pl -->
   <input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p9GeV_SL23d_file.list" nFiles="all"/>
+  <!--input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/fxt_3p9GeV_SL23e_2020only_file.list" nFiles="all"/-->
   
   <!-- Run log & error messages -->
   <stdout URL="file:/star/data01/pwg/cracz/Data_3p9GeV_FXT/out/$JOBID.out" />

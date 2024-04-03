@@ -5,7 +5,7 @@
 
   <!-- Task list -->
   <command>
-    starver SL21d
+    starver SL23d
     TreeAnalyzer $INPUTFILE0 $JOBID config_3p9GeV.txt correctionInfo_INPUT_3p9GeV.root resolutionInfo_INPUT_3p9GeV_1to5_max10_averagedRes_SL23d.root
   </command>
 
@@ -26,6 +26,7 @@
 
   <!-- Get input files from get_file_lis.pl -->
   <input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/tree_fxt_3p9GeV_SL23d_2019and2020_file.list" nFiles="all"/>
+  <!--input URL="filelist:/star/u/cracz/work/flow/TreeAnalysis/input/tree_fxt_3p9GeV_SL23e_2020_file.list" nFiles="all"/-->
   
   <!-- Run log & error messages -->
   <stdout URL="file:/star/data01/pwg/cracz/flowResults_3p9GeV/out/$JOBID.out" />
