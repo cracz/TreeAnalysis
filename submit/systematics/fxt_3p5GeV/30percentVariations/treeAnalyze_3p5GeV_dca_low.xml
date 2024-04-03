@@ -5,7 +5,7 @@
 
   <!-- Task list -->
   <command>
-    starver SL20d
+    starver SL23d
     TreeAnalyzer $INPUTFILE0 $JOBID config_3p5GeV_dca_low.txt correctionInfo_INPUT_3p5GeV_dca_low.root resolutionInfo_INPUT_3p5GeV_1to6_max11_averagedRes_SL23d.root
   </command>
 
