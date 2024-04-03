@@ -9,13 +9,13 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
   if(!file) {std::cout << "Wrong file!" << std::endl; return;}
 
   TCanvas *canvas = new TCanvas("canvas", "Canvas", 1000, 1000);//1200, 1200);
-  //canvas->SetGridx();
-  //canvas->SetGridy();
+  canvas->SetGridx(0);
+  canvas->SetGridy(0);
   canvas->SetLogy(0);
   canvas->SetTicks();
   canvas->SetTopMargin(0.04);
   canvas->SetRightMargin(0.04);
-  canvas->SetBottomMargin(0.1);
+  canvas->SetBottomMargin(0.12);
   canvas->SetLeftMargin(0.17);
   canvas->cd();
   
@@ -23,14 +23,14 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
   gStyle->SetOptStat(0);
   gStyle->SetEndErrorSize(6);
   gStyle->SetLineWidth(3);
-  //gStyle->SetOptDate();
+  gStyle->SetOptDate(0);
 
 
   TProfile *p_vn_pp = (TProfile*)file->Get("p_vn_pp");
   TProfile *p_vn_pm = (TProfile*)file->Get("p_vn_pm");
   TProfile *p_vn_kp = (TProfile*)file->Get("p_vn_kp");
   TProfile *p_vn_km = (TProfile*)file->Get("p_vn_km");
-  TProfile *p_vn_pr = (TProfile*)file->Get("p_vn_pr");
+  TProfile *p_vn_pr = (TProfile*)file->Get("p_vn_pr"); 
   p_vn_kp->Rebin();
   p_vn_km->Rebin();
 
@@ -65,8 +65,17 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
 
   if (useSystematics)
     {
-      systematicFile = TFile::Open("systematicErrors_thirdDraft.root", "READ");
-      jobID = "Normal_averagedRes";
+      if (sqrt_s_NN == 3.0)
+	systematicFile = TFile::Open("systematicErrors_3p0GeV.root", "READ");
+      else if (sqrt_s_NN == 3.2)
+	systematicFile = TFile::Open("systematicErrors_3p2GeV_SL23d.root", "READ");
+      else if (sqrt_s_NN == 3.5)
+	systematicFile = TFile::Open("systematicErrors_3p5GeV_SL23d.root", "READ");
+      else if (sqrt_s_NN == 3.9)
+	systematicFile = TFile::Open("systematicErrors_3p9GeV_SL23d.root", "READ");
+      else if (sqrt_s_NN == 4.5)
+	systematicFile = TFile::Open("systematicErrors_4p5GeV_SL23d.root", "READ");
+      jobID = "Normal";
       sys_pp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pp_"+jobID+"_flip");
       sys_pm = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_pm_"+jobID+"_flip");
       sys_kp = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_kp_"+jobID+"_flip");
@@ -147,14 +156,14 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
 	}
     }
 
-  THStack *allCentralityStack = new THStack("allCentralityStack", ";Centrality (%);v_{1} {#Psi_{1}}");
+  THStack *allCentralityStack = new THStack("allCentralityStack", ";Centrality (%);v_{3} {#Psi_{1}}");
   allCentralityStack->Add(h_vn_pp);
   allCentralityStack->Add(h_vn_pm);
   allCentralityStack->Add(h_vn_pr);
 
-  THStack *kaCentralityStack = new THStack("kaCentralityStack", ";Centrality (%);v_{1} {#Psi_{1}}");
+  THStack *kaCentralityStack = new THStack("kaCentralityStack", ";Centrality (%);v_{3} {#Psi_{1}}");
   kaCentralityStack->Add(h_vn_km);
-  kaCentralityStack->Add(h_vn_kp);
+  //kaCentralityStack->Add(h_vn_kp);
   
   // Make text boxes, legends, and line at zero
   TPaveText* prelimText = new TPaveText(15, 0.01, 45, 0.014, "NB");
@@ -164,24 +173,25 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
   prelimText->SetTextSize(0.04);
 
    
-  TPaveText *allText = new TPaveText(15, 0.01, 45, 0.018, "NB");
+  TPaveText *allText = new TPaveText(15, 0.007, 45, 0.018, "NB");
   if (sqrt_s_NN == 3.0)
-    allText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
+    allText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");// (year 2018)");
   else if (sqrt_s_NN == 3.2 || sqrt_s_NN == 3.22)
-    allText->AddText("Au+Au #sqrt{s_{NN}} = 3.2 GeV FXT (year 2019)");
+    allText->AddText("Au+Au #sqrt{s_{NN}} = 3.2 GeV FXT");// (year 2019)");
   else if (sqrt_s_NN == 3.5)
-    allText->AddText("Au+Au #sqrt{s_{NN}} = 3.5 GeV FXT (year 2020)");
+    allText->AddText("Au+Au #sqrt{s_{NN}} = 3.5 GeV FXT");// (year 2020)");
   else if (sqrt_s_NN == 3.9)
-    allText->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT (years 2019, 2020)");
+    allText->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT");// (years 2019, 2020)");
   else if (sqrt_s_NN == 4.5)
-    allText->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT (year 2020)");
-  allText->AddText("0 < y_{CM} < 0.5");
-  //allText->AddText("0.4 #leq p_{T} #leq 2.0 GeV");
+    allText->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT");// (year 2020)");
+  allText->AddText("0 < y_{c.m.} < 0.5");
+  allText->AddText("STAR");
   allText->SetFillColorAlpha(0,0);
   allText->SetLineColorAlpha(0,0);
-  allText->SetTextSize(0.04);
+  allText->SetTextFont(23);
+  allText->SetTextSize(45);
 
-  TPaveText *kaText = new TPaveText(15, 0.05, 48, 0.09, "NB");
+  TPaveText *kaText = new TPaveText(15, 0.038, 45, 0.095, "NB");//(15, 0.038, 48, 0.095, "NB");
   if (sqrt_s_NN == 3.0)
     kaText->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");
   else if (sqrt_s_NN == 3.2 || sqrt_s_NN == 3.22)
@@ -192,26 +202,30 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
     kaText->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT");
   else if (sqrt_s_NN == 4.5)
     kaText->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT");
-  kaText->AddText("0 < y_{CM} < 0.5");
-  kaText->AddText("0.4 < p_{T} < 1.6 GeV");
+  kaText->AddText("0 < y_{c.m.} < 0.5");
+  kaText->AddText("0.4 < p_{T} < 1.6 GeV/c");
+  kaText->AddText("STAR");
   kaText->SetFillColorAlpha(0,0);
   kaText->SetLineColorAlpha(0,0);
-  kaText->SetTextSize(0.045);
+  kaText->SetTextFont(23);
+  kaText->SetTextSize(45);
 
-  TLegend *allLegend = new TLegend(0.28, 0.14, 0.6, 0.3);
-  allLegend->AddEntry(h_vn_pp,"#pi^{+}, 0.18 #leq p_{T} #leq 1.6 GeV");
-  allLegend->AddEntry(h_vn_pm,"#pi^{-}, 0.18 #leq p_{T} #leq 1.6 GeV");
-  allLegend->AddEntry(h_vn_pr,"p, 0.4 #leq p_{T} #leq 2.0 GeV");
+  TLegend *allLegend = new TLegend(0.25, 0.14, 0.6, 0.3);
+  allLegend->AddEntry(h_vn_pp,"#pi^{+}, 0.18 #leq p_{T} #leq 1.6 GeV/c");
+  allLegend->AddEntry(h_vn_pm,"#pi^{-}, 0.18 #leq p_{T} #leq 1.6 GeV/c");
+  allLegend->AddEntry(h_vn_pr,"p, 0.4 #leq p_{T} #leq 2.0 GeV/c");
   allLegend->SetFillColorAlpha(0,0);
   allLegend->SetLineColorAlpha(0,0);
-  allLegend->SetTextSize(0.04);
+  allLegend->SetTextFont(23);
+  allLegend->SetTextSize(45);
 
-  TLegend *kaLegend = new TLegend(0.2, 0.8, 0.4, 0.9);
+  TLegend *kaLegend = new TLegend(0.5, 0.14, 0.7, 0.25);
   kaLegend->AddEntry(h_vn_kp,"K^{+}");
   kaLegend->AddEntry(h_vn_km,"K^{-}");
   kaLegend->SetFillColorAlpha(0,0);
   kaLegend->SetLineColorAlpha(0,0);
-  kaLegend->SetTextSize(0.04);
+  kaLegend->SetTextFont(23);
+  kaLegend->SetTextSize(45);
 
 
   TLine *zeroLine = new TLine(0, 0, 60, 0);
@@ -220,46 +234,77 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
   ////
 
   allCentralityStack->Draw();
-  allCentralityStack->GetXaxis()->SetLabelSize(0.045);
-  allCentralityStack->GetYaxis()->SetLabelSize(0.045);
+  allCentralityStack->GetXaxis()->SetLabelFont(133);
+  allCentralityStack->GetYaxis()->SetLabelFont(133);
+  allCentralityStack->GetXaxis()->SetLabelSize(55);
+  allCentralityStack->GetYaxis()->SetLabelSize(55);
   allCentralityStack->GetXaxis()->SetTitleOffset(1.0);
-  allCentralityStack->GetYaxis()->SetTitleOffset(1.7);
-  allCentralityStack->GetXaxis()->SetTitleSize(0.045);
-  allCentralityStack->GetYaxis()->SetTitleSize(0.05);
+  allCentralityStack->GetYaxis()->SetTitleOffset(1.5);
+  allCentralityStack->GetXaxis()->SetTitleFont(133);
+  allCentralityStack->GetYaxis()->SetTitleFont(133);
+  allCentralityStack->GetXaxis()->SetTitleSize(55);
+  allCentralityStack->GetYaxis()->SetTitleSize(55);
   allCentralityStack->GetXaxis()->SetNdivisions(210);
+  allCentralityStack->GetYaxis()->SetNdivisions(505);
   allCentralityStack->SetMaximum(0.02);
   allCentralityStack->SetMinimum(-0.03);
-  allCentralityStack->Draw("NOSTACK EP");
+  allCentralityStack->Draw("NOSTACK X0 EP");
   zeroLine->Draw("SAME");
-  allCentralityStack->Draw("NOSTACK EP SAME");
+  allCentralityStack->Draw("NOSTACK EP X0 SAME");
   if (useSystematics)
-    {  
+    {
+      for (int i = 0; i < sys_pp->GetN(); i++)
+	{
+	  sys_pp->SetPointError(i, 0.0, sys_pp->GetErrorY(i));
+	  sys_pm->SetPointError(i, 0.0, sys_pm->GetErrorY(i));
+	  sys_pr->SetPointError(i, 0.0, sys_pr->GetErrorY(i));
+	}
       sys_pp->Draw("[]");
       sys_pm->Draw("[]");
       sys_pr->Draw("[]");
     }
   allLegend->Draw();
-  //allText->Draw();
+  allText->Draw();
   //prelimText->Draw();
   canvas->SaveAs("v3_allCentralityStack.pdf");
-  //canvas->SaveAs("v3_allCentralityStack.png");
+  canvas->SaveAs("v3_allCentralityStack.png");
   canvas->Clear();
 
+
+  TGraphErrors* g_kp;
+  if (useSystematics)
+    {
+      g_kp = new TGraphErrors(h_vn_kp);
+      for (int i = 0; i < g_kp->GetN(); i++)
+	{
+	  g_kp->SetPointError(i, 0.0, g_kp->GetErrorY(i));
+	  sys_kp->SetPointError(i, 0.0, sys_kp->GetErrorY(i));
+	  sys_km->SetPointError(i, 0.0, sys_km->GetErrorY(i));
+	}
+      PlotUtils::shiftGraphX(g_kp, -1.5);
+      PlotUtils::shiftGraphX(sys_kp, -1.5);
+    }
+  
   kaCentralityStack->Draw();
-  kaCentralityStack->GetXaxis()->SetLabelSize(0.045);
-  kaCentralityStack->GetYaxis()->SetLabelSize(0.045);
+  kaCentralityStack->GetXaxis()->SetLabelFont(133);
+  kaCentralityStack->GetYaxis()->SetLabelFont(133);
+  kaCentralityStack->GetXaxis()->SetLabelSize(55);
+  kaCentralityStack->GetYaxis()->SetLabelSize(55);
   kaCentralityStack->GetXaxis()->SetTitleOffset(1.0);
-  kaCentralityStack->GetYaxis()->SetTitleOffset(1.7);
-  kaCentralityStack->GetXaxis()->SetTitleSize(0.045);
-  kaCentralityStack->GetYaxis()->SetTitleSize(0.05);
+  kaCentralityStack->GetYaxis()->SetTitleOffset(1.5);
+  kaCentralityStack->GetXaxis()->SetTitleFont(133);
+  kaCentralityStack->GetYaxis()->SetTitleFont(133);
+  kaCentralityStack->GetXaxis()->SetTitleSize(55);
+  kaCentralityStack->GetYaxis()->SetTitleSize(55);
   kaCentralityStack->GetXaxis()->SetNdivisions(210);
   kaCentralityStack->SetMaximum(0.1);
   kaCentralityStack->SetMinimum(-0.1);
-  kaCentralityStack->Draw("NOSTACK EP");
+  kaCentralityStack->Draw("NOSTACK EP X0");
   zeroLine->Draw("SAME");
-  kaCentralityStack->Draw("NOSTACK EP SAME");
+  kaCentralityStack->Draw("NOSTACK EP X0 SAME");
   if (useSystematics)
     {
+      g_kp->Draw("PZ");
       sys_kp->Draw("[]");
       sys_km->Draw("[]");
     }
@@ -267,7 +312,7 @@ void prelimCentralityPlots(TString jobID, Bool_t useSystematics = false, Double_
   kaText->Draw();
   //prelimText->Draw();
   canvas->SaveAs("v3_kaCentralityStack.pdf");
-  //canvas->SaveAs("v3_kaCentralityStack.png");
+  canvas->SaveAs("v3_kaCentralityStack.png");
   canvas->Clear();
 
   if (useSystematics)

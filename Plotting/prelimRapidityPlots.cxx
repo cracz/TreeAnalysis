@@ -4,24 +4,26 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
+  //TString fileName = jobID + ".root";
 
   TFile *file = TFile::Open(fileName);
   if(!file) {cout << "Wrong file!" << endl; return;}
 
   TCanvas *canvas = new TCanvas("canvas", "Canvas", 1000, 1000);
-  //canvas->SetGrid();
+  canvas->SetGridx(0);
+  canvas->SetGridy(0);
   canvas->SetTicks();
-  canvas->SetLeftMargin(0.15);
+  canvas->SetLeftMargin(0.16);
   canvas->SetTopMargin(0.04);
   canvas->SetRightMargin(0.04);
-  canvas->SetBottomMargin(0.1);
+  canvas->SetBottomMargin(0.11);
   canvas->cd();
 
   gStyle->SetErrorX(0);
   gStyle->SetOptStat(0);
   gStyle->SetEndErrorSize(6);
   gStyle->SetLineWidth(3);
-  //gStyle->SetOptDate();
+  gStyle->SetOptDate(0);
 
   TProfile2D *p2_vn_yCM_cent_pr = (TProfile2D*)file->Get("p2_vn_yCM_cent_pr");
   TProfile2D *p2_vn_yCM_cent_pr_symmetry = (TProfile2D*)file->Get("p2_vn_yCM_cent_pr_symmetry");
@@ -64,7 +66,7 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
 
   if (useSystematics)
     {
-      systematicFile = TFile::Open("systematicErrors_thirdDraft.root", "READ");
+      systematicFile = TFile::Open("systematicErrors_3p0GeV.root", "READ");
       sys_yCM_00to10_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_00to10_pr_px");
       sys_yCM_10to40_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_10to40_pr_px");
       sys_yCM_40to60_pr = (TGraphErrors*)systematicFile->Get("Graph_from_p_vn_yCM_40to60_pr_px");
@@ -77,13 +79,13 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
 
   std::cout << std::endl << "Fitting 10-40% non-symmetric: " << std::endl;
 
-  TF1* function = new TF1("function", "[0]*x + [1]*x*x*x", 0.0, 1.0);
+  TF1* function0 = new TF1("function0", "[0]*x + [1]*x*x*x", 0.0, 1.0);
   TH1D* h_10to40 = (TH1D*)h_vn_yCM_10to40_pr->Clone();
-  h_10to40->Fit(function, "", "", 0.0, 1.0);
-  Double_t slopeMeasured = function->GetParameter(0);
+  h_10to40->Fit(function0, "", "", 0.0, 1.0);
+  Double_t slopeMeasured = function0->GetParameter(0);
 
   std::cout << "Measured slope = " << slopeMeasured << std::endl
-	    << "Chi^2/NDF = " << function->GetChisquare() / function->GetNDF() << std::endl
+	    << "Chi^2/NDF = " << function0->GetChisquare() / function0->GetNDF() << std::endl
 	    << std::endl
 	    << "done"
 	    << std::endl;
@@ -201,16 +203,43 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
 
   if (useSystematics)
     {
+      Double_t* sys_pointsX_00to10 = sys_yCM_00to10_pr->GetX();
+      Double_t* sys_pointsX_10to40 = sys_yCM_10to40_pr->GetX();
+      Double_t* sys_pointsX_40to60 = sys_yCM_40to60_pr->GetX();
+
+      Double_t* sys_pointsY_00to10 = sys_yCM_00to10_pr->GetY();
+      Double_t* sys_pointsY_10to40 = sys_yCM_10to40_pr->GetY();
+      Double_t* sys_pointsY_40to60 = sys_yCM_40to60_pr->GetY();
+
+      Double_t* sys_errorsY_00to10 = sys_yCM_00to10_pr->GetEY();
+      Double_t* sys_errorsY_10to40 = sys_yCM_10to40_pr->GetEY();
+      Double_t* sys_errorsY_40to60 = sys_yCM_40to60_pr->GetEY();
+
+      //Make mirrored systematics
       int j = 19;
       for (int i = 0; i < 10; i++)
 	{
-	  sys_yCM_00to10_pr->SetPointY(i, -sys_yCM_00to10_pr->GetPointY(j));
-	  sys_yCM_00to10_pr->SetPointError(i,0.0, sys_yCM_00to10_pr->GetErrorY(j));
-	  sys_yCM_10to40_pr->SetPointY(i, -sys_yCM_10to40_pr->GetPointY(j));
-	  sys_yCM_10to40_pr->SetPointError(i,0.0, sys_yCM_10to40_pr->GetErrorY(j));
-	  sys_yCM_40to60_pr->SetPointY(i, -sys_yCM_40to60_pr->GetPointY(j));
-	  sys_yCM_40to60_pr->SetPointError(i,0.0, sys_yCM_40to60_pr->GetErrorY(j));
+	  sys_yCM_00to10_pr->SetPoint(i, -sys_pointsX_00to10[j], -sys_pointsY_00to10[j]);
+	  sys_yCM_00to10_pr->SetPointError(i,0.0, sys_errorsY_00to10[j]);
+	  sys_yCM_10to40_pr->SetPoint(i, -sys_pointsX_10to40[j], -sys_pointsY_10to40[j]);
+	  sys_yCM_10to40_pr->SetPointError(i,0.0, sys_errorsY_10to40[j]);
+	  sys_yCM_40to60_pr->SetPoint(i, -sys_pointsX_40to60[j], -sys_pointsY_40to60[j]);
+	  sys_yCM_40to60_pr->SetPointError(i,0.0, sys_errorsY_40to60[j]);	  
 	  j--;
+	}
+
+      //Removing x error bars
+      for (int i = 10; i < 20; i++)
+	{
+	  sys_yCM_00to10_pr->SetPointError(i, 0.0, sys_errorsY_00to10[i]);
+	  sys_yCM_10to40_pr->SetPointError(i, 0.0, sys_errorsY_10to40[i]);
+	  sys_yCM_40to60_pr->SetPointError(i, 0.0, sys_errorsY_40to60[i]);
+	}
+      for(int i = 0; i < 20; i++)
+	{
+	  sys_yCM_00to10_pr_symm->SetPointError(i, 0.0, sys_yCM_00to10_pr_symm->GetErrorY(i));
+	  sys_yCM_10to40_pr_symm->SetPointError(i, 0.0, sys_yCM_10to40_pr_symm->GetErrorY(i));
+	  sys_yCM_40to60_pr_symm->SetPointError(i, 0.0, sys_yCM_40to60_pr_symm->GetErrorY(i));
 	}
     }
 
@@ -220,13 +249,13 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   h_vn_yCM_10to40_pr->SetMarkerStyle(20);
   h_vn_yCM_40to60_pr->SetMarkerStyle(33);
   h_vn_yCM_00to10_pr->SetMarkerColor(kRed-4);
-  //h_vn_yCM_10to40_pr->SetMarkerColor(kBlue-4);
+  h_vn_yCM_10to40_pr->SetMarkerColor(kBlack);
   h_vn_yCM_40to60_pr->SetMarkerColor(kBlue-4);
   h_vn_yCM_00to10_pr->SetMarkerSize(2);
   h_vn_yCM_10to40_pr->SetMarkerSize(2);
   h_vn_yCM_40to60_pr->SetMarkerSize(3);
   h_vn_yCM_00to10_pr->SetLineColor(kRed-4);
-  //h_vn_yCM_10to40_pr->SetLineColor(kBlue-4);
+  h_vn_yCM_10to40_pr->SetLineColor(kBlack);
   h_vn_yCM_40to60_pr->SetLineColor(kBlue-4);
   h_vn_yCM_00to10_pr->SetLineWidth(3);
   h_vn_yCM_10to40_pr->SetLineWidth(3);
@@ -236,13 +265,13 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   h_vn_yCM_10to40_pr_symm->SetMarkerStyle(20);
   h_vn_yCM_40to60_pr_symm->SetMarkerStyle(33);
   h_vn_yCM_00to10_pr_symm->SetMarkerColor(kRed-4);
-  //h_vn_yCM_10to40_pr_symm->SetMarkerColor(kBlue-4);
+  h_vn_yCM_10to40_pr_symm->SetMarkerColor(kBlack);
   h_vn_yCM_40to60_pr_symm->SetMarkerColor(kBlue-4);
   h_vn_yCM_00to10_pr_symm->SetMarkerSize(2);
   h_vn_yCM_10to40_pr_symm->SetMarkerSize(2);
   h_vn_yCM_40to60_pr_symm->SetMarkerSize(3);
   h_vn_yCM_00to10_pr_symm->SetLineColor(kRed-4);
-  //h_vn_yCM_10to40_pr_symm->SetLineColor(kBlue-4);
+  h_vn_yCM_10to40_pr_symm->SetLineColor(kBlack);
   h_vn_yCM_40to60_pr_symm->SetLineColor(kBlue-4);
   h_vn_yCM_00to10_pr_symm->SetLineWidth(3);
   h_vn_yCM_10to40_pr_symm->SetLineWidth(3);
@@ -251,17 +280,17 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   if (useSystematics)
     {
       sys_yCM_00to10_pr->SetMarkerColor(kRed-4);
-      //sys_yCM_10to40_pr->SetMarkerColor(kBlue-4);
+      sys_yCM_10to40_pr->SetMarkerColor(kBlack);
       sys_yCM_40to60_pr->SetMarkerColor(kBlue-4);
       sys_yCM_00to10_pr->SetLineColor(kRed-4);
-      //sys_yCM_10to40_pr->SetLineColor(kBlue-4);
+      sys_yCM_10to40_pr->SetLineColor(kBlack);
       sys_yCM_40to60_pr->SetLineColor(kBlue-4);
 
       sys_yCM_00to10_pr_symm->SetMarkerColor(kRed-4);
-      //sys_yCM_10to40_pr_symm->SetMarkerColor(kBlue-4);
+      sys_yCM_10to40_pr_symm->SetMarkerColor(kBlack);
       sys_yCM_40to60_pr_symm->SetMarkerColor(kBlue-4);
       sys_yCM_00to10_pr_symm->SetLineColor(kRed-4);
-      //sys_yCM_10to40_pr_symm->SetLineColor(kBlue-4);
+      sys_yCM_10to40_pr_symm->SetLineColor(kBlack);
       sys_yCM_40to60_pr_symm->SetLineColor(kBlue-4);
     }
   
@@ -269,90 +298,21 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   h_vn_yCM_10to40_pr_mirror->SetMarkerStyle(24);
   h_vn_yCM_40to60_pr_mirror->SetMarkerStyle(27);
   h_vn_yCM_00to10_pr_mirror->SetMarkerColor(kRed-4);
-  //h_vn_yCM_10to40_pr_mirror->SetMarkerColor(kBlue-4);
+  h_vn_yCM_10to40_pr_mirror->SetMarkerColor(kBlack);
   h_vn_yCM_40to60_pr_mirror->SetMarkerColor(kBlue-4);
   h_vn_yCM_00to10_pr_mirror->SetMarkerSize(2);
   h_vn_yCM_10to40_pr_mirror->SetMarkerSize(2);
   h_vn_yCM_40to60_pr_mirror->SetMarkerSize(3);
   h_vn_yCM_00to10_pr_mirror->SetLineColor(kRed-4);
-  //h_vn_yCM_10to40_pr_mirror->SetLineColor(kBlue-4);
+  h_vn_yCM_10to40_pr_mirror->SetLineColor(kBlack);
   h_vn_yCM_40to60_pr_mirror->SetLineColor(kBlue-4);
   h_vn_yCM_00to10_pr_mirror->SetLineWidth(3);
   h_vn_yCM_10to40_pr_mirror->SetLineWidth(3);
   h_vn_yCM_40to60_pr_mirror->SetLineWidth(3);
   ////
 
-  // Even and odd components of the symmetric plots
-  /*
-  TH1D* h_even_00to10 = PlotUtils::getEvenComponent(h_vn_yCM_00to10_pr_symm);
-  TH1D* h_even_10to40 = PlotUtils::getEvenComponent(h_vn_yCM_10to40_pr_symm);
-  TH1D* h_even_40to60 = PlotUtils::getEvenComponent(h_vn_yCM_40to60_pr_symm);
-  TH1D* h_odd_00to10 = PlotUtils::getOddComponent(h_vn_yCM_00to10_pr_symm);
-  TH1D* h_odd_10to40 = PlotUtils::getOddComponent(h_vn_yCM_10to40_pr_symm);
-  TH1D* h_odd_40to60 = PlotUtils::getOddComponent(h_vn_yCM_40to60_pr_symm);
-  */
-  TProfileHelper ph_even_00to10;
-  TProfileHelper ph_even_10to40;
-  TProfileHelper ph_even_40to60;
-  TProfileHelper ph_odd_00to10;
-  TProfileHelper ph_odd_10to40;
-  TProfileHelper ph_odd_40to60;
 
-  ph_even_00to10.initialize(p_vn_yCM_00to10_pr_symm);
-  ph_even_10to40.initialize(p_vn_yCM_10to40_pr_symm);
-  ph_even_40to60.initialize(p_vn_yCM_40to60_pr_symm);
-  ph_odd_00to10.initialize(p_vn_yCM_00to10_pr_symm);
-  ph_odd_10to40.initialize(p_vn_yCM_10to40_pr_symm);
-  ph_odd_40to60.initialize(p_vn_yCM_40to60_pr_symm);
-
-  ph_even_00to10.removeOddComponent();
-  ph_even_10to40.removeOddComponent();
-  ph_even_40to60.removeOddComponent();
-  ph_odd_00to10.removeEvenComponent();
-  ph_odd_10to40.removeEvenComponent();
-  ph_odd_40to60.removeEvenComponent();
-
-  TH1D* h_even_00to10 = ph_even_00to10.getHistogram("h_even_00to10");
-  TH1D* h_even_10to40 = ph_even_10to40.getHistogram("h_even_10to40");
-  TH1D* h_even_40to60 = ph_even_40to60.getHistogram("h_even_40to60");
-  TH1D* h_odd_00to10 = ph_odd_00to10.getHistogram("h_odd_00to10");
-  TH1D* h_odd_10to40 = ph_odd_10to40.getHistogram("h_odd_10to40");
-  TH1D* h_odd_40to60 = ph_odd_40to60.getHistogram("h_odd_40to60");
-
-  h_even_00to10->SetMarkerStyle(21);
-  h_even_10to40->SetMarkerStyle(20);
-  h_even_40to60->SetMarkerStyle(33);
-  h_even_00to10->SetMarkerColor(kRed-4);
-  //h_even_10to40->SetMarkerColor(kBlue-4);
-  h_even_40to60->SetMarkerColor(kBlue-4);
-  h_even_00to10->SetMarkerSize(2);
-  h_even_10to40->SetMarkerSize(2);
-  h_even_40to60->SetMarkerSize(3);
-  h_even_00to10->SetLineColor(kRed-4);
-  //h_even_10to40->SetLineColor(kBlue-4);
-  h_even_40to60->SetLineColor(kBlue-4);
-  h_even_00to10->SetLineWidth(3);
-  h_even_10to40->SetLineWidth(3);
-  h_even_40to60->SetLineWidth(3);
-
-  h_odd_00to10->SetMarkerStyle(21);
-  h_odd_10to40->SetMarkerStyle(20);
-  h_odd_40to60->SetMarkerStyle(33);
-  h_odd_00to10->SetMarkerColor(kRed-4);
-  //h_odd_10to40->SetMarkerColor(kBlue-4);
-  h_odd_40to60->SetMarkerColor(kBlue-4);
-  h_odd_00to10->SetMarkerSize(2);
-  h_odd_10to40->SetMarkerSize(2);
-  h_odd_40to60->SetMarkerSize(3);
-  h_odd_00to10->SetLineColor(kRed-4);
-  //h_odd_10to40->SetLineColor(kBlue-4);
-  h_odd_40to60->SetLineColor(kBlue-4);
-  h_odd_00to10->SetLineWidth(3);
-  h_odd_10to40->SetLineWidth(3);
-  h_odd_40to60->SetLineWidth(3);
-  ////
-
-  THStack *prRapidityStack   = new THStack("prRapidityStack", ";y-y_{mid};v_{1} {#Psi_{1}}");
+  THStack *prRapidityStack   = new THStack("prRapidityStack", ";y-y_{mid};v_{3}{#Psi_{1}}");
   prRapidityStack->Add(h_vn_yCM_00to10_pr);
   if (sqrt_s_NN < 3.5)
     prRapidityStack->Add(h_vn_yCM_40to60_pr);
@@ -362,23 +322,11 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
     prRapidityStack->Add(h_vn_yCM_40to60_pr_mirror);
   prRapidityStack->Add(h_vn_yCM_10to40_pr_mirror);
 
-  THStack *prRapidityStack_symm = new THStack("prRapidityStack_symm", ";y-y_{mid};v_{1} {#Psi_{1}}");
+  THStack *prRapidityStack_symm = new THStack("prRapidityStack_symm", ";y-y_{mid};v_{3}{#Psi_{1}}");
   prRapidityStack_symm->Add(h_vn_yCM_00to10_pr_symm);
   if (sqrt_s_NN < 3.5)
     prRapidityStack_symm->Add(h_vn_yCM_40to60_pr_symm);
   prRapidityStack_symm->Add(h_vn_yCM_10to40_pr_symm);
-
-  THStack *prEvenStack = new THStack("prEvenStack", ";y-y_{mid};v_{1}^{even} {#Psi_{1}}");
-  if (sqrt_s_NN < 3.5)
-    prEvenStack->Add(h_even_40to60);
-  prEvenStack->Add(h_even_00to10);
-  prEvenStack->Add(h_even_10to40);
-  
-  THStack *prOddStack = new THStack("prOddStack", ";y-y_{mid};v_{1}^{odd} {#Psi_{1}}");
-  if (sqrt_s_NN < 3.5)
-    prOddStack->Add(h_odd_40to60);
-  prOddStack->Add(h_odd_00to10);
-  prOddStack->Add(h_odd_10to40);
   
 
   // Make text boxes, legends, and line at zero
@@ -389,7 +337,8 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
     prLegend->AddEntry(h_vn_yCM_40to60_pr, "40 - 60%");
   prLegend->SetBorderSize(0);
   prLegend->SetFillColorAlpha(0,0);
-  prLegend->SetTextSize(0.04);
+  prLegend->SetTextFont(23);
+  prLegend->SetTextSize(45);
 
   TLegend *prLegend_symm = new TLegend(0.19, 0.15, 0.39, 0.3);
   prLegend_symm->AddEntry(h_vn_yCM_00to10_pr_symm, "0 - 10%");
@@ -398,61 +347,49 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
     prLegend_symm->AddEntry(h_vn_yCM_40to60_pr_symm, "40 - 60%");
   prLegend_symm->SetBorderSize(0);
   prLegend_symm->SetFillColorAlpha(0,0);
-  prLegend_symm->SetTextSize(0.04);
+  prLegend_symm->SetTextFont(23);
+  prLegend_symm->SetTextSize(45);
 
-  TPaveText *prText_y = new TPaveText(-0.35, 0.03, 0.75, 0.055, "NB");
-  prText_y->AddText("Proton");
+  TPaveText *prText_y = new TPaveText(-0.35, 0.025, 0.75, 0.055, "NB");
   if (sqrt_s_NN == 3.0)
-    prText_y->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
+    prText_y->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");// (year 2018)");
   else if (sqrt_s_NN == 3.2 || sqrt_s_NN == 3.22)
-    prText_y->AddText("Au+Au #sqrt{s_{NN}} = 3.2 GeV FXT (year 2019)");
+    prText_y->AddText("Au+Au #sqrt{s_{NN}} = 3.2 GeV FXT");// (year 2019)");
   else if (sqrt_s_NN == 3.5)
-    prText_y->AddText("Au+Au #sqrt{s_{NN}} = 3.5 GeV FXT (year 2020)");
+    prText_y->AddText("Au+Au #sqrt{s_{NN}} = 3.5 GeV FXT");// (year 2020)");
   else if (sqrt_s_NN == 3.9)
-    prText_y->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT (years 2019, 2020)");
+    prText_y->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT");// (years 2019, 2020)");
   else if (sqrt_s_NN == 4.5)
-    prText_y->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT (year 2020)");
-  prText_y->AddText("0.4 #leq p_{T} #leq 2.0 GeV");
+    prText_y->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT");// (year 2020)");
+  prText_y->AddText("Proton");
+  prText_y->AddText("0.4 #leq p_{T} #leq 2.0 GeV/c");
+  prText_y->AddText("STAR");
   prText_y->SetFillColorAlpha(0,0);
   prText_y->SetLineColorAlpha(0,0);
-  prText_y->SetTextSize(.035);
+  prText_y->SetTextFont(23);
+  prText_y->SetTextSize(45);
  
-  //TPaveText *prText_y_symm = new TPaveText(-0.6, 0.037, 0.6, 0.075, "NB");
-  TPaveText *prText_y_symm = new TPaveText(-0.8, 0.03, 1.0, 0.065, "NB");
+  //TPaveText *prText_y_symm = new TPaveText(-0.8, 0.02, 1.0, 0.065, "NB");
+  TPaveText *prText_y_symm = new TPaveText(-0.8, 0.025, 1.0, 0.065, "NB");
   prText_y_symm->SetTextAlign(32);
   if (sqrt_s_NN == 3.0)
-    prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
+    prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT");// (year 2018)");
   else if (sqrt_s_NN == 3.2 || sqrt_s_NN == 3.22)
-    prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 3.2 GeV FXT (year 2019)");
+    prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 3.2 GeV FXT");// (year 2019)");
   else if (sqrt_s_NN == 3.5)
-    prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 3.5 GeV FXT (year 2020)");
+    prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 3.5 GeV FXT");// (year 2020)");
   else if (sqrt_s_NN == 3.9)
-    prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT (years 2019, 2020)");
+    prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT");// (years 2019, 2020)");
   else if (sqrt_s_NN == 4.5)
-    prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT (year 2020)");
+    prText_y_symm->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT");// (year 2020)");
   prText_y_symm->AddText("Proton");
-  prText_y_symm->AddText("1.0 #leq p_{T} #leq 2.5 GeV");
+  prText_y_symm->AddText("1.0 #leq p_{T} #leq 2.5 GeV/c");
+  prText_y_symm->AddText("STAR");
   prText_y_symm->SetFillColorAlpha(0,0);
   prText_y_symm->SetLineColorAlpha(0,0);
-  prText_y_symm->SetTextSize(.045);
-
-  TPaveText *prText_odd = new TPaveText(-0.8, 0.04, 1.0, 0.075, "NB");
-  prText_odd->SetTextAlign(32);
-  if (sqrt_s_NN == 3.0)
-    prText_odd->AddText("Au+Au #sqrt{s_{NN}} = 3.0 GeV FXT (year 2018)");
-  else if (sqrt_s_NN == 3.2 || sqrt_s_NN == 3.22)
-    prText_odd->AddText("Au+Au #sqrt{s_{NN}} = 3.2 GeV FXT (year 2019)");
-  else if (sqrt_s_NN == 3.5)
-    prText_odd->AddText("Au+Au #sqrt{s_{NN}} = 3.5 GeV FXT (year 2020)");
-  else if (sqrt_s_NN == 3.9)
-    prText_odd->AddText("Au+Au #sqrt{s_{NN}} = 3.9 GeV FXT (years 2019, 2020)");
-  else if (sqrt_s_NN == 4.5)
-    prText_odd->AddText("Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT (year 2020)");
-  prText_odd->AddText("Proton");
-  prText_odd->AddText("1.0 #leq p_{T} #leq 2.5 GeV");
-  prText_odd->SetFillColorAlpha(0,0);
-  prText_odd->SetLineColorAlpha(0,0);
-  prText_odd->SetTextSize(.04);
+  prText_y_symm->SetTextFont(23);
+  prText_y_symm->SetTextSize(45);
+  
 
   TPaveText* prelimText_symm = new TPaveText(-0.9, -0.05, -0.1, -0.04, "NB");
   prelimText_symm->AddText("STAR Preliminary");
@@ -472,13 +409,17 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
   ////
 
   prRapidityStack->Draw();
-  prRapidityStack->GetYaxis()->SetLabelSize(0.043);
-  prRapidityStack->GetXaxis()->SetLabelSize(0.043);
+  prRapidityStack->GetXaxis()->SetLabelFont(133);
+  prRapidityStack->GetYaxis()->SetLabelFont(133);
+  prRapidityStack->GetXaxis()->SetLabelSize(55);
+  prRapidityStack->GetYaxis()->SetLabelSize(55);
   prRapidityStack->GetYaxis()->SetTitleOffset(1.4);
-  prRapidityStack->GetXaxis()->SetTitleOffset(1.0);
-  prRapidityStack->GetXaxis()->SetNdivisions(210);
-  prRapidityStack->GetXaxis()->SetTitleSize(0.045);
-  prRapidityStack->GetYaxis()->SetTitleSize(0.05);
+  prRapidityStack->GetXaxis()->SetTitleOffset(0.8);
+  prRapidityStack->GetXaxis()->SetTitleFont(133);
+  prRapidityStack->GetYaxis()->SetTitleFont(133);
+  prRapidityStack->GetXaxis()->SetTitleSize(55);
+  prRapidityStack->GetYaxis()->SetTitleSize(55);
+  prRapidityStack->GetXaxis()->SetNdivisions(505);
   prRapidityStack->Draw();
   prRapidityStack->SetMaximum(0.06);
   prRapidityStack->SetMinimum(-0.06);
@@ -492,26 +433,32 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
     }
   prRapidityStack->Draw("NOSTACK EP SAME");
   prLegend->Draw();
-  //prText_y->Draw();
+  prText_y->Draw();
 
   //prelimText->Draw();
   //function->Draw("C SAME");
   canvas->SaveAs("v3_prRapidityStack.pdf");
-  //canvas->SaveAs("v3_prRapidityStack.png");
+  canvas->SaveAs("v3_prRapidityStack.png");
   canvas->Clear();
 
 
   prRapidityStack_symm->Draw();
-  prRapidityStack_symm->GetYaxis()->SetLabelSize(0.043);
-  prRapidityStack_symm->GetXaxis()->SetLabelSize(0.043);
+  prRapidityStack_symm->GetXaxis()->SetLabelFont(133);
+  prRapidityStack_symm->GetYaxis()->SetLabelFont(133);
+  prRapidityStack_symm->GetXaxis()->SetLabelSize(55);
+  prRapidityStack_symm->GetYaxis()->SetLabelSize(55);
   prRapidityStack_symm->GetYaxis()->SetTitleOffset(1.4);
-  prRapidityStack_symm->GetXaxis()->SetTitleOffset(1.0);
-  prRapidityStack_symm->GetXaxis()->SetNdivisions(210);
-  prRapidityStack_symm->GetXaxis()->SetTitleSize(0.045);
-  prRapidityStack_symm->GetYaxis()->SetTitleSize(0.05);
+  prRapidityStack_symm->GetXaxis()->SetTitleOffset(0.8);
+  prRapidityStack_symm->GetXaxis()->SetTitleFont(133);
+  prRapidityStack_symm->GetYaxis()->SetTitleFont(133);
+  prRapidityStack_symm->GetXaxis()->SetTitleSize(55);
+  prRapidityStack_symm->GetYaxis()->SetTitleSize(55);
+  prRapidityStack_symm->GetXaxis()->SetNdivisions(505);
   prRapidityStack_symm->Draw();
   prRapidityStack_symm->SetMaximum(0.07);
   prRapidityStack_symm->SetMinimum(-0.09);
+  //prRapidityStack_symm->SetMaximum(0.5);
+  //prRapidityStack_symm->SetMinimum(-0.5);
   prRapidityStack_symm->Draw("NOSTACK EP");
   zeroLine_y_pr->Draw("SAME");
   //h_00to10_symm->Draw("SAME");
@@ -525,60 +472,19 @@ void prelimRapidityPlots(TString jobID, Bool_t useSystematics = false, Double_t 
     }
   prRapidityStack_symm->Draw("NOSTACK EP SAME");
   prLegend_symm->Draw();
-  //prText_y_symm->Draw();
+  prText_y_symm->Draw();
 
   //prelimText_symm->Draw();
   //function1->Draw("C SAME");
   //function2->Draw("C SAME");
   //function3->Draw("C SAME");
   canvas->SaveAs("v3_prRapidityStack_symm.pdf");
-  //canvas->SaveAs("v3_prRapidityStack_symm.png");
+  canvas->SaveAs("v3_prRapidityStack_symm.png");
   canvas->Clear();
 
-  prEvenStack->Draw();
-  prEvenStack->GetYaxis()->SetLabelSize(0.043);
-  prEvenStack->GetXaxis()->SetLabelSize(0.043);
-  prEvenStack->GetYaxis()->SetTitleOffset(1.4);
-  prEvenStack->GetXaxis()->SetTitleOffset(1.0);
-  prEvenStack->GetXaxis()->SetNdivisions(210);
-  prEvenStack->GetXaxis()->SetTitleSize(0.045);
-  prEvenStack->GetYaxis()->SetTitleSize(0.05);
-  prEvenStack->Draw();
-  prEvenStack->SetMaximum(0.02);
-  prEvenStack->SetMinimum(-0.03);
-  prEvenStack->Draw("NOSTACK EP");
-  zeroLine_y_pr->Draw("SAME");
-  prEvenStack->Draw("NOSTACK EP SAME");
-  prLegend_symm->Draw();
-  //prText_y_symm->Draw();
-  //prelimText_symm->Draw();
-  canvas->SaveAs("v3_prEvenStack.pdf");
-  //canvas->SaveAs("v3_prEvenStack.png");
-  canvas->Clear();
-
-  prOddStack->Draw();
-  prOddStack->GetYaxis()->SetLabelSize(0.043);
-  prOddStack->GetXaxis()->SetLabelSize(0.043);
-  prOddStack->GetYaxis()->SetTitleOffset(1.4);
-  prOddStack->GetXaxis()->SetTitleOffset(1.0);
-  prOddStack->GetXaxis()->SetNdivisions(210);
-  prOddStack->GetXaxis()->SetTitleSize(0.045);
-  prOddStack->GetYaxis()->SetTitleSize(0.05);
-  prOddStack->Draw();
-  prOddStack->SetMaximum(0.08);
-  prOddStack->SetMinimum(-0.08);
-  prOddStack->Draw("NOSTACK EP");
-  zeroLine_y_pr->Draw("SAME");
-  prOddStack->Draw("NOSTACK EP SAME");
-  prLegend_symm->Draw();
-  //prText_odd->Draw();
-  //prelimText_symm->Draw();
-  canvas->SaveAs("v3_prOddStack.pdf");
-  //canvas->SaveAs("v3_prOddStack.png");
-  canvas->Clear();
   
-  if (useSystematics)
-    systematicFile->Close();
+  //if (useSystematics)
+  //systematicFile->Close();
   
-  file->Close();
+  //file->Close();
 }

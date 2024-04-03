@@ -4,18 +4,28 @@ void resolutions(TString jobID, TString order_n_str)
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
+  //TString fileName = jobID + ".root";
 
   TFile *file = TFile::Open(fileName);
   if(!file) {cout << "Wrong file!" << endl; return;}
 
   TFile *resolutionInfo_INPUT = new TFile("resolutionInfo_INPUT.root", "RECREATE");
-
+  /*
   TCanvas *canvas = new TCanvas("canvas", "Canvas", 875, 675);
   canvas->SetGridx();
   canvas->SetGridy();
   //canvas->SetLeftMargin(0.15);
   canvas->cd();
-
+  */
+  TCanvas *canvas = new TCanvas("canvas", "Canvas", 1200, 1000);
+  canvas->SetTicks();
+  canvas->SetGrid();
+  canvas->SetTopMargin(0.04);
+  canvas->SetBottomMargin(0.12);
+  canvas->SetRightMargin(0.04);
+  canvas->SetLeftMargin(0.13);
+  canvas->cd();
+  
   TProfile *p_EpdAEpdB = (TProfile*)file->Get("p_EpdAEpdB");
   TProfile *p_TpcBEpdA = (TProfile*)file->Get("p_TpcBEpdA");
   TProfile *p_TpcBEpdB = (TProfile*)file->Get("p_TpcBEpdB");
@@ -78,7 +88,18 @@ void resolutions(TString jobID, TString order_n_str)
       dR_AvsB_save = R_AvsB_save * TMath::Sqrt((dEpdAEpdB_save/(2*EpdAEpdB_save))*(dEpdAEpdB_save/(2*EpdAEpdB_save)) +
 					       (dTpcBEpdA_save/(2*TpcBEpdA_save))*(dTpcBEpdA_save/(2*TpcBEpdA_save)) +
 					       (dTpcBEpdB_save/(2*TpcBEpdB_save))*(dTpcBEpdB_save/(2*TpcBEpdB_save)));
-	    
+      /*
+      if (i == 5)
+	{
+	  std::cout << "( (EpdAEpdB_save * TpcBEpdA_save) / TpcBEpdB_save )^2 = "
+		    << "(" << EpdAEpdB_save << " * " << TpcBEpdA_save << ") / " << TpcBEpdB_save
+		    << std::endl << std::endl;
+
+	  std::cout << "dEpdAEpdB_save = " << dEpdAEpdB_save << std::endl;
+	  std::cout << "dTpcBEpdA_save = " << dTpcBEpdA_save << std::endl;
+	  std::cout << "dTpcBEpdB_save = " << dTpcBEpdB_save << std::endl;
+	}
+      */
       
       EpdAEpdB = h_EpdAEpdB_flip->GetBinContent(i);      
       TpcBEpdA = h_TpcBEpdA_flip->GetBinContent(i);
@@ -153,24 +174,52 @@ void resolutions(TString jobID, TString order_n_str)
   canvas->SetRightMargin(0.04);
   canvas->SetLeftMargin(0.13);
 
+  gStyle->SetErrorX(0);
+
+  TPaveText *text = new TPaveText(2, 0.215, 30, 0.24, "NB");
+  text->AddText("STAR Au+Au #sqrt{s_{NN}} = 4.5 GeV FXT");
+  text->SetFillColorAlpha(0,0);
+  text->SetLineColorAlpha(0,0);
+  text->SetTextSize(0.045);
+  text->SetTextAlign(13);
+  text->SetTextFont(22);
+
   h_resolEPDA = PlotUtils::trimCentralityPlot(h_resolEPDA);
+
+  h_resolEPDA->SetBinContent(9,0.0);
+  h_resolEPDA->SetBinError(9,0.0);
+  h_resolEPDA->SetBinContent(10,0.0);
+  h_resolEPDA->SetBinError(10,0.0);
+  h_resolEPDA->SetBinContent(11,0.0);
+  h_resolEPDA->SetBinError(11,0.0);
+
+  h_resolEPDA->SetLineWidth(2);
+  h_resolEPDA->SetLineColor(kBlack);
+  h_resolEPDA->SetMarkerStyle(20);
+  h_resolEPDA->SetMarkerSize(2);
+  h_resolEPDA->SetMarkerColor(kBlue);
+  h_resolEPDA->SetFillColorAlpha(kBlue-4, 0.3);
+
   h_resolEPDA->GetXaxis()->SetLabelSize(0.05);
   h_resolEPDA->GetYaxis()->SetLabelSize(0.045);
   h_resolEPDA->GetXaxis()->SetTitleOffset(1.1);
-  h_resolEPDA->GetYaxis()->SetTitleOffset(0.9);
+  h_resolEPDA->GetYaxis()->SetTitleOffset(1.1);
   h_resolEPDA->GetXaxis()->SetTitleSize(0.045);
-  h_resolEPDA->GetYaxis()->SetTitleSize(0.065);
-  //h_resolEPDA->SetMaximum(0.25);
-  h_resolEPDA->SetMaximum(1.0);
+  h_resolEPDA->GetYaxis()->SetTitleSize(0.055);
+  h_resolEPDA->GetYaxis()->SetLabelSize(0.045);
+  h_resolEPDA->GetXaxis()->SetTitleFont(132);
+  h_resolEPDA->GetYaxis()->SetTitleFont(132);
+  h_resolEPDA->SetMaximum(0.25);
+  //h_resolEPDA->SetMaximum(1.0);
   h_resolEPDA->SetMinimum(0.0);
   h_resolEPDA->SetTitle("");
-  h_resolEPDA->SetMarkerColor(1);
-  h_resolEPDA->SetLineColor(1);
+  //h_resolEPDA->SetMarkerColor(1);
+  //h_resolEPDA->SetLineColor(1);
   h_resolEPDA->Draw("E1P");
   //legend2->Draw();
-  //text_extra->Draw();
+  text->Draw();
   //prelimText->Draw();
-  canvas->SaveAs(jobID + "_resolutionAonly.png");
+  canvas->SaveAs(jobID + "_resolutionAonly.pdf");
   canvas->Clear();
 
   resolutionInfo_INPUT->Close();

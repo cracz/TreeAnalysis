@@ -23,3 +23,6 @@ dict_systematics.npy
 saveSystematics.py*
 sched*
 *~
+Plotting/*.root
+Plotting/*.png
+Plotting/*.pdf

@@ -36,30 +36,40 @@ void acceptanceCombined(TString jobID)
   TPaveText *text_pp = new TPaveText(-0.9, 0.2, -0.6, 0.5);
   text_pp->SetFillColorAlpha(0, 0);
   text_pp->AddText("#pi^{+}");
+  text_pp->SetTextFont(23);
+  text_pp->SetTextSize(40);
 
   TPaveText *text_pm = new TPaveText(-0.9, 0.2, -0.6, 0.5);
   text_pm->SetFillColorAlpha(0, 0);
   text_pm->AddText("#pi^{-}");
+  text_pm->SetTextFont(23);
+  text_pm->SetTextSize(40);
 
   TPaveText *text_kp = new TPaveText(-0.9, 0.2, -0.6, 0.5);
   text_kp->SetFillColorAlpha(0, 0);
   text_kp->AddText("K^{+}");
+  text_kp->SetTextFont(23);
+  text_kp->SetTextSize(40);
 
   TPaveText *text_km = new TPaveText(-0.9, 0.2, -0.6, 0.5);
   text_km->SetFillColorAlpha(0, 0);
   text_km->AddText("K^{-}");
+  text_km->SetTextFont(23);
+  text_km->SetTextSize(40);
 
   TPaveText *text_pr = new TPaveText(-0.9, 0.2, -0.6, 0.5);
   text_pr->SetFillColorAlpha(0, 0);
   text_pr->AddText("p");
+  text_pr->SetTextFont(23);
+  text_pr->SetTextSize(40);
 
-  TPaveText *text_extra = new TPaveText(-1.0, 1.5, 1.0, 2.0);
+  TPaveText *text_extra = new TPaveText(-1.0, 0.6, 1.0, 2.5);
   text_extra->SetFillColorAlpha(0,0);
-  //text_extra->AddText("#sqrt{s_{NN}} = 3.0 GeV FXT Au+Au");
-  //text_extra->AddText("#sqrt{s_{NN}} = 3.2 GeV FXT Au+Au");
-  //text_extra->AddText("#sqrt{s_{NN}} = 3.5 GeV FXT Au+Au");
-  text_extra->AddText("#sqrt{s_{NN}} = 3.9 GeV FXT Au+Au");
-  text_extra->AddText("Collisions at RHIC");
+  text_extra->AddText("RHIC");
+  text_extra->AddText("#sqrt{s_{NN}} = 3.0 GeV");
+  text_extra->AddText("Au+Au FXT");
+  text_extra->SetTextFont(133);
+  text_extra->SetTextSize(40);
 
 
   TLine *y_mid = new TLine(0, 0, 0, 2.5);
@@ -67,7 +77,7 @@ void acceptanceCombined(TString jobID)
   y_mid->SetLineWidth(2);
 
   //3.0 GeV
-  //TLine *y_target = new TLine(1.05, 0, 1.05, 2.5);
+  TLine *y_target = new TLine(1.05, 0, 1.05, 2.5);
 
   //3.2 GeV
   //TLine *y_target = new TLine(1.14, 0, 1.14, 2.5);
@@ -76,7 +86,7 @@ void acceptanceCombined(TString jobID)
   //TLine *y_target = new TLine(1.25, 0, 1.25, 2.5);
 
   //3.9 GeV
-  TLine *y_target = new TLine(1.37, 0, 1.37, 2.5);
+  //TLine *y_target = new TLine(1.37, 0, 1.37, 2.5);
   y_target->SetLineStyle(9);
   y_target->SetLineColor(kRed);
   y_target->SetLineWidth(2);
@@ -186,9 +196,9 @@ void acceptanceCombined(TString jobID)
   // Margins
 
   Float_t lMargin = 0.08;
-  Float_t rMargin = 0.08;
-  Float_t bMargin = 0.11;
-  Float_t tMargin = 0.05;
+  Float_t rMargin = 0.10;
+  Float_t bMargin = 0.14;
+  Float_t tMargin = 0.02;
 
   /*
   Float_t lMargin = 0.12;
@@ -255,37 +265,38 @@ void acceptanceCombined(TString jobID)
       //h->GetYaxis()->SetRangeUser(0.0001,1.2*h->GetMaximum());
  
       // Format for y axis
-      h->GetYaxis()->SetLabelFont(43);
-      h->GetYaxis()->SetLabelSize(20);
+      h->GetYaxis()->SetLabelFont(133);
+      h->GetYaxis()->SetLabelSize(40);
       h->GetYaxis()->SetLabelOffset(0.02);
-      h->GetYaxis()->SetTitleFont(43);
-      h->GetYaxis()->SetTitleSize(29);
-      h->GetYaxis()->SetTitleOffset(1.9);
+      h->GetYaxis()->SetTitleFont(133);
+      h->GetYaxis()->SetTitleSize(40);
+      h->GetYaxis()->SetTitleOffset(0.8);
       h->GetYaxis()->ChangeLabel(1,-1,0.); // remove the first label
-      h->GetYaxis()->ChangeLabel(-1,-1,0.); // remove the last label
+      //h->GetYaxis()->ChangeLabel(-1,-1,0.); // remove the last label
  
       h->GetYaxis()->CenterTitle();
-      //h->GetYaxis()->SetNdivisions(504);
+      h->GetYaxis()->SetNdivisions(504);
  
       // TICKS Y Axis
       //h->GetYaxis()->SetTickLength(xFactor*0.04/yFactor);
  
       // Format for x axis
-      h->GetXaxis()->SetLabelFont(43);
-      h->GetXaxis()->SetLabelSize(20);
+      h->GetXaxis()->SetLabelFont(133);
+      h->GetXaxis()->SetLabelSize(40);
       h->GetXaxis()->SetLabelOffset(0.02);
-      h->GetXaxis()->SetTitleFont(43);
-      h->GetXaxis()->SetTitleSize(29);
-      h->GetXaxis()->SetTitleOffset(1.9);
+      h->GetXaxis()->SetTitleFont(133);
+      h->GetXaxis()->SetTitleSize(40);
+      h->GetXaxis()->SetTitleOffset(1.0);
       h->GetXaxis()->CenterTitle();
-      h->GetXaxis()->SetNdivisions(505);
+      h->GetXaxis()->SetNdivisions(504);
  
       // TICKS X Axis
       //h->GetXaxis()->SetTickLength(yFactor*0.06/xFactor);
 
       // TICKS Z Axis
       h->GetZaxis()->SetTickLength(0.07);
-      h->GetZaxis()->SetLabelSize(0.08);
+      h->GetZaxis()->SetLabelFont(133);
+      h->GetZaxis()->SetLabelSize(40);
 
       if (i == 2 && j == 0)
 	{
@@ -294,7 +305,7 @@ void acceptanceCombined(TString jobID)
 	  y_target->Draw("same");
 	  gPad->Update();
 	  TPaletteAxis *palette = (TPaletteAxis*)h->GetListOfFunctions()->FindObject("palette");
-	  palette->SetX2NDC(0.86);
+	  palette->SetX2NDC(0.83);
 	  palette->Draw();
 	}
       else if ( !(i == 2 && j == 1) )
@@ -370,7 +381,8 @@ void acceptanceCombined(TString jobID)
     }
   }
 
-  C->SaveAs("acceptanceCombined.png");
+  //C->SaveAs("acceptanceCombined.png");
+  C->SaveAs("acceptanceCombined.pdf");
   C->cd();
 }
  
