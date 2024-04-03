@@ -145,6 +145,7 @@ int main(int argc, char *argv[])
   Float_t nSigmaKa[N_track];
   Float_t nSigmaPr[N_track];
   Float_t tofBeta[N_track];
+  Float_t EtofBeta[N_track];
   Int_t nHits[N_track];
   Int_t nHitsFit[N_track];
   Int_t nHitsPoss[N_track];
@@ -178,6 +179,8 @@ int main(int argc, char *argv[])
   tree->SetBranchAddress("nSigmaKa",&nSigmaKa);
   tree->SetBranchAddress("nSigmaPr",&nSigmaPr);
   tree->SetBranchAddress("tofBeta",&tofBeta);
+  if (configs.sqrt_s_NN == 4.5) 
+    tree->SetBranchAddress("EtofBeta",&EtofBeta);
   tree->SetBranchAddress("dEdx",&dEdx);
   //tree->SetBranchAddress("dEdxError",&dEdxError);
   tree->SetBranchAddress("nHits",&nHits);
@@ -350,10 +353,14 @@ int main(int argc, char *argv[])
   TH2D *h2_dEdx_vs_qp = new TH2D("h2_dEdx_vs_qp", "dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 800, -2, 6, 1000, 0, 20);
   TH2D *h2_dEdx_vs_qp_half = new TH2D("h2_dEdx_vs_qp_half", "dE/dx vs q|p|;q|p| (GeV);dE/dx (keV/cm)", 600, 0, 6, 1000, 0, 20);
   TH2D *h2_beta_vs_qp = new TH2D("h2_beta_vs_qp","1/#beta vs Momentum;q*|p| (GeV);1/#beta", 300, -3, 3, 300, 0.5, 3.5);
+  TH2D *h2_beta_vs_qp_Etof = new TH2D("h2_beta_vs_qp_Etof","ETOF 1/#beta vs Momentum;q*|p| (GeV);1/#beta", 300, -3, 3, 300, 0.5, 3.5);
   TH2D *h2_m2_vs_qp = new TH2D("h2_m2_vs_qp", "m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)", 400, -4, 4, 400, -0.1, 1.5);
+  TH2D *h2_m2_vs_qp_Etof = new TH2D("h2_m2_vs_qp_Etof", "ETOF m^2 vs q*|p|;q*|p| (GeV);m^2 (GeV^2)", 400, -4, 4, 400, -0.1, 1.5);
 
   TH1D *h_tofBeta = new TH1D("h_tofBeta", "TOF #beta;#beta;Tracks", 150, 0, 1.5);
+  TH1D *h_EtofBeta = new TH1D("h_EtofBeta", "ETOF #beta;#beta;Tracks", 150, 0, 1.5);
   TH1D *h_m2 = new TH1D("h_m2", "m^{2};m^{2} (GeV^{2}/c^{4});Tracks", 1000, 0, 15);
+  TH1D *h_m2_Etof = new TH1D("h_m2_Etof", "m^{2} ETOF;m^{2} (GeV^{2}/c^{4});Tracks", 1000, 0, 15);
 
   TH1D *h_mom_pp = new TH1D("h_mom_pp", "#pi^{+} Total Momentum;|p| (GeV);", 100, 0, 5);
   TH1D *h_mom_pm = new TH1D("h_mom_pm", "#pi^{-} Total Momentum;|p| (GeV);", 100, 0, 5);
@@ -499,9 +506,6 @@ int main(int argc, char *argv[])
   TH2D *h2_pT_vs_yCM_pr_alt = new TH2D("h2_pT_vs_yCM_pr_alt", "Proton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
   TH2D *h2_pT_vs_yCM_de = new TH2D("h2_pT_vs_yCM_de", "Deuteron;y-y_{mid};p_{T} (GeV/c)",tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
   TH2D *h2_pT_vs_yCM_tr = new TH2D("h2_pT_vs_yCM_tr", "Triton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
-  TH2D *h2_pT_vs_yCM_pr_contamination = new TH2D("h2_pT_vs_yCM_pr_contamination", "Proton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
-  TH2D *h2_pT_vs_yCM_pr_etaGt1p5 = new TH2D("h2_pT_vs_yCM_pr_etaGt1p5", "Proton;y-y_{mid};p_{T} (GeV/c)",  tempBins1, tempLowBound1, tempHighBound1, tempBins2, tempLowBound2, tempHighBound2);
-  //TH2D *h2_pT_vs_pTot_pr = new TH2D("h2_pT_vs_pTot_pr", "Proton;|p| (GeV/c);p_{T} (GeV/c)",  500, 0.0, 10.0, 500, 0.0, 5.0);
 
   TH2D *h2_pT_vs_eta     = new TH2D("h2_pT_vs_eta", "All Good Tracks;#eta;p_{T} (GeV/c)", 480, -2.2, 0.2, 490, 0.0, 7.0);
   TH2D *h2_pT_vs_eta_TOF = new TH2D("h2_pT_vs_eta_TOF", "TOF Hits;#eta;p_{T} (GeV/c)", 480, -2.2, 0.2, 490, 0.0, 7.0);
@@ -785,7 +789,6 @@ int main(int argc, char *argv[])
 
   TH2D *h2_nSigp_vs_mom_pr  = new TH2D("h2_nSigp_vs_mom_pr", "Identified Protons;|p| (GeV/c);n#sigma_{p}", 50, 0.0, 5.0, 500, -10.0, 10.0);
   TH2D *h2_nSigp_vs_mom_pr_poss  = new TH2D("h2_nSigp_vs_mom_pr_poss", "Possible Protons;|p| (GeV/c);n#sigma_{p}", 50, 0.0, 5.0, 500, -10.0, 10.0);
-  TH2D *h2_nSigp_vs_mom_pr_poss_symm  = new TH2D("h2_nSigp_vs_mom_pr_poss_symm", "Possible Protons;|p| (GeV/c);n#sigma_{p}", 50, 0.0, 5.0, 500, -10.0, 10.0);
   TH2D *h2_nSigp_vs_mom_apr_poss  = new TH2D("h2_nSigp_vs_mom_apr_poss", "Possible Anti-protons;|p| (GeV/c);n#sigma_{p}", 50, 0.0, 5.0, 500, -10.0, 10.0);
   TH2D *h2_nSigp_vs_mom_all = new TH2D("h2_nSigp_vs_mom_all", ";|p| (GeV/c);n#sigma_{p}", 50, 0.0, 5.0, 500, -10.0, 10.0);
   TH2D *h2_nSigp_vs_mom_original = new TH2D("h2_nSigp_vs_mom_original", ";|p| (GeV/c);n#sigma_{p}", 50, 0.0, 5.0, 500, -10.0, 10.0);
@@ -793,10 +796,6 @@ int main(int argc, char *argv[])
   TH2D *h2_nSigKa_vs_mom_original = new TH2D("h2_nSigKa_vs_mom_original", ";|p| (GeV/c);n#sigma_{K}", 50, 0.0, 5.0, 500, -10.0, 10.0);
   TH2D *h2_nSigPi_vs_mom_QAcut_m2cut = new TH2D("h2_nSigPi_vs_mom_QAcut_m2cut", ";|p| (GeV/c);n#sigma_{#pi}", 50, 0.0, 5.0, 500, -10.0, 10.0);
   TH2D *h2_nSigKa_vs_mom_QAcut_m2cut = new TH2D("h2_nSigKa_vs_mom_QAcut_m2cut", ";|p| (GeV/c);n#sigma_{K}", 50, 0.0, 5.0, 500, -10.0, 10.0);
-  TH2D *h2_nSigPi_vs_mom_contamination = new TH2D("h2_nSigPi_vs_mom_contamination", ";|p| (GeV/c);n#sigma_{#pi}", 50, 0.0, 5.0, 500, -10.0, 10.0);
-  TH2D *h2_nSigKa_vs_mom_contamination = new TH2D("h2_nSigKa_vs_mom_contamination", ";|p| (GeV/c);n#sigma_{K}", 50, 0.0, 5.0, 500, -10.0, 10.0);
-  TH2D *h2_nSigPi_vs_nSigPr_etaGt1p5 = new TH2D("h2_nSigPi_vs_nSigPr_etaGt1p5", ";n#sigma_{p};n#sigma_{#pi}", 500, -10.0, 10.0, 500, -10.0, 10.0);
-  TH2D *h2_nSigKa_vs_nSigPr_etaGt1p5 = new TH2D("h2_nSigKa_vs_nSigPr_etaGt1p5", ";n#sigma_{p};n#sigma_{K}", 500, -10.0, 10.0, 500, -10.0, 10.0);
   TH2D *h2_zd_vs_mom = new TH2D("h2_zd_vs_mom", ";|p| (GeV/c);z_{d}", 50, 0.0, 5.0, 140, -0.7, 0.7);
   TH2D *h2_zt_vs_mom = new TH2D("h2_zt_vs_mom", ";|p| (GeV/c);z_{t}", 50, 0.0, 5.0, 140, -0.7, 0.7);
   
@@ -963,19 +962,23 @@ int main(int argc, char *argv[])
   
   FlowUtils::Event eventInfo;        // These hold info for each event
   FlowUtils::Particle particleInfo;  // These hold info for each track/hit
-  //NSigmaCorrectionUtils::NewNSigmaProton3p2GeV nSigmaCorrection3p2GeV; // These are to get corrected proton nSigma values for
-  //NSigmaCorrectionUtils::NewNSigmaProton3p5GeV nSigmaCorrection3p5GeV;  // FXT energies where the TPC calibration is bad.
-  //NSigmaCorrectionUtils::NewNSigmaProton3p9GeV nSigmaCorrection3p9GeV;
-  //NSigmaCorrectionUtils::NewNSigmaProton4p5GeV nSigmaCorrection4p5GeV;
-  NSigmaCorrectionUtils::NewNSigmaProton3p2GeV_SL23d nSigmaCorrection3p2GeV;
-  NSigmaCorrectionUtils::NewNSigmaProton3p5GeV_SL23d nSigmaCorrection3p5GeV;
-  NSigmaCorrectionUtils::NewNSigmaProton3p9GeV_SL23d nSigmaCorrection3p9GeV;
-  NSigmaCorrectionUtils::NewNSigmaProton4p5GeV_SL23d nSigmaCorrection4p5GeV;
-  /*if (configs.sqrt_s_NN == 3.2) nSigmaCorrection3p2GeV.initialize();
-  else if (configs.sqrt_s_NN == 3.5) nSigmaCorrection3p5GeV.initialize();
-  else if (configs.sqrt_s_NN == 3.9) nSigmaCorrection3p9GeV.initialize();
-  else if (configs.sqrt_s_NN == 4.5) nSigmaCorrection4p5GeV.initialize();
+  
+  /*
+    NSigmaCorrectionUtils::NewNSigmaProton3p2GeV nSigmaCorrection3p2GeV; // These are to get corrected proton nSigma values for
+    NSigmaCorrectionUtils::NewNSigmaProton3p5GeV nSigmaCorrection3p5GeV;  // FXT energies where the TPC calibration is bad.
+    NSigmaCorrectionUtils::NewNSigmaProton3p9GeV nSigmaCorrection3p9GeV;
+    NSigmaCorrectionUtils::NewNSigmaProton4p5GeV nSigmaCorrection4p5GeV;
+    if (configs.sqrt_s_NN == 3.2) nSigmaCorrection3p2GeV.initialize();
+    else if (configs.sqrt_s_NN == 3.5) nSigmaCorrection3p5GeV.initialize();
+    else if (configs.sqrt_s_NN == 3.9) nSigmaCorrection3p9GeV.initialize();
+    else if (configs.sqrt_s_NN == 4.5) nSigmaCorrection4p5GeV.initialize();
   */
+
+  NSigmaCorrectionUtils::NewNSigmaProton3p2GeV_SL23d nSigmaCorrection3p2GeV; // These are to get corrected proton nSigma values for  
+  NSigmaCorrectionUtils::NewNSigmaProton3p5GeV_SL23d nSigmaCorrection3p5GeV; // for SL23d produced FXT energies where the TPC calibration 
+  NSigmaCorrectionUtils::NewNSigmaProton3p9GeV_SL23d nSigmaCorrection3p9GeV; // is LESS bad than previous productions
+  NSigmaCorrectionUtils::NewNSigmaProton4p5GeV_SL23d nSigmaCorrection4p5GeV;
+
   StEpdGeom *epdGeom = new StEpdGeom();  // This is to translate EPD tile IDs into phi and eta
 
   // EVENT LOOP
@@ -1032,6 +1035,7 @@ int main(int argc, char *argv[])
       Double_t d_nSigmaPr;
       //Double_t d_nSigmaPr_original;
       Double_t d_tofBeta;
+      Double_t d_EtofBeta;
       Double_t d_dEdx;
       //Double_t d_dEdxError;
       //Double_t d_rapidity_assumingProton;
@@ -1074,6 +1078,7 @@ int main(int argc, char *argv[])
 	  d_nSigmaPr = nSigmaPr[iTrk];
 	  //d_nSigmaPr_original = nSigmaPr[iTrk];
 	  d_tofBeta = tofBeta[iTrk];
+	  d_EtofBeta = (configs.sqrt_s_NN == 4.5) ? EtofBeta[iTrk] : -999.0;  // eTOF is only implemented for 4.5 GeV
 	  d_dEdx = dEdx[iTrk];
 	  //d_dEdxError = dEdxError[iTrk];
 	  //d_rapidity_assumingProton = FlowUtils::rapidity(d_px, d_py, d_pz, D_M0_PR);
@@ -1184,7 +1189,8 @@ int main(int argc, char *argv[])
 	      //          TOF Beta Cuts
 	      //=========================================================
 	      Double_t d_m2 = -999.0;
-	      Bool_t tofTrack = (d_tofBeta != -999.0);
+	      Bool_t tofTrack  = (d_tofBeta  != -999.0);
+	      Bool_t EtofTrack = (d_EtofBeta != -999.0);
 
 	      if (tofTrack)
 		{
@@ -1193,6 +1199,15 @@ int main(int argc, char *argv[])
 		  h_tofBeta->Fill(d_tofBeta);		  
 		  h2_beta_vs_qp->Fill(s_charge*d_mom, 1.0/d_tofBeta);
 		  h2_m2_vs_qp->Fill(s_charge*d_mom, d_m2);
+		  h2_pT_vs_eta_TOF->Fill(d_eta, d_pT);
+		}
+	      else if (EtofTrack)
+		{
+		  d_m2 = d_mom*d_mom*( (1.0 / (d_EtofBeta*d_EtofBeta)) - 1.0);		    
+		  h_m2_Etof->Fill(d_m2);
+		  h_EtofBeta->Fill(d_EtofBeta);		  
+		  h2_beta_vs_qp_Etof->Fill(s_charge*d_mom, 1.0/d_EtofBeta);
+		  h2_m2_vs_qp_Etof->Fill(s_charge*d_mom, d_m2);
 		  h2_pT_vs_eta_TOF->Fill(d_eta, d_pT);
 		}
 	      //=========================================================
@@ -1220,7 +1235,7 @@ int main(int argc, char *argv[])
 	      Bool_t deuteron = false;
 	      Bool_t triton   = false;
 
-	      if (tofTrack)
+	      if (tofTrack || EtofTrack)
 		{
 		  pion = (d_nSigmaPi > configs.nSig_pi_low) &&
 		    (d_nSigmaPi < configs.nSig_pi_high) &&
@@ -1261,7 +1276,7 @@ int main(int argc, char *argv[])
 			configs.sqrt_s_NN == 4.5))
 		{
 		  //  DEUTERON
-		  if (tofTrack)
+		  if (tofTrack || EtofTrack)
 		    {
 		      if (d_zDeuteron > configs.z_de_low &&
 			  d_zDeuteron < configs.z_de_high &&
@@ -1271,7 +1286,7 @@ int main(int argc, char *argv[])
 		    }
 
 		  //  TRITON
-		  if (tofTrack)
+		  if (tofTrack || EtofTrack)
 		    {
 		      if (d_zTriton > configs.z_tr_low &&
 			  d_zTriton < configs.z_tr_high &&
@@ -1281,48 +1296,12 @@ int main(int argc, char *argv[])
 		    }
 		}
 
-	      /*
-		if (deuteron && proton) 
-		{ 
-		if (TMath::Abs(d_zDeuteron) < TMath::Abs(d_nSigmaPr)) { proton = false; }
-		else if (TMath::Abs(d_zDeuteron) == TMath::Abs(d_nSigmaPr)) { proton = false; deuteron = false; }
-		else { deuteron = false; }
-		}
-		if (triton && proton)
-		{
-		if (TMath::Abs(d_zTriton) < TMath::Abs(d_nSigmaPr)) { proton = false; }
-		else if (TMath::Abs(d_zTriton) == TMath::Abs(d_nSigmaPr)) { proton = false; triton = false; }
-		else { triton = false; }
-		}
-		if (deuteron && triton)
-		{
-		if (TMath::Abs(d_zDeuteron) < TMath::Abs(d_zTriton)) { triton = false; }
-		else if (TMath::Abs(d_zDeuteron) == TMath::Abs(d_zTriton)) { triton = false; deuteron = false; }
-		else { deuteron = false; }
-		}
-	      */
-
 	      if (deuteron && triton) { deuteron = false; triton = false; } // Ignore tags of both d and t.
 	      if (deuteron && proton) { proton = false; } // d and t will have some contamination from p, but that has been minimized
 	      if (triton && proton)   { proton = false; }
 
 	      if (pion && proton)   { proton = false; }
 	      if (kaon && proton)   { proton = false; }
-
-	      /*
-	      // SUPPLEMENTARY CUTS TO REDUCE CONTAMINATION OUTSIDE OF TOF REACH
-	      if (proton)
-		{
-		  // CUT TEST 1
-		  if (d_eta < -1.5 && (TMath::Abs(d_nSigmaPi) < 1.0 || TMath::Abs(d_nSigmaKa) < 1.0))
-		    proton = false;
-
-		  // CUT TEST 2
-		  //if (TMath::Abs(d_nSigmaPi) < 1.0 || TMath::Abs(d_nSigmaKa) < 1.0)
-		  //proton = false;
-		}
-	      //////
-	      */
 	      //=========================================================
 	      //          END PID Cuts
 	      //=========================================================
@@ -1336,53 +1315,12 @@ int main(int argc, char *argv[])
 		}
 
 	      if (!pion && !kaon && !deuteron && !triton && s_charge == 1)
-		{
 		  h2_nSigp_vs_mom_pr_poss->Fill(d_mom, d_nSigmaPr); 
 
-		  if (d_pT > configs.pt_ySym_pr_low && d_pT < configs.pt_ySym_pr_high)
-		    h2_nSigp_vs_mom_pr_poss_symm->Fill(d_mom, d_nSigmaPr); 
-		}
 	      if (!pion && !kaon && !deuteron && !triton && s_charge == -1)
-		{
 		  h2_nSigp_vs_mom_apr_poss->Fill(d_mom, d_nSigmaPr); 
-		}
-	      /*
-	      // Find possible proton sample including background -- CUT TEST 1
-	      if (d_eta < -1.5)
-		{
-		  if (!pion && !kaon && !deuteron && !triton && s_charge == 1 && 
-		      (TMath::Abs(d_nSigmaPi) > 1.0 || TMath::Abs(d_nSigmaKa) > 1.0))
-		    {
-		      h2_nSigp_vs_mom_pr_poss->Fill(d_mom, d_nSigmaPr); 
 
-		      if (d_pT > configs.pt_ySym_pr_low && d_pT < configs.pt_ySym_pr_high)
-			h2_nSigp_vs_mom_pr_poss_symm->Fill(d_mom, d_nSigmaPr); 
-		    }
-		}
-	      else if (d_eta > -1.5)
-		{
-		  if (!pion && !kaon && !deuteron && !triton && s_charge == 1)
-		    {
-		      h2_nSigp_vs_mom_pr_poss->Fill(d_mom, d_nSigmaPr); 
 
-		      if (d_pT > configs.pt_ySym_pr_low && d_pT < configs.pt_ySym_pr_high)
-			h2_nSigp_vs_mom_pr_poss_symm->Fill(d_mom, d_nSigmaPr); 
-		    }
-		}
-	      ////
-	      */
-	      /*	      
-	      // Find possible proton sample including background -- CUT TEST 2
-	      if (!pion && !kaon && !deuteron && !triton && s_charge == 1 && 
-		  (TMath::Abs(d_nSigmaPi) > 1.0 || TMath::Abs(d_nSigmaKa) > 1.0))
-		{
-		  h2_nSigp_vs_mom_pr_poss->Fill(d_mom, d_nSigmaPr); 
-
-		  if (d_pT > configs.pt_ySym_pr_low && d_pT < configs.pt_ySym_pr_high)
-		    h2_nSigp_vs_mom_pr_poss_symm->Fill(d_mom, d_nSigmaPr); 
-		}
-	      ////
-	      */
 	      Double_t d_rapidity = 999.0;
 	      Double_t d_mT = -999.0;
 	      Double_t massNumber;
@@ -1483,14 +1421,7 @@ int main(int argc, char *argv[])
 		  h_dndy_pr->Fill(d_rapidity);
 		  h_dndm_pr->Fill(d_mT - D_M0_PR);
 		  h2_pT_vs_yCM_pr->Fill(d_rapidity - Y_MID, d_pT);
-		  if (d_eta < -1.5) 
-		    {
-		      h2_pT_vs_yCM_pr_etaGt1p5->Fill(d_rapidity - Y_MID, d_pT);
-		      h2_nSigPi_vs_nSigPr_etaGt1p5->Fill(d_nSigmaPr, d_nSigmaPi);
-		      h2_nSigKa_vs_nSigPr_etaGt1p5->Fill(d_nSigmaPr, d_nSigmaKa);
-		    }
 		  h2_nSigp_vs_mom_pr->Fill(d_mom, d_nSigmaPr); 
-		  //h2_pT_vs_pTot_pr->Fill(d_mom, d_pT);
 		  h2_KToverA_vs_yCM_pr->Fill(d_rapidity - Y_MID, (d_mT - D_M0_PR)/1.0);
 		  h2_dEdx_vs_qp_pr->Fill(s_charge*d_mom, d_dEdx);
 		  h_dEdx_pr->Fill(d_dEdx);
@@ -1509,17 +1440,6 @@ int main(int argc, char *argv[])
 		      h2_dEdx_vs_qp_id_pr_alt->Fill(d_mom, d_dEdx);
 		      h2_pT_vs_cent_pr->Fill(i_centrality, d_pT);
 		      h2_pT_vs_yCM_pr_alt->Fill(d_rapidity - Y_MID, d_pT);
-		    }
-
-		  if ((d_nSigmaPr > -1.0) && (d_nSigmaPr < 1.0) && (d_mom > 1.3) && (d_mom < 1.8))
-		    {
-		      h2_pT_vs_yCM_pr_contamination->Fill(d_rapidity - Y_MID, d_pT);
-		    }
-
-		  if ((d_nSigmaPr > -1.0) && (d_nSigmaPr < 1.0) && (d_mom > 1.3) && (d_mom < 1.8) && (d_rapidity-Y_MID < -0.56))
-		    {
-		      h2_nSigPi_vs_mom_contamination->Fill(d_mom, d_nSigmaPi);
-		      h2_nSigKa_vs_mom_contamination->Fill(d_mom, d_nSigmaKa);
 		    }
 		}		    
 	      else if(deuteron) // PID Deuteron
@@ -1681,19 +1601,11 @@ int main(int argc, char *argv[])
       //=========================================================
 
 
-      //if (eventInfo.nTracksTpcA < configs.min_tracks) continue;
       if (eventInfo.nTracksTpcB < configs.min_tracks) continue;
-      //if (eventInfo.nHitsEpd    < configs.min_tracks) continue;
       if (eventInfo.nHitsEpdA   < configs.min_tracks) continue;
-      //if (eventInfo.nHitsEpdB   < configs.min_tracks) continue;
-      if (configs.fixed_target && configs.sqrt_s_NN == 3.0 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
-      else if (configs.fixed_target && configs.sqrt_s_NN == 3.2 && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
-      else if (configs.fixed_target && configs.sqrt_s_NN == 3.5  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
-      else if (configs.fixed_target && configs.sqrt_s_NN == 3.9  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
-      else if (configs.fixed_target && configs.sqrt_s_NN == 4.5  && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
+      if (configs.fixed_target && eventInfo.nHitsEpdB < configs.min_tracks+4) continue;
 
-      h_eventCheck->Fill(5); // Count # of events after minimum hits cut
-      
+      h_eventCheck->Fill(5); // Count # of events after minimum hits cut      
       h_centralities_final->Fill(i_centrality);
 
       FlowUtils::checkZeroQ(eventInfo);  // Remove events with no flow
@@ -1879,12 +1791,8 @@ int main(int argc, char *argv[])
 	  Double_t tofEfficiency = 1.0;  // Default
 	  Int_t centID = eventInfo.centID;
 	  Int_t jthRing;
-	  /*
-	  if (configs.sqrt_s_NN == 3.0 && centID < 4) continue;  // ONLY LOOKING AT CENTRALITY 60% AND LOWER FOR 3.0 GeV
-	  else if (configs.sqrt_s_NN == 3.2 && centID < 4) continue;
-	  else if (configs.sqrt_s_NN == 3.5  && centID < 4) continue;
-	  */
-	  if (centID < 4) continue;
+
+	  if (centID < 4) continue;  // ONLY LOOKING AT CENTRALITY 60% AND LOWER FOR 3.0 GeV
 
 	  // JUST v1 FOR WEIGHTING
 	  //Weights are only accumulated when they have not already been applied.
