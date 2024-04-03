@@ -68,6 +68,7 @@ Int_t TreeMaker::Init()
   FxtTree->Branch("EPDid",tree_EPDid,"EPDid[nEPDhits]/S");
   FxtTree->Branch("EPDnMip",tree_EPDnMip,"EPDnMip[nEPDhits]/F");
   FxtTree->Branch("tofBeta",tree_Beta,"tofBeta[tracknumber]/F");
+  FxtTree->Branch("EtofBeta",tree_EtofBeta,"EtofBeta[tracknumber]/F");
   FxtTree->Branch("dEdx",tree_dEdx,"dEdx[tracknumber]/F");
   FxtTree->Branch("dEdxError",tree_dEdxError,"dEdxError[tracknumber]/F");
   FxtTree->Branch("nHits",tree_nHits,"nHits[tracknumber]/I");
@@ -206,46 +207,6 @@ Int_t TreeMaker::Make()
 		      // https://drupal.star.bnl.gov/STAR/pwg/common/BES-II-Centrality-Calibration
 		      else if (configs.sqrt_s_NN == 3.2) // DON'T FORGET TO UPDATE N_track IN TreeAnalyzer.cxx!!
 			{
-			  /*
-			  Bool_t pileupEvent = false;
-			  Double_t upperBound;
-			  Double_t lowerBound;
-
-			  if (nBTOFMatch >= 86)
-			    {
-			      upperBound = 287;
-			      lowerBound = pileupBoundLow_3p2GeV->Eval(nBTOFMatch);
-			    }
-			  else if (nBTOFMatch < 86)
-			    {
-			      upperBound = pileupBoundHigh_3p2GeV->Eval(nBTOFMatch);
-			      lowerBound = pileupBoundLow_3p2GeV->Eval(nBTOFMatch);
-			    }
-
-			  if (primTracks < lowerBound || primTracks > upperBound)
-			    pileupEvent = true;
-
-			  if (!pileupEvent)
-			    {
-			      if     ( primTracks >=   5 && primTracks <=   6 ) centrality =  0;  // 75% - 80% (Peripheral)
-			      else if( primTracks >=   7 && primTracks <=  10 ) centrality =  1;
-			      else if( primTracks >=  11 && primTracks <=  14 ) centrality =  2;
-			      else if( primTracks >=  15 && primTracks <=  19 ) centrality =  3;
-			      else if( primTracks >=  20 && primTracks <=  25 ) centrality =  4;
-			      else if( primTracks >=  26 && primTracks <=  32 ) centrality =  5;
-			      else if( primTracks >=  33 && primTracks <=  42 ) centrality =  6;
-			      else if( primTracks >=  43 && primTracks <=  52 ) centrality =  7;
-			      else if( primTracks >=  53 && primTracks <=  65 ) centrality =  8;
-			      else if( primTracks >=  66 && primTracks <=  80 ) centrality =  9;
-			      else if( primTracks >=  81 && primTracks <=  97 ) centrality = 10;
-			      else if( primTracks >=  98 && primTracks <= 117 ) centrality = 11;
-			      else if( primTracks >= 118 && primTracks <= 140 ) centrality = 12;
-			      else if( primTracks >= 141 && primTracks <= 165 ) centrality = 13;
-			      else if( primTracks >= 166 && primTracks <= 196 ) centrality = 14;
-			      else if( primTracks >= 197 && primTracks <= 287 ) centrality = 15;  // 0% - 5% (Central)
-			    }
-			  */
-
 			  if     ( primTracks >=   5 && primTracks <=   6 ) centrality =  0;  // 75% - 80% (Peripheral)
 			  else if( primTracks >=   7 && primTracks <=  10 ) centrality =  1;
 			  else if( primTracks >=  11 && primTracks <=  14 ) centrality =  2;
@@ -431,9 +392,12 @@ Int_t TreeMaker::Make()
 			      Float_t d_nSigmaKa = track->nSigmaKaon();
 			      Float_t d_nSigmaPr = track->nSigmaProton();
 			      Float_t d_tofBeta = -999.0;
+			      Float_t d_EtofBeta = -999.0;
 
 			      if (track->isTofTrack())
 				{ d_tofBeta = mPicoDstMaker->picoDst()->btofPidTraits(track->bTofPidTraitsIndex())->btofBeta(); }
+			      if (track->isETofTrack())
+				{ d_EtofBeta = mPicoDstMaker->picoDst()->etofPidTraits(track->eTofPidTraitsIndex())->beta(); }
 
 			      tree_Charge[realTrackIndex] = s_charge;
 			      tree_Px[realTrackIndex] = d_px;
@@ -444,6 +408,7 @@ Int_t TreeMaker::Make()
 			      tree_nSigmaKa[realTrackIndex] = d_nSigmaKa;
 			      tree_nSigmaPr[realTrackIndex] = d_nSigmaPr;
                               tree_Beta[realTrackIndex] = d_tofBeta;
+			      tree_EtofBeta[realTrackIndex] = d_EtofBeta;
 			      tree_dEdx[realTrackIndex] = d_dEdx;
 			      tree_dEdxError[realTrackIndex] = d_dEdxError;
 			      tree_nHits[realTrackIndex]  = i_nHits;

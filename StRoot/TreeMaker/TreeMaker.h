@@ -26,7 +26,9 @@
 #include "StRoot/StPicoEvent/StPicoBbcHit.h"
 #include "StRoot/StPicoEvent/StPicoEpdHit.h"
 #include "StRoot/StPicoEvent/StPicoBTofHit.h"
+#include "StRoot/StPicoEvent/StPicoETofHit.h"
 #include "StRoot/StPicoEvent/StPicoBTofPidTraits.h"
+#include "StRoot/StPicoEvent/StPicoETofPidTraits.h"
 #include "StRoot/StPicoEvent/StPicoTrackCovMatrix.h"
 
 // Configuration file reader
@@ -92,6 +94,7 @@ private:
   Float_t             tree_nSigmaKa[N_track];
   Float_t             tree_nSigmaPr[N_track];
   Float_t             tree_Beta[N_track];
+  Float_t             tree_EtofBeta[N_track];
   Float_t             tree_dEdx[N_track];
   Float_t             tree_dEdxError[N_track];
   Int_t               tree_nHits[N_track];
