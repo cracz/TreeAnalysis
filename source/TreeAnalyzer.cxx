@@ -1230,10 +1230,17 @@ int main(int argc, char *argv[])
 	      //=========================================================
 	      Bool_t pion   = false;
 	      Bool_t kaon   = false;
-	      Bool_t proton = (d_nSigmaPr > configs.nSig_pr_low) && (d_nSigmaPr < configs.nSig_pr_high) && (s_charge == 1);
-	      if (proton) { h2_dEdx_vs_qp_prInitial->Fill(s_charge*d_mom, d_dEdx); }
+	      Bool_t proton = false;
 	      Bool_t deuteron = false;
 	      Bool_t triton   = false;
+
+	      if (configs.sqrt_s_NN == 3.0) 
+		proton = (d_nSigmaPr > configs.nSig_pr_low) && (d_nSigmaPr < configs.nSig_pr_high) && (s_charge == 1);		
+	      else 
+		proton = FlowUtils::momDepProtonID(d_mom, d_nSigmaPr) && (s_charge == 1);
+
+	      if (proton) 
+		h2_dEdx_vs_qp_prInitial->Fill(s_charge*d_mom, d_dEdx);
 
 	      if (tofTrack || EtofTrack)
 		{
