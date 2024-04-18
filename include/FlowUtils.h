@@ -593,10 +593,7 @@ namespace FlowUtils
     else if (momentum >= 1.3 && momentum < 1.4 && nSigmaProton > -1.0 && nSigmaProton <  2.0) proton = true;
     else if (momentum >= 1.4 && momentum < 1.5 && nSigmaProton > -0.5 && nSigmaProton <  2.0) proton = true;
     else if (momentum >= 1.5 && momentum < 1.6 && nSigmaProton >  0.0 && nSigmaProton <  3.0) proton = true;
-    //else if (momentum >= 1.6 && momentum < 1.7 && nSigmaProton >  1.5 && nSigmaProton <  3.0) proton = true; // Test 1
-    //else if (momentum >= 1.7 && momentum < 1.8 && nSigmaProton > -3.0 && nSigmaProton < -1.0) proton = true;
-    //else if (momentum >= 1.8 && momentum < 1.9 && nSigmaProton > -3.0 && nSigmaProton <  0.0) proton = true;
-    else if (momentum >= 1.6 && momentum < 1.7 && nSigmaProton >  0.0 && nSigmaProton <  3.0) proton = true;   // Test 2
+    else if (momentum >= 1.6 && momentum < 1.7 && nSigmaProton >  0.0 && nSigmaProton <  3.0) proton = true;
     else if (momentum >= 1.7 && momentum < 1.8 && nSigmaProton > -2.0 && nSigmaProton <  2.0) proton = true;
     else if (momentum >= 1.8 && momentum < 1.9 && nSigmaProton > -3.0 && nSigmaProton < 0.25) proton = true;
     else if (momentum >= 1.9 && nSigmaProton > -3.0 && nSigmaProton < 1.0) proton = true;

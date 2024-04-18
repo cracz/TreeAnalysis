@@ -36,8 +36,7 @@ nHits_ratio=0.52
 dca=3.0
 tpc_A_low_eta=-2.0
 tpc_A_high_eta=-1.57
-# tpc_B_low_eta=-1.47
-tpc_B_low_eta=-0.735
+tpc_B_low_eta=-1.47
 tpc_B_high_eta=0.0
 r_vtx=2.0
 z_vtx_low=198.0
@@ -67,7 +66,7 @@ m2_tr_high=8.7578
 # EPD A IS THE MAIN SUBEVENT FOR FLOW CALCULATIONS
 epdA_inner_row=1
 epdA_outer_row=3
-epdB_inner_row=5
+epdB_inner_row=4
 epdB_outer_row=9
 
 
