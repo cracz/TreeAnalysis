@@ -584,6 +584,23 @@ namespace FlowUtils
   }// End shiftPsi()
 
 
+  Bool_t momDepProtonID(Double_t momentum, Double_t nSigmaProton)
+  {
+    Bool_t proton = false;
+
+    if      (momentum < 1.2 && nSigmaProton > -2.0 && nSigmaProton < 2.0) proton = true;
+    else if (momentum >= 1.2 && momentum < 1.3 && nSigmaProton > -1.5 && nSigmaProton <  2.0) proton = true;
+    else if (momentum >= 1.3 && momentum < 1.4 && nSigmaProton > -1.0 && nSigmaProton <  2.0) proton = true;
+    else if (momentum >= 1.4 && momentum < 1.5 && nSigmaProton > -0.5 && nSigmaProton <  2.0) proton = true;
+    else if (momentum >= 1.5 && momentum < 1.6 && nSigmaProton >  0.0 && nSigmaProton <  3.0) proton = true;
+    else if (momentum >= 1.6 && momentum < 1.7 && nSigmaProton >  0.0 && nSigmaProton <  3.0) proton = true;
+    else if (momentum >= 1.7 && momentum < 1.8 && nSigmaProton > -2.0 && nSigmaProton <  2.0) proton = true;
+    else if (momentum >= 1.8 && momentum < 1.9 && nSigmaProton > -3.0 && nSigmaProton < 0.25) proton = true;
+    else if (momentum >= 1.9 && nSigmaProton > -3.0 && nSigmaProton < 1.0) proton = true;
+
+    return proton;
+  }
+
   Bool_t momDepDeuteronID(Double_t sqrt_s_NN, Double_t momentum, Double_t zDeuteron, 
 			  Bool_t tofTrack, Double_t m2, 
 			  Double_t zLowBoundWithTof, Double_t zHighBoundWithTof, Double_t m2LowBoundWithTof, Double_t m2HighBoundWithTof)
