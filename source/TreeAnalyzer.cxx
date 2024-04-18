@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
   else if (configs.sqrt_s_NN == 3.2)  { N_track = 287;  }
   else if (configs.sqrt_s_NN == 3.5)  { N_track = 325;  }
   else if (configs.sqrt_s_NN == 3.9)  { N_track = 344;  }
-  else if (configs.sqrt_s_NN == 4.5)  { N_track = 344;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
+  else if (configs.sqrt_s_NN == 4.5)  { N_track = 367;  }
   else if (configs.sqrt_s_NN == 7.2)  { N_track = 240;  }  // UPDATE THIS WHEN CENTRALITY IS OFFICIAL!
   else
     {
@@ -1224,7 +1224,7 @@ int main(int argc, char *argv[])
 	      if (configs.sqrt_s_NN == 3.0) 
 		proton = (d_nSigmaPr > configs.nSig_pr_low) && (d_nSigmaPr < configs.nSig_pr_high) && (s_charge == 1);		
 	      else 
-		proton = FlowUtils::momDepProtonID(d_mom, d_nSigmaPr) && (s_charge == 1);
+		proton = FlowUtils::momDepProtonID(d_mom, d_nSigmaPr, configs.nSig_pr_variation) && (s_charge == 1);
 	      
 	      if (proton) 
 		h2_dEdx_vs_qp_prInitial->Fill(s_charge*d_mom, d_dEdx);

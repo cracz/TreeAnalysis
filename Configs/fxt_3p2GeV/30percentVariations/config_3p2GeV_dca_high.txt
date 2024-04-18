@@ -3,7 +3,6 @@
 # If you add a new variable, make sure to also add it to the ConfigReader.
 # To get a list of all available variables, check ConfigReader.h.
 
-
 # 0 = false, 1 = true
 fixed_target=1
 
@@ -15,6 +14,9 @@ order_m=1.0
 shift_terms=10
 triggers=680001
 #epde-or-bbce-or-vpde-tof1
+
+# Use this switch in order to alter nSigma proton when using momentum dependent cuts.
+nSig_pr_variation=0
 
 # MAKER CUTS - Must be wider than any systematic variations, but small enough to help trim the tree size.
 m_nHits=0

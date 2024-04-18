@@ -17,6 +17,9 @@ triggers=740000,740010
 #epde-or-bbce-or-vpde-tof1
 
 
+# Use this switch in order to alter nSigma proton when using momentum dependent cuts.
+nSig_pr_variation=-1
+
 # MAKER CUTS - Must be wider than any systematic variations, but small enough to help trim the tree size.
 m_nHits=0
 m_nHits_dEdx=0

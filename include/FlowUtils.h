@@ -584,19 +584,79 @@ namespace FlowUtils
   }// End shiftPsi()
 
 
-  Bool_t momDepProtonID(Double_t momentum, Double_t nSigmaProton)
+  // Cuts for momentum dependent nSigmaProton cuts
+  // 'systematicVariation' variable corresponds to the variation of cuts used
+  // to estimate systematic uncertainties from nSigmaProton.
+  // -2 = 30% lower than nominal
+  // -1 = 20% lower than nominal
+  //  0 = nominal settings
+  //  1 = 20% higher than nominal
+  //  2 = 30% higher than nominal
+  // any other value used by mistake reverts back to nominal settings!
+  Bool_t momDepProtonID(Double_t momentum, Double_t nSigmaProton, Int_t systematicVariation)
   {
     Bool_t proton = false;
 
-    if      (momentum < 1.2 && nSigmaProton > -2.0 && nSigmaProton < 2.0) proton = true;
-    else if (momentum >= 1.2 && momentum < 1.3 && nSigmaProton > -1.5 && nSigmaProton <  2.0) proton = true;
-    else if (momentum >= 1.3 && momentum < 1.4 && nSigmaProton > -1.0 && nSigmaProton <  2.0) proton = true;
-    else if (momentum >= 1.4 && momentum < 1.5 && nSigmaProton > -0.5 && nSigmaProton <  2.0) proton = true;
-    else if (momentum >= 1.5 && momentum < 1.6 && nSigmaProton >  0.0 && nSigmaProton <  3.0) proton = true;
-    else if (momentum >= 1.6 && momentum < 1.7 && nSigmaProton >  0.0 && nSigmaProton <  3.0) proton = true;
-    else if (momentum >= 1.7 && momentum < 1.8 && nSigmaProton > -2.0 && nSigmaProton <  2.0) proton = true;
-    else if (momentum >= 1.8 && momentum < 1.9 && nSigmaProton > -3.0 && nSigmaProton < 0.25) proton = true;
-    else if (momentum >= 1.9 && nSigmaProton > -3.0 && nSigmaProton < 1.0) proton = true;
+    if (systematicVariation == -2)
+      {
+	if      (momentum < 1.2 && nSigmaProton > -1.4 && nSigmaProton < 1.4) proton = true;
+	else if (momentum >= 1.2 && momentum < 1.3 && nSigmaProton > -0.975 && nSigmaProton < 1.475) proton = true;
+	else if (momentum >= 1.3 && momentum < 1.4 && nSigmaProton > -0.55 && nSigmaProton < 1.55) proton = true;
+	else if (momentum >= 1.4 && momentum < 1.5 && nSigmaProton > -0.125 && nSigmaProton < 1.625) proton = true;
+	else if (momentum >= 1.5 && momentum < 1.6 && nSigmaProton >  0.45 && nSigmaProton < 2.55) proton = true;
+	else if (momentum >= 1.6 && momentum < 1.7 && nSigmaProton >  0.45 && nSigmaProton < 2.55) proton = true;
+	else if (momentum >= 1.7 && momentum < 1.8 && nSigmaProton > -1.4 && nSigmaProton < 1.4) proton = true;
+	else if (momentum >= 1.8 && momentum < 1.9 && nSigmaProton > -2.5125 && nSigmaProton < -0.2375) proton = true;
+	else if (momentum >= 1.9 && nSigmaProton > -2.4 && nSigmaProton < 0.4) proton = true;
+      }
+    else if (systematicVariation == -1)
+      {
+	if      (momentum < 1.2 && nSigmaProton > -1.6 && nSigmaProton < 1.6) proton = true;
+	else if (momentum >= 1.2 && momentum < 1.3 && nSigmaProton > -1.15 && nSigmaProton < 1.65) proton = true;
+	else if (momentum >= 1.3 && momentum < 1.4 && nSigmaProton > -0.7 && nSigmaProton < 1.7) proton = true;
+	else if (momentum >= 1.4 && momentum < 1.5 && nSigmaProton > -0.25 && nSigmaProton < 1.75) proton = true;
+	else if (momentum >= 1.5 && momentum < 1.6 && nSigmaProton >  0.3 && nSigmaProton < 2.7) proton = true;
+	else if (momentum >= 1.6 && momentum < 1.7 && nSigmaProton >  0.3 && nSigmaProton < 2.7) proton = true;
+	else if (momentum >= 1.7 && momentum < 1.8 && nSigmaProton > -1.6 && nSigmaProton < 1.6) proton = true;
+	else if (momentum >= 1.8 && momentum < 1.9 && nSigmaProton > -2.675 && nSigmaProton < -0.075) proton = true;
+	else if (momentum >= 1.9 && nSigmaProton > -2.6 && nSigmaProton < 0.6) proton = true;
+      }
+    else if (systematicVariation == 1)
+      {
+	if      (momentum < 1.2 && nSigmaProton > -2.4 && nSigmaProton < 2.4) proton = true;
+	else if (momentum >= 1.2 && momentum < 1.3 && nSigmaProton > -1.85 && nSigmaProton < 2.35) proton = true;
+	else if (momentum >= 1.3 && momentum < 1.4 && nSigmaProton > -1.3 && nSigmaProton < 2.3) proton = true;
+	else if (momentum >= 1.4 && momentum < 1.5 && nSigmaProton > -0.75 && nSigmaProton < 2.25) proton = true;
+	else if (momentum >= 1.5 && momentum < 1.6 && nSigmaProton > -0.3 && nSigmaProton < 3.3) proton = true;
+	else if (momentum >= 1.6 && momentum < 1.7 && nSigmaProton > -0.3 && nSigmaProton < 3.3) proton = true;
+	else if (momentum >= 1.7 && momentum < 1.8 && nSigmaProton > -2.4 && nSigmaProton < 2.4) proton = true;
+	else if (momentum >= 1.8 && momentum < 1.9 && nSigmaProton > -3.325 && nSigmaProton < 0.575) proton = true;
+	else if (momentum >= 1.9 && nSigmaProton > -3.4 && nSigmaProton < 1.4) proton = true;
+      }
+    else if (systematicVariation == 2)
+      {
+	if      (momentum < 1.2 && nSigmaProton > -2.6 && nSigmaProton < 2.6) proton = true;
+	else if (momentum >= 1.2 && momentum < 1.3 && nSigmaProton > -2.025 && nSigmaProton < 2.525) proton = true;
+	else if (momentum >= 1.3 && momentum < 1.4 && nSigmaProton > -1.45 && nSigmaProton < 2.45) proton = true;
+	else if (momentum >= 1.4 && momentum < 1.5 && nSigmaProton > -0.875 && nSigmaProton < 2.375) proton = true;
+	else if (momentum >= 1.5 && momentum < 1.6 && nSigmaProton > -0.45 && nSigmaProton < 3.45) proton = true;
+	else if (momentum >= 1.6 && momentum < 1.7 && nSigmaProton > -0.45 && nSigmaProton < 3.45) proton = true;
+	else if (momentum >= 1.7 && momentum < 1.8 && nSigmaProton > -2.6 && nSigmaProton < 2.6) proton = true;
+	else if (momentum >= 1.8 && momentum < 1.9 && nSigmaProton > -3.4875 && nSigmaProton < 0.7375) proton = true;
+	else if (momentum >= 1.9 && nSigmaProton > -3.6 && nSigmaProton < 1.6) proton = true;
+      }
+    else
+      {
+	if      (momentum < 1.2 && nSigmaProton > -2.0 && nSigmaProton < 2.0) proton = true;
+	else if (momentum >= 1.2 && momentum < 1.3 && nSigmaProton > -1.5 && nSigmaProton <  2.0) proton = true;
+	else if (momentum >= 1.3 && momentum < 1.4 && nSigmaProton > -1.0 && nSigmaProton <  2.0) proton = true;
+	else if (momentum >= 1.4 && momentum < 1.5 && nSigmaProton > -0.5 && nSigmaProton <  2.0) proton = true;
+	else if (momentum >= 1.5 && momentum < 1.6 && nSigmaProton >  0.0 && nSigmaProton <  3.0) proton = true;
+	else if (momentum >= 1.6 && momentum < 1.7 && nSigmaProton >  0.0 && nSigmaProton <  3.0) proton = true;
+	else if (momentum >= 1.7 && momentum < 1.8 && nSigmaProton > -2.0 && nSigmaProton <  2.0) proton = true;
+	else if (momentum >= 1.8 && momentum < 1.9 && nSigmaProton > -3.0 && nSigmaProton < 0.25) proton = true;
+	else if (momentum >= 1.9 && nSigmaProton > -3.0 && nSigmaProton < 1.0) proton = true;
+      }
 
     return proton;
   }
