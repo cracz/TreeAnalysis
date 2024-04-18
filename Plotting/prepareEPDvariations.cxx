@@ -5,7 +5,8 @@ void prepareEPDvariations()
   //TFile* sourceFile = TFile::Open("eventPlaneSystematics_3p0GeV.root","READ");
   //TFile* sourceFile = TFile::Open("eventPlaneSystematics_3p2GeV_1to6_max13_SL23d.root","READ");
   //TFile* sourceFile = TFile::Open("eventPlaneSystematics_3p5GeV_1to6_max11_SL23d.root","READ");
-  TFile* sourceFile = TFile::Open("eventPlaneSystematics_3p9GeV_1to5_max10_SL23e.root","READ");
+  //TFile* sourceFile = TFile::Open("eventPlaneSystematics_3p9GeV_1to5_max10_SL23e.root","READ");
+  TFile* sourceFile = TFile::Open("eventPlaneSystematics_4p5GeV_1to3_max9_SL23e.root","READ");
 
   TH1D* h_resolutionsCombinedError = (TH1D*)sourceFile->Get("h_resolutionsCombinedError");
 
