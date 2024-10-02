@@ -334,6 +334,10 @@ int main(int argc, char *argv[])
   TH1D* h_zvtx_2019 = new TH1D("h_zvtx_2019","Primary Vertex Position in z;Distance (cm);Events", 500, 190, 210);
   TH1D* h_zvtx_2020 = new TH1D("h_zvtx_2020","Primary Vertex Position in z;Distance (cm);Events", 500, 190, 210);
 
+  TH1D *h_weightsEPDA = new TH1D("h_weightsEPDA", "EPD A hit weights;Weights;Hits", 100, -2.5, 2.5);
+  TH1D *h_weightsEPDB = new TH1D("h_weightsEPDB", "EPD B hit weights;Weights;Hits", 100, -2.5, 2.4);
+  TH1D *h_weightsTPCB = new TH1D("h_weightsTPCB", "TPC B track weights;Weights;Tracs", 200, -10, 10);
+
   TH1D *h_tileWeights = new TH1D("h_tileWeights", "EPD Tile Weights;nMIP Weights;Hits", 100, -1, 4);
   TH1D *h_centralities = new TH1D("h_centralities", "Centralities;Centrality ID;Events", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
   TH1D *h_centralities_final = new TH1D("h_centralities_final", "Final Good Centralities;Centrality ID;Events", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
@@ -1640,7 +1644,8 @@ int main(int argc, char *argv[])
 
       if (setup.getRunIteration() == 1 || setup.getRunIteration() == 2)
 	{
-	  FlowUtils::recenterQ(eventInfo, setup.correctionFile, ORDER_M);
+	  //FlowUtils::recenterQ(eventInfo, setup.correctionFile, ORDER_M);
+	  FlowUtils::recenterQtrackwise(eventInfo, setup.correctionFile, ORDER_M, Y_MID);
 
 	  if (eventInfo.badEvent) continue;
 
@@ -1767,6 +1772,72 @@ int main(int argc, char *argv[])
 	  //=========================================================
 	  //          End v_n Scan Plots
 	  //=========================================================
+
+
+
+
+
+	  //=========================================================
+	  //          Secondary loops for diagnostic plots
+	  //=========================================================
+	  for (uint i = 0; i < eventInfo.tpcParticles.size(); i++)
+	    {
+	      if (eventInfo.tpcParticles.at(i).isInTpcB)
+		{
+		  if (ODD_PLANE)
+		    {
+		      if (eventInfo.tpcParticles.at(i).eta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
+			{
+			  h_weightsTPCB->Fill(eventInfo.tpcParticles.at(i).weight);
+			}
+		      else if (eventInfo.tpcParticles.at(i).eta < Y_MID)
+			{
+			  h_weightsTPCB->Fill(-1.0 * eventInfo.tpcParticles.at(i).weight);
+			}
+		    }
+		}
+	    }
+
+	  for (uint i = 0; i < eventInfo.epdParticles.size(); i++)
+	    {
+	      if (eventInfo.epdParticles.at(i).isInEpdA)
+		{
+		  if (ODD_PLANE)
+		    {
+		      if (eventInfo.epdParticles.at(i).eta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
+			{
+			  h_weightsEPDA->Fill(eventInfo.epdParticles.at(i).weight);
+			}
+		      else if (eventInfo.epdParticles.at(i).eta < Y_MID)
+			{
+			  h_weightsEPDA->Fill(-1.0 * eventInfo.epdParticles.at(i).weight);
+			}
+		    }
+		}
+	      else if (eventInfo.epdParticles.at(i).isInEpdB)
+		{
+		  if (ODD_PLANE)
+		    {
+		      if (eventInfo.epdParticles.at(i).eta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
+			{
+			  h_weightsEPDB->Fill(eventInfo.epdParticles.at(i).weight);
+			}
+		      else if (eventInfo.epdParticles.at(i).eta < Y_MID)
+			{
+			  h_weightsEPDB->Fill(-1.0 * eventInfo.epdParticles.at(i).weight);
+			}
+		    }
+		}
+	    }
+	  //=========================================================
+	  //          END Secondary loops for diagnostic plots
+	  //=========================================================
+
+
+
+
+
+
 
 
 	  //=========================================================
@@ -1906,7 +1977,7 @@ int main(int argc, char *argv[])
 	    {
 	      TH1D *resolutionHistogram = (TH1D*)setup.resolutionFile->Get("h_resolutions");
 	      Double_t resolution = resolutionHistogram->GetBinContent(centID+1);	      
-	      if (resolution == 0.0) continue;  // Skip centralities without resolutions.
+	      if (resolution <= 0.0) continue;  // Skip centralities without resolutions or with negative resolutions.
 
 
 	      for (UInt_t j = 0; j < eventInfo.tpcParticles.size(); j++)

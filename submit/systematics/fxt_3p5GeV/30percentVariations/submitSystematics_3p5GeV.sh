@@ -1,6 +1,6 @@
 #!/bin/bash
 
-nohup star-submit ../../../treeAnalyze_3p5GeV.xml >& submitOut_3p5GeV_Normal.txt &
+#nohup star-submit ../../../treeAnalyze_3p5GeV.xml >& submitOut_3p5GeV_Normal.txt &
 
 nohup star-submit treeAnalyze_3p5GeV_dca_low.xml >& submitOut_3p5GeV_dca_low.txt &
 nohup star-submit treeAnalyze_3p5GeV_dca_high.xml >& submitOut_3p5GeV_dca_high.txt &

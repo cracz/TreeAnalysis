@@ -28,13 +28,13 @@ void prepareResolutionsWithSystematics()
   TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p0GeV_v2_EPDB10to16.root", "READ");
   TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p0GeV_v2_EPDB13to16.root", "READ");
   */
-  /*
+
   // 3.2 GeV
-  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p2GeV_EPDA1to6_EPDB7to13_TPCB0p55to0.root", "READ");
-  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p2GeV_EPDA1to6_EPDB8to13_TPCB0p55to0.root", "READ");
-  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p2GeV_EPDA1to6_EPDB9to13_TPCB0p55to0.root", "READ");
-  */
-  /*  
+  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p2GeV_EPDA1to6_EPDB7to13_withEff_SL23d.root", "READ");
+  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p2GeV_EPDA1to6_EPDB8to13_withEff_SL23d.root", "READ");
+  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p2GeV_EPDA1to6_EPDB9to13_withEff_SL23d.root", "READ");
+
+  /*
   // 3.5 GeV 
   TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p5GeV_EPDA1to6_EPDB7to11_withEff_SL23d.root", "READ");
   TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p5GeV_EPDA1to6_EPDB8to11_withEff_SL23d.root", "READ");
@@ -42,21 +42,21 @@ void prepareResolutionsWithSystematics()
   */
   /*
   // 3.9 GeV
-  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDB6to10_withEff_SL23e.root", "READ");
-  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDB7to10_withEff_SL23e.root", "READ");
-  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDB8to10_withEff_SL23e.root", "READ");
+  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDB6to10_withEff_SL23d.root", "READ");
+  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDB7to10_withEff_SL23d.root", "READ");
+  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDB8to10_withEff_SL23d.root", "READ");
   */
-
+  /*
   // 3.9 GeV v1
   TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDB6to10_SL23e_v1.root", "READ");
   TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDB7to10_SL23e_v1.root", "READ");
   TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_3p9GeV_EPDA1to5_EPDB8to10_SL23e_v1.root", "READ");
-
+  */
   /*
   // 4.5 GeV
-  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_4p5GeV_EPDA1to3_EPDB4to9_TPCB0p735to0_SL23e.root", "READ");
-  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_4p5GeV_EPDA1to3_EPDB5to9_TPCB0p735to0_SL23e.root", "READ");
-  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_4p5GeV_EPDA1to3_EPDB6to9_TPCB0p735to0_SL23e.root", "READ");
+  TFile* resVarFile1 = TFile::Open("resolutionInfo_INPUT_4p5GeV_EPDA1to3_EPDB4to9_SL23e.root", "READ");
+  TFile* resVarFile2 = TFile::Open("resolutionInfo_INPUT_4p5GeV_EPDA1to3_EPDB5to9_SL23e.root", "READ");
+  TFile* resVarFile3 = TFile::Open("resolutionInfo_INPUT_4p5GeV_EPDA1to3_EPDB6to9_SL23e.root", "READ");
   */
   
   if (!resVarFile1) std::cout << "No resVarFile1" << std::endl;
@@ -86,7 +86,7 @@ void prepareResolutionsWithSystematics()
   TH1D* h_resolutionsWithSysts = (TH1D*)h_avgRes->Clone("h_resolutionsWithSysts");
   h_resolutionsWithSysts->SetName("h_resolutionsWithSysts");
   
-  for (int ithBin = 1; ithBin < h_resolutionsWithSysts->GetNbinsX(); ithBin++)
+  for (int ithBin = 1; ithBin <= h_resolutionsWithSysts->GetNbinsX(); ithBin++)
     {
       double diff1 = TMath::Abs(h_resolutionsWithSysts->GetBinContent(ithBin) - h_resVar1->GetBinContent(ithBin));
       double diff2 = TMath::Abs(h_resolutionsWithSysts->GetBinContent(ithBin) - h_resVar2->GetBinContent(ithBin));
@@ -101,7 +101,7 @@ void prepareResolutionsWithSystematics()
   TH1D* h_resolutionsCombinedError = (TH1D*)h_avgRes->Clone("h_resolutionsCombinedError");
   h_resolutionsCombinedError->SetName("h_resolutionsCombinedError");
   
-  for (int ithBin = 1; ithBin < h_resolutionsCombinedError->GetNbinsX(); ithBin++)
+  for (int ithBin = 1; ithBin <= h_resolutionsCombinedError->GetNbinsX(); ithBin++)
     {
       Double_t statError = h_resolutionsWithStats->GetBinError(ithBin);
       Double_t systError = h_resolutionsWithSysts->GetBinError(ithBin);

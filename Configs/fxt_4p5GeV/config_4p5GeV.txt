@@ -73,7 +73,6 @@ epdB_inner_row=4
 epdB_outer_row=9
 
 
-
 # Acceptance cuts
 
 yCM_norm_pi_low=0.0
