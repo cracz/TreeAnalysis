@@ -131,12 +131,19 @@ namespace PlotUtils
   };// End flipGraph()
 
 
-
+  // Replace x-axis centrality IDs with percentages without trimming bins off
+  TH1D* replaceCentralityIDs(TH1D* histo)
+  {
+    TH1D* h_withPercentages = (TH1D*)histo->Clone();
+    h_withPercentages->SetBins(histo->GetNbinsX(), 0, 80);
+    h_withPercentages->GetXaxis()->SetTitle("Centrality (%)");
+    return h_withPercentages;
+  }// End replaceCentralityIDs()
   
   // Cut off everything above 60% centrality
-  TH1D* trimCentralityPlot(TH1D *histo)
+  TH1D* trimCentralityPlot(TH1D* histo)
   {
-    TH1D *h_trimmed = (TH1D*)histo->Clone();
+    TH1D* h_trimmed = (TH1D*)histo->Clone();
     Int_t oldBins = histo->GetNbinsX();
     Int_t newBins = (oldBins == 16) ? 12 : 6; // Usually 12; 6 for rebinned kaons.
     h_trimmed->SetBins(newBins, 0, 60);
@@ -253,6 +260,16 @@ namespace PlotUtils
   };// End getEvenComponent()
 
 
+
+  void shiftGraphX(TGraphErrors* graph, Double_t shiftAmount)
+  {
+    for (int i = 0; i < graph->GetN(); i++)
+      {
+	graph->SetPointX(i, graph->GetPointX(i)+shiftAmount);
+      }
+  };
+
+
   // Add two graphs with a multiplicative factor on the second.
   // Both graphs must be guaranteed to have the same range and same number of
   // points before using this!
@@ -353,7 +370,34 @@ namespace PlotUtils
   };// End scaleGraph()
   
 
+  // Take the HADES 2.4 GeV graph with errors that is NOT symmetric across
+  // x = 0 and return the odd component of that graph.
+  TGraphErrors* getOddComponentHADESGraph(TGraphErrors* graph)
+  {
+    TString newName = (TString)graph->GetName() + "_odd";
 
+    cleanGraph(graph);
+
+    graph->RemovePoint(14);
+    graph->RemovePoint(13);
+
+    TGraphErrors* g_reflected = flipGraph(graph);
+    g_reflected->SetName("g_reflected");
+
+    TGraphErrors* g_reflectedAndNegative = (TGraphErrors*)g_reflected->Clone("g_reflectedAndNegative");
+    scaleGraph(g_reflectedAndNegative, -1.0);
+
+    TGraphErrors* g_oddComponent = addGraphs(graph, g_reflectedAndNegative, 1.0);
+    g_oddComponent->SetName(newName);
+    scaleGraph(g_oddComponent, 1.0/2.0);
+
+    return g_oddComponent;
+  };// End getOddComponentGraph()
+
+
+
+
+  
   // Take a graph with errors that is symmetric across
   // x = 0 and return the odd component of that graph.
   TGraphErrors* getOddComponentGraph(TGraphErrors* graph)

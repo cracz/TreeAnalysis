@@ -9,6 +9,7 @@
 #include "TGraph.h"
 #include "TProfile.h"
 #include "TProfile2D.h"
+#include "TProfile3D.h"
 #include "TString.h"
 #include "TMath.h"
 
@@ -280,6 +281,21 @@ namespace FlowUtils
     }
   }; // End struct Event
 
+
+  Int_t getRunIndex(Int_t runID, int* runNumbersArray, int totalNumberOfRuns)
+  {
+    Int_t runIndex = -999;
+    for(int i = 0; i < totalNumberOfRuns; i++)
+      {
+	if(runID == runNumbersArray[i]) 
+	  {
+	    runIndex = i;
+	    break;
+	  }
+      }
+    return runIndex;
+  }
+
   
   ////////
   //   Calculates the event plane angle in every subevent.
@@ -500,6 +516,175 @@ namespace FlowUtils
 
 
   ////////
+  //   Recenters the flow vectors of every subevent region in an event using the averages 
+  //  found over all events in the SAME CENTRALITY CLASS and then recalculates event plane angles.
+  ////////
+  void recenterQcentralityBased(Event &eventInfo, TFile *correctionInputFile, Double_t order_m)
+  {
+    TProfile *p_XnTpc_INPUT  = (TProfile*)correctionInputFile->Get("p_XnTpc");
+    TProfile *p_XnTpcA_INPUT = (TProfile*)correctionInputFile->Get("p_XnTpcA");
+    TProfile *p_XnTpcB_INPUT = (TProfile*)correctionInputFile->Get("p_XnTpcB");
+    TProfile *p_XnEpd_INPUT  = (TProfile*)correctionInputFile->Get("p_XnEpd");
+    TProfile *p_XnEpdA_INPUT = (TProfile*)correctionInputFile->Get("p_XnEpdA");
+    TProfile *p_XnEpdB_INPUT = (TProfile*)correctionInputFile->Get("p_XnEpdB");
+
+    TProfile *p_YnTpc_INPUT  = (TProfile*)correctionInputFile->Get("p_YnTpc");
+    TProfile *p_YnTpcA_INPUT = (TProfile*)correctionInputFile->Get("p_YnTpcA");
+    TProfile *p_YnTpcB_INPUT = (TProfile*)correctionInputFile->Get("p_YnTpcB");
+    TProfile *p_YnEpd_INPUT  = (TProfile*)correctionInputFile->Get("p_YnEpd");
+    TProfile *p_YnEpdA_INPUT = (TProfile*)correctionInputFile->Get("p_YnEpdA");
+    TProfile *p_YnEpdB_INPUT = (TProfile*)correctionInputFile->Get("p_YnEpdB");
+
+    Double_t d_XnTpc_Avg  = p_XnTpc_INPUT->GetBinContent(eventInfo.centID+1);
+    Double_t d_XnTpcA_Avg = p_XnTpcA_INPUT->GetBinContent(eventInfo.centID+1);
+    Double_t d_XnTpcB_Avg = p_XnTpcB_INPUT->GetBinContent(eventInfo.centID+1);
+    Double_t d_XnEpd_Avg  = p_XnEpd_INPUT->GetBinContent(eventInfo.centID+1);
+    Double_t d_XnEpdA_Avg = p_XnEpdA_INPUT->GetBinContent(eventInfo.centID+1);
+    Double_t d_XnEpdB_Avg = p_XnEpdB_INPUT->GetBinContent(eventInfo.centID+1);
+
+    Double_t d_YnTpc_Avg  = p_YnTpc_INPUT->GetBinContent(eventInfo.centID+1);
+    Double_t d_YnTpcA_Avg = p_YnTpcA_INPUT->GetBinContent(eventInfo.centID+1);
+    Double_t d_YnTpcB_Avg = p_YnTpcB_INPUT->GetBinContent(eventInfo.centID+1);
+    Double_t d_YnEpd_Avg  = p_YnEpd_INPUT->GetBinContent(eventInfo.centID+1);
+    Double_t d_YnEpdA_Avg = p_YnEpdA_INPUT->GetBinContent(eventInfo.centID+1);
+    Double_t d_YnEpdB_Avg = p_YnEpdB_INPUT->GetBinContent(eventInfo.centID+1);
+
+
+    eventInfo.XnTpc  -= d_XnTpc_Avg;
+    eventInfo.XnTpcA -= d_XnTpcA_Avg;
+    eventInfo.XnTpcB -= d_XnTpcB_Avg;
+    eventInfo.XnEpd  -= d_XnEpd_Avg;
+    eventInfo.XnEpdA -= d_XnEpdA_Avg;
+    eventInfo.XnEpdB -= d_XnEpdB_Avg;
+
+    eventInfo.YnTpc  -= d_YnTpc_Avg;
+    eventInfo.YnTpcA -= d_YnTpcA_Avg;
+    eventInfo.YnTpcB -= d_YnTpcB_Avg;
+    eventInfo.YnEpd  -= d_YnEpd_Avg;
+    eventInfo.YnEpdA -= d_YnEpdA_Avg;
+    eventInfo.YnEpdB -= d_YnEpdB_Avg;
+
+    checkZeroQ(eventInfo);
+
+    getAllPsi(eventInfo, order_m);
+    setAllPeriods(eventInfo, order_m);
+  }// End recenterQcentralityBased()
+
+
+  ////////
+  //   Recenters the flow vectors of every subevent region in an event using the averages 
+  //  found over all events in the SAME RUN ID and then recalculates event plane angles.
+  ////////
+  void recenterQrunIDBased(Event &eventInfo, TFile *correctionInputFile, Double_t order_m, Int_t runindex)
+  {
+    TProfile *p_XnTpc_INPUT  = (TProfile*)correctionInputFile->Get("p_XnTpc");
+    TProfile *p_XnTpcA_INPUT = (TProfile*)correctionInputFile->Get("p_XnTpcA");
+    TProfile *p_XnTpcB_INPUT = (TProfile*)correctionInputFile->Get("p_XnTpcB");
+    TProfile *p_XnEpd_INPUT  = (TProfile*)correctionInputFile->Get("p_XnEpd");
+    TProfile *p_XnEpdA_INPUT = (TProfile*)correctionInputFile->Get("p_XnEpdA");
+    TProfile *p_XnEpdB_INPUT = (TProfile*)correctionInputFile->Get("p_XnEpdB");
+
+    TProfile *p_YnTpc_INPUT  = (TProfile*)correctionInputFile->Get("p_YnTpc");
+    TProfile *p_YnTpcA_INPUT = (TProfile*)correctionInputFile->Get("p_YnTpcA");
+    TProfile *p_YnTpcB_INPUT = (TProfile*)correctionInputFile->Get("p_YnTpcB");
+    TProfile *p_YnEpd_INPUT  = (TProfile*)correctionInputFile->Get("p_YnEpd");
+    TProfile *p_YnEpdA_INPUT = (TProfile*)correctionInputFile->Get("p_YnEpdA");
+    TProfile *p_YnEpdB_INPUT = (TProfile*)correctionInputFile->Get("p_YnEpdB");
+
+    Double_t d_XnTpc_Avg  = p_XnTpc_INPUT->GetBinContent(runindex+1);
+    Double_t d_XnTpcA_Avg = p_XnTpcA_INPUT->GetBinContent(runindex+1);
+    Double_t d_XnTpcB_Avg = p_XnTpcB_INPUT->GetBinContent(runindex+1);
+    Double_t d_XnEpd_Avg  = p_XnEpd_INPUT->GetBinContent(runindex+1);
+    Double_t d_XnEpdA_Avg = p_XnEpdA_INPUT->GetBinContent(runindex+1);
+    Double_t d_XnEpdB_Avg = p_XnEpdB_INPUT->GetBinContent(runindex+1);
+
+    Double_t d_YnTpc_Avg  = p_YnTpc_INPUT->GetBinContent(runindex+1);
+    Double_t d_YnTpcA_Avg = p_YnTpcA_INPUT->GetBinContent(runindex+1);
+    Double_t d_YnTpcB_Avg = p_YnTpcB_INPUT->GetBinContent(runindex+1);
+    Double_t d_YnEpd_Avg  = p_YnEpd_INPUT->GetBinContent(runindex+1);
+    Double_t d_YnEpdA_Avg = p_YnEpdA_INPUT->GetBinContent(runindex+1);
+    Double_t d_YnEpdB_Avg = p_YnEpdB_INPUT->GetBinContent(runindex+1);
+
+
+    eventInfo.XnTpc  -= d_XnTpc_Avg;
+    eventInfo.XnTpcA -= d_XnTpcA_Avg;
+    eventInfo.XnTpcB -= d_XnTpcB_Avg;
+    eventInfo.XnEpd  -= d_XnEpd_Avg;
+    eventInfo.XnEpdA -= d_XnEpdA_Avg;
+    eventInfo.XnEpdB -= d_XnEpdB_Avg;
+
+    eventInfo.YnTpc  -= d_YnTpc_Avg;
+    eventInfo.YnTpcA -= d_YnTpcA_Avg;
+    eventInfo.YnTpcB -= d_YnTpcB_Avg;
+    eventInfo.YnEpd  -= d_YnEpd_Avg;
+    eventInfo.YnEpdA -= d_YnEpdA_Avg;
+    eventInfo.YnEpdB -= d_YnEpdB_Avg;
+
+    checkZeroQ(eventInfo);
+
+    getAllPsi(eventInfo, order_m);
+    setAllPeriods(eventInfo, order_m);
+  }// End recenterQrunIDBased()
+
+
+    ////////
+  //   Recenters the flow vectors of every subevent region in an event using the averages 
+  //  found over all events in the SAME CENTRALITY CLASS AND RUN ID and then recalculates event plane angles.
+  ////////
+  void recenterQcentralityAndRunIDBased(Event &eventInfo, TFile *correctionInputFile, Double_t order_m, Int_t runindex)
+  {
+    TProfile2D *p2_XnTpc_INPUT  = (TProfile2D*)correctionInputFile->Get("p2_XnTpc");
+    TProfile2D *p2_XnTpcA_INPUT = (TProfile2D*)correctionInputFile->Get("p2_XnTpcA");
+    TProfile2D *p2_XnTpcB_INPUT = (TProfile2D*)correctionInputFile->Get("p2_XnTpcB");
+    TProfile2D *p2_XnEpd_INPUT  = (TProfile2D*)correctionInputFile->Get("p2_XnEpd");
+    TProfile2D *p2_XnEpdA_INPUT = (TProfile2D*)correctionInputFile->Get("p2_XnEpdA");
+    TProfile2D *p2_XnEpdB_INPUT = (TProfile2D*)correctionInputFile->Get("p2_XnEpdB");
+
+    TProfile2D *p2_YnTpc_INPUT  = (TProfile2D*)correctionInputFile->Get("p2_YnTpc");
+    TProfile2D *p2_YnTpcA_INPUT = (TProfile2D*)correctionInputFile->Get("p2_YnTpcA");
+    TProfile2D *p2_YnTpcB_INPUT = (TProfile2D*)correctionInputFile->Get("p2_YnTpcB");
+    TProfile2D *p2_YnEpd_INPUT  = (TProfile2D*)correctionInputFile->Get("p2_YnEpd");
+    TProfile2D *p2_YnEpdA_INPUT = (TProfile2D*)correctionInputFile->Get("p2_YnEpdA");
+    TProfile2D *p2_YnEpdB_INPUT = (TProfile2D*)correctionInputFile->Get("p2_YnEpdB");
+
+    Double_t d_XnTpc_Avg  = p2_XnTpc_INPUT->GetBinContent(eventInfo.centID+1, runindex+1);
+    Double_t d_XnTpcA_Avg = p2_XnTpcA_INPUT->GetBinContent(eventInfo.centID+1, runindex+1);
+    Double_t d_XnTpcB_Avg = p2_XnTpcB_INPUT->GetBinContent(eventInfo.centID+1, runindex+1);
+    Double_t d_XnEpd_Avg  = p2_XnEpd_INPUT->GetBinContent(eventInfo.centID+1, runindex+1);
+    Double_t d_XnEpdA_Avg = p2_XnEpdA_INPUT->GetBinContent(eventInfo.centID+1, runindex+1);
+    Double_t d_XnEpdB_Avg = p2_XnEpdB_INPUT->GetBinContent(eventInfo.centID+1, runindex+1);
+
+    Double_t d_YnTpc_Avg  = p2_YnTpc_INPUT->GetBinContent(eventInfo.centID+1, runindex+1);
+    Double_t d_YnTpcA_Avg = p2_YnTpcA_INPUT->GetBinContent(eventInfo.centID+1, runindex+1);
+    Double_t d_YnTpcB_Avg = p2_YnTpcB_INPUT->GetBinContent(eventInfo.centID+1, runindex+1);
+    Double_t d_YnEpd_Avg  = p2_YnEpd_INPUT->GetBinContent(eventInfo.centID+1, runindex+1);
+    Double_t d_YnEpdA_Avg = p2_YnEpdA_INPUT->GetBinContent(eventInfo.centID+1, runindex+1);
+    Double_t d_YnEpdB_Avg = p2_YnEpdB_INPUT->GetBinContent(eventInfo.centID+1, runindex+1);
+
+
+    eventInfo.XnTpc  -= d_XnTpc_Avg;
+    eventInfo.XnTpcA -= d_XnTpcA_Avg;
+    eventInfo.XnTpcB -= d_XnTpcB_Avg;
+    eventInfo.XnEpd  -= d_XnEpd_Avg;
+    eventInfo.XnEpdA -= d_XnEpdA_Avg;
+    eventInfo.XnEpdB -= d_XnEpdB_Avg;
+
+    eventInfo.YnTpc  -= d_YnTpc_Avg;
+    eventInfo.YnTpcA -= d_YnTpcA_Avg;
+    eventInfo.YnTpcB -= d_YnTpcB_Avg;
+    eventInfo.YnEpd  -= d_YnEpd_Avg;
+    eventInfo.YnEpdA -= d_YnEpdA_Avg;
+    eventInfo.YnEpdB -= d_YnEpdB_Avg;
+
+    checkZeroQ(eventInfo);
+
+    getAllPsi(eventInfo, order_m);
+    setAllPeriods(eventInfo, order_m);
+  }// End recenterQcentralityAndRunIDBased()
+
+
+
+  ////////
   //   Performs the event-by-event shifting described in the Poskanzer paper to flatten the event 
   //  plane angle distributions of each subevent.
   ////////
@@ -582,6 +767,263 @@ namespace FlowUtils
     // Keep angles in the correct period
     setAllPeriods(eventInfo, order_m);
   }// End shiftPsi()
+
+
+
+  ////////
+  //   Performs the event-by-event shifting described in the Poskanzer paper to flatten the event 
+  //  plane angle distributions of each subevent IN EACH CENTRALITY CLASS SEPARATELY.
+  ////////
+  void shiftPsiCentralityBased(Event &eventInfo, TFile *correctionInputFile, Double_t order_m, Int_t shiftTerms)
+  {
+    TProfile2D *p2_sinAvgsTpc_INPUT  = (TProfile2D*)correctionInputFile->Get("p2_sinAvgsTpc");
+    TProfile2D *p2_cosAvgsTpc_INPUT  = (TProfile2D*)correctionInputFile->Get("p2_cosAvgsTpc");
+    TProfile2D *p2_sinAvgsTpcA_INPUT = (TProfile2D*)correctionInputFile->Get("p2_sinAvgsTpcA");
+    TProfile2D *p2_cosAvgsTpcA_INPUT = (TProfile2D*)correctionInputFile->Get("p2_cosAvgsTpcA");
+    TProfile2D *p2_sinAvgsTpcB_INPUT = (TProfile2D*)correctionInputFile->Get("p2_sinAvgsTpcB");
+    TProfile2D *p2_cosAvgsTpcB_INPUT = (TProfile2D*)correctionInputFile->Get("p2_cosAvgsTpcB");
+    TProfile2D *p2_sinAvgsEpd_INPUT  = (TProfile2D*)correctionInputFile->Get("p2_sinAvgsEpd");
+    TProfile2D *p2_cosAvgsEpd_INPUT  = (TProfile2D*)correctionInputFile->Get("p2_cosAvgsEpd");
+    TProfile2D *p2_sinAvgsEpdA_INPUT = (TProfile2D*)correctionInputFile->Get("p2_sinAvgsEpdA");
+    TProfile2D *p2_cosAvgsEpdA_INPUT = (TProfile2D*)correctionInputFile->Get("p2_cosAvgsEpdA");
+    TProfile2D *p2_sinAvgsEpdB_INPUT = (TProfile2D*)correctionInputFile->Get("p2_sinAvgsEpdB");
+    TProfile2D *p2_cosAvgsEpdB_INPUT = (TProfile2D*)correctionInputFile->Get("p2_cosAvgsEpdB");
+
+
+    // Get corrected event plane angles //
+
+    Double_t psiTpc_delta  = 0;
+    Double_t psiTpcA_delta = 0;
+    Double_t psiTpcB_delta = 0;
+    Double_t psiEpd_delta  = 0;
+    Double_t psiEpdA_delta = 0;
+    Double_t psiEpdB_delta = 0;
+
+    Double_t jthSinAvg_Tpc  = 0;
+    Double_t jthCosAvg_Tpc  = 0;
+    Double_t jthSinAvg_TpcA = 0;
+    Double_t jthCosAvg_TpcA = 0;
+    Double_t jthSinAvg_TpcB = 0;
+    Double_t jthCosAvg_TpcB = 0;
+    Double_t jthSinAvg_Epd  = 0;
+    Double_t jthCosAvg_Epd  = 0;
+    Double_t jthSinAvg_EpdA = 0;
+    Double_t jthCosAvg_EpdA = 0;
+    Double_t jthSinAvg_EpdB = 0;
+    Double_t jthCosAvg_EpdB = 0;
+
+
+    for (Int_t j = 1; j <= shiftTerms; j++)    // Build the correction sums
+      {
+	jthSinAvg_Tpc  = p2_sinAvgsTpc_INPUT->GetBinContent(j,  eventInfo.centID+1);
+	jthCosAvg_Tpc  = p2_cosAvgsTpc_INPUT->GetBinContent(j,  eventInfo.centID+1);
+	jthSinAvg_TpcA = p2_sinAvgsTpcA_INPUT->GetBinContent(j, eventInfo.centID+1);
+	jthCosAvg_TpcA = p2_cosAvgsTpcA_INPUT->GetBinContent(j, eventInfo.centID+1);
+	jthSinAvg_TpcB = p2_sinAvgsTpcB_INPUT->GetBinContent(j, eventInfo.centID+1);
+	jthCosAvg_TpcB = p2_cosAvgsTpcB_INPUT->GetBinContent(j, eventInfo.centID+1);
+	jthSinAvg_Epd  = p2_sinAvgsEpd_INPUT->GetBinContent(j,  eventInfo.centID+1);
+	jthCosAvg_Epd  = p2_cosAvgsEpd_INPUT->GetBinContent(j,  eventInfo.centID+1);
+	jthSinAvg_EpdA = p2_sinAvgsEpdA_INPUT->GetBinContent(j, eventInfo.centID+1);
+	jthCosAvg_EpdA = p2_cosAvgsEpdA_INPUT->GetBinContent(j, eventInfo.centID+1);
+	jthSinAvg_EpdB = p2_sinAvgsEpdB_INPUT->GetBinContent(j, eventInfo.centID+1);
+	jthCosAvg_EpdB = p2_cosAvgsEpdB_INPUT->GetBinContent(j, eventInfo.centID+1);
+
+	psiTpc_delta  += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_Tpc * TMath::Cos((Double_t)j * order_m * eventInfo.psiTpc) 
+							+jthCosAvg_Tpc * TMath::Sin((Double_t)j * order_m * eventInfo.psiTpc));
+	psiTpcA_delta += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_TpcA * TMath::Cos((Double_t)j * order_m * eventInfo.psiTpcA) 
+							+jthCosAvg_TpcA * TMath::Sin((Double_t)j * order_m * eventInfo.psiTpcA));
+	psiTpcB_delta += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_TpcB * TMath::Cos((Double_t)j * order_m * eventInfo.psiTpcB) 
+							+jthCosAvg_TpcB * TMath::Sin((Double_t)j * order_m * eventInfo.psiTpcB));
+	psiEpd_delta  += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_Epd * TMath::Cos((Double_t)j * order_m * eventInfo.psiEpd)
+							+jthCosAvg_Epd * TMath::Sin((Double_t)j * order_m * eventInfo.psiEpd));
+	psiEpdA_delta += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_EpdA * TMath::Cos((Double_t)j * order_m * eventInfo.psiEpdA)
+							+jthCosAvg_EpdA * TMath::Sin((Double_t)j * order_m * eventInfo.psiEpdA));
+	psiEpdB_delta += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_EpdB * TMath::Cos((Double_t)j * order_m * eventInfo.psiEpdB)
+							+jthCosAvg_EpdB * TMath::Sin((Double_t)j * order_m * eventInfo.psiEpdB));
+      }
+
+    // Shift event plane angles
+    eventInfo.psiTpc  += psiTpc_delta;
+    eventInfo.psiTpcA += psiTpcA_delta;
+    eventInfo.psiTpcB += psiTpcB_delta;
+    eventInfo.psiEpd  += psiEpd_delta;
+    eventInfo.psiEpdA += psiEpdA_delta;
+    eventInfo.psiEpdB += psiEpdB_delta;
+
+    // Keep angles in the correct period
+    setAllPeriods(eventInfo, order_m);
+  }// End shiftPsiCentralityBased()
+
+
+  ////////
+  //   Performs the event-by-event shifting described in the Poskanzer paper to flatten the event 
+  //  plane angle distributions of each subevent IN EACH RUN ID SEPARATELY.
+  ////////
+  void shiftPsiRunIDBased(Event &eventInfo, TFile *correctionInputFile, Double_t order_m, Int_t shiftTerms, Int_t runindex)
+  {
+    TProfile2D *p2_sinAvgsTpc_INPUT  = (TProfile2D*)correctionInputFile->Get("p2_sinAvgsTpc");
+    TProfile2D *p2_cosAvgsTpc_INPUT  = (TProfile2D*)correctionInputFile->Get("p2_cosAvgsTpc");
+    TProfile2D *p2_sinAvgsTpcA_INPUT = (TProfile2D*)correctionInputFile->Get("p2_sinAvgsTpcA");
+    TProfile2D *p2_cosAvgsTpcA_INPUT = (TProfile2D*)correctionInputFile->Get("p2_cosAvgsTpcA");
+    TProfile2D *p2_sinAvgsTpcB_INPUT = (TProfile2D*)correctionInputFile->Get("p2_sinAvgsTpcB");
+    TProfile2D *p2_cosAvgsTpcB_INPUT = (TProfile2D*)correctionInputFile->Get("p2_cosAvgsTpcB");
+    TProfile2D *p2_sinAvgsEpd_INPUT  = (TProfile2D*)correctionInputFile->Get("p2_sinAvgsEpd");
+    TProfile2D *p2_cosAvgsEpd_INPUT  = (TProfile2D*)correctionInputFile->Get("p2_cosAvgsEpd");
+    TProfile2D *p2_sinAvgsEpdA_INPUT = (TProfile2D*)correctionInputFile->Get("p2_sinAvgsEpdA");
+    TProfile2D *p2_cosAvgsEpdA_INPUT = (TProfile2D*)correctionInputFile->Get("p2_cosAvgsEpdA");
+    TProfile2D *p2_sinAvgsEpdB_INPUT = (TProfile2D*)correctionInputFile->Get("p2_sinAvgsEpdB");
+    TProfile2D *p2_cosAvgsEpdB_INPUT = (TProfile2D*)correctionInputFile->Get("p2_cosAvgsEpdB");
+
+
+    // Get corrected event plane angles //
+
+    Double_t psiTpc_delta  = 0;
+    Double_t psiTpcA_delta = 0;
+    Double_t psiTpcB_delta = 0;
+    Double_t psiEpd_delta  = 0;
+    Double_t psiEpdA_delta = 0;
+    Double_t psiEpdB_delta = 0;
+
+    Double_t jthSinAvg_Tpc  = 0;
+    Double_t jthCosAvg_Tpc  = 0;
+    Double_t jthSinAvg_TpcA = 0;
+    Double_t jthCosAvg_TpcA = 0;
+    Double_t jthSinAvg_TpcB = 0;
+    Double_t jthCosAvg_TpcB = 0;
+    Double_t jthSinAvg_Epd  = 0;
+    Double_t jthCosAvg_Epd  = 0;
+    Double_t jthSinAvg_EpdA = 0;
+    Double_t jthCosAvg_EpdA = 0;
+    Double_t jthSinAvg_EpdB = 0;
+    Double_t jthCosAvg_EpdB = 0;
+
+
+    for (Int_t j = 1; j <= shiftTerms; j++)    // Build the correction sums
+      {
+	jthSinAvg_Tpc  = p2_sinAvgsTpc_INPUT->GetBinContent(j,  runindex+1);
+	jthCosAvg_Tpc  = p2_cosAvgsTpc_INPUT->GetBinContent(j,  runindex+1);
+	jthSinAvg_TpcA = p2_sinAvgsTpcA_INPUT->GetBinContent(j, runindex+1);
+	jthCosAvg_TpcA = p2_cosAvgsTpcA_INPUT->GetBinContent(j, runindex+1);
+	jthSinAvg_TpcB = p2_sinAvgsTpcB_INPUT->GetBinContent(j, runindex+1);
+	jthCosAvg_TpcB = p2_cosAvgsTpcB_INPUT->GetBinContent(j, runindex+1);
+	jthSinAvg_Epd  = p2_sinAvgsEpd_INPUT->GetBinContent(j,  runindex+1);
+	jthCosAvg_Epd  = p2_cosAvgsEpd_INPUT->GetBinContent(j,  runindex+1);
+	jthSinAvg_EpdA = p2_sinAvgsEpdA_INPUT->GetBinContent(j, runindex+1);
+	jthCosAvg_EpdA = p2_cosAvgsEpdA_INPUT->GetBinContent(j, runindex+1);
+	jthSinAvg_EpdB = p2_sinAvgsEpdB_INPUT->GetBinContent(j, runindex+1);
+	jthCosAvg_EpdB = p2_cosAvgsEpdB_INPUT->GetBinContent(j, runindex+1);
+
+	psiTpc_delta  += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_Tpc * TMath::Cos((Double_t)j * order_m * eventInfo.psiTpc) 
+							+jthCosAvg_Tpc * TMath::Sin((Double_t)j * order_m * eventInfo.psiTpc));
+	psiTpcA_delta += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_TpcA * TMath::Cos((Double_t)j * order_m * eventInfo.psiTpcA) 
+							+jthCosAvg_TpcA * TMath::Sin((Double_t)j * order_m * eventInfo.psiTpcA));
+	psiTpcB_delta += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_TpcB * TMath::Cos((Double_t)j * order_m * eventInfo.psiTpcB) 
+							+jthCosAvg_TpcB * TMath::Sin((Double_t)j * order_m * eventInfo.psiTpcB));
+	psiEpd_delta  += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_Epd * TMath::Cos((Double_t)j * order_m * eventInfo.psiEpd)
+							+jthCosAvg_Epd * TMath::Sin((Double_t)j * order_m * eventInfo.psiEpd));
+	psiEpdA_delta += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_EpdA * TMath::Cos((Double_t)j * order_m * eventInfo.psiEpdA)
+							+jthCosAvg_EpdA * TMath::Sin((Double_t)j * order_m * eventInfo.psiEpdA));
+	psiEpdB_delta += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_EpdB * TMath::Cos((Double_t)j * order_m * eventInfo.psiEpdB)
+							+jthCosAvg_EpdB * TMath::Sin((Double_t)j * order_m * eventInfo.psiEpdB));
+      }
+
+    // Shift event plane angles
+    eventInfo.psiTpc  += psiTpc_delta;
+    eventInfo.psiTpcA += psiTpcA_delta;
+    eventInfo.psiTpcB += psiTpcB_delta;
+    eventInfo.psiEpd  += psiEpd_delta;
+    eventInfo.psiEpdA += psiEpdA_delta;
+    eventInfo.psiEpdB += psiEpdB_delta;
+
+    // Keep angles in the correct period
+    setAllPeriods(eventInfo, order_m);
+  }// End shiftPsiRunIDBased()
+
+
+  ////////
+  //   Performs the event-by-event shifting described in the Poskanzer paper to flatten the event 
+  //  plane angle distributions of each subevent IN EACH CENTRALITY CLASS AND RUN ID SEPARATELY.
+  ////////
+  void shiftPsiCentralityAndRunIDBased(Event &eventInfo, TFile *correctionInputFile, Double_t order_m, Int_t shiftTerms, Int_t runindex)
+  {
+    TProfile3D *p3_sinAvgsTpc_INPUT  = (TProfile3D*)correctionInputFile->Get("p3_sinAvgsTpc");
+    TProfile3D *p3_cosAvgsTpc_INPUT  = (TProfile3D*)correctionInputFile->Get("p3_cosAvgsTpc");
+    TProfile3D *p3_sinAvgsTpcA_INPUT = (TProfile3D*)correctionInputFile->Get("p3_sinAvgsTpcA");
+    TProfile3D *p3_cosAvgsTpcA_INPUT = (TProfile3D*)correctionInputFile->Get("p3_cosAvgsTpcA");
+    TProfile3D *p3_sinAvgsTpcB_INPUT = (TProfile3D*)correctionInputFile->Get("p3_sinAvgsTpcB");
+    TProfile3D *p3_cosAvgsTpcB_INPUT = (TProfile3D*)correctionInputFile->Get("p3_cosAvgsTpcB");
+    TProfile3D *p3_sinAvgsEpd_INPUT  = (TProfile3D*)correctionInputFile->Get("p3_sinAvgsEpd");
+    TProfile3D *p3_cosAvgsEpd_INPUT  = (TProfile3D*)correctionInputFile->Get("p3_cosAvgsEpd");
+    TProfile3D *p3_sinAvgsEpdA_INPUT = (TProfile3D*)correctionInputFile->Get("p3_sinAvgsEpdA");
+    TProfile3D *p3_cosAvgsEpdA_INPUT = (TProfile3D*)correctionInputFile->Get("p3_cosAvgsEpdA");
+    TProfile3D *p3_sinAvgsEpdB_INPUT = (TProfile3D*)correctionInputFile->Get("p3_sinAvgsEpdB");
+    TProfile3D *p3_cosAvgsEpdB_INPUT = (TProfile3D*)correctionInputFile->Get("p3_cosAvgsEpdB");
+
+
+    // Get corrected event plane angles //
+
+    Double_t psiTpc_delta  = 0;
+    Double_t psiTpcA_delta = 0;
+    Double_t psiTpcB_delta = 0;
+    Double_t psiEpd_delta  = 0;
+    Double_t psiEpdA_delta = 0;
+    Double_t psiEpdB_delta = 0;
+
+    Double_t jthSinAvg_Tpc  = 0;
+    Double_t jthCosAvg_Tpc  = 0;
+    Double_t jthSinAvg_TpcA = 0;
+    Double_t jthCosAvg_TpcA = 0;
+    Double_t jthSinAvg_TpcB = 0;
+    Double_t jthCosAvg_TpcB = 0;
+    Double_t jthSinAvg_Epd  = 0;
+    Double_t jthCosAvg_Epd  = 0;
+    Double_t jthSinAvg_EpdA = 0;
+    Double_t jthCosAvg_EpdA = 0;
+    Double_t jthSinAvg_EpdB = 0;
+    Double_t jthCosAvg_EpdB = 0;
+
+
+    for (Int_t j = 1; j <= shiftTerms; j++)    // Build the correction sums
+      {
+	jthSinAvg_Tpc  = p3_sinAvgsTpc_INPUT->GetBinContent(j,  eventInfo.centID+1, runindex+1);
+	jthCosAvg_Tpc  = p3_cosAvgsTpc_INPUT->GetBinContent(j,  eventInfo.centID+1, runindex+1);
+	jthSinAvg_TpcA = p3_sinAvgsTpcA_INPUT->GetBinContent(j, eventInfo.centID+1, runindex+1);
+	jthCosAvg_TpcA = p3_cosAvgsTpcA_INPUT->GetBinContent(j, eventInfo.centID+1, runindex+1);
+	jthSinAvg_TpcB = p3_sinAvgsTpcB_INPUT->GetBinContent(j, eventInfo.centID+1, runindex+1);
+	jthCosAvg_TpcB = p3_cosAvgsTpcB_INPUT->GetBinContent(j, eventInfo.centID+1, runindex+1);
+	jthSinAvg_Epd  = p3_sinAvgsEpd_INPUT->GetBinContent(j,  eventInfo.centID+1, runindex+1);
+	jthCosAvg_Epd  = p3_cosAvgsEpd_INPUT->GetBinContent(j,  eventInfo.centID+1, runindex+1);
+	jthSinAvg_EpdA = p3_sinAvgsEpdA_INPUT->GetBinContent(j, eventInfo.centID+1, runindex+1);
+	jthCosAvg_EpdA = p3_cosAvgsEpdA_INPUT->GetBinContent(j, eventInfo.centID+1, runindex+1);
+	jthSinAvg_EpdB = p3_sinAvgsEpdB_INPUT->GetBinContent(j, eventInfo.centID+1, runindex+1);
+	jthCosAvg_EpdB = p3_cosAvgsEpdB_INPUT->GetBinContent(j, eventInfo.centID+1, runindex+1);
+
+	psiTpc_delta  += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_Tpc  * TMath::Cos((Double_t)j * order_m * eventInfo.psiTpc) 
+							+jthCosAvg_Tpc  * TMath::Sin((Double_t)j * order_m * eventInfo.psiTpc));
+	psiTpcA_delta += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_TpcA * TMath::Cos((Double_t)j * order_m * eventInfo.psiTpcA) 
+							+jthCosAvg_TpcA * TMath::Sin((Double_t)j * order_m * eventInfo.psiTpcA));
+	psiTpcB_delta += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_TpcB * TMath::Cos((Double_t)j * order_m * eventInfo.psiTpcB) 
+							+jthCosAvg_TpcB * TMath::Sin((Double_t)j * order_m * eventInfo.psiTpcB));
+	psiEpd_delta  += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_Epd  * TMath::Cos((Double_t)j * order_m * eventInfo.psiEpd)
+							+jthCosAvg_Epd  * TMath::Sin((Double_t)j * order_m * eventInfo.psiEpd));
+	psiEpdA_delta += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_EpdA * TMath::Cos((Double_t)j * order_m * eventInfo.psiEpdA)
+							+jthCosAvg_EpdA * TMath::Sin((Double_t)j * order_m * eventInfo.psiEpdA));
+	psiEpdB_delta += (2.0/((Double_t)j*order_m)) * (-jthSinAvg_EpdB * TMath::Cos((Double_t)j * order_m * eventInfo.psiEpdB)
+							+jthCosAvg_EpdB * TMath::Sin((Double_t)j * order_m * eventInfo.psiEpdB));
+      }
+
+    // Shift event plane angles
+    eventInfo.psiTpc  += psiTpc_delta;
+    eventInfo.psiTpcA += psiTpcA_delta;
+    eventInfo.psiTpcB += psiTpcB_delta;
+    eventInfo.psiEpd  += psiEpd_delta;
+    eventInfo.psiEpdA += psiEpdA_delta;
+    eventInfo.psiEpdB += psiEpdB_delta;
+
+    // Keep angles in the correct period
+    setAllPeriods(eventInfo, order_m);
+  }// End shiftPsiCentralityAndRunIDBased()
+
 
 
   // Cuts for momentum dependent nSigmaProton cuts

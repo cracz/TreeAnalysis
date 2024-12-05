@@ -144,6 +144,9 @@ void SetupAttributes::setTOFEfficiencyFile(TString fileName)
       h2_ratio_tof = (TH2D*)tofEfficiencyFile->Get("h2_ratio_tof");
 
       if (!h2_ratio_tof)
+	h2_ratio_tof = (TH2D*)tofEfficiencyFile->Get("h2_ratio_TOF");
+
+      if (!h2_ratio_tof)
 	{ 
 	  std::cout << "FAILED TO RETRIEVE TOF EFFICIENCY HISTOGRAM!" << std::endl
 		    << "ALL EFFICIENCIES WILL DEFAULT TO 1!" << std::endl;
