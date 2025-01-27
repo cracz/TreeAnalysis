@@ -1,6 +1,6 @@
 #include "PlotUtils.h"
 
-void resolutions(TString jobID, TString order_n_str)
+void resolutionsEPDB(TString jobID, TString order_n_str)
 {
   if (!jobID) { std::cout << "Supply a job ID!" << std::endl; return; }
   TString fileName = jobID + ".picoDst.result.combined.root";
@@ -43,8 +43,8 @@ void resolutions(TString jobID, TString order_n_str)
   Int_t lastCentID  = h_EpdAEpdB->GetBinLowEdge(h_EpdAEpdB->GetNbinsX());
 
   // Make plots of EPD A resolutions.
-  TH1D *h_resolEPDA = new TH1D("h_resolEPDA","EPD A vs EPD B and TPC B;Centrality (%);R_{"+order_n_str+"1}",centBins,0,centBins);
-  TH1D *h_resolutions = new TH1D("h_resolutions","EPD A Resolutions;Centrality;R_{"+order_n_str+"1}",centBins,0,centBins);
+  TH1D *h_resolEPDB = new TH1D("h_resolEPDB","EPD B vs EPD A and TPC B;Centrality (%);R_{"+order_n_str+"1}",centBins,0,centBins);
+  TH1D *h_resolutions = new TH1D("h_resolutions","EPD B Resolutions;Centrality;R_{"+order_n_str+"1}",centBins,0,centBins);
   
   
   Double_t EpdAEpdB;
@@ -70,8 +70,8 @@ void resolutions(TString jobID, TString order_n_str)
   Double_t dTpcBEpdA_save;
   Double_t dTpcBEpdB_save;
 
-  Double_t R_AvsB_save;
-  Double_t dR_AvsB_save;
+  Double_t R_BvsA_save;
+  Double_t dR_BvsA_save;
       
   // Fill resolution plots
   for (int i = 1; i <= centBins; i++)
@@ -84,22 +84,10 @@ void resolutions(TString jobID, TString order_n_str)
       dTpcBEpdA_save = h_TpcBEpdA->GetBinError(i);
       dTpcBEpdB_save = h_TpcBEpdB->GetBinError(i);
 
-      R_AvsB_save  = TMath::Sqrt( (EpdAEpdB_save * TpcBEpdA_save) / TpcBEpdB_save );
-      dR_AvsB_save = R_AvsB_save * TMath::Sqrt((dEpdAEpdB_save/(2*EpdAEpdB_save))*(dEpdAEpdB_save/(2*EpdAEpdB_save)) +
+      R_BvsA_save  = TMath::Sqrt( (EpdAEpdB_save * TpcBEpdB_save) / TpcBEpdA_save );
+      dR_BvsA_save = R_BvsA_save * TMath::Sqrt((dEpdAEpdB_save/(2*EpdAEpdB_save))*(dEpdAEpdB_save/(2*EpdAEpdB_save)) +
 					       (dTpcBEpdA_save/(2*TpcBEpdA_save))*(dTpcBEpdA_save/(2*TpcBEpdA_save)) +
 					       (dTpcBEpdB_save/(2*TpcBEpdB_save))*(dTpcBEpdB_save/(2*TpcBEpdB_save)));
-      /*
-      if (i == 5)
-	{
-	  std::cout << "( (EpdAEpdB_save * TpcBEpdA_save) / TpcBEpdB_save )^2 = "
-		    << "(" << EpdAEpdB_save << " * " << TpcBEpdA_save << ") / " << TpcBEpdB_save
-		    << std::endl << std::endl;
-
-	  std::cout << "dEpdAEpdB_save = " << dEpdAEpdB_save << std::endl;
-	  std::cout << "dTpcBEpdA_save = " << dTpcBEpdA_save << std::endl;
-	  std::cout << "dTpcBEpdB_save = " << dTpcBEpdB_save << std::endl;
-	}
-      */
       
       EpdAEpdB = h_EpdAEpdB_flip->GetBinContent(i);      
       TpcBEpdA = h_TpcBEpdA_flip->GetBinContent(i);
@@ -130,13 +118,13 @@ void resolutions(TString jobID, TString order_n_str)
       if(TMath::IsNaN(R_BvsA)) { R_BvsA = 0; dR_BvsA = 0; }
       if(TMath::IsNaN(R_TpcB)) { R_TpcB = 0; dR_TpcB = 0; }
 
-      h_resolEPDA->SetBinContent(i, R_AvsB);
-      h_resolEPDA->SetBinError(i, dR_AvsB);
+      h_resolEPDB->SetBinContent(i, R_BvsA);
+      h_resolEPDB->SetBinError(i, dR_BvsA);
 
-      if(!TMath::IsNaN(R_AvsB_save))
+      if(!TMath::IsNaN(R_BvsA_save))
 	{
-	  h_resolutions->SetBinContent(i, R_AvsB_save);
-	  h_resolutions->SetBinError(i, dR_AvsB_save);
+	  h_resolutions->SetBinContent(i, R_BvsA_save);
+	  h_resolutions->SetBinError(i, dR_BvsA_save);
 	}
     }
 
@@ -145,13 +133,13 @@ void resolutions(TString jobID, TString order_n_str)
   
   gStyle->SetOptStat(0);
 
-  h_resolEPDA->SetMarkerStyle(20);
-  h_resolEPDA->SetMarkerSize(1.5);
-  h_resolEPDA->SetMarkerColor(kBlue-7);
-  h_resolEPDA->SetLineColor(kBlue-7);
+  h_resolEPDB->SetMarkerStyle(20);
+  h_resolEPDB->SetMarkerSize(1.5);
+  h_resolEPDB->SetMarkerColor(kBlue-7);
+  h_resolEPDB->SetLineColor(kBlue-7);
   
   TLegend *legend2 = new TLegend(0.65, 0.82, 0.96, 0.96);
-  legend2->AddEntry(h_resolEPDA,"Inner EPD #psi_{1}");
+  legend2->AddEntry(h_resolEPDB,"Inner EPD #psi_{1}");
   legend2->SetTextSize(0.05);
 
   TPaveText *text_extra = new TPaveText(2, 0.25, 28, 0.3);
@@ -184,42 +172,44 @@ void resolutions(TString jobID, TString order_n_str)
   text->SetTextAlign(13);
   text->SetTextFont(22);
 
-  h_resolEPDA = PlotUtils::trimCentralityPlot(h_resolEPDA);
+  h_resolEPDB = PlotUtils::trimCentralityPlot(h_resolEPDB);
   /*
-  h_resolEPDA->SetBinContent(9,0.0);
-  h_resolEPDA->SetBinError(9,0.0);
-  h_resolEPDA->SetBinContent(10,0.0);
-  h_resolEPDA->SetBinError(10,0.0);
-  h_resolEPDA->SetBinContent(11,0.0);
-  h_resolEPDA->SetBinError(11,0.0);
+  h_resolEPDB->SetBinContent(9,0.0);
+  h_resolEPDB->SetBinError(9,0.0);
+  h_resolEPDB->SetBinContent(10,0.0);
+  h_resolEPDB->SetBinError(10,0.0);
+  h_resolEPDB->SetBinContent(11,0.0);
+  h_resolEPDB->SetBinError(11,0.0);
+  h_resolEPDB->SetBinContent(12,0.0);
+  h_resolEPDB->SetBinError(12,0.0);
   */
-  h_resolEPDA->SetLineWidth(2);
-  h_resolEPDA->SetLineColor(kBlack);
-  h_resolEPDA->SetMarkerStyle(20);
-  h_resolEPDA->SetMarkerSize(2);
-  h_resolEPDA->SetMarkerColor(kBlue);
-  h_resolEPDA->SetFillColorAlpha(kBlue-4, 0.3);
+  h_resolEPDB->SetLineWidth(2);
+  h_resolEPDB->SetLineColor(kBlack);
+  h_resolEPDB->SetMarkerStyle(20);
+  h_resolEPDB->SetMarkerSize(2);
+  h_resolEPDB->SetMarkerColor(kBlue);
+  h_resolEPDB->SetFillColorAlpha(kBlue-4, 0.3);
 
-  h_resolEPDA->GetXaxis()->SetLabelSize(0.05);
-  h_resolEPDA->GetYaxis()->SetLabelSize(0.045);
-  h_resolEPDA->GetXaxis()->SetTitleOffset(1.1);
-  h_resolEPDA->GetYaxis()->SetTitleOffset(1.1);
-  h_resolEPDA->GetXaxis()->SetTitleSize(0.045);
-  h_resolEPDA->GetYaxis()->SetTitleSize(0.055);
-  h_resolEPDA->GetYaxis()->SetLabelSize(0.045);
-  h_resolEPDA->GetXaxis()->SetTitleFont(132);
-  h_resolEPDA->GetYaxis()->SetTitleFont(132);
-  h_resolEPDA->SetMaximum(0.25);
-  //h_resolEPDA->SetMaximum(1.0);
-  h_resolEPDA->SetMinimum(0.0);
-  h_resolEPDA->SetTitle("");
-  //h_resolEPDA->SetMarkerColor(1);
-  //h_resolEPDA->SetLineColor(1);
-  h_resolEPDA->Draw("E1P");
+  h_resolEPDB->GetXaxis()->SetLabelSize(0.05);
+  h_resolEPDB->GetYaxis()->SetLabelSize(0.045);
+  h_resolEPDB->GetXaxis()->SetTitleOffset(1.1);
+  h_resolEPDB->GetYaxis()->SetTitleOffset(1.1);
+  h_resolEPDB->GetXaxis()->SetTitleSize(0.045);
+  h_resolEPDB->GetYaxis()->SetTitleSize(0.055);
+  h_resolEPDB->GetYaxis()->SetLabelSize(0.045);
+  h_resolEPDB->GetXaxis()->SetTitleFont(132);
+  h_resolEPDB->GetYaxis()->SetTitleFont(132);
+  //h_resolEPDB->SetMaximum(0.25);
+  //h_resolEPDB->SetMaximum(1.0);
+  h_resolEPDB->SetMinimum(0.0);
+  h_resolEPDB->SetTitle("");
+  //h_resolEPDB->SetMarkerColor(1);
+  //h_resolEPDB->SetLineColor(1);
+  h_resolEPDB->Draw("E1P");
   //legend2->Draw();
-  text->Draw();
+  //   text->Draw();
   //prelimText->Draw();
-  canvas->SaveAs(jobID + "_resolutionAonly.pdf");
+  canvas->SaveAs(jobID + "_resolutionBonly.pdf");
   canvas->Clear();
 
   resolutionInfo_INPUT->Close();

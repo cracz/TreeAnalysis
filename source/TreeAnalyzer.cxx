@@ -106,8 +106,8 @@ int main(int argc, char *argv[])
   TString ORDER_M_STR;
   ORDER_N_STR.Form("%.0f", ORDER_N);
   ORDER_M_STR.Form("%.0f", ORDER_M);
-  const Double_t PSI_BOUNDS = TMath::Pi()/ORDER_M + 1;  // Boundaries for many histograms
-  const Double_t Q_BOUNDS = 100;
+  const Double_t PSI_BOUNDS = TMath::Pi()/ORDER_M + 1;  // Boundaries for event plane angle histograms
+  const Double_t Q_BOUNDS = 100;                        // Boundaries for Q vector component histograms
   const Bool_t ODD_PLANE = ((int)ORDER_M % 2 == 1) ? true : false;
 
   //=== INITIALIZE TTREE
@@ -364,10 +364,6 @@ int main(int argc, char *argv[])
   TH1D* h_zvtx = (TH1D*)inputFile->Get("h_zvtx");
   TH1D* h_zvtx_2019 = new TH1D("h_zvtx_2019","Primary Vertex Position in z;Distance (cm);Events", 500, 190, 210);
   TH1D* h_zvtx_2020 = new TH1D("h_zvtx_2020","Primary Vertex Position in z;Distance (cm);Events", 500, 190, 210);
-
-  TH1D *h_weightsEPDA = new TH1D("h_weightsEPDA", "EPD A hit weights;Weights;Hits", 100, -2.5, 2.5);
-  TH1D *h_weightsEPDB = new TH1D("h_weightsEPDB", "EPD B hit weights;Weights;Hits", 100, -2.5, 2.4);
-  TH1D *h_weightsTPCB = new TH1D("h_weightsTPCB", "TPC B track weights;Weights;Tracs", 200, -10, 10);
 
   TH1D *h_tileWeights = new TH1D("h_tileWeights", "EPD Tile Weights;nMIP Weights;Hits", 100, -1, 4);
   TH1D *h_centralities = new TH1D("h_centralities", "Centralities;Centrality ID;Events", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
@@ -947,175 +943,6 @@ int main(int argc, char *argv[])
 				  200, -PSI_BOUNDS, PSI_BOUNDS, 200, -PSI_BOUNDS, PSI_BOUNDS);
   ////
 
-
-  ////////////////
-  // New centrality based processes
-  /*
-  TProfile* p_XnTpc  = new TProfile("p_XnTpc",  "<X_n> vs Centrality (TPC);Centrality ID;<X_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_YnTpc  = new TProfile("p_YnTpc",  "<Y_n> vs Centrality (TPC);Centrality ID;<Y_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_XnTpcA = new TProfile("p_XnTpcA", "<X_n> vs Centrality (TPC A);Centrality ID;<X_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_YnTpcA = new TProfile("p_YnTpcA", "<Y_n> vs Centrality (TPC A);Centrality ID;<Y_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_XnTpcB = new TProfile("p_XnTpcB", "<X_n> vs Centrality (TPC B);Centrality ID;<X_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_YnTpcB = new TProfile("p_YnTpcB", "<Y_n> vs Centrality (TPC B);Centrality ID;<Y_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_XnEpd  = new TProfile("p_XnEpd",  "<X_n> vs Centrality (EPD);Centrality ID;<X_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_YnEpd  = new TProfile("p_YnEpd",  "<Y_n> vs Centrality (EPD);Centrality ID;<Y_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_XnEpdA = new TProfile("p_XnEpdA", "<X_n> vs Centrality (EPD A);Centrality ID;<X_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_YnEpdA = new TProfile("p_YnEpdA", "<Y_n> vs Centrality (EPD A);Centrality ID;<Y_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_XnEpdB = new TProfile("p_XnEpdB", "<X_n> vs Centrality (EPD B);Centrality ID;<X_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_YnEpdB = new TProfile("p_YnEpdB", "<Y_n> vs Centrality (EPD B);Centrality ID;<Y_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-
-  TProfile2D *p2_sinAvgsTpc  = new TProfile2D("p2_sinAvgsTpc", "Sin Averages (TPC);j (Correction term);Centrality ID;<sin(jn#psi^{TPC}_{n})>",      
-					     configs.shift_terms, 1, configs.shift_terms+1, CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile2D *p2_cosAvgsTpc  = new TProfile2D("p2_cosAvgsTpc", "Cos Averages (TPC);j (Correction term);Centrality ID;<sin(jn#psi^{TPC}_{n})>",      
-					     configs.shift_terms, 1, configs.shift_terms+1, CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile2D *p2_sinAvgsTpcA = new TProfile2D("p2_sinAvgsTpcA", "Sin Averages (TPC A);j (Correction term);Centrality ID;<sin(jn#psi^{TPC,A}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile2D *p2_cosAvgsTpcA = new TProfile2D("p2_cosAvgsTpcA", "Cos Averages (TPC A);j (Correction term);Centrality ID;<sin(jn#psi^{TPC,A}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile2D *p2_sinAvgsTpcB = new TProfile2D("p2_sinAvgsTpcB", "Sin Averages (TPC B);j (Correction term);Centrality ID;<sin(jn#psi^{TPC,B}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile2D *p2_cosAvgsTpcB = new TProfile2D("p2_cosAvgsTpcB", "Cos Averages (TPC B);j (Correction term);Centrality ID;<sin(jn#psi^{TPC,B}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile2D *p2_sinAvgsEpd  = new TProfile2D("p2_sinAvgsEpd", "Sin Averages (EPD);j (Correction term);Centrality ID;<sin(jn#psi^{EPD}_{n})>",      
-					     configs.shift_terms, 1, configs.shift_terms+1, CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile2D *p2_cosAvgsEpd  = new TProfile2D("p2_cosAvgsEpd", "Cos Averages (EPD);j (Correction term);Centrality ID;<sin(jn#psi^{EPD}_{n})>",      
-					     configs.shift_terms, 1, configs.shift_terms+1, CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile2D *p2_sinAvgsEpdA = new TProfile2D("p2_sinAvgsEpdA", "Sin Averages (EPD A);j (Correction term);Centrality ID;<sin(jn#psi^{EPD,A}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile2D *p2_cosAvgsEpdA = new TProfile2D("p2_cosAvgsEpdA", "Cos Averages (EPD A);j (Correction term);Centrality ID;<sin(jn#psi^{EPD,A}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile2D *p2_sinAvgsEpdB = new TProfile2D("p2_sinAvgsEpdB", "Sin Averages (EPD B);j (Correction term);Centrality ID;<sin(jn#psi^{EPD,B}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-  TProfile2D *p2_cosAvgsEpdB = new TProfile2D("p2_cosAvgsEpdB", "Cos Averages (EPD B);j (Correction term);Centrality ID;<sin(jn#psi^{EPD,B}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, CENT_BINS, FIRST_CENT, FIRST_CENT+CENT_BINS);
-
-
-  TProfile* p_XnTpc_RC  = new TProfile("p_XnTpc_RC",  "Recentered <X_n> vs Centrality (TPC);Centrality ID;<X_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_YnTpc_RC  = new TProfile("p_YnTpc_RC",  "Recentered <Y_n> vs Centrality (TPC);Centrality ID;<Y_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_XnTpcA_RC = new TProfile("p_XnTpcA_RC", "Recentered <X_n> vs Centrality (TPC A);Centrality ID;<X_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_YnTpcA_RC = new TProfile("p_YnTpcA_RC", "Recentered <Y_n> vs Centrality (TPC A);Centrality ID;<Y_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_XnTpcB_RC = new TProfile("p_XnTpcB_RC", "Recentered <X_n> vs Centrality (TPC B);Centrality ID;<X_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_YnTpcB_RC = new TProfile("p_YnTpcB_RC", "Recentered <Y_n> vs Centrality (TPC B);Centrality ID;<Y_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_XnEpd_RC  = new TProfile("p_XnEpd_RC",  "Recentered <X_n> vs Centrality (EPD);Centrality ID;<X_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_YnEpd_RC  = new TProfile("p_YnEpd_RC",  "Recentered <Y_n> vs Centrality (EPD);Centrality ID;<Y_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_XnEpdA_RC = new TProfile("p_XnEpdA_RC", "Recentered <X_n> vs Centrality (EPD A);Centrality ID;<X_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_YnEpdA_RC = new TProfile("p_YnEpdA_RC", "Recentered <Y_n> vs Centrality (EPD A);Centrality ID;<Y_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_XnEpdB_RC = new TProfile("p_XnEpdB_RC", "Recentered <X_n> vs Centrality (EPD B);Centrality ID;<X_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TProfile* p_YnEpdB_RC = new TProfile("p_YnEpdB_RC", "Recentered <Y_n> vs Centrality (EPD B);Centrality ID;<Y_n>", CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-
-  TH2D *h2_psiTpc_RC  = new TH2D("h2_psiTpc_RC", "Re-centered Event Plane Angles (m = "+ORDER_M_STR+", TPC);#psi_{"+ORDER_M_STR+"};Centrality ID;Events",    
-				 400, -PSI_BOUNDS, PSI_BOUNDS, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TH2D *h2_psiTpcA_RC = new TH2D("h2_psiTpcA_RC", "Re-centered Event Plane Angles (m = "+ORDER_M_STR+", TPC A);#psi_{"+ORDER_M_STR+"};Centrality ID;Events", 
-				 400, -PSI_BOUNDS, PSI_BOUNDS, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TH2D *h2_psiTpcB_RC = new TH2D("h2_psiTpcB_RC", "Re-centered Event Plane Angles (m = "+ORDER_M_STR+", TPC B);#psi_{"+ORDER_M_STR+"};Centrality ID;Events", 
-				 400, -PSI_BOUNDS, PSI_BOUNDS, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TH2D *h2_psiEpd_RC  = new TH2D("h2_psiEpd_RC", "Re-centered Event Plane Angles (m = "+ORDER_M_STR+", EPD);#psi_{"+ORDER_M_STR+"};Centrality ID;Events",    
-				 400, -PSI_BOUNDS, PSI_BOUNDS, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TH2D *h2_psiEpdA_RC = new TH2D("h2_psiEpdA_RC", "Re-centered Event Plane Angles (m = "+ORDER_M_STR+", EPD A);#psi_{"+ORDER_M_STR+"};Centrality ID;Events", 
-				 400, -PSI_BOUNDS, PSI_BOUNDS, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TH2D *h2_psiEpdB_RC = new TH2D("h2_psiEpdB_RC", "Re-centered Event Plane Angles (m = "+ORDER_M_STR+", EPD B);#psi_{"+ORDER_M_STR+"};Centrality ID;Events", 
-				 400, -PSI_BOUNDS, PSI_BOUNDS, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-
-
-  TH2D *h2_psiTpc_FLAT  = new TH2D("h2_psiTpc_FLAT", "Flattened Event Plane Angle (TPC, order "+ORDER_M_STR+");#psi_{"+ORDER_M_STR+"};Centrality ID;Events",    
-				   400, -PSI_BOUNDS, PSI_BOUNDS, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TH2D *h2_psiTpcA_FLAT = new TH2D("h2_psiTpcA_FLAT", "Flattened Event Plane Angle (TPC A, order "+ORDER_M_STR+");#psi_{"+ORDER_M_STR+"};Centrality ID;Events", 
-				   400, -PSI_BOUNDS, PSI_BOUNDS, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TH2D *h2_psiTpcB_FLAT = new TH2D("h2_psiTpcB_FLAT", "Flattened Event Plane Angle (TPC B, order "+ORDER_M_STR+");#psi_{"+ORDER_M_STR+"};Centrality ID;Events", 
-				   400, -PSI_BOUNDS, PSI_BOUNDS, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TH2D *h2_psiEpd_FLAT  = new TH2D("h2_psiEpd_FLAT", "Flattened Event Plane Angle (EPD, order "+ORDER_M_STR+");#psi_{"+ORDER_M_STR+"};Centrality ID;Events",    
-				   400, -PSI_BOUNDS, PSI_BOUNDS, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TH2D *h2_psiEpdA_FLAT = new TH2D("h2_psiEpdA_FLAT", "Flattened Event Plane Angle (EPD A, order "+ORDER_M_STR+");#psi_{"+ORDER_M_STR+"};Centrality ID;Events", 
-				   400, -PSI_BOUNDS, PSI_BOUNDS, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  TH2D *h2_psiEpdB_FLAT = new TH2D("h2_psiEpdB_FLAT", "Flattened Event Plane Angle (EPD B, order "+ORDER_M_STR+");#psi_{"+ORDER_M_STR+"};Centrality ID;Events", 
-				   400, -PSI_BOUNDS, PSI_BOUNDS, CENT_BINS, FIRST_CENT, FIRST_CENT + CENT_BINS);
-  */
-  ////////////////
-
-
-  ////////////////
-  // New run ID based processes
-  /*
-  TProfile* p_XnTpc  = new TProfile("p_XnTpc",  "<X_n> vs Run (TPC);Run Index;<X_n>", totalRuns, 0, totalRuns);
-  TProfile* p_YnTpc  = new TProfile("p_YnTpc",  "<Y_n> vs Run (TPC);Run Index;<Y_n>", totalRuns, 0, totalRuns);
-  TProfile* p_XnTpcA = new TProfile("p_XnTpcA", "<X_n> vs Run (TPC A);Run Index;<X_n>", totalRuns, 0, totalRuns);
-  TProfile* p_YnTpcA = new TProfile("p_YnTpcA", "<Y_n> vs Run (TPC A);Run Index;<Y_n>", totalRuns, 0, totalRuns);
-  TProfile* p_XnTpcB = new TProfile("p_XnTpcB", "<X_n> vs Run (TPC B);Run Index;<X_n>", totalRuns, 0, totalRuns);
-  TProfile* p_YnTpcB = new TProfile("p_YnTpcB", "<Y_n> vs Run (TPC B);Run Index;<Y_n>", totalRuns, 0, totalRuns);
-  TProfile* p_XnEpd  = new TProfile("p_XnEpd",  "<X_n> vs Run (EPD);Run Index;<X_n>", totalRuns, 0, totalRuns);
-  TProfile* p_YnEpd  = new TProfile("p_YnEpd",  "<Y_n> vs Run (EPD);Run Index;<Y_n>", totalRuns, 0, totalRuns);
-  TProfile* p_XnEpdA = new TProfile("p_XnEpdA", "<X_n> vs Run (EPD A);Run Index;<X_n>", totalRuns, 0, totalRuns);
-  TProfile* p_YnEpdA = new TProfile("p_YnEpdA", "<Y_n> vs Run (EPD A);Run Index;<Y_n>", totalRuns, 0, totalRuns);
-  TProfile* p_XnEpdB = new TProfile("p_XnEpdB", "<X_n> vs Run (EPD B);Run Index;<X_n>", totalRuns, 0, totalRuns);
-  TProfile* p_YnEpdB = new TProfile("p_YnEpdB", "<Y_n> vs Run (EPD B);Run Index;<Y_n>", totalRuns, 0, totalRuns);
-
-  TProfile2D *p2_sinAvgsTpc  = new TProfile2D("p2_sinAvgsTpc", "Sin Averages (TPC);j (Correction term);Run Index;<sin(jn#psi^{TPC}_{n})>",      
-					     configs.shift_terms, 1, configs.shift_terms+1, totalRuns, 0, totalRuns);
-  TProfile2D *p2_cosAvgsTpc  = new TProfile2D("p2_cosAvgsTpc", "Cos Averages (TPC);j (Correction term);Run Index;<sin(jn#psi^{TPC}_{n})>",      
-					     configs.shift_terms, 1, configs.shift_terms+1, totalRuns, 0, totalRuns);
-  TProfile2D *p2_sinAvgsTpcA = new TProfile2D("p2_sinAvgsTpcA", "Sin Averages (TPC A);j (Correction term);Run Index;<sin(jn#psi^{TPC,A}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, totalRuns, 0, totalRuns);
-  TProfile2D *p2_cosAvgsTpcA = new TProfile2D("p2_cosAvgsTpcA", "Cos Averages (TPC A);j (Correction term);Run Index;<sin(jn#psi^{TPC,A}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, totalRuns, 0, totalRuns);
-  TProfile2D *p2_sinAvgsTpcB = new TProfile2D("p2_sinAvgsTpcB", "Sin Averages (TPC B);j (Correction term);Run Index;<sin(jn#psi^{TPC,B}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, totalRuns, 0, totalRuns);
-  TProfile2D *p2_cosAvgsTpcB = new TProfile2D("p2_cosAvgsTpcB", "Cos Averages (TPC B);j (Correction term);Run Index;<sin(jn#psi^{TPC,B}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, totalRuns, 0, totalRuns);
-  TProfile2D *p2_sinAvgsEpd  = new TProfile2D("p2_sinAvgsEpd", "Sin Averages (EPD);j (Correction term);Run Index;<sin(jn#psi^{EPD}_{n})>",      
-					     configs.shift_terms, 1, configs.shift_terms+1, totalRuns, 0, totalRuns);
-  TProfile2D *p2_cosAvgsEpd  = new TProfile2D("p2_cosAvgsEpd", "Cos Averages (EPD);j (Correction term);Run Index;<sin(jn#psi^{EPD}_{n})>",      
-					     configs.shift_terms, 1, configs.shift_terms+1, totalRuns, 0, totalRuns);
-  TProfile2D *p2_sinAvgsEpdA = new TProfile2D("p2_sinAvgsEpdA", "Sin Averages (EPD A);j (Correction term);Run Index;<sin(jn#psi^{EPD,A}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, totalRuns, 0, totalRuns);
-  TProfile2D *p2_cosAvgsEpdA = new TProfile2D("p2_cosAvgsEpdA", "Cos Averages (EPD A);j (Correction term);Run Index;<sin(jn#psi^{EPD,A}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, totalRuns, 0, totalRuns);
-  TProfile2D *p2_sinAvgsEpdB = new TProfile2D("p2_sinAvgsEpdB", "Sin Averages (EPD B);j (Correction term);Run Index;<sin(jn#psi^{EPD,B}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, totalRuns, 0, totalRuns);
-  TProfile2D *p2_cosAvgsEpdB = new TProfile2D("p2_cosAvgsEpdB", "Cos Averages (EPD B);j (Correction term);Run Index;<sin(jn#psi^{EPD,B}_{n})>", 
-					     configs.shift_terms, 1, configs.shift_terms+1, totalRuns, 0, totalRuns);
-
-
-  TProfile* p_XnTpc_RC  = new TProfile("p_XnTpc_RC",  "Recentered <X_n> vs Run (TPC);Run Index;<X_n>", totalRuns, 0, totalRuns);
-  TProfile* p_YnTpc_RC  = new TProfile("p_YnTpc_RC",  "Recentered <Y_n> vs Run (TPC);Run Index;<Y_n>", totalRuns, 0, totalRuns);
-  TProfile* p_XnTpcA_RC = new TProfile("p_XnTpcA_RC", "Recentered <X_n> vs Run (TPC A);Run Index;<X_n>", totalRuns, 0, totalRuns);
-  TProfile* p_YnTpcA_RC = new TProfile("p_YnTpcA_RC", "Recentered <Y_n> vs Run (TPC A);Run Index;<Y_n>", totalRuns, 0, totalRuns);
-  TProfile* p_XnTpcB_RC = new TProfile("p_XnTpcB_RC", "Recentered <X_n> vs Run (TPC B);Run Index;<X_n>", totalRuns, 0, totalRuns);
-  TProfile* p_YnTpcB_RC = new TProfile("p_YnTpcB_RC", "Recentered <Y_n> vs Run (TPC B);Run Index;<Y_n>", totalRuns, 0, totalRuns);
-  TProfile* p_XnEpd_RC  = new TProfile("p_XnEpd_RC",  "Recentered <X_n> vs Run (EPD);Run Index;<X_n>", totalRuns, 0, totalRuns);
-  TProfile* p_YnEpd_RC  = new TProfile("p_YnEpd_RC",  "Recentered <Y_n> vs Run (EPD);Run Index;<Y_n>", totalRuns, 0, totalRuns);
-  TProfile* p_XnEpdA_RC = new TProfile("p_XnEpdA_RC", "Recentered <X_n> vs Run (EPD A);Run Index;<X_n>", totalRuns, 0, totalRuns);
-  TProfile* p_YnEpdA_RC = new TProfile("p_YnEpdA_RC", "Recentered <Y_n> vs Run (EPD A);Run Index;<Y_n>", totalRuns, 0, totalRuns);
-  TProfile* p_XnEpdB_RC = new TProfile("p_XnEpdB_RC", "Recentered <X_n> vs Run (EPD B);Run Index;<X_n>", totalRuns, 0, totalRuns);
-  TProfile* p_YnEpdB_RC = new TProfile("p_YnEpdB_RC", "Recentered <Y_n> vs Run (EPD B);Run Index;<Y_n>", totalRuns, 0, totalRuns);
-
-  TH2D *h2_psiTpc_RC  = new TH2D("h2_psiTpc_RC", "Re-centered Event Plane Angles (m = "+ORDER_M_STR+", TPC);#psi_{"+ORDER_M_STR+"};Run Index;Events",    
-				 400, -PSI_BOUNDS, PSI_BOUNDS, totalRuns, 0, totalRuns);
-  TH2D *h2_psiTpcA_RC = new TH2D("h2_psiTpcA_RC", "Re-centered Event Plane Angles (m = "+ORDER_M_STR+", TPC A);#psi_{"+ORDER_M_STR+"};Run Index;Events", 
-				 400, -PSI_BOUNDS, PSI_BOUNDS, totalRuns, 0, totalRuns);
-  TH2D *h2_psiTpcB_RC = new TH2D("h2_psiTpcB_RC", "Re-centered Event Plane Angles (m = "+ORDER_M_STR+", TPC B);#psi_{"+ORDER_M_STR+"};Run Index;Events", 
-				 400, -PSI_BOUNDS, PSI_BOUNDS, totalRuns, 0, totalRuns);
-  TH2D *h2_psiEpd_RC  = new TH2D("h2_psiEpd_RC", "Re-centered Event Plane Angles (m = "+ORDER_M_STR+", EPD);#psi_{"+ORDER_M_STR+"};Run Index;Events",    
-				 400, -PSI_BOUNDS, PSI_BOUNDS, totalRuns, 0, totalRuns);
-  TH2D *h2_psiEpdA_RC = new TH2D("h2_psiEpdA_RC", "Re-centered Event Plane Angles (m = "+ORDER_M_STR+", EPD A);#psi_{"+ORDER_M_STR+"};Run Index;Events", 
-				 400, -PSI_BOUNDS, PSI_BOUNDS, totalRuns, 0, totalRuns);
-  TH2D *h2_psiEpdB_RC = new TH2D("h2_psiEpdB_RC", "Re-centered Event Plane Angles (m = "+ORDER_M_STR+", EPD B);#psi_{"+ORDER_M_STR+"};Run Index;Events", 
-				 400, -PSI_BOUNDS, PSI_BOUNDS, totalRuns, 0, totalRuns);
-
-
-  TH2D *h2_psiTpc_FLAT  = new TH2D("h2_psiTpc_FLAT", "Flattened Event Plane Angle (TPC, order "+ORDER_M_STR+");#psi_{"+ORDER_M_STR+"};Run Index;Events",    
-				   400, -PSI_BOUNDS, PSI_BOUNDS, totalRuns, 0, totalRuns);
-  TH2D *h2_psiTpcA_FLAT = new TH2D("h2_psiTpcA_FLAT", "Flattened Event Plane Angle (TPC A, order "+ORDER_M_STR+");#psi_{"+ORDER_M_STR+"};Run Index;Events", 
-				   400, -PSI_BOUNDS, PSI_BOUNDS, totalRuns, 0, totalRuns);
-  TH2D *h2_psiTpcB_FLAT = new TH2D("h2_psiTpcB_FLAT", "Flattened Event Plane Angle (TPC B, order "+ORDER_M_STR+");#psi_{"+ORDER_M_STR+"};Run Index;Events", 
-				   400, -PSI_BOUNDS, PSI_BOUNDS, totalRuns, 0, totalRuns);
-  TH2D *h2_psiEpd_FLAT  = new TH2D("h2_psiEpd_FLAT", "Flattened Event Plane Angle (EPD, order "+ORDER_M_STR+");#psi_{"+ORDER_M_STR+"};Run Index;Events",    
-				   400, -PSI_BOUNDS, PSI_BOUNDS, totalRuns, 0, totalRuns);
-  TH2D *h2_psiEpdA_FLAT = new TH2D("h2_psiEpdA_FLAT", "Flattened Event Plane Angle (EPD A, order "+ORDER_M_STR+");#psi_{"+ORDER_M_STR+"};Run Index;Events", 
-				   400, -PSI_BOUNDS, PSI_BOUNDS, totalRuns, 0, totalRuns);
-  TH2D *h2_psiEpdB_FLAT = new TH2D("h2_psiEpdB_FLAT", "Flattened Event Plane Angle (EPD B, order "+ORDER_M_STR+");#psi_{"+ORDER_M_STR+"};Run Index;Events", 
-				   400, -PSI_BOUNDS, PSI_BOUNDS, totalRuns, 0, totalRuns);
-  */
-  ////////////////
 
   ////////////////
   // New centrality and run ID based processes
@@ -1970,36 +1797,6 @@ int main(int argc, char *argv[])
       h_XnEpdB->Fill(eventInfo.XnEpdB);
       h_YnEpdB->Fill(eventInfo.YnEpdB);
 
-      /*
-      p_XnTpc->Fill(eventInfo.centID, eventInfo.XnTpc);
-      p_YnTpc->Fill(eventInfo.centID, eventInfo.YnTpc);
-      p_XnTpcA->Fill(eventInfo.centID, eventInfo.XnTpcA);
-      p_YnTpcA->Fill(eventInfo.centID, eventInfo.YnTpcA);
-      p_XnTpcB->Fill(eventInfo.centID, eventInfo.XnTpcB);
-      p_YnTpcB->Fill(eventInfo.centID, eventInfo.YnTpcB);
-      p_XnEpd->Fill(eventInfo.centID, eventInfo.XnEpd);
-      p_YnEpd->Fill(eventInfo.centID, eventInfo.YnEpd);
-      p_XnEpdA->Fill(eventInfo.centID, eventInfo.XnEpdA);
-      p_YnEpdA->Fill(eventInfo.centID, eventInfo.YnEpdA);
-      p_XnEpdB->Fill(eventInfo.centID, eventInfo.XnEpdB);
-      p_YnEpdB->Fill(eventInfo.centID, eventInfo.YnEpdB);
-      */
-
-      /*
-      p_XnTpc->Fill(runindex, eventInfo.XnTpc);
-      p_YnTpc->Fill(runindex, eventInfo.YnTpc);
-      p_XnTpcA->Fill(runindex, eventInfo.XnTpcA);
-      p_YnTpcA->Fill(runindex, eventInfo.YnTpcA);
-      p_XnTpcB->Fill(runindex, eventInfo.XnTpcB);
-      p_YnTpcB->Fill(runindex, eventInfo.YnTpcB);
-      p_XnEpd->Fill(runindex, eventInfo.XnEpd);
-      p_YnEpd->Fill(runindex, eventInfo.YnEpd);
-      p_XnEpdA->Fill(runindex, eventInfo.XnEpdA);
-      p_YnEpdA->Fill(runindex, eventInfo.YnEpdA);
-      p_XnEpdB->Fill(runindex, eventInfo.XnEpdB);
-      p_YnEpdB->Fill(runindex, eventInfo.YnEpdB);
-      */
-
       p2_XnTpc->Fill(eventInfo.centID, runindex, eventInfo.XnTpc);
       p2_YnTpc->Fill(eventInfo.centID, runindex, eventInfo.YnTpc);
       p2_XnTpcA->Fill(eventInfo.centID, runindex, eventInfo.XnTpcA);
@@ -2027,9 +1824,6 @@ int main(int argc, char *argv[])
 
       if (setup.getRunIteration() == 1 || setup.getRunIteration() == 2)
 	{
-	  //FlowUtils::recenterQ(eventInfo, setup.correctionFile, ORDER_M);
-	  //FlowUtils::recenterQcentralityBased(eventInfo, setup.correctionFile, ORDER_M);
-	  //FlowUtils::recenterQrunIDBased(eventInfo, setup.correctionFile, ORDER_M, runindex);
 	  FlowUtils::recenterQcentralityAndRunIDBased(eventInfo, setup.correctionFile, ORDER_M, runindex);
 
 	  if (eventInfo.badEvent) continue;
@@ -2047,37 +1841,6 @@ int main(int argc, char *argv[])
 	  h_YnEpd_RC->Fill(eventInfo.YnEpd);
 	  h_YnEpdA_RC->Fill(eventInfo.YnEpdA);
 	  h_YnEpdB_RC->Fill(eventInfo.YnEpdB);
-	  /*
-	  p_XnTpc_RC->Fill(eventInfo.centID, eventInfo.XnTpc);
-	  p_XnTpcA_RC->Fill(eventInfo.centID, eventInfo.XnTpcA);
-	  p_XnTpcB_RC->Fill(eventInfo.centID, eventInfo.XnTpcB);
-	  p_XnEpd_RC->Fill(eventInfo.centID, eventInfo.XnEpd);
-	  p_XnEpdA_RC->Fill(eventInfo.centID, eventInfo.XnEpdA);
-	  p_XnEpdB_RC->Fill(eventInfo.centID, eventInfo.XnEpdB);
-
-	  p_YnTpc_RC->Fill(eventInfo.centID, eventInfo.YnTpc);
-	  p_YnTpcA_RC->Fill(eventInfo.centID, eventInfo.YnTpcA);
-	  p_YnTpcB_RC->Fill(eventInfo.centID, eventInfo.YnTpcB);
-	  p_YnEpd_RC->Fill(eventInfo.centID, eventInfo.YnEpd);
-	  p_YnEpdA_RC->Fill(eventInfo.centID, eventInfo.YnEpdA);
-	  p_YnEpdB_RC->Fill(eventInfo.centID, eventInfo.YnEpdB);
-	  */
-
-	  /*
-	  p_XnTpc_RC->Fill(runindex, eventInfo.XnTpc);
-	  p_XnTpcA_RC->Fill(runindex, eventInfo.XnTpcA);
-	  p_XnTpcB_RC->Fill(runindex, eventInfo.XnTpcB);
-	  p_XnEpd_RC->Fill(runindex, eventInfo.XnEpd);
-	  p_XnEpdA_RC->Fill(runindex, eventInfo.XnEpdA);
-	  p_XnEpdB_RC->Fill(runindex, eventInfo.XnEpdB);
-
-	  p_YnTpc_RC->Fill(runindex, eventInfo.YnTpc);
-	  p_YnTpcA_RC->Fill(runindex, eventInfo.YnTpcA);
-	  p_YnTpcB_RC->Fill(runindex, eventInfo.YnTpcB);
-	  p_YnEpd_RC->Fill(runindex, eventInfo.YnEpd);
-	  p_YnEpdA_RC->Fill(runindex, eventInfo.YnEpdA);
-	  p_YnEpdB_RC->Fill(runindex, eventInfo.YnEpdB);
-	  */
 
 	  p2_XnTpc_RC->Fill(eventInfo.centID, runindex, eventInfo.XnTpc);
 	  p2_XnTpcA_RC->Fill(eventInfo.centID, runindex, eventInfo.XnTpcA);
@@ -2099,23 +1862,6 @@ int main(int argc, char *argv[])
 	  h_psiEpd_RC->Fill(eventInfo.psiEpd);
 	  h_psiEpdA_RC->Fill(eventInfo.psiEpdA);
 	  h_psiEpdB_RC->Fill(eventInfo.psiEpdB);
-	  /*
-	  h2_psiTpc_RC->Fill(eventInfo.psiTpc, eventInfo.centID);
-	  h2_psiTpcA_RC->Fill(eventInfo.psiTpcA, eventInfo.centID);
-	  h2_psiTpcB_RC->Fill(eventInfo.psiTpcB, eventInfo.centID);
-	  h2_psiEpd_RC->Fill(eventInfo.psiEpd, eventInfo.centID);
-	  h2_psiEpdA_RC->Fill(eventInfo.psiEpdA, eventInfo.centID);
-	  h2_psiEpdB_RC->Fill(eventInfo.psiEpdB, eventInfo.centID);
-	  */
-
-	  /*
-	  h2_psiTpc_RC->Fill(eventInfo.psiTpc, runindex);
-	  h2_psiTpcA_RC->Fill(eventInfo.psiTpcA, runindex);
-	  h2_psiTpcB_RC->Fill(eventInfo.psiTpcB, runindex);
-	  h2_psiEpd_RC->Fill(eventInfo.psiEpd, runindex);
-	  h2_psiEpdA_RC->Fill(eventInfo.psiEpdA, runindex);
-	  h2_psiEpdB_RC->Fill(eventInfo.psiEpdB, runindex);
-	  */
 
 	  h3_psiTpc_RC->Fill(eventInfo.psiTpc, eventInfo.centID, runindex);
 	  h3_psiTpcA_RC->Fill(eventInfo.psiTpcA, eventInfo.centID, runindex);
@@ -2139,36 +1885,6 @@ int main(int argc, char *argv[])
 	      p_cosAvgsEpdA->Fill(j, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiEpdA));
 	      p_sinAvgsEpdB->Fill(j, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiEpdB));
 	      p_cosAvgsEpdB->Fill(j, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiEpdB));
-	      
-	      /*
-	      p2_sinAvgsTpc->Fill(j,  eventInfo.centID, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiTpc));
-	      p2_cosAvgsTpc->Fill(j,  eventInfo.centID, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiTpc));
-	      p2_sinAvgsTpcA->Fill(j, eventInfo.centID, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiTpcA));
-	      p2_cosAvgsTpcA->Fill(j, eventInfo.centID, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiTpcA));
-	      p2_sinAvgsTpcB->Fill(j, eventInfo.centID, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiTpcB));
-	      p2_cosAvgsTpcB->Fill(j, eventInfo.centID, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiTpcB));
-	      p2_sinAvgsEpd->Fill(j,  eventInfo.centID, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiEpd));
-	      p2_cosAvgsEpd->Fill(j,  eventInfo.centID, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiEpd));
-	      p2_sinAvgsEpdA->Fill(j, eventInfo.centID, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiEpdA));
-	      p2_cosAvgsEpdA->Fill(j, eventInfo.centID, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiEpdA));
-	      p2_sinAvgsEpdB->Fill(j, eventInfo.centID, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiEpdB));
-	      p2_cosAvgsEpdB->Fill(j, eventInfo.centID, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiEpdB));
-	      */
-
-	      /*
-	      p2_sinAvgsTpc->Fill(j,  runindex, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiTpc));
-	      p2_cosAvgsTpc->Fill(j,  runindex, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiTpc));
-	      p2_sinAvgsTpcA->Fill(j, runindex, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiTpcA));
-	      p2_cosAvgsTpcA->Fill(j, runindex, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiTpcA));
-	      p2_sinAvgsTpcB->Fill(j, runindex, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiTpcB));
-	      p2_cosAvgsTpcB->Fill(j, runindex, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiTpcB));
-	      p2_sinAvgsEpd->Fill(j,  runindex, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiEpd));
-	      p2_cosAvgsEpd->Fill(j,  runindex, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiEpd));
-	      p2_sinAvgsEpdA->Fill(j, runindex, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiEpdA));
-	      p2_cosAvgsEpdA->Fill(j, runindex, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiEpdA));
-	      p2_sinAvgsEpdB->Fill(j, runindex, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiEpdB));
-	      p2_cosAvgsEpdB->Fill(j, runindex, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiEpdB));
-	      */
 
 	      p3_sinAvgsTpc->Fill(j,  eventInfo.centID, runindex, TMath::Sin((Double_t)j * ORDER_M * eventInfo.psiTpc));
 	      p3_cosAvgsTpc->Fill(j,  eventInfo.centID, runindex, TMath::Cos((Double_t)j * ORDER_M * eventInfo.psiTpc));
@@ -2196,9 +1912,6 @@ int main(int argc, char *argv[])
 
       if (setup.getRunIteration() == 2)
 	{
-	  //FlowUtils::shiftPsi(eventInfo, setup.correctionFile, ORDER_M, configs.shift_terms);
-	  //FlowUtils::shiftPsiCentralityBased(eventInfo, setup.correctionFile, ORDER_M, configs.shift_terms);
-	  //FlowUtils::shiftPsiRunIDBased(eventInfo, setup.correctionFile, ORDER_M, configs.shift_terms, runindex);
 	  FlowUtils::shiftPsiCentralityAndRunIDBased(eventInfo, setup.correctionFile, ORDER_M, configs.shift_terms, runindex);
 
 	  h_psiTpc_FLAT->Fill(eventInfo.psiTpc);
@@ -2207,23 +1920,6 @@ int main(int argc, char *argv[])
 	  h_psiEpd_FLAT->Fill(eventInfo.psiEpd);
 	  h_psiEpdA_FLAT->Fill(eventInfo.psiEpdA);
 	  h_psiEpdB_FLAT->Fill(eventInfo.psiEpdB);
-	  /*
-	  h2_psiTpc_FLAT->Fill(eventInfo.psiTpc, eventInfo.centID);
-	  h2_psiTpcA_FLAT->Fill(eventInfo.psiTpcA, eventInfo.centID);
-	  h2_psiTpcB_FLAT->Fill(eventInfo.psiTpcB, eventInfo.centID);
-	  h2_psiEpd_FLAT->Fill(eventInfo.psiEpd, eventInfo.centID);
-	  h2_psiEpdA_FLAT->Fill(eventInfo.psiEpdA, eventInfo.centID);
-	  h2_psiEpdB_FLAT->Fill(eventInfo.psiEpdB, eventInfo.centID);
-	  */
-
-	  /*
-	  h2_psiTpc_FLAT->Fill(eventInfo.psiTpc, runindex);
-	  h2_psiTpcA_FLAT->Fill(eventInfo.psiTpcA, runindex);
-	  h2_psiTpcB_FLAT->Fill(eventInfo.psiTpcB, runindex);
-	  h2_psiEpd_FLAT->Fill(eventInfo.psiEpd, runindex);
-	  h2_psiEpdA_FLAT->Fill(eventInfo.psiEpdA, runindex);
-	  h2_psiEpdB_FLAT->Fill(eventInfo.psiEpdB, runindex);
-	  */
 
 	  h3_psiTpc_FLAT->Fill(eventInfo.psiTpc, eventInfo.centID, runindex);
 	  h3_psiTpcA_FLAT->Fill(eventInfo.psiTpcA, eventInfo.centID, runindex);
@@ -2307,71 +2003,6 @@ int main(int argc, char *argv[])
 
 
 
-
-
-	  //=========================================================
-	  //          Secondary loops for diagnostic plots
-	  //=========================================================
-	  for (uint i = 0; i < eventInfo.tpcParticles.size(); i++)
-	    {
-	      if (eventInfo.tpcParticles.at(i).isInTpcB)
-		{
-		  if (ODD_PLANE)
-		    {
-		      if (eventInfo.tpcParticles.at(i).eta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
-			{
-			  h_weightsTPCB->Fill(eventInfo.tpcParticles.at(i).weight);
-			}
-		      else if (eventInfo.tpcParticles.at(i).eta < Y_MID)
-			{
-			  h_weightsTPCB->Fill(-1.0 * eventInfo.tpcParticles.at(i).weight);
-			}
-		    }
-		}
-	    }
-
-	  for (uint i = 0; i < eventInfo.epdParticles.size(); i++)
-	    {
-	      if (eventInfo.epdParticles.at(i).isInEpdA)
-		{
-		  if (ODD_PLANE)
-		    {
-		      if (eventInfo.epdParticles.at(i).eta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
-			{
-			  h_weightsEPDA->Fill(eventInfo.epdParticles.at(i).weight);
-			}
-		      else if (eventInfo.epdParticles.at(i).eta < Y_MID)
-			{
-			  h_weightsEPDA->Fill(-1.0 * eventInfo.epdParticles.at(i).weight);
-			}
-		    }
-		}
-	      else if (eventInfo.epdParticles.at(i).isInEpdB)
-		{
-		  if (ODD_PLANE)
-		    {
-		      if (eventInfo.epdParticles.at(i).eta > Y_MID)        // Account for Q vector sign change past mid-rapidity.
-			{
-			  h_weightsEPDB->Fill(eventInfo.epdParticles.at(i).weight);
-			}
-		      else if (eventInfo.epdParticles.at(i).eta < Y_MID)
-			{
-			  h_weightsEPDB->Fill(-1.0 * eventInfo.epdParticles.at(i).weight);
-			}
-		    }
-		}
-	    }
-	  //=========================================================
-	  //          END Secondary loops for diagnostic plots
-	  //=========================================================
-
-
-
-
-
-
-
-
 	  //=========================================================
 	  //        Flow Calculations
 	  //=========================================================
@@ -2382,7 +2013,7 @@ int main(int argc, char *argv[])
 	  Double_t jthRapidity;
 	  Double_t jthTnMIP;
 	  Double_t psi = eventInfo.psiEpdA;
-	  Double_t psi_epdA = eventInfo.psiEpdA;
+	  Double_t psi_epdB = eventInfo.psiEpdB;
 	  Double_t psi_tpcB = eventInfo.psiTpcB;
 	  Double_t tpcEfficiency = 1.0;  // Default
 	  Double_t tofEfficiency = 1.0;  // Default
@@ -2405,7 +2036,7 @@ int main(int argc, char *argv[])
 		  if (jthPhi == FlowUtils::D_BAD_VALUE || jthEta == FlowUtils::D_BAD_VALUE)
 		    continue;
 	      
-		  p2_v1_eta_cent_TPC->Fill(centID, jthEta, TMath::Cos(jthPhi - psi_epdA));
+		  p2_v1_eta_cent_TPC->Fill(centID, jthEta, TMath::Cos(jthPhi - psi_epdB));
 		}
 
 	      //EPD v1 weights
@@ -2886,32 +2517,6 @@ int main(int argc, char *argv[])
       h_YnEpdA       ->Write();
       h_XnEpdB       ->Write();
       h_YnEpdB       ->Write();
-      /*
-      p_XnTpc        ->Write();
-      p_YnTpc        ->Write();
-      p_XnTpcA       ->Write();
-      p_YnTpcA       ->Write();
-      p_XnTpcB       ->Write();
-      p_YnTpcB       ->Write();
-      p_XnEpd        ->Write();
-      p_YnEpd        ->Write();
-      p_XnEpdA       ->Write();
-      p_YnEpdA       ->Write();
-      p_XnEpdB       ->Write();
-      p_YnEpdB       ->Write();
-      p2_sinAvgsTpc   ->Write();
-      p2_cosAvgsTpc   ->Write();
-      p2_sinAvgsTpcA  ->Write();
-      p2_cosAvgsTpcA  ->Write();
-      p2_sinAvgsTpcB  ->Write();
-      p2_cosAvgsTpcB  ->Write();
-      p2_sinAvgsEpd   ->Write();
-      p2_cosAvgsEpd   ->Write();
-      p2_sinAvgsEpdA  ->Write();
-      p2_cosAvgsEpdA  ->Write();
-      p2_sinAvgsEpdB  ->Write();
-      p2_cosAvgsEpdB  ->Write();
-      */
 
       p2_XnTpc        ->Write();
       p2_YnTpc        ->Write();
