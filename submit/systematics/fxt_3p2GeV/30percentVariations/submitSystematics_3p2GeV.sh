@@ -40,5 +40,5 @@ nohup star-submit treeAnalyze_3p2GeV_m2De_high.xml >& submitOut_3p2GeV_m2De_high
 nohup star-submit treeAnalyze_3p2GeV_m2Tr_low.xml >& submitOut_3p2GeV_m2Tr_low.txt &
 nohup star-submit treeAnalyze_3p2GeV_m2Tr_high.xml >& submitOut_3p2GeV_m2Tr_high.txt &
 
-nohup star-submit treeAnalyze_3p2GeV_epd_low.xml >& submitOut_3p2GeV_epd_low.txt &
-nohup star-submit treeAnalyze_3p2GeV_epd_high.xml >& submitOut_3p2GeV_epd_high.txt &
+#nohup star-submit treeAnalyze_3p2GeV_epd_low.xml >& submitOut_3p2GeV_epd_low.txt &
+#nohup star-submit treeAnalyze_3p2GeV_epd_high.xml >& submitOut_3p2GeV_epd_high.txt &

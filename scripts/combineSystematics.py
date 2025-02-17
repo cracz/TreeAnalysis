@@ -1,3 +1,4 @@
+import sys
 import subprocess
 import numpy as np
 import glob
@@ -50,7 +51,17 @@ if len(sys.argv) == 1:
 elif len(sys.argv) == 3:
     choice      = sys.argv[1]
     nFilesInput = sys.argv[2]
-    
+
+    if not choice.isdigit():
+        print("First argument was not an integer.")
+        exit(0)
+    elif not nFilesInput.isdigit():
+        print("Second argument was not an integer.")
+        exit(0)
+    else:
+        choice = int(choice)
+        nFiles = str(nFilesInput)
+
     if choice != 0 and choice != 1 and choice != 2 and choice != 3 and choice != 4 and choice != 5:
         print("Please input only an integer 0 - 5 for the first argument.")
         exit(0)
@@ -68,11 +79,6 @@ elif len(sys.argv) == 3:
     elif choice == 5:
         subDirectory="fxt_4p5GeV/"
 
-    if not isinstance(nFilesInput, int):
-        print("Second argument was not an integer.")
-        exit(0)
-    else:
-        nFiles = str(nFilesInput)
 else:
     print("Incorrect number of arguments. Use zero or two arguments.")
     exit(0)
