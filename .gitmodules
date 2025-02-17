@@ -2,3 +2,6 @@
 	path = StRoot/ConfigReader
 	url = https://github.com/cracz/ConfigReader.git
 	branch = main
+[submodule "Systematics"]
+	path = Systematics
+	url = https://github.com/cracz/Systematics.git
