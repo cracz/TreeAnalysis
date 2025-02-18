@@ -11,7 +11,7 @@ y_mid=-1.25
 y_beam=2.5
 order_n=3.0
 order_m=1.0
-shift_terms=20
+shift_terms=10
 triggers=720000
 #epde-or-bbce-or-vpde-tof1
 
@@ -37,10 +37,8 @@ nHits_ratio=0.52
 dca=3.0
 tpc_A_low_eta=-2.0
 tpc_A_high_eta=-1.3
-
 #tpc_B_low_eta=-1.2
 tpc_B_low_eta=-1.0
-
 tpc_B_high_eta=0.0
 r_vtx=2.0
 z_vtx_low=198.0
@@ -68,11 +66,6 @@ m2_tr_high=8.7578
 
 # innermost/ourtermost rows in EPD subevents (inclusive)
 # EPD A IS THE MAIN SUBEVENT FOR FLOW CALCULATIONS
-#epdA_inner_row=1
-#epdA_outer_row=6
-#epdB_inner_row=7
-#epdB_outer_row=11
-
 epdA_inner_row=1
 epdA_outer_row=8
 epdB_inner_row=13

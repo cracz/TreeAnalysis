@@ -6,7 +6,7 @@
   <!-- Task list -->
   <command>
     starver SL23d
-    TreeAnalyzer $INPUTFILE0 $JOBID config_3p2GeV.txt correctionInfo_INPUT_3p2GeV.root resolutionInfo_INPUT_3p2GeV_1to8_14to16_NewResolutions.root
+    TreeAnalyzer $INPUTFILE0 $JOBID config_3p2GeV.txt correctionInfo_INPUT_3p2GeV.root resolutionInfo_INPUT_3p2GeV_1to8_13to16_NewResolutions.root
   </command>
 
 
