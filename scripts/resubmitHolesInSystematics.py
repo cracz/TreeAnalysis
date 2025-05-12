@@ -11,19 +11,18 @@ nFilesInput = 0
 nFiles = '0'
 
 if len(sys.argv) == 1:
-    print(
-        '''
-        "What energy is this?"
-        "[0] Cancel"
-        "[1] 3.0 GeV"
-        "[2] 3.2 GeV"
-        "[3] 3.5 GeV"
-        "[4] 3.9 GeV"
-        "[5] 4.5 GeV"
-        ''')
+    print('''
+    What energy is this?
+    [0] Cancel
+    [1] 3.0 GeV
+    [2] 3.2 GeV
+    [3] 3.5 GeV
+    [4] 3.9 GeV
+    [5] 4.5 GeV
+    ''')
     
     choice = input()
-
+    
     if choice != 0 and choice != 1 and choice != 2 and choice != 3 and choice != 4 and choice != 5:
         print("Please input only an integer 0 - 5.")
         exit(0)
@@ -50,10 +49,10 @@ if len(sys.argv) == 1:
         nFiles = str(nFilesInput)
 
     print('''
-    "What size of variation?"
-    "[0] Cancel"
-    "[1] 20 percent"
-    "[2] 30 percent"
+    What size of variation?
+    [0] Cancel
+    [1] 20 percent
+    [2] 30 percent
     ''')
 
     choice2 = input()

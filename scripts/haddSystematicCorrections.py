@@ -8,15 +8,14 @@ variationDirectory = '20percentVariations/'
 subDirectory = 'fxt_3p0GeV/'
 fileName = 'dict_systematics.npy'
 
-print(
-'''
-"What energy is this?"
-"[0] Cancel"
-"[1] 3.0 GeV"
-"[2] 3.2 GeV"
-"[3] 3.5 GeV"
-"[4] 3.9 GeV"
-"[5] 4.5 GeV"
+print('''
+What energy is this?
+[0] Cancel
+[1] 3.0 GeV
+[2] 3.2 GeV
+[3] 3.5 GeV
+[4] 3.9 GeV
+[5] 4.5 GeV
 ''')
 
 choice = input()
@@ -39,10 +38,10 @@ elif choice == 5:
     subDirectory="fxt_4p5GeV/"
     
 print('''
-"What size of variation?"
-"[0] Cancel"
-"[1] 20 percent"
-"[2] 30 percent"
+What size of variation?
+[0] Cancel
+[1] 20 percent
+[2] 30 percent
 ''')
 
 choice2 = input()
