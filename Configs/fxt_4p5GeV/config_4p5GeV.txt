@@ -40,8 +40,8 @@ dca=3.0
 tpc_A_low_eta=-2.0
 tpc_A_high_eta=-1.57
 
-#tpc_B_low_eta=-1.47
-tpc_B_low_eta=-1.0
+tpc_B_low_eta=-1.47
+#tpc_B_low_eta=-1.0
 
 tpc_B_high_eta=0.0
 r_vtx=2.0
@@ -70,15 +70,15 @@ m2_tr_high=8.7578
 
 # innermost/ourtermost rows in EPD subevents (inclusive)
 # EPD A IS THE MAIN SUBEVENT FOR FLOW CALCULATIONS
-#epdA_inner_row=1
-#epdA_outer_row=3
-#epdB_inner_row=4
-#epdB_outer_row=9
-
 epdA_inner_row=1
-epdA_outer_row=8
-epdB_inner_row=14
-epdB_outer_row=16
+epdA_outer_row=3
+epdB_inner_row=5
+epdB_outer_row=9
+
+#epdA_inner_row=1
+#epdA_outer_row=8
+#epdB_inner_row=13
+#epdB_outer_row=16
 
 # Acceptance cuts
 

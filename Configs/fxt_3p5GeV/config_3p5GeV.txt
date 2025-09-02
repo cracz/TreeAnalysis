@@ -37,7 +37,6 @@ nHits_ratio=0.52
 dca=3.0
 tpc_A_low_eta=-2.0
 tpc_A_high_eta=-1.3
-#tpc_B_low_eta=-1.2
 tpc_B_low_eta=-1.0
 tpc_B_high_eta=0.0
 r_vtx=2.0

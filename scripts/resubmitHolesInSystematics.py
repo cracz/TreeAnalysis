@@ -12,14 +12,14 @@ nFiles = '0'
 
 if len(sys.argv) == 1:
     print('''
-    What energy is this?
-    [0] Cancel
-    [1] 3.0 GeV
-    [2] 3.2 GeV
-    [3] 3.5 GeV
-    [4] 3.9 GeV
-    [5] 4.5 GeV
-    ''')
+What energy is this?
+[0] Cancel
+[1] 3.0 GeV
+[2] 3.2 GeV
+[3] 3.5 GeV
+[4] 3.9 GeV
+[5] 4.5 GeV
+''')
     
     choice = input()
     
@@ -49,11 +49,11 @@ if len(sys.argv) == 1:
         nFiles = str(nFilesInput)
 
     print('''
-    What size of variation?
-    [0] Cancel
-    [1] 20 percent
-    [2] 30 percent
-    ''')
+What size of variation?
+[0] Cancel
+[1] 20 percent
+[2] 30 percent
+''')
 
     choice2 = input()
 
@@ -77,7 +77,9 @@ else:
 systemDict = np.load(directory+subDirectory+fileName, allow_pickle='TRUE').item()
 
 for key in systemDict.keys():
-
+    
+    print(key+": "+systemDict[key])
+    
     foundFiles = glob.glob(systemDict[key]+"_*.root")
     if len(foundFiles) == 0:
         print("No files found with ID \""+systemDict[key]+"\". Check if the dictionary of job IDs was updated!")
@@ -86,5 +88,7 @@ for key in systemDict.keys():
     cmd1 = "~/Scripts/findHolesSyst.sh "+systemDict[key]+" "+nFiles+" "+directory+"/"+subDirectory+"/"+variationDirectory
     sp = subprocess.Popen(cmd1, shell=True)
     sp.communicate()
+
+    print("\n")
 
 print("Done!")

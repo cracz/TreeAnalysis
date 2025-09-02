@@ -6,7 +6,7 @@
   <!-- Task list -->
   <command>
     starver SL23d
-    TreeAnalyzer $INPUTFILE0 $JOBID config_3p5GeV_zDe_high.txt correctionInfo_INPUT_3p5GeV.root resolutionInfo_INPUT_3p5GeV_1to6_max11_averagedRes_SL23d.root
+    TreeAnalyzer $INPUTFILE0 $JOBID config_3p5GeV_zDe_high.txt correctionInfo_INPUT_3p5GeV.root resolutionInfo_INPUT_3p5GeV_1to8_13to16_NewResolutions.root
   </command>
 
 
@@ -15,7 +15,7 @@
     <Package>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/source/TreeAnalyzer</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/fxt_3p5GeV/correctionInfo_INPUT_3p5GeV.root</File>
-      <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/fxt_3p5GeV/resolutionInfo_INPUT_3p5GeV_1to6_max11_averagedRes_SL23d.root</File>
+      <File>file:/star/u/cracz/work/flow/TreeAnalysis/CorrectionFiles/fxt_3p5GeV/resolutionInfo_INPUT_3p5GeV_1to8_13to16_NewResolutions.root</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/Configs/fxt_3p5GeV/30percentVariations/config_3p5GeV_zDe_high.txt</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/Efficiencies/fxt_3p5GeV/tof_efficiency_3p5GeV.root</File>
       <File>file:/star/u/cracz/work/flow/TreeAnalysis/Efficiencies/fxt_3p2GeV/eff_tpc_pr_3p2GeV.root</File>
